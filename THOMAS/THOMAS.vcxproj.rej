@@ -1,0 +1,15 @@
+diff a/THOMAS/THOMAS.vcxproj b/THOMAS/THOMAS.vcxproj	(rejected hunks)
+@@ -152,13 +152,11 @@
+     </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>
+-    <ClCompile Include="D3d.cpp" />
+     <ClCompile Include="ThomasCore.cpp" />
+     <ClCompile Include="Window.cpp" />
+   </ItemGroup>
+   <ItemGroup>
+     <ClInclude Include="Common.h" />
+-    <ClInclude Include="D3d.h" />
+     <ClInclude Include="ThomasCore.h" />
+     <ClInclude Include="Thomas.h" />
+     <ClInclude Include="Window.h" />
