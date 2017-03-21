@@ -361,14 +361,6 @@
     <ClInclude Include="src\graphics\TextRender.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DirectXTK-dec2016\Audio\DirectXTKAudio_Desktop_2015_Win8.vcxproj">
-      <Project>{4f150a30-cecb-49d1-8283-6a3f57438cf5}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\DirectXTK-dec2016\DirectXTK_Desktop_2015.vcxproj">
-      <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="include\assimp\color4.inl" />
     <None Include="include\assimp\material.inl" />
     <None Include="include\assimp\matrix3x3.inl" />
@@ -429,11 +421,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
     <IncludePath>$(ProjectDir)include;$(ProjectDir)freetype;$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
     <IncludePath>$(ProjectDir)include;$(ProjectDir)freetype;$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -459,7 +451,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>$(ProjectDir)\lib\assimp.lib;$(ProjectDir)\lib\AntTweakBar.lib;$(ProjectDir)\lib\libnoise.lib;$(ProjectDir)\lib\BulletCollision_Debug.lib;$(ProjectDir)\lib\BulletDynamics_Debug.lib;$(ProjectDir)\lib\LinearMath_Debug.lib</AdditionalDependencies>
+      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;DirectXTK.lib;DirectXTKAudioWin8.lib;libnoise.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -477,7 +469,8 @@
     </Link>
     <Lib>
       <AdditionalDependencies>$(ProjectDir)\lib\assimp.lib;$(ProjectDir)\lib\libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>$(ProjectDir)\lib\assimp.lib;$(ProjectDir)\lib\DirectXTK.lib;$(ProjectDir)\lib\libnoise.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -499,7 +492,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>$(ProjectDir)\lib\assimp.lib;$(ProjectDir)\lib\libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>$(ProjectDir)\lib\assimp.lib;$(ProjectDir)\lib\AntTweakBar.lib;$(ProjectDir)\lib\libnoise.lib;$(ProjectDir)\lib\BulletCollision.lib;$(ProjectDir)\lib\BulletDynamics.lib;$(ProjectDir)\lib\LinearMath.lib</AdditionalDependencies>
+      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision.lib;BulletDynamics.lib;DirectXTK.lib;DirectXTKAudioWin8.lib;libnoise.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -519,7 +512,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>$(ProjectDir)\lib\assimp.lib;$(ProjectDir)\lib\DirectXTK.lib;$(ProjectDir)\lib\libnoise.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

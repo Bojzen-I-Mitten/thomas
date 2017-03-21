@@ -1,6 +1,6 @@
 #pragma once
 #include <d3d11.h>
-#include "../../../DirectXTK-dec2016/Inc/SimpleMath.h"
+#include "DirectXTK/SimpleMath.h"
 
 namespace thomas
 {

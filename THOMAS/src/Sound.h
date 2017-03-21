@@ -2,8 +2,7 @@
 #include "common.h"
 #include <string>
 #include <vector>
-#include "../../DirectXTK-dec2016/Audio/SoundCommon.h"
-
+#include "DirectXTK/SoundCommon.h"
 
 
 namespace thomas
