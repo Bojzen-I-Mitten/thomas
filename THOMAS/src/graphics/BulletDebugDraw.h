@@ -1,10 +1,10 @@
 #pragma once
 #define _XM_NO_INTRINSICS_ 1;
 #include "../../include/LinearMath/btIDebugDraw.h"
-#include "../../../DirectXTK-dec2016/Inc/PrimitiveBatch.h"
-#include "../../../DirectXTK-dec2016/Inc/VertexTypes.h"
-#include "../../../DirectXTK-dec2016/Inc/Effects.h"
-#include "../../../DirectXTK-dec2016/Inc/CommonStates.h"
+#include "DirectXTK/PrimitiveBatch.h"
+#include "DirectXTK/VertexTypes.h"
+#include "DirectXTK/Effects.h"
+#include "DirectXTK/CommonStates.h"
 #include "../utils/Math.h"
 #include "../Common.h"
 #include "../object/component/Camera.h"

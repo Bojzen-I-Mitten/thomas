@@ -2,10 +2,10 @@
 #include "../utils/Math.h"
 #include "../ThomasCore.h"
 #include <map>
-#include "../../../DirectXTK-dec2016/Inc/SpriteBatch.h"
-#include "../../../DirectXTK-dec2016/Inc/SpriteFont.h"
-#include "../../../DirectXTK-dec2016/Inc/CommonStates.h"
-#include "../../../DirectXTK-dec2016/Inc/Effects.h"
+#include "DirectXTK/SpriteBatch.h"
+#include "DirectXTK/SpriteFont.h"
+#include "DirectXTK/CommonStates.h"
+#include "DirectXTK/Effects.h"
 #include "../object/component/TextComponent.h"
 
 namespace thomas

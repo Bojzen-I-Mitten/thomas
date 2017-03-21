@@ -2,11 +2,11 @@
 #include "../utils/Math.h"
 #include "../ThomasCore.h"
 #include <wrl.h>
-#include "../../../DirectXTK-dec2016/Inc/SpriteBatch.h"
-#include "../../../DirectXTK-dec2016/Inc/WICTextureLoader.h"
+#include "DirectXTK/SpriteBatch.h"
+#include "DirectXTK/WICTextureLoader.h"
 #include "../object/component/SpriteComponent.h"
 #include <map>
-#include "../../../DirectXTK-dec2016/Inc/CommonStates.h"
+#include "DirectXTK/CommonStates.h"
 
 namespace thomas
 {
