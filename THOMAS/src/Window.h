@@ -34,13 +34,13 @@ namespace thomas
 		static LONG GetVerticalResolution();
 		
 
-		static void ShowCursor();
-		static void HideCursor();
+		static void SetCursor(bool visible);
 		static bool Destroy();
 		static bool Initialized();
 
 		static bool ChangeWindowShowState(int nCmdShow);
 
+		static bool SetFullScreen(bool fullSceeen);
 	private:
 		static LONG s_width;
 		static LONG s_height;
@@ -50,9 +50,9 @@ namespace thomas
 		static RECT s_windowRectangle;
 		static LPWSTR s_title;
 		static bool s_initialized;
-		static bool s_visibleCursor;
+		static bool s_showCursor;
 		static Ratio s_ratio;
-		
+		static bool s_fullScreen;
 	};
 }
 
