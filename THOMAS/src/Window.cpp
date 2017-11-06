@@ -232,7 +232,7 @@ namespace thomas
 		return ShowWindow(s_windowHandler, nCmdShow);
 	}
 
-	bool Window::SetFullScreen(bool fullSceeen)
+	void Window::SetFullScreen(bool fullSceeen)
 	{
 		if (s_fullScreen != fullSceeen)
 		{
