@@ -40,7 +40,7 @@ namespace thomas
 
 		static bool ChangeWindowShowState(int nCmdShow);
 
-		static bool SetFullScreen(bool fullSceeen);
+		static void SetFullScreen(bool fullSceeen);
 	private:
 		static LONG s_width;
 		static LONG s_height;
