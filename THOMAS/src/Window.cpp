@@ -12,9 +12,9 @@ namespace thomas
 	RECT Window::s_windowRectangle;
 	LPWSTR Window::s_title;
 	bool Window::s_initialized;
-	bool Window::s_visibleCursor;
+	bool Window::s_showCursor;
 	Window::Ratio Window::s_ratio;
-
+	bool Window::s_fullScreen;
 
 	LRESULT CALLBACK Window::EventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
@@ -74,6 +74,8 @@ namespace thomas
 		s_width = width;
 		s_title = title;
 		s_initialized = false;
+		s_showCursor = true;
+		s_fullScreen = false;
 
 		SetAspectRatio();
 
@@ -205,16 +207,14 @@ namespace thomas
 		return true;
 	}
 
-	void Window::ShowCursor()
-	{
-		s_visibleCursor = true;
-		UpdateWindow();
-	}
 
-	void Window::HideCursor()
+	void Window::SetCursor(bool visible)
 	{
-		s_visibleCursor = false;
-		UpdateWindow();
+		if (s_showCursor != visible)
+		{
+			s_showCursor = visible;
+			ShowCursor(visible);
+		}
 	}
 
 	bool Window::Destroy()
@@ -230,6 +230,15 @@ namespace thomas
 	bool Window::ChangeWindowShowState(int nCmdShow)
 	{
 		return ShowWindow(s_windowHandler, nCmdShow);
+	}
+
+	bool Window::SetFullScreen(bool fullSceeen)
+	{
+		if (s_fullScreen != fullSceeen)
+		{
+			s_fullScreen = fullSceeen;
+			ThomasCore::GetSwapChain()->SetFullscreenState(fullSceeen, NULL);
+		}
 	}
 
 

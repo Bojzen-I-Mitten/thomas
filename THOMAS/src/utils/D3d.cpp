@@ -79,7 +79,7 @@ namespace thomas
 			
 			scd.SampleDesc.Count = THOMAS_AA_COUNT; // AA times 1
 			scd.SampleDesc.Quality = THOMAS_AA_QUALITY;
-			scd.Windowed = FALSE;
+			scd.Windowed = TRUE;
 			scd.BufferDesc.RefreshRate.Numerator = 0; // change 0 to numerator for vsync
 			scd.BufferDesc.RefreshRate.Denominator = 1; // change 1 to denominator for vynsc
 			
