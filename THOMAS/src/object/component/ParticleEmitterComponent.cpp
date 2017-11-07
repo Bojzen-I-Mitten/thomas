@@ -4,6 +4,14 @@
 #include "../GameObject.h"
 #include <fstream>
 #include "../../utils/DebugTools.h"
+#include "../../utils/d3d.h"
+
+#include "..\..\graphics\Texture.h"
+#include "..\..\graphics\Shader.h"
+#include "..\..\graphics\ParticleSystem.h"
+#include "../../utils/DebugTools.h"
+#include "Transform.h"
+#include "../../ThomasTime.h"
 namespace thomas
 {
 	namespace object
@@ -468,7 +476,6 @@ namespace thomas
 			{
 				//Header size and texture size
 				int texturesize;
-				int totalsize;
 
 				std::string texName = m_texture->GetName();
 				//Texturesize is how long the string is * bytes
@@ -535,7 +542,7 @@ namespace thomas
 				SetTexture(textureName);
 			}
 
-			float ParticleEmitterComponent::GetSpawnedParticleCount()
+			unsigned int ParticleEmitterComponent::GetSpawnedParticleCount()
 			{
 				return m_spawnedParticleCount;
 			}

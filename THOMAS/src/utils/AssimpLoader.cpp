@@ -1,6 +1,14 @@
 #include "AssimpLoader.h"
+
 #include "../graphics/Model.h"
-#include <stdlib.h>
+#include "../graphics/Texture.h"
+#include "../graphics/Mesh.h"
+#include "../graphics/Material.h"
+#include <assimp\Importer.hpp>
+#include <assimp\scene.h>
+#include <assimp\postprocess.h>
+
+
 namespace thomas
 {
 	namespace utils

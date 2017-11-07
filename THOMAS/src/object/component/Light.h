@@ -3,8 +3,6 @@
 #include "Component.h"
 
 #include "../../utils/Math.h"
-#include "../GameObject.h"
-#include "../../graphics/Shader.h"
 #include "../../graphics/LightManager.h"
 
 /**

@@ -2,6 +2,8 @@
 #include "ThomasTime.h"
 #include "object\component\RigidBodyComponent.h"
 #include "object\GameObject.h"
+#include "graphics\BulletDebugDraw.h"
+#include "object\component\Camera.h"
 #define PHYSICS_TIMESTEP 1.0f/60.0f
 namespace thomas
 {
@@ -26,7 +28,7 @@ namespace thomas
 		btSequentialImpulseConstraintSolver * solver = new btSequentialImpulseConstraintSolver;
 
 		s_world = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-		s_world->setGravity(btVector3(0, -9.82, 0));
+		s_world->setGravity(btVector3(0, -9.82f, 0));
 
 		s_debugDraw = new graphics::BulletDebugDraw();
 

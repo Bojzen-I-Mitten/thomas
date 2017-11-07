@@ -1,6 +1,7 @@
 #include "Plane.h"
 #include <cmath>
 #include <algorithm>
+#include "../graphics/Mesh.h"
 namespace thomas
 {
 	namespace utils

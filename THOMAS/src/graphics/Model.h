@@ -1,9 +1,11 @@
 #pragma once
 #include "../Common.h"
-#include "Mesh.h"
-#include "Material.h"
+#include <vector>
 namespace thomas {
 	namespace graphics {
+		class Material;
+		class Mesh;
+
 		class THOMAS_API Model {
 		private:
 			Model(std::string name, std::vector<Mesh*> meshes);

@@ -1,7 +1,9 @@
 #pragma once
-#include "../../include/AntTweakBar.h"
-#include "../ThomasCore.h"
+
 #include <map>
+#include "../../include/AntTweakBar.h"
+#include "Math.h"
+
 namespace thomas
 {
 	namespace utils
@@ -15,8 +17,8 @@ namespace thomas
 			};
 		private:
 			
-			static void TW_CALL ReloadShadersButtonCallback(void* clientData);
-			static void TW_CALL CopyStdStringToClient(std::string& destClientString, const std::string& sourceLibraryString);
+			static void __stdcall ReloadShadersButtonCallback(void* clientData);
+			static void __stdcall CopyStdStringToClient(std::string& destClientString, const std::string& sourceLibraryString);
 		public:
 			static void Init();
 			static void Destroy();

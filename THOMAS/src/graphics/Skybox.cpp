@@ -3,6 +3,8 @@
 #include "LightManager.h"
 #include "../utils/d3d.h"
 #include "time.h"
+#include "../ThomasCore.h"
+#include "Shader.h"
 namespace thomas
 {
 	namespace graphics

@@ -1,5 +1,8 @@
 #include "Material.h"
 #include "../utils/AssimpLoader.h"
+#include "Shader.h"
+#include "Texture.h"
+
 namespace thomas
 {
 	namespace graphics

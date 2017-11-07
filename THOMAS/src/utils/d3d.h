@@ -1,11 +1,10 @@
 #pragma once
 #include "../Common.h"
 #include <d3dcompiler.h>
+#include <d3d11.h>
 #include <string>
 #include <vector>
 #include "../ThomasCore.h"
-#include "DirectXTK/WICTextureLoader.h"
-#include "DirectXTK/DDSTextureLoader.h"
 
 #pragma comment (lib, "d3d11.lib")
 #pragma comment(lib, "Dxguid.lib")
@@ -68,8 +67,6 @@ namespace thomas
 		private:
 
 		};
-
-
 		template<typename T>
 		ID3D11Buffer* D3d::CreateBufferFromStruct(T& dataStruct, D3D11_BIND_FLAG bindFlag)
 		{
@@ -125,8 +122,8 @@ namespace thomas
 			return NULL;
 
 		}
-		template<typename T>
 
+		template<typename T>
 		bool D3d::FillBuffer(ID3D11Buffer* buffer, T& data)
 		{
 			ThomasCore::GetDeviceContext()->UpdateSubresource(buffer, 0, NULL, &data, 0, 0);
@@ -134,7 +131,7 @@ namespace thomas
 		}
 
 		template<typename T>
-		inline bool D3d::FillDynamicBufferVector(ID3D11Buffer * buffer, const std::vector<T>& vectorData)
+		bool D3d::FillDynamicBufferVector(ID3D11Buffer * buffer, const std::vector<T>& vectorData)
 		{
 			D3D11_MAPPED_SUBRESOURCE mappedResource;
 			ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -145,7 +142,7 @@ namespace thomas
 		}
 
 		template<typename T>
-		inline bool D3d::FillDynamicBufferStruct(ID3D11Buffer * buffer, T& data)
+		bool D3d::FillDynamicBufferStruct(ID3D11Buffer * buffer, T& data)
 		{
 			D3D11_MAPPED_SUBRESOURCE mappedResource;
 			ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -154,8 +151,6 @@ namespace thomas
 			ThomasCore::GetDeviceContext()->Unmap(buffer, 0);
 			return true;
 		}
-
-
 
 		template <typename T>
 		ID3D11Buffer* D3d::CreateBufferFromVector(const std::vector<T>& vectorData, D3D11_BIND_FLAG bindFlag)
@@ -167,7 +162,7 @@ namespace thomas
 			bufferDesc.BindFlags = bindFlag;
 			bufferDesc.CPUAccessFlags = 0; //CPU if dynamic
 			bufferDesc.MiscFlags = 0;
-			
+
 
 			const T* data = &vectorData[0];
 
@@ -218,6 +213,9 @@ namespace thomas
 			return NULL;
 
 		}
+
+		
+
 	}
 
 }

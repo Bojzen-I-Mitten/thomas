@@ -1,12 +1,13 @@
 #pragma once
 #include "../utils/Math.h"
-#include "Shader.h"
-#include "Texture.h"
+#include <vector>
 
 namespace thomas
 {
 	namespace graphics
 	{
+		class Shader;
+		class Texture;
 		class Skybox
 		{
 		private:

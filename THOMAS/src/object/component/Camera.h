@@ -1,13 +1,12 @@
 #pragma once
 #include "Component.h"
 #include "../../utils/Math.h"
-#include "../../graphics/Skybox.h"
-#include "../../graphics/TextRender.h"
 /**
 *Camera class
 */
 namespace thomas
 {
+	namespace graphics { class Skybox; }
 	namespace object
 	{
 		namespace component

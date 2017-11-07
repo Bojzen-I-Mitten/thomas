@@ -1,7 +1,6 @@
 #pragma once
 #include "Common.h"
-#include <Windows.h>
-#include <ctime>
+
 
 /**
 *Time calss, holds delta time(DT), FPS and timescale.

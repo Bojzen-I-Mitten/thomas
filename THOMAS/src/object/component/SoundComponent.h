@@ -1,7 +1,11 @@
 #pragma once
 
 #include "Component.h"
-#include "../../Sound.h"
+#include <memory>
+
+namespace DirectX {
+	class SoundEffectInstance;
+}
 namespace thomas
 {
 	namespace object

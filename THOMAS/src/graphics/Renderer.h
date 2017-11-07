@@ -2,10 +2,12 @@
 #include "../Common.h"
 
 #include "../utils/Math.h"
-#include "../object/GameObject.h"
-#include "../object/component/Camera.h"
+#include <vector>
 
 namespace thomas {
+
+	namespace object { class GameObject; namespace component { class Camera; } }
+
 	namespace graphics
 	{
 		class THOMAS_API Renderer {
