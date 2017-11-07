@@ -1,5 +1,6 @@
 #include "HeightMap.h"
-
+#include "noise\noise.h"
+#include "../graphics/Mesh.h"
 namespace thomas
 {
 	namespace utils
@@ -12,7 +13,7 @@ namespace thomas
 
 			float width = size * detail;
 			float height = width;
-			double e = 0.0f;
+			float e = 0.0f;
 
 			noise::module::Perlin myModule;
 
@@ -29,20 +30,20 @@ namespace thomas
 				y = -(plane.verts[i].position.z * detail);
 
 				e = 0.0f;
-				double nx = x / width - 0.5,
-					ny = y / height - 0.5;
+				float nx = x / width - 0.5f;
+				float ny = y / height - 0.5f;
 
 
-				e += myModule.GetValue(nx, ny, 0) / 2.0 + 0.5;
-				e += myModule.GetValue(2 * nx, 2 * ny, 0) / 2.0 + 0.5;
-				e += myModule.GetValue(4 * nx, 4 * ny, 0) / 2.0 + 0.5;
-				e += myModule.GetValue(8 * nx, 8 * ny, 0) / 2.0 + 0.5;
-				e += myModule.GetValue(16 * nx, 16 * ny, 0) / 2.0 + 0.5;
-				e += myModule.GetValue(32 * nx, 32 * ny, 0) / 2.0 + 0.5;
+				e += myModule.GetValue(nx, ny, 0) / 2.0f + 0.5f;
+				e += myModule.GetValue(2 * nx, 2 * ny, 0) / 2.0f + 0.5f;
+				e += myModule.GetValue(4 * nx, 4 * ny, 0) / 2.0f + 0.5f;
+				e += myModule.GetValue(8 * nx, 8 * ny, 0) / 2.0f + 0.5f;
+				e += myModule.GetValue(16 * nx, 16 * ny, 0) / 2.0f + 0.5f;
+				e += myModule.GetValue(32 * nx, 32 * ny, 0) / 2.0f + 0.5f;
 				e = pow(e, 3.0f);
 
 
-				double d = 2 * sqrt(nx*nx + ny*ny);
+				float d = 2 * sqrt(nx*nx + ny*ny);
 				e = (e + 1.00) * (1 - 2.00*pow(d, 1.70));
 
 				if (e < 0.0f)

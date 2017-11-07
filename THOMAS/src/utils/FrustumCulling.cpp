@@ -1,4 +1,6 @@
 #include "FrustumCulling.h"
+#include "../object/component/Camera.h"
+#include "../object/component/FrustumCullingComponent.h"
 
 thomas::utils::FrustumCulling::ClippingPlane thomas::utils::FrustumCulling::m_clippingPlanes[6];
 

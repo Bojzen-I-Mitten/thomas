@@ -1,13 +1,14 @@
 #pragma once
 #include "Component.h"
 #include "..\..\utils\math.h"
-#include "..\..\graphics\Texture.h"
-#include "..\..\graphics\Shader.h"
-#include "..\..\graphics\ParticleSystem.h"
-#include "../../utils/DebugTools.h"
+#include <d3d11.h>
 
 namespace thomas
 {
+	namespace graphics {
+		class Shader;
+		class Texture;
+	}
 	namespace object
 	{
 		namespace component
@@ -175,7 +176,7 @@ namespace thomas
 				void SetBlendState(BlendStates state);
 				BlendStates GetBlendState();
 
-				float GetSpawnedParticleCount();
+				unsigned int GetSpawnedParticleCount();
 
 				float GetDrawTimer();
 			private:

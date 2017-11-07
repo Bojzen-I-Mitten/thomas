@@ -1,7 +1,9 @@
 #pragma once
-#include "../Thomas.h"
+#include "../utils/Math.h"
+#include <vector>
 namespace thomas
 {
+	namespace object { namespace component { class Camera; } }
 	namespace graphics
 	{
 		class GeometryDraw

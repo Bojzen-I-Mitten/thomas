@@ -1,15 +1,19 @@
 #pragma once
 #include "../utils/Math.h"
-#include "../ThomasCore.h"
+
 #include <wrl.h>
-#include "DirectXTK/SpriteBatch.h"
-#include "DirectXTK/WICTextureLoader.h"
-#include "../object/component/SpriteComponent.h"
 #include <map>
-#include "DirectXTK/CommonStates.h"
+#include <memory>
+
+
+namespace DirectX {
+	class SpriteBatch;
+	class CommonStates;
+}
 
 namespace thomas
 {
+	namespace object { namespace component { class SpriteComponent; } }
 	namespace graphics
 	{
 		class Sprite
@@ -33,8 +37,8 @@ namespace thomas
 		private:
 			static std::map<std::string, SpriteData> s_texture;
 			static std::unique_ptr<DirectX::SpriteBatch> s_spriteBatch;
-			static DirectX::SimpleMath::Vector2 s_screenPos;
-			static DirectX::SimpleMath::Vector2 s_origin;
+			static math::Vector2 s_screenPos;
+			static math::Vector2 s_origin;
 			static std::unique_ptr<DirectX::CommonStates> s_states;
 		};
 	}

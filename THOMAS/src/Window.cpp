@@ -1,7 +1,7 @@
 #include "Window.h"
 #include "Input.h"
 #include "utils\DebugTools.h"
-
+#include "ThomasCore.h"
 namespace thomas 
 {
 	LONG Window::s_width;

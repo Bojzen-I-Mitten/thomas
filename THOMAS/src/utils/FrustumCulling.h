@@ -1,12 +1,17 @@
 #pragma once
-#include "../object/component/Camera.h"
-#include "../object/component/FrustumCullingComponent.h"
-
+#include "../Common.h"
+#include "Math.h"
 namespace thomas
 {
+	namespace object {
+		namespace component {
+			class Camera;
+			class FrustumCullingComponent;
+		}
+	}
 	namespace utils
 	{
-		static class THOMAS_API FrustumCulling
+		class THOMAS_API FrustumCulling
 		{
 		private:
 			struct ClippingPlane

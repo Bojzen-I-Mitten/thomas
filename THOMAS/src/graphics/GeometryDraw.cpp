@@ -1,5 +1,9 @@
 #include "GeometryDraw.h"
 #include "../object/component/Camera.h"
+#include "../utils/d3d.h"
+#include "../graphics/Shader.h"
+#include "../ThomasCore.h"
+#include <DirectXTK\CommonStates.h>
 namespace thomas
 {
 	namespace graphics

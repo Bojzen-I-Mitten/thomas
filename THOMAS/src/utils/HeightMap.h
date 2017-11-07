@@ -1,12 +1,11 @@
 #pragma once
-#include "../graphics/Model.h"
 #include "../Common.h"
-#include "noise\noise.h"
+#include "Math.h"
+#include <vector>
 #include "Plane.h"
-#include <time.h>
-
 namespace thomas
 {
+	
 	namespace utils
 	{
 		class HeightMap

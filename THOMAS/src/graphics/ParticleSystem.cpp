@@ -1,4 +1,14 @@
 #include "ParticleSystem.h"
+#include "../object/component/ParticleEmitterComponent.h"
+#include "../object/component/Transform.h"
+#include "../object/component/Camera.h"
+#include "../object/GameObject.h"
+#include "Shader.h"
+#include "Renderer.h"
+#include "../utils/d3d.h"
+#include "../ThomasCore.h"
+#include "../graphics/Texture.h"
+#include "../ThomasTime.h"
 
 namespace thomas
 {

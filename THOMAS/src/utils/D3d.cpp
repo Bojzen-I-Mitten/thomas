@@ -3,6 +3,11 @@
 #include <AtlBase.h>
 #include <atlconv.h>
 #include "Math.h"
+#include "../ThomasCore.h"
+
+#include "DirectXTK/WICTextureLoader.h"
+#include "DirectXTK/DDSTextureLoader.h"
+#include "../Window.h"
 namespace thomas
 {
 	namespace utils
@@ -70,8 +75,8 @@ namespace thomas
 			ZeroMemory(&scd, sizeof(scd));
 
 			scd.BufferCount = 1;
-			scd.BufferDesc.Height = (float)height;
-			scd.BufferDesc.Width = (float)width;
+			scd.BufferDesc.Height = height;
+			scd.BufferDesc.Width = width;
 			scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 			scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
 			scd.OutputWindow = handle;
@@ -386,7 +391,7 @@ namespace thomas
 				// Using water's refraction index 1.33
 			
 
-				DWORD fresnel = math::Vector2(DirectX::XMFresnelTerm(math::Vector2(cos_a), math::Vector2(1.33))).x*255;
+				DWORD fresnel = math::Vector2(DirectX::XMFresnelTerm(math::Vector2(cos_a), math::Vector2(1.33f))).x*255.0f;
 
 				DWORD sky_blend = (DWORD)(powf(1 / (1 + cos_a), blending) * 255);
 
@@ -553,6 +558,9 @@ namespace thomas
 				LOG_HR(result);
 			}
 		}
+
+
+
 		ID3D11Buffer * D3d::CreateStagingBuffer(UINT byte_width, UINT byte_stride)
 		{
 			HRESULT result;

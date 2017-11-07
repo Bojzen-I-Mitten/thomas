@@ -1,15 +1,19 @@
 #pragma once
 #include "../utils/Math.h"
-#include "../ThomasCore.h"
+
 #include <map>
-#include "DirectXTK/SpriteBatch.h"
-#include "DirectXTK/SpriteFont.h"
-#include "DirectXTK/CommonStates.h"
-#include "DirectXTK/Effects.h"
-#include "../object/component/TextComponent.h"
+#include <memory>
+
+namespace DirectX {
+	class SpriteBatch;
+	class CommonStates;
+	class SpriteFont;
+	class BasicEffect;
+}
 
 namespace thomas
 {
+	namespace object { namespace component { class TextComponent; } }
 	namespace graphics
 	{
 		class TextRender
