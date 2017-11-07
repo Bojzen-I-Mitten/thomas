@@ -1,11 +1,10 @@
 #pragma once
 
-#include "../graphics/Model.h"
 #include "../Common.h"
-
-
+#include <vector>
 namespace thomas
 {
+	namespace graphics { struct Vertex; }
 	namespace utils
 	{
 

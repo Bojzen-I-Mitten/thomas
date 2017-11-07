@@ -2,6 +2,10 @@
 #include "../ThomasCore.h"
 #include "Shader.h"
 #include "../utils/d3d.h"
+#include "../object/component/Camera.h"
+#include "DirectXTK/CommonStates.h"
+
+
 namespace thomas
 {
 	namespace graphics

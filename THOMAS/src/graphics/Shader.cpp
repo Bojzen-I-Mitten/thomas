@@ -15,8 +15,8 @@ namespace thomas
 
 		ID3DBlob* Shader::Compile(std::string source, std::string profile, std::string main)
 		{
-			ID3DBlob* shaderBlob;
-			ID3DBlob* errorBlob;
+			ID3DBlob* shaderBlob = nullptr;
+			ID3DBlob* errorBlob = nullptr;
 
 
 			HRESULT status = D3DCompileFromFile(CA2W(source.c_str()), nullptr, nullptr, main.c_str(), profile.c_str(), D3DCOMPILE_DEBUG, 0, &shaderBlob, &errorBlob);

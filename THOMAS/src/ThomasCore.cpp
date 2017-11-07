@@ -8,6 +8,8 @@
 #include "graphics\Model.h"
 #include "graphics\Material.h"
 #include "graphics\PostEffect.h"
+#include "graphics\LightManager.h"
+#include "graphics\TextRender.h"
 #include <assimp\Importer.hpp>
 #include "Sound.h"
 #include "graphics\Sprite.h"
@@ -19,6 +21,9 @@
 #include "utils/d3d.h"
 #include "graphics\ParticleSystem.h"
 #include "Scene.h"
+#include "Input.h"
+#include "Window.h"
+#include "ThomasTime.h"
 
 namespace thomas {
 	ID3D11Debug* ThomasCore::s_debug;

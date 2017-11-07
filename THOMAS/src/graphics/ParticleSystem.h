@@ -1,9 +1,7 @@
 #pragma once
 #include "../utils/Math.h"
-#include "../utils/d3d.h"
-#include "Shader.h"
-#include "Renderer.h"
-#include "../object/component/ParticleEmitterComponent.h"
+#include <d3d11.h>
+
 
 namespace thomas
 {
@@ -13,11 +11,14 @@ namespace thomas
 		{
 			class ParticleEmitterComponent;
 			class Transform;
+			class Camera;
 		}
 	}
 	namespace graphics
 	{
-		static class ParticleSystem
+		class Shader;
+
+		class ParticleSystem
 		{
 		private:
 			

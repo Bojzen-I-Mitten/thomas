@@ -1,6 +1,9 @@
 #include "Camera.h"
 #include "../../Window.h"
 #include "../GameObject.h"
+#include "../../graphics/Skybox.h"
+#include "../../graphics/TextRender.h"
+#include "Transform.h"
 namespace thomas
 {
 	namespace object

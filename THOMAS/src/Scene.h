@@ -1,10 +1,29 @@
 #pragma once
+/*
 #include "graphics\Renderer.h"
 #include "graphics\ParticleSystem.h"
 #include "utils\FrustumCulling.h"
 
+*/
+#include "graphics\Shader.h"
+#include "utils\Math.h"
 namespace thomas
 {
+	namespace object 
+	{ 
+		namespace component 
+		{ 
+		class RenderComponent;
+		class FrustumCullingComponent;
+		class Camera;
+		class Transform;
+		} 
+	}
+	namespace graphics {
+		class Material;
+		class Model;
+	}
+
 	class THOMAS_API Scene
 	{
 	private:

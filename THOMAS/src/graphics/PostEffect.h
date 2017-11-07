@@ -1,12 +1,17 @@
 #pragma once
-#include "Shader.h"
-#include "Texture.h"
+
 #include <map>
-#include "../object/component/Camera.h"
+#include <vector>
+#include <d3d11.h>
+#include "../utils/Math.h"
 namespace thomas
 {
+	namespace object { namespace component { class Camera; } }
 	namespace graphics
 	{
+		class Shader;
+		class Texture;
+
 		class PostEffect
 		{
 		private:

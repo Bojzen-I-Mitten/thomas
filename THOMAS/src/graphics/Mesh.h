@@ -1,18 +1,16 @@
 #pragma once
 #include "../Common.h"
-#include <d3d11.h>
+
 #include "../utils/Math.h"
 #include <vector>
-#include "../../include/assimp/Importer.hpp"
-#include "../../include/assimp/scene.h"
-#include "../../include/assimp/postprocess.h"
-#include "../ThomasCore.h"
-#include "Material.h"
+
 
 namespace thomas 
 {
 	namespace graphics 
 	{
+		class Material;
+
 		struct Vertex 
 		{
 			math::Vector3 position;
