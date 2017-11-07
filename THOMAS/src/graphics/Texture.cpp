@@ -3,6 +3,7 @@
 #include "../ThomasCore.h"
 #include  "../utils/AssimpLoader.h"
 #include "../utils/d3d.h"
+#include <assimp\material.h>
 namespace thomas
 {
 	namespace graphics

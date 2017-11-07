@@ -1,5 +1,10 @@
 #include "TextRender.h"
-
+#include "../ThomasCore.h"
+#include "DirectXTK/SpriteBatch.h"
+#include "DirectXTK/SpriteFont.h"
+#include "DirectXTK/CommonStates.h"
+#include "DirectXTK/Effects.h"
+#include "../object/component/TextComponent.h"
 namespace thomas
 {
 	namespace graphics

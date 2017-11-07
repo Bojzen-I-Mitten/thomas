@@ -1,5 +1,7 @@
 #include "Light.h"
 #include "../../utils/d3d.h"
+#include "../GameObject.h"
+#include "Transform.h"
 
 namespace thomas
 {
@@ -73,9 +75,9 @@ namespace thomas
 			PointLight::PointLight() : Light()
 			{
 				//standard init of light
-				m_thisLight.constantAttenuation = 0.6;
-				m_thisLight.linearAttenuation = 0.3;
-				m_thisLight.quadraticAttenuation = 0.1;
+				m_thisLight.constantAttenuation = 0.6f;
+				m_thisLight.linearAttenuation = 0.3f;
+				m_thisLight.quadraticAttenuation = 0.1f;
 				m_thisLight.power = 5;
 				
 				m_thisLight.position = thomas::math::Vector3(0, 0, 0);

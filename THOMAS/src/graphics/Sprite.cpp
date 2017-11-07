@@ -1,5 +1,9 @@
 #include "Sprite.h"
-
+#include "../ThomasCore.h"
+#include "DirectXTK/SpriteBatch.h"
+#include "DirectXTK/WICTextureLoader.h"
+#include "DirectXTK/CommonStates.h"
+#include "../object/component/SpriteComponent.h"
 namespace thomas
 {
 	namespace graphics

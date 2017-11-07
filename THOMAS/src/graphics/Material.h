@@ -1,13 +1,16 @@
 #pragma once
 #include <map>
-#include "Shader.h"
-#include "Texture.h"
-#include "../utils/AssimpLoader.h"
+#include <vector>
+#include <d3d11.h>
+struct aiMaterial;
 
 namespace thomas
 {
 	namespace graphics
 	{
+		class Texture;
+		class Shader;
+
 		class Material
 		{
 		private:

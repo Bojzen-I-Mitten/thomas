@@ -1,10 +1,13 @@
 #pragma once
 #include "Common.h"
-#include "../include/btBulletDynamicsCommon.h"
-#include "graphics\BulletDebugDraw.h"
-#include "object\component\Camera.h"
+#include "utils\Math.h"
+
+#include <btBulletDynamicsCommon.h>
+
 namespace thomas
 {
+	namespace graphics { class BulletDebugDraw; };
+	namespace object { namespace component { class Camera; } }
 	class THOMAS_API Physics
 	{
 	private:

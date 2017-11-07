@@ -1,5 +1,5 @@
 #include "GameObject.h"
-
+#include "component\Transform.h"
 namespace thomas
 {
 	namespace object
@@ -98,6 +98,8 @@ namespace thomas
 					output.push_back(gameObject);
 			return output;
 		}
+
+		
 		
 
 	}

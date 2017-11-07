@@ -3,10 +3,12 @@
 #include <vector>
 #include <string>
 #include "Math.h"
-#include "../../include/assimp/Importer.hpp"
-#include "../../include/assimp/scene.h"
-#include "../../include/assimp/postprocess.h"
 
+
+struct aiNode;
+struct aiMesh;
+struct aiScene;
+struct aiMaterial;
 namespace thomas
 {
 	namespace graphics 

@@ -1,15 +1,17 @@
 #pragma once
 #define _XM_NO_INTRINSICS_ 1;
-#include "../../include/LinearMath/btIDebugDraw.h"
-#include "DirectXTK/PrimitiveBatch.h"
-#include "DirectXTK/VertexTypes.h"
-#include "DirectXTK/Effects.h"
-#include "DirectXTK/CommonStates.h"
+#include <LinearMath\btIDebugDraw.h>
+
+
+
 #include "../utils/Math.h"
 #include "../Common.h"
-#include "../object/component/Camera.h"
+#include <vector>
+
 namespace thomas
 {
+	namespace object { namespace component { class Camera; } }
+
 	namespace graphics
 	{
 

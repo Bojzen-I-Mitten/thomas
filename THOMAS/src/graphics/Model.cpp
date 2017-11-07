@@ -1,5 +1,7 @@
 #include "Model.h"
-#include "../object/component/RenderComponent.h"
+
+#include "Mesh.h"
+#include "Material.h"
 namespace thomas {
 	namespace graphics {
 

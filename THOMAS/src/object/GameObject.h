@@ -1,12 +1,15 @@
 #pragma once
-#include "component\Components.h"
 #include "Object.h"
+#include "component\Components.h"
 #include <vector>
 namespace thomas
 {
 	class Scene;
 	namespace object
 	{
+
+
+
 		class THOMAS_API GameObject : public Object
 		{
 		private:
@@ -55,6 +58,8 @@ namespace thomas
 			
 		};
 
+		
+
 		template<typename T>
 		T* GameObject::AddComponent()
 		{
@@ -84,7 +89,7 @@ namespace thomas
 		}
 
 		template<typename T>
-		inline std::vector<T*> GameObject::GetComponents()
+		std::vector<T*> GameObject::GetComponents()
 		{
 			std::vector<T*> components;
 			for (UINT i = 0; i < m_components.size(); i++)
@@ -97,7 +102,7 @@ namespace thomas
 		}
 
 		template<typename T>
-		inline std::vector<GameObject*> GameObject::FindGameObjectsWithComponent()
+		std::vector<GameObject*> GameObject::FindGameObjectsWithComponent()
 		{
 			std::vector<GameObject*> gameObjectsWithComponent;
 			for (UINT i = 0; i < s_gameObjects.size(); i++)
@@ -110,7 +115,7 @@ namespace thomas
 		}
 
 		template<typename T>
-		inline T * GameObject::Instantiate(Scene * scene)
+		T * GameObject::Instantiate(Scene * scene)
 		{
 			T* gameObject = Object::Instantiate<T>(scene);
 			s_gameObjects.push_back(gameObject);
@@ -121,7 +126,7 @@ namespace thomas
 		}
 
 		template<typename T>
-		inline T * GameObject::Instantiate(component::Transform * parent, Scene * scene)
+		T * GameObject::Instantiate(component::Transform * parent, Scene * scene)
 		{
 			T* gameObject = Object::Instantiate<T>(scene);
 			s_gameObjects.push_back(gameObject);
@@ -133,7 +138,7 @@ namespace thomas
 		}
 
 		template<typename T>
-		inline T * GameObject::Instantiate(math::Vector3 position, math::Quaternion rotation, Scene * scene)
+		T * GameObject::Instantiate(math::Vector3 position, math::Quaternion rotation, Scene * scene)
 		{
 			T* gameObject = Object::Instantiate<T>(scene);
 			s_gameObjects.push_back(gameObject);
@@ -146,7 +151,7 @@ namespace thomas
 		}
 
 		template<typename T>
-		inline T * GameObject::Instantiate(math::Vector3 position, math::Quaternion rotation, component::Transform * parent, Scene * scene)
+		T * GameObject::Instantiate(math::Vector3 position, math::Quaternion rotation, component::Transform * parent, Scene * scene)
 		{
 			T* gameObject = Object::Instantiate<T>(scene);
 			s_gameObjects.push_back(gameObject);
@@ -158,7 +163,5 @@ namespace thomas
 			gameObject->Start();
 			return gameObject;
 		}
-
-
 	}
 }

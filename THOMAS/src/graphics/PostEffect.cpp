@@ -1,6 +1,10 @@
 #include "PostEffect.h"
 #include "../Scene.h"
 #include "../utils/d3d.h"
+#include "Shader.h"
+#include "Texture.h"
+#include "../object/component/Camera.h"
+#include "../ThomasCore.h"
 namespace thomas
 {
 	namespace graphics
@@ -91,6 +95,7 @@ namespace thomas
 				if (s_loadedEffects[i]->GetName() == name)
 					return s_loadedEffects[i];
 			}
+			return nullptr;
 		}
 
 		std::vector<PostEffect*> PostEffect::GetLoadedPostEffects()

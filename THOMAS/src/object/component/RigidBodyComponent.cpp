@@ -2,6 +2,7 @@
 
 #include "../GameObject.h"
 #include "../../utils/Math.h"
+#include "Transform.h"
 
 namespace thomas
 {

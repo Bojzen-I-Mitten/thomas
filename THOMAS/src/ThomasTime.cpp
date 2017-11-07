@@ -1,6 +1,7 @@
 #include "ThomasTime.h"
 #include "../src/utils/DebugTools.h"
 #include <Windows.h>
+#include <ctime>
 namespace thomas
 {
 	double ThomasTime::s_initTime;

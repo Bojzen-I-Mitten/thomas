@@ -1,8 +1,8 @@
 #pragma once
 #include <d3d11.h>
-#include "Input.h"
-#include "Window.h"
-#include "ThomasTime.h"
+#include "Common.h"
+
+
 namespace thomas
 {
 	class THOMAS_API ThomasCore

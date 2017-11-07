@@ -1,6 +1,6 @@
 #include "FrustumCullingComponent.h"
 #include "../GameObject.h"
-
+#include "Transform.h"
 namespace thomas
 {
 	namespace object

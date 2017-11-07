@@ -5,7 +5,23 @@
 #include "graphics\Shader.h"
 #include "utils\DebugTools.h"
 #include "graphics\GeometryDraw.h"
-
+#include "utils\AssimpLoader.h"
+#include "object\GameObject.h"
+#include "graphics\Material.h"
+#include "graphics\Renderer.h"
+#include "utils\FrustumCulling.h"
+#include "graphics\Mesh.h"
+#include "graphics\Texture.h"
+#include "graphics\ParticleSystem.h"
+#include "graphics\TextRender.h"
+#include "object\component\RenderComponent.h"
+#include "graphics\LightManager.h"
+#include "object\component\SpriteComponent.h"
+#include "object\component\ParticleEmitterComponent.h"
+#include "object\component\TextComponent.h"
+#include "ThomasTime.h"
+#include "ThomasCore.h"
+#include "object\component\Camera.h"
 namespace thomas
 {
 	Scene* Scene::s_currentScene;

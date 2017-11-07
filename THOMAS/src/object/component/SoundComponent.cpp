@@ -1,5 +1,5 @@
 #include "SoundComponent.h"
-
+#include "../../Sound.h"
 
 namespace thomas
 {

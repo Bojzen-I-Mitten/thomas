@@ -1,6 +1,6 @@
 #pragma once
 #include "../utils/Math.h"
-#include "../graphics/Shader.h"
+
 
 namespace thomas
 {
