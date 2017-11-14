@@ -2,7 +2,7 @@
 #include <iostream>
 #include <comdef.h>
 
-#define THOMAS_API 
+#define THOMAS_API
 
 
 #ifdef _DEBUG

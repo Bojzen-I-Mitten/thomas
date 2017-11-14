@@ -1,9 +1,9 @@
 #pragma once
 #include <Windows.h>
 #include "Common.h"
-#include "DirectXTK/GamePad.h"
-#include "DirectXTK/Keyboard.h"
-#include "DirectXTK/Mouse.h"
+#include <DirectXTK\GamePad.h>
+#include <DirectXTK\Keyboard.h>
+#include <DirectXTK\Mouse.h>
 #include "utils\Math.h"
 
 /*

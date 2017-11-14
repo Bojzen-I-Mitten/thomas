@@ -93,5 +93,6 @@
     <ClInclude Include="src\object\component\FrustumCullingComponent.h" />
     <ClInclude Include="src\ThomasTime.h" />
     <ClInclude Include="src\graphics\GeometryDraw.h" />
+    <ClInclude Include="src\TestScene.h" />
   </ItemGroup>
 </Project>

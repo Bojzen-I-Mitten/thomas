@@ -7,7 +7,7 @@ namespace thomas
 	class THOMAS_API Window
 	{
 	private:
-		static LRESULT CALLBACK EventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+		
 		static bool UpdateWindow();
 
 	public:
@@ -19,7 +19,12 @@ namespace thomas
 		};
 
 	public:
+
+		static LRESULT CALLBACK EventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 		static bool Init(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPWSTR title);
+
+		static bool Init(HWND hWnd);
 
 		static bool SetHeight(LONG height);
 		static bool SetWidth(LONG width);

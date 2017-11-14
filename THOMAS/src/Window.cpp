@@ -120,6 +120,33 @@ namespace thomas
 		return s_initialized;
 	}
 
+	bool Window::Init(HWND hWnd)
+	{
+		
+		if (s_initialized)
+			return false;
+
+		bool result = GetWindowRect(hWnd, &s_windowRectangle);
+		if (result)
+		{
+			s_height = s_windowRectangle.bottom;
+			s_width = s_windowRectangle.right;
+			s_initialized = false;
+			s_showCursor = true;
+			s_fullScreen = false;
+
+			SetAspectRatio();
+			s_windowHandler = hWnd;
+			s_initialized = true;
+			return true;
+		}
+		else
+			return false;
+			
+		
+
+	}
+
 	bool Window::SetHeight(LONG height)
 	{
 		if (height > 0 && height <= GetVerticalResolution())
