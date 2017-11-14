@@ -10,8 +10,9 @@ namespace thomas
 	private:
 		static void Update();
 	public:
-		static bool Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow, LONG windowWidth, LONG windowHeight, LPWSTR title);
 		
+		static bool Init();
+
 		static HINSTANCE GetHInstance();
 
 		static void Start();

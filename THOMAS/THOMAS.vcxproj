@@ -93,6 +93,7 @@
     <ClInclude Include="src\object\Object.h" />
     <ClInclude Include="src\Physics.h" />
     <ClInclude Include="src\Scene.h" />
+    <ClInclude Include="src\TestScene.h" />
     <ClInclude Include="src\Thomas.h" />
     <ClInclude Include="src\ThomasCore.h" />
     <ClInclude Include="src\ThomasTime.h" />
@@ -162,6 +163,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
     <IncludePath>$(ProjectDir)include;$(ProjectDir)freetype;$(ProjectDir);$(IncludePath)</IncludePath>
+    <TargetName>$(ProjectName)_Debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
@@ -182,7 +184,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;THOMAS_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -191,7 +193,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;DirectXTK.lib;DirectXTKAudioWin8.lib;libnoise.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;DirectXTK_Debug.lib;DirectXTKAudioWin8_Debug.lib;libnoise.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
