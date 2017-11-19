@@ -23,7 +23,9 @@ namespace thomas
 		//If one case is hit the code will execute everything down until a break;
 		switch (message)
 		{
-
+		case WM_SIZE:
+			ThomasCore::Resize();
+			break;
 		case WM_SETFOCUS:
 		case WM_KILLFOCUS:
 			Input::ProcessGamePad(message, wParam, lParam);
@@ -131,7 +133,6 @@ namespace thomas
 		{
 			s_height = s_windowRectangle.bottom;
 			s_width = s_windowRectangle.right;
-			s_initialized = false;
 			s_showCursor = true;
 			s_fullScreen = false;
 
@@ -179,6 +180,20 @@ namespace thomas
 		return false;
 	}
 
+	bool Window::Resize()
+	{
+		bool result = GetWindowRect(s_windowHandler, &s_windowRectangle);
+		if (result)
+		{
+			s_height = s_windowRectangle.bottom;
+			s_width = s_windowRectangle.right;
+			SetAspectRatio();
+			return true;
+		}
+		else
+			return false;
+	}
+
 	LONG Window::GetHeight()
 	{
 		return s_height;
@@ -192,6 +207,11 @@ namespace thomas
 	Window::Ratio Window::GetAspectRatio()
 	{
 		return s_ratio;
+	}
+
+	float Window::GetRealAspectRatio()
+	{
+		return (float)s_width / (float)s_height;
 	}
 
 	HWND Window::GetWindowHandler()

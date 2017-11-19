@@ -3,7 +3,6 @@
 #include <AtlBase.h>
 #include <atlconv.h>
 #include "Math.h"
-#include "../ThomasCore.h"
 
 #include "DirectXTK/WICTextureLoader.h"
 #include "DirectXTK/DDSTextureLoader.h"
@@ -54,13 +53,13 @@ namespace thomas
 
 			
 
-			#ifdef _DEBUG
+			#ifdef _DEBUG_DX
 			debug = CreateDebug();
 			if (debug == nullptr)
 				return false;
 			#endif
 
-		
+				
 
 			
 			LOG("DirectX initiated, welcome to the masterace");
@@ -93,11 +92,11 @@ namespace thomas
 			hr = D3D11CreateDeviceAndSwapChain(NULL,
 				D3D_DRIVER_TYPE_HARDWARE,
 				NULL,
-				#ifdef _DEBUG
+				#ifdef _DEBUG_DX
 					D3D11_CREATE_DEVICE_DEBUG,
 				#else
 					NULL,
-				#endif // _DEBUG
+				#endif // _DEBUG_DX
 				NULL,
 				NULL,
 				D3D11_SDK_VERSION,
@@ -279,6 +278,25 @@ namespace thomas
 				return nullptr;
 			}
 			return debug;
+		}
+
+		ID3D11InfoQueue* D3d::CreateDebugInfoQueue() {
+			ID3D11InfoQueue* infoQueue;
+			HRESULT hr = ThomasCore::GetDevice()->QueryInterface(IID_PPV_ARGS(&infoQueue));
+			if (FAILED(hr))
+			{
+				LOG_HR(hr);
+				return nullptr;
+			}
+			for (int i = 0; i < infoQueue->GetNumStoredMessages(); i++) {
+				SIZE_T messageLength;		
+				infoQueue->GetMessageW(i, NULL, &messageLength);
+				D3D11_MESSAGE * message = (D3D11_MESSAGE*)malloc(messageLength);
+				infoQueue->GetMessageW(i, message, &messageLength);
+				LOG(message->pDescription);
+			}
+			infoQueue->ClearStoredMessages();
+			return infoQueue;
 		}
 
 

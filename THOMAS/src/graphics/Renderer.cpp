@@ -46,6 +46,25 @@ namespace thomas
 			return false;
 		}
 
+		bool Renderer::Resize()
+		{
+			ThomasCore::GetDeviceContext()->OMSetRenderTargets(0, 0, 0);
+			SAFE_RELEASE(s_backBuffer);
+			SAFE_RELEASE(s_backBufferSRV);
+			SAFE_RELEASE(s_depthStencilView);
+			SAFE_RELEASE(s_depthStencilState);
+			SAFE_RELEASE(s_depthStencilViewReadOnly);
+			SAFE_RELEASE(s_depthBufferSRV);
+			
+
+			ThomasCore::GetSwapChain()->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+			ID3D11Texture2D* pBuffer;
+
+			utils::D3d::InitRenderer(s_backBuffer, s_backBufferSRV, s_depthStencilState, s_depthStencilView, s_depthStencilViewReadOnly, s_depthBufferSRV);
+					
+			return true;
+		}
+
 		void thomas::graphics::Renderer::Clear()
 		{
 			float color[4] = { 0.0f, 0.5f, 0.75f, 1.0f };

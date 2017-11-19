@@ -12,7 +12,7 @@ namespace thomas
 		{
 			void Camera::UpdateProjMatrix()
 			{
-				m_projMatrix = math::Matrix::CreatePerspectiveFieldOfView(math::DegreesToRadians(m_fov), m_viewport.AspectRatio(), m_near, m_far);
+				m_projMatrix = math::Matrix::CreatePerspectiveFieldOfView(math::DegreesToRadians(m_fov), m_viewport.AspectRatio() * Window::GetRealAspectRatio(), m_near, m_far);
 			}
 
 			Camera::Camera(): Component("CameraComponent")
@@ -20,7 +20,7 @@ namespace thomas
 				m_fov = 70;
 				m_near = 0.5;
 				m_far = 10000;
-				m_viewport = math::Viewport(0, 0, Window::GetWidth(), Window::GetHeight());
+				m_viewport = math::Viewport(0, 0, 1,1);
 				m_skybox = NULL;
 				UpdateProjMatrix();
 			}
@@ -85,7 +85,8 @@ namespace thomas
 
 			math::Viewport Camera::GetViewport()
 			{
-				return m_viewport;
+				UpdateProjMatrix();
+				return math::Viewport(m_viewport.x, m_viewport.y, m_viewport.width * Window::GetWidth(), m_viewport.height * Window::GetHeight());
 			}
 
 			void Camera::SetViewport(math::Viewport viewport)

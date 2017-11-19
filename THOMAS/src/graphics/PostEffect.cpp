@@ -74,7 +74,7 @@ namespace thomas
 				s_loadedEffects.push_back(instancedEffect);
 				return instancedEffect;
 			}
-			LOG("No Post Effect of type: " << postEffectType << " exists.");
+			LOG("No Post Effect of type: " + postEffectType + " exists.");
 			return NULL;
 		}
 

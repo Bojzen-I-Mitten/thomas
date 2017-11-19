@@ -15,42 +15,82 @@ using System.Windows.Shapes;
 using System.Windows.Interop;
 
 
+
 namespace ThomasEditor
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+
     public partial class MainWindow : Window
     {
+        TimeSpan lastRender;
+        int lastCount = 0;
+
         public MainWindow()
         {
-            
             InitializeComponent();
 
-            var window = Window.GetWindow(this);
-            IntPtr hWnd = new WindowInteropHelper(window).EnsureHandle();
+            CompositionTarget.Rendering += DoUpdates;
 
-            var success = ThomasManaged.ThomasWrapper.Init(hWnd);
-            Console.WriteLine("window: " + success);
-            ThomasManaged.ThomasWrapper.Start();
-
-            HwndSource source = HwndSource.FromHwnd(hWnd);
-            source.AddHook(new HwndSourceHook(WndProc));
-
-            CompositionTarget.Rendering += testRender;
         }
 
-        private static IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+
+        private void BuildTree(Transform parent, TreeViewItem parentTree)
         {
-            ThomasManaged.ThomasWrapper.eventHandler(hWnd, msg, wParam, lParam);
+            parentTree.IsExpanded = true;
+            foreach(Transform child in parent.children)
+            {
+                TreeViewItem node = new TreeViewItem();
+                node.Header = child.gameObject.GetType();
+                BuildTree(child, node);
+                parentTree.Items.Add(node);
 
-            return IntPtr.Zero;
+
+            }
         }
 
-        private void testRender(object sender, EventArgs e)
+
+        private void DoUpdates(object sender, EventArgs e)
         {
-            ThomasManaged.ThomasWrapper.Update();
-        }
 
+            
+            RenderingEventArgs args = (RenderingEventArgs)e;
+            
+            if(this.lastRender != args.RenderingTime)
+            {
+                ThomasWrapper.Update();
+                var objects = GameObject.GetGameObjects();
+                
+                if(objects.Count != lastCount)
+                {
+                    thomasObjects.Items.Clear();
+                    objects.ForEach(delegate (GameObject g) {
+                        if (g.transform.parent == null)
+                        {
+                            TreeViewItem node = new TreeViewItem();
+                            node.Header = g.GetType();
+                            BuildTree(g.transform, node);
+
+                            thomasObjects.Items.Add(node);
+                        }
+                    });
+                    lastCount = objects.Count();
+                }
+
+                List<String> outputs = ThomasWrapper.GetLogOutput();
+                if(outputs.Count > 0)
+                {
+                    foreach (String output in outputs)
+                        console.Items.Add(output);
+                }
+                
+
+                lastRender = args.RenderingTime;
+            }
+           
+            
+        }
     }
 }

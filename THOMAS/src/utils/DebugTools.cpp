@@ -18,6 +18,8 @@ namespace thomas
 			destClientString = sourceLibraryString;
 		}
 
+		
+
 		void DebugTools::Init()
 		{
 			TwInit(TW_DIRECT3D11, ThomasCore::GetDevice());
@@ -34,6 +36,11 @@ namespace thomas
 		void DebugTools::Destroy()
 		{
 			TwTerminate();
+		}
+
+		void DebugTools::Resize()
+		{
+			TwWindowSize(Window::GetWidth(), Window::GetHeight());
 		}
 
 		void DebugTools::RemoveAllVariables(std::string barName)
