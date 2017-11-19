@@ -11,7 +11,6 @@
 #include "graphics\LightManager.h"
 #include "graphics\TextRender.h"
 #include <assimp\Importer.hpp>
-#include "Sound.h"
 #include "graphics\Sprite.h"
 #include "Scene.h"
 #include "Physics.h"
@@ -24,6 +23,7 @@
 #include "Input.h"
 #include "Window.h"
 #include "ThomasTime.h"
+#include <time.h>
 
 namespace thomas {
 	ID3D11Debug* ThomasCore::s_debug;
@@ -31,56 +31,57 @@ namespace thomas {
 	ID3D11DeviceContext* ThomasCore::s_context;
 	IDXGISwapChain* ThomasCore::s_swapchain;
 	HINSTANCE ThomasCore::s_hInstance;
+	std::vector<std::string> ThomasCore::s_logOutput;
 	bool ThomasCore::s_initialized;
 
 	bool ThomasCore::Init()
 	{
 		srand(time(NULL));
-		//#ifdef _DEBUG
-		//		AllocConsole();
-		//		freopen("CONOUT$", "w", stdout);
-		//#endif
-		AllocConsole();
-		freopen("CONOUT$", "w", stdout);
+		#ifdef _DEBUG
+				AllocConsole();
+				freopen("CONOUT$", "w", stdout);
+		#endif
+		bool init = Window::Initialized();
 
-		s_initialized = Window::Initialized();
+		LOG(Window::GetWidth());
 
-		if (s_initialized)
-			s_initialized = Input::Init();
+		if (init)
+			init = Input::Init();
 
-		if (s_initialized)
-			s_initialized = utils::D3d::Init(s_device, s_context, s_swapchain, s_debug);			
+		if (init)
+			init = utils::D3d::Init(s_device, s_context, s_swapchain, s_debug);
 
-		if (s_initialized)
-			s_initialized = graphics::Texture::Init();
+		if (init)
+			init = graphics::Texture::Init();
 
-		if (s_initialized)
-			s_initialized = graphics::Renderer::Init();
+		if (init)
+			init = graphics::Renderer::Init();
 
 		utils::DebugTools::Init();
 
-		if (s_initialized)
-			s_initialized = ThomasTime::Init();
+		if (init)
+			init = ThomasTime::Init();
 
-		if (s_initialized)
-			s_initialized = Sound::Init();
+		/*if (init)
+			init = Sound::Init();*/
 
-		if (s_initialized)
-			s_initialized = graphics::PostEffect::Init();
+		if (init)
+			init = graphics::PostEffect::Init();
 
-		if(s_initialized)
-			s_initialized = graphics::TextRender::Initialize();
+		if(init)
+			init = graphics::TextRender::Initialize();
 
-		if (s_initialized)
-			s_initialized = graphics::Sprite::Initialize();		
-		if (s_initialized)
-			s_initialized = Physics::Init();
+		if (init)
+			init = graphics::Sprite::Initialize();
+		if (init)
+			init = Physics::Init();
 
 
 		utils::DebugTools::Init();
 
 		graphics::ParticleSystem::Init();
 		
+		s_initialized = init;
 		return s_initialized;
 	}
 
@@ -91,16 +92,22 @@ namespace thomas {
 
 	void ThomasCore::Update()
 	{
+		Input::Update();
+		ThomasTime::Update();
+
 		std::string title = "FPS: " + std::to_string(ThomasTime::GetFPS()) + " FrameTime: " + std::to_string(ThomasTime::GetFrameTime());
 		SetWindowText(Window::GetWindowHandler(), CA2W(title.c_str()));
-
 
 		if (Input::GetKeyDown(Input::Keys::F1))
 			utils::DebugTools::ToggleVisibility();
 		Scene::UpdateCurrentScene();
 		Physics::Update();
+		//Sound::Update();
+	}
+
+	void ThomasCore::Render()
+	{
 		Scene::Render();
-		Sound::Update();
 	}
 
 	void ThomasCore::Start()
@@ -123,8 +130,7 @@ namespace thomas {
 				}
 				else
 				{
-					Input::Update();
-					ThomasTime::Update();
+					
 					Update();
 				}
 			}
@@ -146,6 +152,19 @@ namespace thomas {
 	bool ThomasCore::Initialized()
 	{
 		return s_initialized;
+	}
+
+	bool ThomasCore::Resize()
+	{
+		if (s_initialized) {
+			Window::Resize();
+			graphics::Renderer::Resize();
+			utils::DebugTools::Resize();
+			//utils::D3d::CreateDebugInfoQueue();
+			return true;
+		}
+		return false;
+		
 	}
 
 	bool ThomasCore::Destroy()
@@ -198,6 +217,20 @@ namespace thomas {
 	IDXGISwapChain * ThomasCore::GetSwapChain()
 	{
 		return s_swapchain;
+	}
+	void ThomasCore::LogOutput(std::string message)
+	{
+
+		s_logOutput.push_back(message);
+	}
+
+	std::vector<std::string>* ThomasCore::GetLogOutput()
+	{
+		return &s_logOutput;
+	}
+	void ThomasCore::ClearLogOutput()
+	{
+		s_logOutput.clear();
 	}
 }
 

@@ -1,6 +1,7 @@
 #include "ThomasTime.h"
 #include "../src/utils/DebugTools.h"
 #include <Windows.h>
+#include "Common.h"
 #include <ctime>
 namespace thomas
 {

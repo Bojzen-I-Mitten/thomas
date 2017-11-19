@@ -19,17 +19,17 @@ namespace thomas
 			std::wstring holder = std::wstring(texture.begin(), texture.end());
 			const wchar_t* result = holder.c_str();
 
-			Microsoft::WRL::ComPtr<ID3D11Resource> resource;
-			HRESULT hr = DirectX::CreateWICTextureFromFile(ThomasCore::GetDevice(), result, resource.GetAddressOf(), s_texture[name].srv.ReleaseAndGetAddressOf());
+			ID3D11Resource* resource;
+			HRESULT hr = DirectX::CreateWICTextureFromFile(ThomasCore::GetDevice(), result, &resource, &s_texture[name].srv);
 
 			if (FAILED(hr))
 			{
-				LOG("Failed to load " << result << " for GUI");
+				LOG("Failed to load " + texture + " for GUI");
 				return false;
 			}
 
-			Microsoft::WRL::ComPtr<ID3D11Texture2D> image;
-			resource.As(&image);
+			ID3D11Texture2D* image;
+			resource->QueryInterface(&image);
 
 			CD3D11_TEXTURE2D_DESC imageDesc;
 			image->GetDesc(&imageDesc);
@@ -89,7 +89,7 @@ namespace thomas
 			{
 				s_spriteBatch->Begin(DirectX::SpriteSortMode_Deferred, s_states->NonPremultiplied());
 
-				s_spriteBatch->Draw(s_texture[name].srv.Get(), math::Vector2(posX, posY), nullptr, color,
+				s_spriteBatch->Draw(s_texture[name].srv, math::Vector2(posX, posY), nullptr, color,
 					0.f, s_origin, scale);
 
 				s_spriteBatch->End();

@@ -3,10 +3,51 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:local="clr-namespace:ThomasEditor"
         mc:Ignorable="d"
-        Title="MainWindow" Height="628.328" Width="955.034">
+        Title="MainWindow" Height="720" Width="1280">
     <Grid>
+        
+        <!--<TabControl  HorizontalAlignment="Left" Height="533" VerticalAlignment="Top" Width="800">
+            <TabItem Header="Editor Window">
+                <Grid Background="#FFE5E5E5">
+                    <local:ThomasWindow x:Name="editor" HorizontalAlignment="Stretch"/>
+                </Grid>
+            </TabItem>
+        </TabControl>-->
+
+        <xcad:DockingManager Grid.Row="1"
+                           AllowMixedOrientation="True"
+                           BorderBrush="Black"
+                           BorderThickness="1">
+            <xcad:LayoutRoot x:Name="__layoutRoot">
+                <xcad:LayoutPanel Orientation="Horizontal">
+                    <xcad:LayoutAnchorablePane DockWidth="500">
+                        <xcad:LayoutAnchorable ContentId="EditorView" Title="Editor View" CanHide="False" CanClose="False"
+                                            AutoHideWidth="240">
+                            <local:ThomasWindow x:Name="editor"/>
+                        </xcad:LayoutAnchorable>
+                    </xcad:LayoutAnchorablePane>
+                    <xcad:LayoutDocumentPaneGroup>
+                        <xcad:LayoutDocumentPane>
+                            <xcad:LayoutAnchorable ContentId="Hiearchy" Title="Hiearchy" >
+                                <TreeView Focusable="True" x:Name="thomasObjects"/>
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutDocumentPane>
+                        <xcad:LayoutDocumentPane>
+                            <xcad:LayoutAnchorable ContentId="Console" Title="Console" >
+                                <ListBox Name="console">
+                                </ListBox>
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutDocumentPane>
+                    </xcad:LayoutDocumentPaneGroup>
+                </xcad:LayoutPanel>
+            </xcad:LayoutRoot>
+        </xcad:DockingManager>
+        
+
 
     </Grid>
+
 </Window>

@@ -75,6 +75,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -91,11 +93,11 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>K:\Users\Morgan Cromell\Documents\thomas\THOMAS\include;K:\Users\Morgan Cromell\Documents\thomas\THOMAS\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <CallingConvention>Cdecl</CallingConvention>
+      <CallingConvention>
+      </CallingConvention>
     </ClCompile>
     <Link>
-      <AdditionalDependencies />
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -135,19 +137,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\object\Component.h" />
+    <ClInclude Include="src\object\component\RenderComponent.h" />
+    <ClInclude Include="src\object\component\Transform.h" />
+    <ClInclude Include="src\object\GameObject.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\object\Object.h" />
     <ClInclude Include="Stdafx.h" />
-    <ClInclude Include="ThomasManaged.h" />
+    <ClInclude Include="src\ThomasManaged.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="src\object\Component.cpp" />
+    <ClCompile Include="src\object\component\RenderComponent.cpp" />
+    <ClCompile Include="src\object\component\Transform.cpp" />
+    <ClCompile Include="src\object\GameObject.cpp" />
+    <ClCompile Include="src\object\Object.cpp" />
     <ClCompile Include="Stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ThomasManaged.cpp" />
+    <ClCompile Include="src\ThomasManaged.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
