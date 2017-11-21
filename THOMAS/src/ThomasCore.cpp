@@ -7,7 +7,6 @@
 #include "graphics\Shader.h"
 #include "graphics\Model.h"
 #include "graphics\Material.h"
-#include "graphics\PostEffect.h"
 #include "graphics\LightManager.h"
 #include "graphics\TextRender.h"
 #include <assimp\Importer.hpp>
@@ -37,10 +36,7 @@ namespace thomas {
 	bool ThomasCore::Init()
 	{
 		srand(time(NULL));
-		#ifdef _DEBUG
-				AllocConsole();
-				freopen("CONOUT$", "w", stdout);
-		#endif
+
 		bool init = Window::Initialized();
 
 		LOG(Window::GetWidth());
@@ -65,8 +61,6 @@ namespace thomas {
 		/*if (init)
 			init = Sound::Init();*/
 
-		if (init)
-			init = graphics::PostEffect::Init();
 
 		if(init)
 			init = graphics::TextRender::Initialize();
@@ -79,7 +73,7 @@ namespace thomas {
 
 		utils::DebugTools::Init();
 
-		graphics::ParticleSystem::Init();
+		//graphics::ParticleSystem::Init();
 		
 		s_initialized = init;
 		return s_initialized;
@@ -174,8 +168,6 @@ namespace thomas {
 		graphics::ParticleSystem::Destroy();
 		graphics::Sprite::Destroy();
 		graphics::TextRender::Destroy();
-		graphics::Material::Destroy();
-		graphics::Shader::Destroy();
 		graphics::Texture::ReleaseSamplers();
 		graphics::Texture::Destroy();
 		graphics::Model::Destroy();

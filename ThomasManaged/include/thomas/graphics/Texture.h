@@ -51,7 +51,7 @@ namespace thomas
 			static Texture * CreateTexture(SamplerState samplerState, int slot, TextureType type, std::string path);
 
 			static ID3D11SamplerState* GetSamplerState(SamplerState samplerState);
-
+			ID3D11SamplerState* GetSamplerState();
 			std::string GetName();
 			ID3D11Resource* GetTexture();
 			ID3D11ShaderResourceView* GetTextureView();
@@ -60,8 +60,6 @@ namespace thomas
 			void SetTextureView(ID3D11ShaderResourceView* view);
 			bool Initialized();
 
-			bool Bind();
-			bool Unbind();
 
 			Texture(SamplerState samplerState, int slot, TextureType type, std::string path);
 

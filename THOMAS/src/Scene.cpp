@@ -1,10 +1,8 @@
 #include "Scene.h"
-#include "graphics\PostEffect.h"
 #include "graphics\Model.h"
 #include "graphics\Sprite.h"
 #include "graphics\Shader.h"
 #include "utils\DebugTools.h"
-#include "graphics\GeometryDraw.h"
 #include "utils\AssimpLoader.h"
 #include "object\GameObject.h"
 #include "graphics\Material.h"
@@ -22,6 +20,7 @@
 #include "ThomasTime.h"
 #include "ThomasCore.h"
 #include "object\component\Camera.h"
+#include "graphics\Material.h"
 namespace thomas
 {
 	Scene* Scene::s_currentScene;
@@ -47,8 +46,6 @@ namespace thomas
 		utils::DebugTools::RemoveAllVariables();
 
 		graphics::LightManager::Destroy();
-		graphics::Material::Destroy();
-		graphics::Shader::Destroy(s_currentScene);
 		graphics::Texture::Destroy();
 		graphics::Model::Destroy();
 		
@@ -67,7 +64,6 @@ namespace thomas
 		s_currentScene = nullptr;
 		ThomasTime::SetTimescale(1.0f);
 		object::Object::Clean();
-		graphics::GeometryDraw::Destroy();
 	}
 	void Scene::UpdateCurrentScene()
 	{
@@ -118,9 +114,7 @@ namespace thomas
 			if (s_drawDebugPhysics)
 				Physics::DrawDebug(camera);
 			s_currentScene->Render2D(camera);
-			graphics::GeometryDraw::Draw();
 
-			graphics::PostEffect::Render(graphics::Renderer::GetDepthBufferSRV(), graphics::Renderer::GetBackBuffer(), camera);
 
 			utils::DebugTools::Draw();
 			ThomasCore::GetSwapChain()->Present(0, 0);
@@ -129,6 +123,25 @@ namespace thomas
 	void Scene::Render3D(object::component::Camera * camera)
 	{
 		std::vector<object::component::RenderComponent*> renderComponents = GetAllRenderComponents();
+
+		for (object::component::RenderComponent* renderComponent : renderComponents)
+		{
+			std::vector<thomas::graphics::Mesh*> meshes = renderComponent->GetModel()->GetMeshes();
+			std::vector<thomas::graphics::Material*>* materials = renderComponent->GetMaterials();
+
+			for (int i = 0; i < meshes.size(); i++)
+			{
+				graphics::Material* material = materials->at(i);
+				if (material != nullptr)
+				{
+					material->SetMatrix("viewProjMatrix", camera->GetViewProjMatrix());
+					material->Draw(meshes[i]);
+					
+				}
+			}
+		}
+		/*
+		
 
 		utils::FrustumCulling::GenerateClippingPlanes(camera);
 
@@ -188,6 +201,7 @@ namespace thomas
 		}
 
 		graphics::Renderer::ResetDepthStencilState();
+		*/
 	}
 
 
@@ -218,18 +232,6 @@ namespace thomas
 	}
 
 
-	graphics::Material * Scene::LoadMaterial(std::string type, graphics::Material* material)
-	{
-		return graphics::Material::RegisterNewMaterialType(type, material);
-	}
-	graphics::Shader * Scene::LoadShader(std::string name, thomas::graphics::Shader::InputLayouts inputLayout, std::string path)
-	{
-		return thomas::graphics::Shader::CreateShader(name, inputLayout, path, this);
-	}
-	graphics::Shader * Scene::LoadShader(std::string name, thomas::graphics::Shader::InputLayouts inputLayout, std::string vertexShader, std::string geometryShader, std::string hullShader, std::string domainShader, std::string pixelShader)
-	{
-		return thomas::graphics::Shader::CreateShader(name, inputLayout, vertexShader, geometryShader, hullShader, domainShader, pixelShader, this);
-	}
 	graphics::Model * Scene::LoadModel(std::string name, std::string path, std::string type)
 	{
 		return utils::AssimpLoader::LoadModel(name, path, type);

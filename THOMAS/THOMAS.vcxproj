@@ -21,22 +21,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\graphics\BulletDebugDraw.cpp" />
+    <ClCompile Include="src\graphics\ComputeShader.cpp" />
+    <ClCompile Include="src\graphics\Material.cpp" />
+    <ClCompile Include="src\graphics\MaterialProperty.cpp" />
+    <ClCompile Include="src\graphics\Shader.cpp" />
     <ClCompile Include="src\object\component\FrustumCullingComponent.cpp" />
-    <ClCompile Include="src\graphics\GeometryDraw.cpp" />
     <ClCompile Include="src\object\component\RigidBodyComponent.cpp" />
     <ClCompile Include="src\graphics\ParticleSystem.cpp" />
     <ClCompile Include="src\object\component\ParticleEmitterComponent.cpp" />
     <ClCompile Include="src\object\component\SpriteComponent.cpp" />
     <ClCompile Include="src\graphics\Sprite.cpp" />
-    <ClCompile Include="src\graphics\PostEffect.cpp" />
     <ClCompile Include="src\graphics\Skybox.cpp" />
     <ClCompile Include="src\graphics\LightManager.cpp" />
     <ClCompile Include="src\object\component\Light.cpp" />
-    <ClCompile Include="src\graphics\Material.cpp" />
     <ClCompile Include="src\graphics\Mesh.cpp" />
     <ClCompile Include="src\graphics\Model.cpp" />
     <ClCompile Include="src\graphics\Renderer.cpp" />
-    <ClCompile Include="src\graphics\Shader.cpp" />
     <ClCompile Include="src\graphics\Texture.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\object\component\Camera.cpp" />
@@ -62,8 +62,11 @@
     <ClCompile Include="src\graphics\TextRender.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\graphics\GeometryDraw.h" />
+    <ClInclude Include="src\graphics\ComputeShader.h" />
+    <ClInclude Include="src\graphics\Material.h" />
+    <ClInclude Include="src\graphics\MaterialProperty.h" />
     <ClInclude Include="src\graphics\ParticleSystem.h" />
+    <ClInclude Include="src\graphics\Shader.h" />
     <ClInclude Include="src\object\component\FrustumCullingComponent.h" />
     <ClInclude Include="src\object\component\ParticleEmitterComponent.h" />
     <ClInclude Include="src\graphics\BulletDebugDraw.h" />
@@ -71,15 +74,12 @@
     <ClInclude Include="src\object\component\SpriteComponent.h" />
     <ClInclude Include="src\graphics\Sprite.h" />
     <ClInclude Include="src\graphics\LightManager.h" />
-    <ClInclude Include="src\graphics\PostEffect.h" />
     <ClInclude Include="src\object\component\Light.h" />
     <ClInclude Include="src\graphics\Skybox.h" />
-    <ClInclude Include="src\graphics\Material.h" />
     <ClInclude Include="src\Common.h" />
     <ClInclude Include="src\graphics\Mesh.h" />
     <ClInclude Include="src\graphics\Model.h" />
     <ClInclude Include="src\graphics\Renderer.h" />
-    <ClInclude Include="src\graphics\Shader.h" />
     <ClInclude Include="src\graphics\Texture.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\object\component\Camera.h" />
@@ -194,7 +194,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;DirectXTK_Debug.lib;DirectXTKAudioWin8_Debug.lib;libnoise.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;DirectXTK_Debug.lib;DirectXTKAudioWin8_Debug.lib;Effects11_Debug.lib;libnoise.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

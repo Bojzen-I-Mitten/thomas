@@ -1,224 +1,271 @@
 #include "Material.h"
-#include "../utils/AssimpLoader.h"
 #include "Shader.h"
 #include "Texture.h"
-
+#include "Mesh.h"
 namespace thomas
 {
 	namespace graphics
 	{
-
-		std::vector<Material*> Material::s_materials;
-		std::map<std::string, Material*> Material::s_materialTypes;
+		void Material::SetProperties()
+		{
+			m_properties.clear();
+			std::vector<Shader::ShaderVariable>* variables = m_shader->GetVariables();
+			LOG("Variables found in shader:");
+			for (Shader::ShaderVariable& variable : *variables)
+			{
+				
+				MaterialProperty* prop = new MaterialProperty(variable);
+				if (prop)
+				{
+					LOG(variable.name);
+					m_properties[variable.name] = prop;
+				}
+					
+			}
+		}
+		void Material::SetSampler(const std::string name, Texture & value)
+		{
+			if (DoesPropertyExist(name))
+			{
+				GetProperty(name)->SetSampler(value);
+			}
+		}
 
 		Material::Material(Shader * shader)
 		{
 			m_shader = shader;
+			SetProperties();
 		}
 
-		Material::Material(std::string shader)
+		void Material::SetShader(Shader * shader)
 		{
-			m_shader = Shader::GetShaderByName(shader);
-			if (!m_shader)
-				LOG("Failed to create material with shader: " << shader);
-		}
-
-		Material::Material(std::string name, Shader* shader)
-		{
-			m_materialName = name;
 			m_shader = shader;
+			m_renderQueue = -1;
+			SetProperties();
 		}
 
-		Material::Material(std::string name, std::string shader)
+		Shader * Material::GetShader()
 		{
-			m_materialName = name;
-			m_shader = Shader::GetShaderByName(shader);
-			if (!m_shader)
-				LOG("Failed to create material with shader: " << shader);
-			
-		}
-
-
-		Material::~Material()
-		{
-			SAFE_RELEASE(m_materialPropertiesBuffer);
-		}
-
-		Material * Material::CreateMaterial(Material * material)
-		{
-			for (unsigned int i = 0; i < s_materials.size(); i++)
-			{
-				if (s_materials[i]->GetName() == material->GetName())
-					return s_materials[i];
-			}
-			s_materials.push_back(material);
-			return material;
-		}
-
-		Material * Material::CreateMaterial(std::string dir, std::string materialType, aiMaterial * assimpMaterial)
-		{
-			std::string name = utils::AssimpLoader::GetMaterialName(assimpMaterial);
-
-			for (unsigned int i = 0; i < s_materials.size(); i++)
-			{
-				if (s_materials[i]->GetName() == name)
-					return s_materials[i];
-			}
-
-
-			Material* instancedMaterial;
-			if (s_materialTypes.find(materialType) != s_materialTypes.end()) //Material was found. So now we create a new copy of it.
-			{
-				Material* matTemplate = s_materialTypes.find(materialType)->second;
-				instancedMaterial = matTemplate->CreateInstance(dir, name, assimpMaterial, matTemplate->m_shader);
-				s_materials.push_back(instancedMaterial);
-				return instancedMaterial;
-			}
-			
-			LOG("No material of type: " << materialType << " exists.");
-			return NULL;
-
-		}
-
-		Material * Material::CreateMaterial(std::string name, std::string materialType)
-		{
-
-			for (unsigned int i = 0; i < s_materials.size(); i++)
-			{
-				if (s_materials[i]->GetName() == name)
-					return s_materials[i];
-			}
-
-
-			Material* instancedMaterial;
-			if (s_materialTypes.find(materialType) != s_materialTypes.end()) //Material was found. So now we create a new copy of it.
-			{
-				Material* matTemplate = s_materialTypes.find(materialType)->second;
-				instancedMaterial = matTemplate->CreateInstance(name, matTemplate->m_shader);
-				s_materials.push_back(instancedMaterial);
-				return instancedMaterial;
-			}
-
-			LOG("No material of type: " << materialType << " exists.");
-			return NULL;
-		}
-
-		Material* Material::GetMaterialByName(std::string name)
-		{
-			for (unsigned int i = 0; i < s_materials.size(); i++)
-			{
-				if (s_materials[i]->GetName() == name)
-				{
-					return s_materials[i];
-				}
-			}
-
-			return NULL;
-		}
-
-		Material* Material::RegisterNewMaterialType(std::string type, Material * material)
-		{
-			if (s_materialTypes.find(type) == s_materialTypes.end()) //Material is not already registered.
-			{
-				s_materialTypes[type] = material;
-			}
-			return material;
-		}
-
-		std::vector<Material*> Material::GetLoadedMaterials()
-		{
-			return s_materials;
-		}
-
-		std::vector<Material*> Material::GetMaterialsByShader(Shader * shader)
-		{
-			std::vector<Material*> materials;
-
-			for (unsigned int i = 0; i < s_materials.size(); i++)
-			{
-				if (s_materials[i]->GetShader() == shader)
-				{
-					materials.push_back(s_materials[i]);
-				}
-			}
-			return materials;
-		}
-
-		std::vector<Material*> Material::GetMaterialsByShader(std::string name)
-		{
-			std::vector<Material*> materials;
-
-			for (unsigned int i = 0; i < s_materials.size(); i++)
-			{
-				if (s_materials[i]->GetShader()->GetName() == name)
-				{
-					materials.push_back(s_materials[i]);
-				}
-			}
-			return materials;
-		}
-
-		void Material::Destroy()
-		{
-			for (unsigned int i = 0; i < s_materials.size(); i++)
-			{
-				delete s_materials[i];
-			}
-			s_materials.clear();
-			for (auto const& materialType : s_materialTypes)
-			{
-				delete materialType.second;
-			}
-			s_materialTypes.clear();
-		}
-
-		void Material::Destroy(Shader * shader)
-		{
-			for (unsigned int i = 0; i < s_materials.size(); i++)
-			{
-				if (s_materials[i]->GetShader())
-				{
-					delete s_materials[i];
-					s_materials.erase(s_materials.begin() + i);
-					i -= 1;
-				}
-			}
-		}
-
-		bool Material::Bind()
-		{
-			m_shader->BindPrimitiveTopology(m_shaderTopology);
-			bool buffer = m_shader->BindBuffer(m_materialPropertiesBuffer, Shader::ResourceType::MATERIAL);
-			bool texture = true;
-			for (unsigned int i = 0; i < m_textures.size(); i++)
-			{
-				if (texture)
-					texture = m_textures[i]->Bind();
-			}
-			return buffer && texture;
-		}
-
-		bool Material::Unbind()
-		{
-			bool buffer = m_shader->BindBuffer(NULL, Shader::ResourceType::MATERIAL);
-			bool texture = true;
-			for (unsigned int i = 0; i < m_textures.size(); i++)
-			{
-				if (texture)
-					texture = m_textures[i]->Unbind();
-			}
-			return buffer && texture;
+			return m_shader;
 		}
 
 		std::string Material::GetName()
 		{
-			return m_materialName;
+			return m_name;
 		}
 
-		Shader* Material::GetShader()
+		void Material::SetName(std::string name)
 		{
-			return m_shader;
+			m_name = name;
+		}
+
+		bool Material::DoesPropertyExist(const std::string & name)
+		{
+			return m_properties.find(name) != m_properties.end();
+		}
+
+		MaterialProperty* Material::GetProperty(const std::string & name)
+		{
+			if (DoesPropertyExist(name))
+				return m_properties.at(name);
+			else
+				return nullptr;
+		}
+		math::Color* Material::GetColor(const std::string& name)
+		{
+			if (DoesPropertyExist(name))
+			{
+				return (math::Color*)GetProperty(name)->GetVector();
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+				return nullptr;
+			}
+		}
+		void Material::SetColor(const std::string& name, math::Color& value)
+		{
+			if (DoesPropertyExist(name))
+			{
+				GetProperty(name)->SetVector(value.ToVector4());
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+			}
+		}
+		float* Material::GetFloat(const std::string& name)
+		{
+			if (DoesPropertyExist(name))
+			{
+				return GetProperty(name)->GetFloat();
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+				return nullptr;
+			}
+		}
+		void Material::SetFloat(const std::string& name, float& value)
+		{
+			
+			if (DoesPropertyExist(name))
+			{
+				GetProperty(name)->SetFloat(value);
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+			}
+
+		}
+		int* Material::GetInt(const std::string& name)
+		{
+			if (DoesPropertyExist(name))
+			{
+				return GetProperty(name)->GetInt();
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+				return nullptr;
+			}
+		}
+		void Material::SetInt(const std::string& name, int& value)
+		{
+			if (DoesPropertyExist(name))
+			{
+				GetProperty(name)->SetInt(value);
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+			}
+		}
+		math::Matrix* Material::GetMatrix(const std::string& name)
+		{
+			if (DoesPropertyExist(name))
+			{
+				return GetProperty(name)->GetMatrix();
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+				return nullptr;
+			}
+		}
+		void Material::SetMatrix(const std::string& name, math::Matrix& value)
+		{
+			if (DoesPropertyExist(name))
+			{
+				GetProperty(name)->SetMatrix(value);
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+			}
+		}
+		Texture* Material::GetTexture(const std::string& name)
+		{
+			if (DoesPropertyExist(name))
+			{
+				return GetProperty(name)->GetTexture();
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+				return nullptr;
+			}
+		}
+		void Material::SetTexture(const std::string& name, Texture& value)
+		{
+			if (DoesPropertyExist(name))
+			{
+				GetProperty(name)->SetTexture(value);
+				SetSampler("sampler" + name, value);
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+			}
+		}
+		math::Vector4* Material::GetVector(const std::string& name)
+		{
+			if (DoesPropertyExist(name))
+			{
+				return GetProperty(name)->GetVector();
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+				return nullptr;
+			}
+		}
+		void Material::SetVector(const std::string& name, math::Vector4& value)
+		{
+			if (DoesPropertyExist(name))
+			{
+				GetProperty(name)->SetVector(value);
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+			}
+		}
+		void Material::SetResource(const std::string & name, ID3D11ShaderResourceView & value)
+		{
+			if (DoesPropertyExist(name))
+			{
+				GetProperty(name)->SetResource(value);
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+			}
+		}
+		void Material::SetBuffer(const std::string & name, ID3D11Buffer & value)
+		{
+			if (DoesPropertyExist(name))
+			{
+				GetProperty(name)->SetBuffer(value);
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+			}
+		}
+		void Material::SetRaw(const std::string & name, void * value, size_t size, UINT count)
+		{
+			if (DoesPropertyExist(name))
+			{
+				GetProperty(name)->SetRaw(value, size, count);
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material:" << m_name);
+			}
+		}
+		void Material::Bind()
+		{
+			for (auto prop : m_properties)
+			{
+				prop.second->ApplyProperty(m_shader);
+			}
+			m_shader->Bind();
+		}
+		void Material::Draw(Mesh * mesh)
+		{
+			Bind();
+			mesh->Draw(m_shader);
+		}
+		void Material::Draw(UINT vertexCount, UINT startVertexLocation)
+		{
+			Bind();
+			ThomasCore::GetDeviceContext()->Draw(vertexCount, startVertexLocation);
+		}
+		Material * Material::Find(std::string name)
+		{
+			return nullptr;
 		}
 	}
 }
-

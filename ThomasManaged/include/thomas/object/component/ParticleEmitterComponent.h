@@ -6,8 +6,7 @@
 namespace thomas
 {
 	namespace graphics {
-		class Shader;
-		class Texture;
+		class Material;
 	}
 	namespace object
 	{
@@ -150,11 +149,9 @@ namespace thomas
 				void SetOffset(math::Vector3 offset);
 				void SetOffset(float x, float y, float z);
 				
-				void SetShader(std::string shaderName);
-				graphics::Shader* GetShader();
-				void SetTexture(std::string texturePath);
-				graphics::Texture* GetTexture();
-
+				void SetMaterial(graphics::Material* material);
+				graphics::Material* GetMaterial();
+	
 				void SetEmissionRate(float emissionRate);
 				void SetEmissionDuration(float duration);
 				float GetEmissionRate();
@@ -184,8 +181,7 @@ namespace thomas
 				math::Vector3 m_offset;
 				math::Vector3 m_directionVector;
 				D3DData m_d3dData;
-				graphics::Shader* m_shader;
-				graphics::Texture* m_texture;
+				graphics::Material* m_material;
 
 				InitParticleBufferStruct m_particleBufferStruct;
 

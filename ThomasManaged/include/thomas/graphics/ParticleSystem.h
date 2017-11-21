@@ -12,12 +12,13 @@ namespace thomas
 			class ParticleEmitterComponent;
 			class Transform;
 			class Camera;
+			
 		}
 	}
 	namespace graphics
 	{
-		class Shader;
-
+		class ComputeShader;
+		class Mesh;
 		class ParticleSystem
 		{
 		private:
@@ -63,22 +64,18 @@ namespace thomas
 				math::Vector3 right;
 				float pad;
 			};
-			struct MatrixBufferStruct
-			{
-				math::Matrix viewProjMatrix;
-			};
 			
 			static CameraBufferStruct s_cameraBufferStruct;
-			static MatrixBufferStruct s_matrixBufferStruct;
+			static math::Matrix s_viewProjMatrix;
 			static ID3D11Buffer* s_cameraBuffer;
-			static ID3D11Buffer* s_matrixBuffer;
 			
-			static Shader* s_updateParticlesCS;
-			static Shader* s_emitParticlesCS;
+			static ComputeShader* s_updateParticlesCS;
+			static ComputeShader* s_emitParticlesCS;
 
 			static ID3D11UnorderedAccessView* s_activeParticleUAV;
 			static ID3D11ShaderResourceView* s_activeParticleSRV;
 
+			static Mesh* s_emptyMesh;
 			
 			static ID3D11DepthStencilState* s_depthStencilState;
 

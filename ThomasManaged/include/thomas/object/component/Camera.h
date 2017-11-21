@@ -39,17 +39,7 @@ namespace thomas
 
 				float GetAspectRatio();
 
-				void SetSkybox(std::string path, std::string shaderName, int slot);
 
-				void AddSkybox(std::string path, int slot);
-				void SetSkyboxLerpValue(math::Vector3 lerp);
-
-				void BindSkybox();
-				void BindReflection();
-				void UnbindSkybox();
-
-				void ReleaseGUI();
-				void ReleaseSkybox();
 				
 			private:
 				math::Matrix m_projMatrix;
@@ -57,7 +47,6 @@ namespace thomas
 				float m_near;
 				float m_far;
 				math::Viewport m_viewport;
-				graphics::Skybox* m_skybox;
 
 			};
 		}

@@ -3,27 +3,29 @@
 #include "../object/component/Transform.h"
 #include "../object/component/Camera.h"
 #include "../object/GameObject.h"
-#include "Shader.h"
+#include "ComputeShader.h"
 #include "Renderer.h"
 #include "../utils/d3d.h"
 #include "../ThomasCore.h"
 #include "../graphics/Texture.h"
 #include "../ThomasTime.h"
+#include "Mesh.h"
 
 namespace thomas
 {
 	namespace graphics
 	{
 		ParticleSystem::CameraBufferStruct ParticleSystem::s_cameraBufferStruct;
-		ParticleSystem::MatrixBufferStruct ParticleSystem::s_matrixBufferStruct;
+		math::Matrix ParticleSystem::s_viewProjMatrix;
 		ID3D11Buffer* ParticleSystem::s_cameraBuffer;
-		ID3D11Buffer* ParticleSystem::s_matrixBuffer;
 
-		Shader* ParticleSystem::s_updateParticlesCS;
-		Shader* ParticleSystem::s_emitParticlesCS;
+		ComputeShader* ParticleSystem::s_updateParticlesCS;
+		ComputeShader* ParticleSystem::s_emitParticlesCS;
 
 		ID3D11UnorderedAccessView* ParticleSystem::s_activeParticleUAV; //ping
 		ID3D11ShaderResourceView* ParticleSystem::s_activeParticleSRV; //pong
+
+		Mesh* ParticleSystem::s_emptyMesh;
 
 		ParticleSystem::BlendStates ParticleSystem::s_blendStates;
 		ID3D11DepthStencilState* ParticleSystem::s_depthStencilState;
@@ -46,9 +48,9 @@ namespace thomas
 		{
 			s_maxNumberOfBillboardsSupported = 1000000;
 			s_cameraBuffer = nullptr;
-			s_matrixBuffer = nullptr;
-			s_emitParticlesCS = Shader::CreateComputeShader("EmitParticlesCS", "../res/shaders/emitParticlesCS.hlsl", NULL);
-			s_updateParticlesCS = Shader::CreateComputeShader("UpdateParticlesCS", "../res/shaders/updateParticlesCS.hlsl", NULL);
+			
+			s_emitParticlesCS = new ComputeShader(Shader::CreateShader("EmitParticlesCS", "../res/shaders/emitParticlesCS.hlsl"));
+			s_updateParticlesCS = new ComputeShader(Shader::CreateShader("UpdateParticlesCS", "../res/shaders/updateParticlesCS.hlsl"));
 
 
 			D3D11_BLEND_DESC blendDesc;
@@ -101,7 +103,6 @@ namespace thomas
 
 
 			s_cameraBuffer = thomas::utils::D3d::CreateDynamicBufferFromStruct(s_cameraBufferStruct, D3D11_BIND_CONSTANT_BUFFER);
-			s_matrixBuffer = thomas::utils::D3d::CreateDynamicBufferFromStruct(s_matrixBufferStruct, D3D11_BIND_CONSTANT_BUFFER);
 			return;
 		}
 
@@ -110,7 +111,6 @@ namespace thomas
 			SAFE_RELEASE(s_blendStates.additive);
 			SAFE_RELEASE(s_blendStates.alphaBlend);
 			SAFE_RELEASE(s_cameraBuffer);
-			SAFE_RELEASE(s_matrixBuffer);
 			SAFE_RELEASE(s_depthStencilState);
 		}
 
@@ -126,12 +126,10 @@ namespace thomas
 			{
 				s_cameraBufferStruct.deltaTime = ThomasTime::GetDeltaTime();
 			}
-
-
-			s_matrixBufferStruct.viewProjMatrix = viewProjMatrix;
+			
+			s_viewProjMatrix = viewProjMatrix;
 
 			thomas::utils::D3d::FillDynamicBufferStruct(s_cameraBuffer, s_cameraBufferStruct);
-			thomas::utils::D3d::FillDynamicBufferStruct(s_matrixBuffer, s_matrixBufferStruct);
 
 		}
 
@@ -166,17 +164,11 @@ namespace thomas
 		{
 			object::component::ParticleEmitterComponent::D3DData* emitterD3D = emitter->GetD3DData();
 			
-			s_emitParticlesCS->Bind();
-			s_emitParticlesCS->BindBuffer(emitterD3D->particleBuffer, 0);
-			s_emitParticlesCS->BindUAV(emitterD3D->particleUAV2, 6);
-			s_emitParticlesCS->BindUAV(emitterD3D->particleUAV1, 7);
+			s_emitParticlesCS->SetBuffer("InitBuffer", *emitterD3D->particleBuffer);
+			s_emitParticlesCS->SetUAV("particlesWrite", *emitterD3D->particleUAV2);
+			s_emitParticlesCS->SetUAV("particlesWrite2", *emitterD3D->particleUAV1);
 
-			ThomasCore::GetDeviceContext()->Dispatch(amountOfParticles, 1, 1);
-
-			s_emitParticlesCS->BindUAV(NULL, 6);
-			s_emitParticlesCS->BindUAV(NULL, 7);
-			s_emitParticlesCS->BindBuffer(NULL, 0);
-			s_emitParticlesCS->Unbind();
+			s_emitParticlesCS->Dispatch(amountOfParticles, 1, 1);
 
 		}
 
@@ -186,19 +178,12 @@ namespace thomas
 			SwapUAVsandSRVs(emitter);
 
 			//bind CS
-			s_updateParticlesCS->Bind();
-			s_updateParticlesCS->BindUAV(s_activeParticleUAV, 6);
-			s_updateParticlesCS->BindUAV(emitter->GetD3DData()->billboardsUAV, 7);
-			s_updateParticlesCS->BindResource(s_activeParticleSRV, 0);
-			s_updateParticlesCS->BindBuffer(s_cameraBuffer, 0);
+			s_updateParticlesCS->SetUAV("particlesWrite", *s_activeParticleUAV);
+			s_updateParticlesCS->SetUAV("billboards", *emitter->GetD3DData()->billboardsUAV);
+			s_updateParticlesCS->SetResource("particlesRead", *s_activeParticleSRV);
+			s_updateParticlesCS->SetBuffer("cameraBuffer", *s_cameraBuffer);
 
-			ThomasCore::GetDeviceContext()->Dispatch(emitter->GetSpawnedParticleCount() / 256 + 1, 1, 1);
-			//unbind CS
-			s_updateParticlesCS->BindUAV(NULL, 6);
-			s_updateParticlesCS->BindUAV(NULL, 7);
-			s_updateParticlesCS->BindResource(NULL, 0);
-			s_emitParticlesCS->BindBuffer(NULL, 0);
-			s_updateParticlesCS->Unbind();
+			s_updateParticlesCS->Dispatch(emitter->GetSpawnedParticleCount() / 256 + 1, 1, 1);
 
 		}
 
@@ -224,26 +209,17 @@ namespace thomas
 
 			//bind Emitter
 
-			emitter->GetShader()->Bind();
-			emitter->GetShader()->BindResource(emitter->GetD3DData()->billboardsSRV, 1);
-			emitter->GetShader()->BindBuffer(s_matrixBuffer, 0);
-			ThomasCore::GetDeviceContext()->IASetInputLayout(NULL);
-			ThomasCore::GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			emitter->GetShader()->BindVertexBuffer(NULL, 0, 0);
+			emitter->GetMaterial()->SetResource("particle", *emitter->GetD3DData()->billboardsSRV);
+			emitter->GetMaterial()->SetMatrix("matrixBuffer", s_viewProjMatrix);
+			emitter->GetMaterial()->m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			emitter->GetMaterial()->GetShader()->BindVertexBuffer(NULL, 0, 0);
 
-			emitter->GetTexture()->Bind();
+			emitter->GetMaterial()->Draw(emitter->GetNrOfMaxParticles() * 6, 0);
 
-			emitter->GetShader()->BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-			ThomasCore::GetDeviceContext()->Draw(emitter->GetNrOfMaxParticles() * 6, 0);
+			
 
 			ThomasCore::GetDeviceContext()->OMSetBlendState(NULL, NULL, 0xffffffff);
 
-			//undbind Emitter
-			emitter->GetTexture()->Unbind();
-			emitter->GetShader()->BindResource(NULL, 1);
-			emitter->GetShader()->BindBuffer(NULL, 0);
-			emitter->GetShader()->Unbind();
 		}
 
 		ID3D11DepthStencilState * ParticleSystem::GetDepthStencilState()

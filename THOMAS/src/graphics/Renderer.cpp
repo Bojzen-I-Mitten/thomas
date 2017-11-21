@@ -5,7 +5,6 @@
 #include "LightManager.h"
 #include "TextRender.h"
 #include "Sprite.h"
-#include "PostEffect.h"
 #include "../utils/d3d.h"
 
 #include "../object/GameObject.h"
@@ -77,10 +76,7 @@ namespace thomas
 		{
 			Scene::Render();
 
-			for (PostEffect* fx : PostEffect::GetLoadedPostEffects())
-			{
-				fx->Update();
-			}
+
 
 			if (Input::GetKey(Input::Keys::X))
 			{
@@ -135,7 +131,7 @@ namespace thomas
 
 		void Renderer::BindGameObjectBuffer()
 		{
-			thomas::graphics::Shader::GetCurrentBoundShader()->BindBuffer(s_objectBuffer, thomas::graphics::Shader::ResourceType::GAME_OBJECT);
+			//thomas::graphics::Shader::GetCurrentBoundShader()->BindBuffer(s_objectBuffer, thomas::graphics::Shader::ResourceType::GAME_OBJECT);
 		}
 
 		ID3D11ShaderResourceView* Renderer::GetDepthBufferSRV()
@@ -148,7 +144,7 @@ namespace thomas
 		}
 		void Renderer::UnBindGameObjectBuffer()
 		{
-			thomas::graphics::Shader::GetCurrentBoundShader()->BindBuffer(NULL, thomas::graphics::Shader::ResourceType::GAME_OBJECT);
+			//thomas::graphics::Shader::GetCurrentBoundShader()->BindBuffer(NULL, thomas::graphics::Shader::ResourceType::GAME_OBJECT);
 		}
 		void Renderer::RenderSetup(object::component::Camera* camera)
 		{

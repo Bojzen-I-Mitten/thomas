@@ -21,12 +21,10 @@ namespace thomas
 				m_near = 0.5;
 				m_far = 10000;
 				m_viewport = math::Viewport(0, 0, 1,1);
-				m_skybox = NULL;
 				UpdateProjMatrix();
 			}
 			Camera::~Camera()
 			{
-				ReleaseSkybox();
 			}
 
 			math::Matrix Camera::GetProjMatrix()
@@ -105,47 +103,7 @@ namespace thomas
 				return m_viewport.AspectRatio();
 			}
 
-			void Camera::SetSkybox(std::string path, std::string shaderName, int slot)
-			{
-				m_skybox = new graphics::Skybox(path, shaderName, slot);
-			}
 
-			void Camera::AddSkybox(std::string path, int slot)
-			{
-				m_skybox->LoadCubeMap(path, slot);
-			}
-
-			void Camera::SetSkyboxLerpValue(math::Vector3 lerp)
-			{
-				m_skybox->SetLerp(lerp);
-			}
-
-			void Camera::BindSkybox()
-			{
-				if (m_skybox)
-				{
-					math::Matrix mvpMatrix = (m_gameObject->m_transform->GetWorldMatrix()*GetViewProjMatrix());
-					m_skybox->Bind(GetViewMatrix(), mvpMatrix);
-				}
-			}
-
-			void Camera::BindReflection()
-			{
-				if (m_skybox)
-					m_skybox->BindCubemap();
-			}
-
-			void Camera::UnbindSkybox()
-			{
-				if (m_skybox)
-					m_skybox->Unbind();
-			}
-
-			void Camera::ReleaseSkybox()
-			{
-				if (m_skybox)
-					delete m_skybox;// ->~Skybox();
-			}
 		}
 	}
 }

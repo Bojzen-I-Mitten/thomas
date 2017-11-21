@@ -3,19 +3,19 @@
 #include "LightManager.h"
 #include "../utils/d3d.h"
 #include "../ThomasCore.h"
-#include "Shader.h"
+#include "Material.h"
 namespace thomas
 {
 	namespace graphics
 	{
 
-		Skybox::Skybox(std::string path, std::string shaderName, int slot)
+		Skybox::Skybox(std::string path, Material* material, int slot)
 		{
 			SetupBuffers();
 			LoadCubeMap(path, slot);
 			CreateRasterizer();
 			CreateDepthStencilState();
-			m_data.shader = Shader::GetShaderByName(shaderName);
+			m_data.material = material;
 		}
 
 
@@ -30,51 +30,36 @@ namespace thomas
 
 		bool Skybox::Bind(math::Matrix viewMatrix, math::Matrix mvpMatrix)
 		{
+			//Needs rework
 			ThomasCore::GetDeviceContext()->RSGetState(&m_rasterizerP);
 			ThomasCore::GetDeviceContext()->OMGetDepthStencilState(&m_depthstencilP, &m_depthRefP);
 
-			m_data.shader->Bind();
-			m_data.shader->BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			bool v = m_data.shader->BindVertexBuffer(m_data.vertexBuffer, sizeof(math::Vector3), 0);
-			bool i = m_data.shader->BindIndexBuffer(m_data.indexBuffer);
+			m_data.material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			
+
+			m_data.material->GetShader()->BindVertexBuffer(m_data.vertexBuffer, sizeof(math::Vector3), 0);
+			m_data.material->GetShader()->BindIndexBuffer(m_data.indexBuffer);
 			m_mvpStruct.mvpMatrix = mvpMatrix.Transpose();
 			m_mvpStruct.viewMatrix = viewMatrix;
 			viewMatrix.Invert().Decompose(math::Vector3(), math::Quaternion(),m_mvpStruct.camPosition);
 			utils::D3d::FillDynamicBufferStruct(m_data.constantBuffer, m_mvpStruct);
-			LightManager::BindAllLights();
 			ThomasCore::GetDeviceContext()->RSSetState(m_data.rasterizerState);
 			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(m_data.depthStencilState, 1);
 
-			m_data.shader->BindBuffer(m_data.constantBuffer, Shader::ResourceType::GAME_OBJECT);
-			for (Texture* texture : m_data.texture)
-				texture->Bind();
-
-			Draw();
-
-			return v && i;
+			return false;
 		}
 
 		bool Skybox::BindCubemap()
 		{
-			for(Texture* texture : m_data.texture)
-				texture->Bind();
+			
 			return true;
 		}
 
 		bool Skybox::Unbind()
 		{
-			LightManager::Unbind();
-			bool v = Shader::GetCurrentBoundShader()->BindVertexBuffer(NULL, sizeof(math::Vector3), 0);
-			bool i = Shader::GetCurrentBoundShader()->BindIndexBuffer(NULL);
+			//needs rework
 
-			ThomasCore::GetDeviceContext()->RSSetState(m_rasterizerP);
-			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(m_depthstencilP, m_depthRefP);
-
-			for (Texture* texture : m_data.texture)
-				texture->Unbind();
-			m_data.shader->Unbind();
-
-			return v && i;
+			return false;
 		}
 
 		void Skybox::Draw()
@@ -114,8 +99,7 @@ namespace thomas
 		}
 		void Skybox::BindSkyboxTexture()
 		{
-			for (Texture* texture : m_data.texture)
-				texture->Bind();
+		
 			return;
 		}
 		void Skybox::SetLerp(math::Vector3 lerp)

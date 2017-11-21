@@ -58,8 +58,6 @@ namespace thomas
 			static bool UpdatePointLight(PointLightStruct other, int index);
 			
 
-			static bool BindAllLights();
-			static bool Unbind();
 
 			static bool BindDirectionalLight(unsigned int index);
 			static bool BindPointLight(unsigned int index);

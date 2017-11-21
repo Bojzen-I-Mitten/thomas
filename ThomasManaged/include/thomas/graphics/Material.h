@@ -1,64 +1,66 @@
 #pragma once
-#include <map>
-#include <vector>
-#include <d3d11.h>
-struct aiMaterial;
-
+#include "../Common.h"
+#include "../utils/Math.h"
+#include "MaterialProperty.h"
 namespace thomas
 {
 	namespace graphics
 	{
-		class Texture;
 		class Shader;
+		class Texture;
+		class Mesh;
 
-		class Material
+		class THOMAS_API Material
 		{
-		private:
-			virtual Material* CreateInstance(std::string dir, std::string name, aiMaterial* assimpMaterial, Shader* shader) { return NULL; }
-			virtual Material* CreateInstance(std::string name, Shader* shader) { return NULL; }
+		protected:
+			void SetProperties();
+			void SetSampler(const std::string name, Texture& value);
+			MaterialProperty* GetProperty(const std::string& name);
+			void Bind();
 		public:
 			Material(Shader* shader);
-			Material(std::string shader);
-			Material(std::string name, Shader* shader);
-			Material(std::string name, std::string shader);
-
-			static Material* CreateMaterial(Material* material);
-			static Material* CreateMaterial(std::string dir, std::string materialType, aiMaterial* assimpMaterial);
-			static Material* CreateMaterial(std::string name, std::string materialType);
-			//static bool RegisterNewMaterialType(std::string type, Material* material);
-			static Material* RegisterNewMaterialType(std::string type, Material* material);
-
-			static Material* GetMaterialByName(std::string name);
-
-			static std::vector<Material*> GetLoadedMaterials();
-			static std::vector<Material*> GetMaterialsByShader(Shader* shader);
-			static std::vector<Material*> GetMaterialsByShader(std::string name);
-
-			static void Destroy();
-			static void Destroy(Shader* shader);
-
-			bool Bind();
-			bool Unbind();
-
-			virtual void Update() {};
-
-			std::string GetName();
+			void SetShader(Shader* shader);
 			Shader* GetShader();
+			std::string GetName();
+			void SetName(std::string name);
 
-			virtual ~Material();
+			bool DoesPropertyExist(const std::string& name);
 
+			math::Color* GetColor(const std::string& name);
+			void SetColor(const std::string& name, math::Color& value);
+
+			float* GetFloat(const std::string& name);
+			void SetFloat(const std::string& name, float& value);
+
+			int* GetInt(const std::string& name);
+			void SetInt(const std::string& name, int& value);
+
+			math::Matrix* GetMatrix(const std::string& name);
+			void SetMatrix(const std::string& name, math::Matrix& value);
+
+			Texture* GetTexture(const std::string& name);
+			void SetTexture(const std::string& name, Texture& value);
+
+			math::Vector4* GetVector(const std::string& name);
+			void SetVector(const std::string& name, math::Vector4& value);
+
+			void SetResource(const std::string& name, ID3D11ShaderResourceView& value);
+			void SetBuffer(const std::string& name, ID3D11Buffer& value);
+
+			void SetRaw(const std::string& name, void* value, size_t size, UINT count);
+
+			void Draw(Mesh* mesh);
+			void Draw(UINT vertexCount, UINT startVertexLocation);
+
+			static Material* Find(std::string name);
+
+		public:
+			int m_renderQueue;
+			std::string m_name;
+			D3D11_PRIMITIVE_TOPOLOGY m_topology;
 		private:
-
-			static std::vector<Material*> s_materials;
-			static std::map<std::string, Material*> s_materialTypes;
-
-		protected:
-			D3D11_PRIMITIVE_TOPOLOGY m_shaderTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			Shader* m_shader;
-			std::string m_materialName;
-			ID3D11Buffer* m_materialPropertiesBuffer;
-			std::vector<Texture*> m_textures;
+			std::map<std::string, MaterialProperty*> m_properties;
 		};
 	}
 }
-

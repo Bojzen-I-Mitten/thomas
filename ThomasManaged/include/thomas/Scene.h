@@ -36,10 +36,8 @@ namespace thomas
 		static void Render();
 		void Render3D(object::component::Camera* camera);
 		void Render2D(object::component::Camera* camera);
-		graphics::Material* LoadMaterial(std::string type, graphics::Material* material);
 		//void RemoveMaterial(std::string name);
-		graphics::Shader* LoadShader(std::string name, graphics::Shader::InputLayouts inputLayout, std::string path);
-		graphics::Shader* LoadShader(std::string name, thomas::graphics::Shader::InputLayouts inputLayout, std::string vertexShader, std::string geometryShader, std::string hullShader, std::string domainShader, std::string pixelShader);
+
 		//void RemoveShader(std::string name);
 		graphics::Model* LoadModel(std::string name, std::string path, std::string type);
 		//void RemoveModel(std::string name);

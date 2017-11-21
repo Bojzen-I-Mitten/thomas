@@ -9,8 +9,7 @@ namespace thomas
 {
 	namespace graphics 
 	{
-		class Material;
-
+		class Shader;
 		struct Vertex 
 		{
 			math::Vector3 position;
@@ -34,7 +33,7 @@ namespace thomas
 			void SetupMesh();
 			
 		public:
-			Mesh(std::vector<Vertex> vertices, std::vector<int> indices, std::string name, Material* material);
+			Mesh(std::vector<Vertex> vertices, std::vector<int> indices, std::string name);
 			~Mesh();
 			bool SetName(std::string name);
 
@@ -44,22 +43,15 @@ namespace thomas
 
 			int GetIndexCount();
 			int GetVertexCount();
+
+			void Draw(Shader* shader);
 			
 			std::vector<Vertex>* GetVertices();
 			std::vector<int>* GetIndices();
 
-			Material* GetMaterial();
-
-			bool Bind();
-			bool Unbind();
-
-			void Draw();
-
 		private:
 			std::string m_name;
 			MeshData m_data;
-			Material* m_material;
-
 		};
 	}
 }
