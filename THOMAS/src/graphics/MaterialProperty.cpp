@@ -113,40 +113,47 @@ namespace thomas
 			return dimension;
 		}
 
-		MaterialProperty::MaterialProperty(Shader::ShaderVariable shaderVariable)
+		MaterialProperty::MaterialProperty(UINT index, ID3DX11EffectVariable* variable)
 		{
 			m_isSet = false;
-			m_name = shaderVariable.name;
-			m_index = shaderVariable.index;
-			m_numberOfElements = shaderVariable.desc.Elements;
-			m_class = GetPropClass(shaderVariable.desc.Class, shaderVariable.desc.Type);
-			
+			m_index = index;
+			variable->GetType()->GetDesc(&m_typeDesc);
+			variable->GetDesc(&m_variableDesc);
+
+			m_class = GetPropClass(m_typeDesc.Class, m_typeDesc.Type);
+
 			switch (m_class)
 			{
-			case PropClass::Scalar:
-			case PropClass::Vector:
-			case PropClass::Matrix:
-				m_type = GetPropType(shaderVariable.desc.Type);
-				break;
-			case PropClass::Texture:
-				m_textureDimension = GetTextureDimension(shaderVariable.desc.Type);
-				break;
-			default:
-				break;
+				case PropClass::Scalar:
+				case PropClass::Vector:
+				case PropClass::Matrix:
+					m_type = GetPropType(m_typeDesc.Type);
+					break;
+				case PropClass::Texture:
+					m_textureDimension = GetTextureDimension(m_typeDesc.Type);
+					break;
+				default:
+					break;
 			}
 			
 		}
 
-		void MaterialProperty::ApplyProperty(Shader * shader)
+			MaterialProperty::MaterialProperty(const MaterialProperty* otherProperty)
+			{
+				m_isSet = false;
+				m_index = otherProperty->m_index;
+				m_typeDesc = otherProperty->m_typeDesc;
+				m_variableDesc = otherProperty->m_variableDesc;
+				m_class = otherProperty->m_class;
+				m_type = otherProperty->m_type;
+				m_textureDimension = otherProperty->m_textureDimension;
+			}
+
+			void MaterialProperty::ApplyProperty(Shader * shader)
 		{
 			if (!m_isSet)
 				return;
 			ID3DX11EffectVariable* variable = shader->GetEffect()->GetVariableByIndex(m_index);
-			if (!variable->IsValid())
-			{
-				LOG("Invalid shader variable: " << m_name);
-				return;
-			}
 			HRESULT result;
 			switch (m_class)
 			{
@@ -240,6 +247,11 @@ namespace thomas
 			}
 		}
 
+		std::string MaterialProperty::GetName()
+		{
+			return m_variableDesc.Name;
+		}
+
 		void MaterialProperty::SetBool(bool & value)
 		{
 			if (m_class == PropClass::Scalar && m_type == PropType::Bool)
@@ -249,7 +261,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: bool");
+				LOG("Material property: " << GetName() << " is not of type: bool");
 			}
 		}
 
@@ -262,7 +274,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: float");
+				LOG("Material property: " << GetName() << " is not of type: float");
 			}
 		}
 
@@ -275,7 +287,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: int");
+				LOG("Material property: " << GetName() << " is not of type: int");
 			}
 		}
 
@@ -288,7 +300,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: vector");
+				LOG("Material property: " << GetName() << " is not of type: vector");
 			}
 		}
 
@@ -301,7 +313,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: matrix");
+				LOG("Material property: " << GetName() << " is not of type: matrix");
 			}
 		}
 
@@ -314,7 +326,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: texture");
+				LOG("Material property: " << GetName() << " is not of type: texture");
 			}
 		}
 
@@ -327,7 +339,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: texture sampler");
+				LOG("Material property: " << GetName() << " is not of type: texture sampler");
 			}
 		}
 
@@ -340,7 +352,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: resource");
+				LOG("Material property: " << GetName() << " is not of type: resource");
 			}
 		}
 
@@ -353,7 +365,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: buffer");
+				LOG("Material property: " << GetName() << " is not of type: buffer");
 			}
 		}
 
@@ -366,7 +378,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: Unordered access view");
+				LOG("Material property: " << GetName() << " is not of type: Unordered access view");
 			}
 		}
 
@@ -381,7 +393,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: unknown");
+				LOG("Material property: " << GetName() << " is not of type: unknown");
 			}
 		}
 
@@ -395,7 +407,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: bool");
+				LOG("Material property: " << GetName() << " is not of type: bool");
 				return nullptr;
 			}
 		}
@@ -408,7 +420,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: float");
+				LOG("Material property: " << GetName() << " is not of type: float");
 				return nullptr;
 			}
 		}
@@ -421,7 +433,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: int");
+				LOG("Material property: " << GetName() << " is not of type: int");
 				return nullptr;
 			}
 		}
@@ -435,7 +447,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: vector");
+				LOG("Material property: " << GetName() << " is not of type: vector");
 				return nullptr;
 			}
 		}
@@ -448,7 +460,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: matrix");
+				LOG("Material property: " << GetName() << " is not of type: matrix");
 				return nullptr;
 			}
 		}
@@ -461,7 +473,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: texture");
+				LOG("Material property: " << GetName() << " is not of type: texture");
 				return nullptr;
 			}
 		}
@@ -474,7 +486,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: texture sampler");
+				LOG("Material property: " << GetName() << " is not of type: texture sampler");
 				return nullptr;
 			}
 		}
@@ -487,7 +499,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: resource");
+				LOG("Material property: " << GetName() << " is not of type: resource");
 				return nullptr;
 			}
 		}
@@ -500,7 +512,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: buffer");
+				LOG("Material property: " << GetName() << " is not of type: buffer");
 				return nullptr;
 			}
 		}
@@ -513,7 +525,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Material property: " << m_name << " is not of type: Unordered access view");
+				LOG("Material property: " << GetName() << " is not of type: Unordered access view");
 				return nullptr;
 			}
 		}
