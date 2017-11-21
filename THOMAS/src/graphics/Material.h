@@ -24,7 +24,7 @@ namespace thomas
 			std::string GetName();
 			void SetName(std::string name);
 
-			bool DoesPropertyExist(const std::string& name);
+			bool HasProperty(const std::string& name);
 
 			math::Color* GetColor(const std::string& name);
 			void SetColor(const std::string& name, math::Color& value);
@@ -61,7 +61,7 @@ namespace thomas
 			D3D11_PRIMITIVE_TOPOLOGY m_topology;
 		private:
 			Shader* m_shader;
-			std::map<std::string, MaterialProperty*> m_properties;
+			std::vector<MaterialProperty*> m_properties;
 		};
 	}
 }

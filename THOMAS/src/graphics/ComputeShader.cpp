@@ -15,7 +15,7 @@ namespace thomas
 		}
 		void ComputeShader::SetUAV(const std::string & name, ID3D11UnorderedAccessView& value)
 		{
-			if (DoesPropertyExist(name))
+			if (HasProperty(name))
 			{
 				GetProperty(name)->SetUAV(value);
 			}
@@ -26,7 +26,7 @@ namespace thomas
 		}
 		ID3D11UnorderedAccessView * ComputeShader::GetUAV(const std::string & name)
 		{
-			if (DoesPropertyExist(name))
+			if (HasProperty(name))
 			{
 				return GetProperty(name)->GetUAV();
 			}

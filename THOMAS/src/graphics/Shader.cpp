@@ -3,6 +3,7 @@
 #include <atlconv.h>
 #include <d3dcompiler.h>
 #include "Shader.h"
+#include "MaterialProperty.h"
 namespace thomas
 {
 	namespace graphics
@@ -19,7 +20,10 @@ namespace thomas
 		Shader::~Shader()
 		{
 			SAFE_RELEASE(m_effect);
-			SAFE_RELEASE(m_inputLayout);
+			for (auto pass : m_passes)
+				SAFE_RELEASE(pass.inputLayout);
+			m_passes.clear();
+			m_properties.clear();
 		}
 
 		void Shader::SetupReflection()
@@ -28,65 +32,73 @@ namespace thomas
 			m_effect->GetDesc(&effectDesc);
 			for (int i = 0; i < effectDesc.GlobalVariables; i++)
 			{
-				D3DX11_EFFECT_VARIABLE_DESC variableDesc;
-				D3DX11_EFFECT_TYPE_DESC variableTypeDesc;
-				m_effect->GetVariableByIndex(i)->GetType()->GetDesc(&variableTypeDesc);
-				m_effect->GetVariableByIndex(i)->GetDesc(&variableDesc);
-
-				ShaderVariable variable;
-				variable.name = variableDesc.Name;
-				variable.index = i;
-				variable.desc = variableTypeDesc;
-
-				m_variables.push_back(variable);
+				ID3DX11EffectVariable* variable = m_effect->GetVariableByIndex(i);
+				if (variable->IsValid())
+				{
+					m_properties.push_back(new MaterialProperty(i, variable));
+				}
+				
 
 			}
 			
-			for (int i = 0; i < effectDesc.Techniques; i++)
+			D3DX11_TECHNIQUE_DESC techniqueDesc;
+			ID3DX11EffectTechnique* tech = m_effect->GetTechniqueByIndex(0);
+			if (tech->IsValid())
 			{
-				D3DX11_TECHNIQUE_DESC techniqueDesc;
-				ID3DX11EffectTechnique* tech = m_effect->GetTechniqueByIndex(i);
 				tech->GetDesc(&techniqueDesc);
 				for (int j = 0; j < techniqueDesc.Passes; j++)
 				{
+					ShaderPass pass;
 					D3DX11_PASS_SHADER_DESC vsPassDesc;
 					D3DX11_EFFECT_SHADER_DESC vsDesc;
+					D3DX11_PASS_DESC passDesc;
 					ID3DX11EffectShaderVariable * vs;
 
+					tech->GetPassByIndex(j)->GetDesc(&passDesc);
 					tech->GetPassByIndex(j)->GetVertexShaderDesc(&vsPassDesc);
-					
+
+					pass.name = passDesc.Name;
+					pass.inputLayout = NULL;
+
 					vs = vsPassDesc.pShaderVariable->AsShader();
-					vs->GetShaderDesc(vsPassDesc.ShaderIndex, &vsDesc);
-
-					std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayoutDesc;
-
-					for (int iInput = 0; iInput < vsDesc.NumInputSignatureEntries; ++iInput)
+					if (vs->IsValid())
 					{
-						D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
-						vs->GetInputSignatureElementDesc(vsPassDesc.ShaderIndex, iInput, &paramDesc);
+						vs->GetShaderDesc(vsPassDesc.ShaderIndex, &vsDesc);
 
-						D3D11_INPUT_ELEMENT_DESC elementDesc;
-						elementDesc.SemanticName = paramDesc.SemanticName;
-						elementDesc.SemanticIndex = paramDesc.SemanticIndex;
-						elementDesc.InputSlot = 0;
-						elementDesc.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-						elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-						elementDesc.InstanceDataStepRate = 0;
+						std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayoutDesc;
 
-						// determine DXGI format
-						elementDesc.Format = GetDXGIFormat(paramDesc.Mask, paramDesc.ComponentType);
+						for (int iInput = 0; iInput < vsDesc.NumInputSignatureEntries; ++iInput)
+						{
+							D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
+							vs->GetInputSignatureElementDesc(vsPassDesc.ShaderIndex, iInput, &paramDesc);
 
-						inputLayoutDesc.push_back(elementDesc);
-		
+							D3D11_INPUT_ELEMENT_DESC elementDesc;
+							elementDesc.SemanticName = paramDesc.SemanticName;
+							elementDesc.SemanticIndex = paramDesc.SemanticIndex;
+							elementDesc.InputSlot = 0;
+							elementDesc.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+							elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+							elementDesc.InstanceDataStepRate = 0;
+
+							// determine DXGI format
+							elementDesc.Format = GetDXGIFormat(paramDesc.Mask, paramDesc.ComponentType);
+
+							inputLayoutDesc.push_back(elementDesc);
+
+						}
+
+						HRESULT result = ThomasCore::GetDevice()->CreateInputLayout(&inputLayoutDesc[0], inputLayoutDesc.size(), vsDesc.pBytecode, vsDesc.BytecodeLength, &pass.inputLayout);
+
+						if (result != S_OK)
+						{
+							LOG("Failed to create input layout for shader: " << m_name << " Error: " << result);
+						}
 					}
-					HRESULT result = ThomasCore::GetDevice()->CreateInputLayout(&inputLayoutDesc[0], inputLayoutDesc.size(), vsDesc.pBytecode, vsDesc.BytecodeLength, &m_inputLayout);
-
-					if (result != S_OK)
-					{
-						LOG("Failed to create input layout for shader: " << m_name << " Error: " << result);
-					}
+					m_passes.push_back(pass);
+					
 				}
 			}
+			
 
 		}
 
@@ -195,14 +207,33 @@ namespace thomas
 		}
 		void Shader::Bind()
 		{
-			ThomasCore::GetDeviceContext()->IASetInputLayout(m_inputLayout);
-			//Currently only one pass. And one technique
-			//TODO: More passes and techuniques
-			m_effect->GetTechniqueByIndex(0)->GetPassByIndex(0)->Apply(0, ThomasCore::GetDeviceContext());
+			for (auto prop : m_properties)
+				prop->ApplyProperty(this);
+
+			ThomasCore::GetDeviceContext()->IASetInputLayout(m_passes[m_currentPass].inputLayout);
+			ID3DX11EffectPass* pass = m_effect->GetTechniqueByIndex(0)->GetPassByIndex(m_currentPass);
+			pass->Apply(0, ThomasCore::GetDeviceContext());
 		}
 		std::string Shader::GetName()
 		{
 			return m_name;
+		}
+		void Shader::SetPass(int index)
+		{
+			if (m_passes.size() > index)
+				m_currentPass = index;
+		}
+		void Shader::SetPass(const std::string & name)
+		{
+			for (int i = 0; i < m_passes.size(); i++)
+			{
+				if (m_passes[i].name == name)
+				{
+					m_currentPass = i;
+					break;
+				}
+					
+			}
 		}
 		void Shader::DestroyAllShaders()
 		{
@@ -216,19 +247,24 @@ namespace thomas
 		{
 			return m_effect;
 		}
-		std::vector<Shader::ShaderVariable>* Shader::GetVariables()
+
+		bool Shader::HasProperty(const std::string & name)
 		{
-			return &m_variables;
-		}
-		int Shader::PropertyToID(const std::string & name)
-		{
-			for (int i = 0; i < m_variables.size(); i++)
+			for (MaterialProperty* prop : m_properties)
 			{
-				if (m_variables[i].name == name)
-					return i;
+				if (prop->GetName() == name)
+					return true;
 			}
-			LOG("Could not find property: " << name << " for shader: " << m_name);
-			return -1;
+			return false;
+		}
+		MaterialProperty * Shader::GetProperty(const std::string & name)
+		{
+			for (MaterialProperty* prop : m_properties)
+			{
+				if (prop->GetName() == name)
+					return prop;
+			}
+			return nullptr;
 		}
 	}
 }

@@ -6,26 +6,10 @@ namespace thomas
 {
 	namespace graphics
 	{
-		void Material::SetProperties()
-		{
-			m_properties.clear();
-			std::vector<Shader::ShaderVariable>* variables = m_shader->GetVariables();
-			LOG("Variables found in shader:");
-			for (Shader::ShaderVariable& variable : *variables)
-			{
-				
-				MaterialProperty* prop = new MaterialProperty(variable);
-				if (prop)
-				{
-					LOG(variable.name);
-					m_properties[variable.name] = prop;
-				}
-					
-			}
-		}
+
 		void Material::SetSampler(const std::string name, Texture & value)
 		{
-			if (DoesPropertyExist(name))
+			if (m_shader->HasProperty(name))
 			{
 				GetProperty(name)->SetSampler(value);
 			}
@@ -34,14 +18,13 @@ namespace thomas
 		Material::Material(Shader * shader)
 		{
 			m_shader = shader;
-			SetProperties();
 		}
 
 		void Material::SetShader(Shader * shader)
 		{
 			m_shader = shader;
 			m_renderQueue = -1;
-			SetProperties();
+			m_properties.clear();
 		}
 
 		Shader * Material::GetShader()
@@ -59,21 +42,39 @@ namespace thomas
 			m_name = name;
 		}
 
-		bool Material::DoesPropertyExist(const std::string & name)
+		bool Material::HasProperty(const std::string & name)
 		{
-			return m_properties.find(name) != m_properties.end();
+			for (MaterialProperty* prop : m_properties)
+			{
+				if (prop->GetName() == name)
+					return true;
+			}
+			return false;
 		}
 
 		MaterialProperty* Material::GetProperty(const std::string & name)
 		{
-			if (DoesPropertyExist(name))
-				return m_properties.at(name);
+			if (HasProperty(name))
+			{
+				for (MaterialProperty* prop : m_properties)
+				{
+					if (prop->GetName() == name)
+						return prop;
+				}
+				return nullptr;
+			}
+			else if (m_shader->HasProperty(name))
+			{
+				MaterialProperty* prop = new MaterialProperty(m_shader->GetProperty(name));
+				m_properties.push_back(prop);
+				return prop;
+			}
 			else
 				return nullptr;
 		}
 		math::Color* Material::GetColor(const std::string& name)
 		{
-			if (DoesPropertyExist(name))
+			if (HasProperty(name))
 			{
 				return (math::Color*)GetProperty(name)->GetVector();
 			}
@@ -85,7 +86,7 @@ namespace thomas
 		}
 		void Material::SetColor(const std::string& name, math::Color& value)
 		{
-			if (DoesPropertyExist(name))
+			if (m_shader->HasProperty(name))
 			{
 				GetProperty(name)->SetVector(value.ToVector4());
 			}
@@ -96,7 +97,7 @@ namespace thomas
 		}
 		float* Material::GetFloat(const std::string& name)
 		{
-			if (DoesPropertyExist(name))
+			if (HasProperty(name))
 			{
 				return GetProperty(name)->GetFloat();
 			}
@@ -109,7 +110,7 @@ namespace thomas
 		void Material::SetFloat(const std::string& name, float& value)
 		{
 			
-			if (DoesPropertyExist(name))
+			if (m_shader->HasProperty(name))
 			{
 				GetProperty(name)->SetFloat(value);
 			}
@@ -121,7 +122,7 @@ namespace thomas
 		}
 		int* Material::GetInt(const std::string& name)
 		{
-			if (DoesPropertyExist(name))
+			if (HasProperty(name))
 			{
 				return GetProperty(name)->GetInt();
 			}
@@ -133,7 +134,7 @@ namespace thomas
 		}
 		void Material::SetInt(const std::string& name, int& value)
 		{
-			if (DoesPropertyExist(name))
+			if (m_shader->HasProperty(name))
 			{
 				GetProperty(name)->SetInt(value);
 			}
@@ -144,7 +145,7 @@ namespace thomas
 		}
 		math::Matrix* Material::GetMatrix(const std::string& name)
 		{
-			if (DoesPropertyExist(name))
+			if (HasProperty(name))
 			{
 				return GetProperty(name)->GetMatrix();
 			}
@@ -156,7 +157,7 @@ namespace thomas
 		}
 		void Material::SetMatrix(const std::string& name, math::Matrix& value)
 		{
-			if (DoesPropertyExist(name))
+			if (m_shader->HasProperty(name))
 			{
 				GetProperty(name)->SetMatrix(value);
 			}
@@ -167,7 +168,7 @@ namespace thomas
 		}
 		Texture* Material::GetTexture(const std::string& name)
 		{
-			if (DoesPropertyExist(name))
+			if (HasProperty(name))
 			{
 				return GetProperty(name)->GetTexture();
 			}
@@ -179,7 +180,7 @@ namespace thomas
 		}
 		void Material::SetTexture(const std::string& name, Texture& value)
 		{
-			if (DoesPropertyExist(name))
+			if (m_shader->HasProperty(name))
 			{
 				GetProperty(name)->SetTexture(value);
 				SetSampler("sampler" + name, value);
@@ -191,7 +192,7 @@ namespace thomas
 		}
 		math::Vector4* Material::GetVector(const std::string& name)
 		{
-			if (DoesPropertyExist(name))
+			if (HasProperty(name))
 			{
 				return GetProperty(name)->GetVector();
 			}
@@ -203,7 +204,7 @@ namespace thomas
 		}
 		void Material::SetVector(const std::string& name, math::Vector4& value)
 		{
-			if (DoesPropertyExist(name))
+			if (m_shader->HasProperty(name))
 			{
 				GetProperty(name)->SetVector(value);
 			}
@@ -214,7 +215,7 @@ namespace thomas
 		}
 		void Material::SetResource(const std::string & name, ID3D11ShaderResourceView & value)
 		{
-			if (DoesPropertyExist(name))
+			if (HasProperty(name))
 			{
 				GetProperty(name)->SetResource(value);
 			}
@@ -225,7 +226,7 @@ namespace thomas
 		}
 		void Material::SetBuffer(const std::string & name, ID3D11Buffer & value)
 		{
-			if (DoesPropertyExist(name))
+			if (m_shader->HasProperty(name))
 			{
 				GetProperty(name)->SetBuffer(value);
 			}
@@ -236,7 +237,7 @@ namespace thomas
 		}
 		void Material::SetRaw(const std::string & name, void * value, size_t size, UINT count)
 		{
-			if (DoesPropertyExist(name))
+			if (m_shader->HasProperty(name))
 			{
 				GetProperty(name)->SetRaw(value, size, count);
 			}
@@ -249,7 +250,7 @@ namespace thomas
 		{
 			for (auto prop : m_properties)
 			{
-				prop.second->ApplyProperty(m_shader);
+				prop->ApplyProperty(m_shader);
 			}
 			m_shader->Bind();
 		}
