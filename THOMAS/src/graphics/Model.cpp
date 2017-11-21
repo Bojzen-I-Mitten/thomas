@@ -1,7 +1,6 @@
 #include "Model.h"
 
 #include "Mesh.h"
-#include "Material.h"
 namespace thomas {
 	namespace graphics {
 
@@ -44,28 +43,6 @@ namespace thomas {
 		std::string Model::GetName()
 		{
 			return m_name;
-		}
-
-		std::vector<Mesh*> Model::GetMeshesByMaterial(Material* material)
-		{
-			std::vector<Mesh*> meshes;
-			for (unsigned int i = 0; i < m_meshes.size(); i++)
-			{
-				if (m_meshes[i]->GetMaterial() == material)
-					meshes.push_back(m_meshes[i]);
-			}
-			return meshes;
-		}
-
-		std::vector<Mesh*> Model::GetMeshesByMaterial(std::string name)
-		{
-			std::vector<Mesh*> meshes;
-			for (unsigned int i = 0; i < m_meshes.size(); i++)
-			{
-				if (m_meshes[i]->GetMaterial()->GetName() == name)
-					meshes.push_back(m_meshes[i]);
-			}
-			return meshes;
 		}
 
 		std::vector<Mesh*> Model::GetMeshes()

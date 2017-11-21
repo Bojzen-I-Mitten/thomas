@@ -6,7 +6,7 @@ namespace thomas
 {
 	namespace graphics
 	{
-		class Shader;
+		class Material;
 		class Texture;
 		class Skybox
 		{
@@ -15,7 +15,7 @@ namespace thomas
 			void CreateRasterizer();
 			void CreateDepthStencilState();
 		public:
-			Skybox(std::string path, std::string shaderName, int slot);
+			Skybox(std::string path, Material* material, int slot);
 			~Skybox();
 			void LoadCubeMap(std::string path, int slot);
 			bool Bind(math::Matrix viewMatrix, math::Matrix mvpMatrix);
@@ -38,7 +38,7 @@ namespace thomas
 				ID3D11RasterizerState* rasterizerState;
 				ID3D11DepthStencilState* depthStencilState;
 				std::vector<Texture*> texture;
-				Shader* shader;
+				Material* material;
 			};
 
 

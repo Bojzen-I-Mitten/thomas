@@ -14,7 +14,7 @@ namespace thomas
 
 	namespace graphics
 	{
-
+		class Material;
 		class THOMAS_API BulletDebugDraw : public btIDebugDraw
 		{
 		private:
@@ -50,18 +50,11 @@ namespace thomas
 			{
 				LineVertex lines[2];
 			};
-			struct CameraStruct
-			{
-				math::Matrix viewProjection;
-			}m_cameraData;
-			ID3D11InputLayout* m_inputLayout;
-			ID3D11VertexShader* m_vertexShader;
-			ID3D11Buffer* m_lineBuffer;
-			ID3D11Buffer* m_cameraBuffer;
-			ID3D11PixelShader* m_pixelShader;
+			Material* m_material;
 			int m_debugMode;
 			std::vector<LineVertex> m_lines;
-
+			ID3D11Buffer* m_vertexBuffer;
+			math::Matrix m_viewProjection;
 		};
 	}
 }

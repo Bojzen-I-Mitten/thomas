@@ -10,7 +10,7 @@ namespace thomas
 
 		void TW_CALL DebugTools::ReloadShadersButtonCallback(void * clientData)
 		{
-			graphics::Shader::ReloadShaders();
+			//graphics::Shader::ReloadShaders();
 		}
 
 		void TW_CALL DebugTools::CopyStdStringToClient(std::string & destClientString, const std::string & sourceLibraryString)

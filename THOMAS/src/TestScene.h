@@ -1,9 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "object\GameObject.h"
-
-
-
+#include "graphics\Material.h"
 class TestCamera : public thomas::object::GameObject
 {
 public:
@@ -21,8 +19,9 @@ public:
 class TestScene : public thomas::Scene
 {
 public:
-	TestScene() : Scene("TestScene")
+	TestScene() : Scene("testScene")
 	{
 		LoadObject<TestCamera>();
+
 	}
 };

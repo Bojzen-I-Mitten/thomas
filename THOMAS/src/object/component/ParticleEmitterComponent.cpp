@@ -6,8 +6,7 @@
 #include "../../utils/DebugTools.h"
 #include "../../utils/d3d.h"
 
-#include "..\..\graphics\Texture.h"
-#include "..\..\graphics\Shader.h"
+#include "..\..\graphics\Material.h"
 #include "..\..\graphics\ParticleSystem.h"
 #include "../../utils/DebugTools.h"
 #include "Transform.h"
@@ -78,8 +77,6 @@ namespace thomas
 				m_particleBufferStruct.rand = (std::rand() % 1000) / 1000.f;
 				m_particleBufferStruct.gravity = 0.0f;
 				m_paused = false;
-				m_shader = graphics::Shader::GetShaderByName("particleShader");
-				m_texture = graphics::Texture::CreateTexture(thomas::graphics::Texture::SamplerState::WRAP, thomas::graphics::Texture::TextureType::DIFFUSE, "../res/textures/standardParticle.png");
 				m_d3dData.swapUAVandSRV = true;
 
 				m_spawnedParticleCount = 0;
@@ -321,28 +318,17 @@ namespace thomas
 				SetOffset(math::Vector3(x, y, z));
 			}
 
-
-			void ParticleEmitterComponent::SetShader(std::string shaderName)
+			void ParticleEmitterComponent::SetMaterial(graphics::Material * material)
 			{
-				m_shader = graphics::Shader::GetShaderByName(shaderName);
+				m_material = material;
 			}
 
-			graphics::Shader * ParticleEmitterComponent::GetShader()
+			graphics::Material * ParticleEmitterComponent::GetMaterial()
 			{
-				return m_shader;
+				return m_material;
 			}
 
-			void ParticleEmitterComponent::SetTexture(std::string texturePath)
-			{
-				graphics::Texture* tempTex = graphics::Texture::CreateTexture(thomas::graphics::Texture::SamplerState::WRAP, thomas::graphics::Texture::TextureType::DIFFUSE, texturePath);
-				if (tempTex->Initialized())
-					m_texture = tempTex;
-			}
 
-			graphics::Texture * ParticleEmitterComponent::GetTexture()
-			{
-				return m_texture;
-			}
 
 			void ParticleEmitterComponent::CreateParticleUAVsandSRVs()
 			{
@@ -477,17 +463,17 @@ namespace thomas
 				//Header size and texture size
 				int texturesize;
 
-				std::string texName = m_texture->GetName();
+				std::string matName = m_material->GetName();
 				//Texturesize is how long the string is * bytes
-				texturesize = texName.length() * sizeof(char);
+				int matSize = matName.length() * sizeof(char);
 
 				//Opens file
 				std::ofstream file;
 				file.open(path, std::ios::binary | std::ios::out);
 
 				//Header
-				file.write(reinterpret_cast<char*>(&texturesize), sizeof(int));
-				file.write(texName.c_str(), texturesize);
+				file.write(reinterpret_cast<char*>(&matSize), sizeof(int));
+				file.write(matName.c_str(), matSize);
 
 				//Particle System variables
 				file.write(reinterpret_cast<char*>(&m_offset), sizeof(math::Vector3));
@@ -507,13 +493,13 @@ namespace thomas
 				std::ifstream file;
 				file.open(path, std::ios::binary | std::ios::in);
 
-				int textureSize;
-				file.read((char*)&textureSize, sizeof(int));
+				int materialSize;
+				file.read((char*)&materialSize, sizeof(int));
 
 				//Read texture name
-				char* textureName = (char*)malloc(textureSize + 1);
-				file.read(textureName, sizeof(char) * textureSize);
-				textureName[textureSize] = 0;
+				char* materialName = (char*)malloc(materialSize + 1);
+				file.read(materialName, sizeof(char) * materialSize);
+				materialName[materialSize] = 0;
 
 				//read data
 				file.read((char*)&m_offset, sizeof(math::Vector3));
@@ -539,7 +525,7 @@ namespace thomas
 
 				CalculateMaxNrOfParticles();
 
-				SetTexture(textureName);
+				SetMaterial(graphics::Material::Find(materialName));
 			}
 
 			unsigned int ParticleEmitterComponent::GetSpawnedParticleCount()

@@ -92,6 +92,11 @@ namespace thomas
 			return texture;
 		}
 
+		ID3D11SamplerState * Texture::GetSamplerState()
+		{
+			return m_samplerState;
+		}
+
 		ID3D11SamplerState * Texture::GetSamplerState(SamplerState samplerState)
 		{
 			ID3D11SamplerState* sampler;
@@ -156,43 +161,7 @@ namespace thomas
 		{
 			return m_initialized;
 		}
-		bool Texture::Bind()
-		{
-			if (m_textureType == TextureType::UNDEFINED)
-			{
-				Shader::GetCurrentBoundShader()->BindTextureSampler(m_samplerState, m_resourceSlot);
-				return Shader::GetCurrentBoundShader()->BindResource(m_data.textureView, m_resourceSlot);
-			}
-			else if (m_textureType == TextureType::CUBEMAP)
-			{
-				Shader::GetCurrentBoundShader()->BindTextureSampler(m_samplerState, m_resourceSlot);
-				return Shader::GetCurrentBoundShader()->BindResource(m_data.textureView, m_resourceSlot);
-			}
-			else
-			{
-				Shader::GetCurrentBoundShader()->BindTextureSampler(m_samplerState, (int)m_textureType);
-				return Shader::GetCurrentBoundShader()->BindResource(m_data.textureView, (int)m_textureType);
-			}
-			
-		}
-		bool Texture::Unbind()
-		{
-			if (m_textureType == TextureType::UNDEFINED)
-			{
-				Shader::GetCurrentBoundShader()->BindTextureSampler(NULL, m_resourceSlot);
-				return Shader::GetCurrentBoundShader()->BindResource(NULL, m_resourceSlot);
-			}
-			else if (m_textureType == TextureType::CUBEMAP)
-			{
-				Shader::GetCurrentBoundShader()->BindTextureSampler(NULL, m_resourceSlot);
-				return Shader::GetCurrentBoundShader()->BindResource(NULL, m_resourceSlot);
-			}
-			else
-			{
-				Shader::GetCurrentBoundShader()->BindTextureSampler(NULL, (int)m_textureType);
-				return Shader::GetCurrentBoundShader()->BindResource(NULL, (int)m_textureType);
-			}
-		}
+		
 		Texture::Texture(SamplerState samplerState, int slot, TextureType type, std::string path)
 		{
 			m_textureType = type;

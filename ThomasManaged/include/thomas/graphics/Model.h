@@ -14,8 +14,6 @@ namespace thomas {
 			static Model* GetModelByName(std::string name);
 			static std::vector<Model*> GetLoadedModels();
 			std::string GetName();
-			std::vector<Mesh*> GetMeshesByMaterial(Material* material);
-			std::vector<Mesh*> GetMeshesByMaterial(std::string name);
 			std::vector<Mesh*> GetMeshes();
 
 			static void Destroy();

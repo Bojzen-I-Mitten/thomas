@@ -4,7 +4,7 @@
 
 namespace thomas
 {
-	namespace graphics { class Model; }
+	namespace graphics { class Model; class Material; }
 	namespace object
 	{
 		namespace component
@@ -15,10 +15,20 @@ namespace thomas
 			public:
 				RenderComponent();
 				void SetModel(std::string name);
-				graphics::Model * GetModel();
+				
+				graphics::Model * GetModel();	
 				void Update();
-			private:
+
+				void SetMaterial(graphics::Material* material);
+				void SetMaterial(int meshIndex, graphics::Material* material);
+				std::vector<graphics::Material*>* GetMaterials();
+
+			public:
 				graphics::Model* m_model;
+			private:
+				
+				std::vector<graphics::Material*> m_sharedMaterials;
+				std::vector<graphics::Material*> m_materials;
 				//graphics::Geometry* m_geometry;
 			};
 		}

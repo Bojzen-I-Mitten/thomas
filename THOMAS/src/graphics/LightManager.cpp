@@ -28,15 +28,6 @@ namespace thomas
 				return thomas::utils::D3d::FillBuffer(s_lightBuffer, s_lightstruct);
 
 		}
-		bool LightManager::BindAllLights()
-		{
-			return graphics::Shader::GetCurrentBoundShader()->BindBuffer(s_lightBuffer, thomas::graphics::Shader::ResourceType::LIGHTS);
-		}
-
-		bool LightManager::Unbind()
-		{
-			return graphics::Shader::GetCurrentBoundShader()->BindBuffer(NULL, thomas::graphics::Shader::ResourceType::LIGHTS);
-		}
 
 		int LightManager::AddDirectionalLight(DirectionalLightStruct directionalLight)
 		{

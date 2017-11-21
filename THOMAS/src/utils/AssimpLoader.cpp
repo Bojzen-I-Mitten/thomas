@@ -240,10 +240,11 @@ namespace thomas
 
 			aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 
-			material = graphics::Material::CreateMaterial(dir, materialType, mat);
+			//TODO: material import
+			//material = graphics::Material::CreateMaterial(dir, materialType, mat);
 
 
-			graphics::Mesh* m = new graphics::Mesh(vertices, indices, name, material);
+			graphics::Mesh* m = new graphics::Mesh(vertices, indices, name);
 			return m;
 		}
 
