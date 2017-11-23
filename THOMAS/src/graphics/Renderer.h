@@ -6,10 +6,25 @@
 
 namespace thomas {
 
-	namespace object { class GameObject; namespace component { class Camera; } }
+	class Scene;
+	namespace object { class GameObject; namespace component 
+	{ 
+		class Camera;
+		class Transform;
+		class RenderComponent;
+	} }
 
 	namespace graphics
 	{
+		class Mesh;
+		class Material;
+		struct RenderPair
+		{
+			object::component::Transform* transform;
+			Mesh* mesh;
+			Material* material;
+		};
+
 		class THOMAS_API Renderer {
 		private:
 			
@@ -29,12 +44,17 @@ namespace thomas {
 			
 			static ID3D11ShaderResourceView* GetDepthBufferSRV();
 			static ID3D11RenderTargetView* GetBackBuffer();
-
+						
+			static void BindPerFrame();
+			static void BindPerCamera(thomas::object::component::Camera* camera);
+			static void BindPerObject(thomas::graphics::Material* material, thomas::object::component::Transform* transform);
 			
-			static void UpdateGameObjectBuffer(object::component::Camera* camera, object::GameObject* gameObject);
-			static void BindGameObjectBuffer();
-			static void UnBindGameObjectBuffer();
-			static void RenderSetup(object::component::Camera* camera);
+
+			static void Render(Scene* scene);
+
+			static void RenderQueue(std::vector<RenderPair*> renderQueue);
+
+			static bool SortPairs(RenderPair* a, RenderPair* b);
 
 			static void BindDepthNormal();
 			static void BindDepthReadOnly();
@@ -45,28 +65,12 @@ namespace thomas {
 			static void ResetDepthStencilState();
 
 		private:
-			struct GameObjectBuffer
-			{
-				math::Matrix worldMatrix;
-				math::Matrix viewMatrix;
-				math::Matrix projectionMatrix;
-				math::Matrix mvpMatrix;
-				math::Vector3 camPos;
-				float buffer;
-				math::Vector3 camDir;
-				float buffer2;
-			};
 			static ID3D11RenderTargetView* s_backBuffer;
 			static ID3D11ShaderResourceView* s_backBufferSRV;
-			static ID3D11RasterizerState* s_rasterState;
-			static ID3D11RasterizerState* s_wireframeRasterState;
 			static ID3D11DepthStencilState* s_depthStencilState;
 			static ID3D11DepthStencilView* s_depthStencilView;
 			static ID3D11DepthStencilView* s_depthStencilViewReadOnly;
 			static ID3D11ShaderResourceView* s_depthBufferSRV;
-
-			static ID3D11Buffer* s_objectBuffer;
-			static GameObjectBuffer s_objectBufferStruct;
 		};
 	}
 }

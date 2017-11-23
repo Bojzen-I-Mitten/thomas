@@ -48,8 +48,11 @@ namespace thomas
 			PropClass GetObjectPropClass(D3D_SHADER_VARIABLE_TYPE type);
 			TexDim GetTextureDimension(D3D_SHADER_VARIABLE_TYPE type);
 		public:
-			MaterialProperty(Shader::ShaderVariable shaderVariable);
+			MaterialProperty(UINT index, ID3DX11EffectVariable* variable);
+			MaterialProperty(const MaterialProperty* otherProperty);
 			void ApplyProperty(Shader* shader);
+
+			std::string GetName();
 
 			void SetBool(bool& value);
 			void SetFloat(float& value);
@@ -76,10 +79,8 @@ namespace thomas
 			ID3D11UnorderedAccessView* GetUAV();
 
 		private:
-
 			bool m_isSet;
-			unsigned int m_numberOfElements;
-			std::string m_name;
+
 			unsigned int m_index;
 			void* m_value;
 			PropClass m_class;
@@ -87,6 +88,8 @@ namespace thomas
 			TexDim m_textureDimension;
 			size_t m_rawSize;
 			UINT m_rawCount;
+			D3DX11_EFFECT_TYPE_DESC m_typeDesc;
+			D3DX11_EFFECT_VARIABLE_DESC m_variableDesc;
 		};
 
 

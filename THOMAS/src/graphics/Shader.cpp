@@ -30,12 +30,21 @@ namespace thomas
 		{
 			D3DX11_EFFECT_DESC effectDesc;
 			m_effect->GetDesc(&effectDesc);
+
+			if (effectDesc.Techniques == 0)
+			{
+				return;
+			}
+			LOG(m_name);
+
 			for (int i = 0; i < effectDesc.GlobalVariables; i++)
 			{
 				ID3DX11EffectVariable* variable = m_effect->GetVariableByIndex(i);
 				if (variable->IsValid())
 				{
-					m_properties.push_back(new MaterialProperty(i, variable));
+					MaterialProperty* prop = new MaterialProperty(i, variable);
+					m_properties.push_back(prop);
+					LOG(prop->GetName());
 				}
 				
 
@@ -188,8 +197,18 @@ namespace thomas
 			if (Compile(filePath, &effect))
 			{
 				Shader* shader = new Shader(name, effect);
-				s_loadedShaders.push_back(shader);
-				return shader;
+				if (!shader->m_passes.empty())
+				{
+					s_loadedShaders.push_back(shader);
+					return shader;
+				}
+				else
+				{
+					return nullptr;
+					LOG("Can't create shader: " << name << " because it contains no techniques or passes");
+				}
+					
+				
 			}
 			return nullptr;
 		}
@@ -211,8 +230,6 @@ namespace thomas
 				prop->ApplyProperty(this);
 
 			ThomasCore::GetDeviceContext()->IASetInputLayout(m_passes[m_currentPass].inputLayout);
-			ID3DX11EffectPass* pass = m_effect->GetTechniqueByIndex(0)->GetPassByIndex(m_currentPass);
-			pass->Apply(0, ThomasCore::GetDeviceContext());
 		}
 		std::string Shader::GetName()
 		{
@@ -235,6 +252,11 @@ namespace thomas
 					
 			}
 		}
+		void Shader::ApplyShader()
+		{
+			ID3DX11EffectPass* pass = m_effect->GetTechniqueByIndex(0)->GetPassByIndex(m_currentPass);
+			pass->Apply(0, ThomasCore::GetDeviceContext());
+		}
 		void Shader::DestroyAllShaders()
 		{
 			for (int i = 0; i < s_loadedShaders.size(); i++)
@@ -243,6 +265,68 @@ namespace thomas
 			}
 			s_loadedShaders.clear();
 		}
+
+		void Shader::SetGlobalColor(const std::string & name, math::Color value)
+		{
+			for (auto shader : s_loadedShaders)
+			{
+				if (shader->HasProperty(name))
+				{
+					shader->GetProperty(name)->SetVector(value.ToVector4());
+				}
+			}
+		}
+		void Shader::SetGlobalFloat(const std::string & name, float value)
+		{
+			for (auto shader : s_loadedShaders)
+			{
+				if (shader->HasProperty(name))
+				{
+					shader->GetProperty(name)->SetFloat(value);
+				}
+			}
+		}
+		void Shader::SetGlobalInt(const std::string & name, int value)
+		{
+			for (auto shader : s_loadedShaders)
+			{
+				if (shader->HasProperty(name))
+				{
+					shader->GetProperty(name)->SetInt(value);
+				}
+			}
+		}
+		void Shader::SetGlobalMatrix(const std::string & name, math::Matrix value)
+		{
+			for (auto shader : s_loadedShaders)
+			{
+				if (shader->HasProperty(name))
+				{
+					shader->GetProperty(name)->SetMatrix(value);
+				}
+			}
+		}
+		void Shader::SetGlobalTexture(const std::string & name, Texture & value)
+		{
+			for (auto shader : s_loadedShaders)
+			{
+				if (shader->HasProperty(name))
+				{
+					shader->GetProperty(name)->SetTexture(value);
+				}
+			}
+		}
+		void Shader::SetGlobalVector(const std::string & name, math::Vector4 value)
+		{
+			for (auto shader : s_loadedShaders)
+			{
+				if (shader->HasProperty(name))
+				{
+					shader->GetProperty(name)->SetVector(value);
+				}
+			}
+		}
+
 		ID3DX11Effect * Shader::GetEffect()
 		{
 			return m_effect;

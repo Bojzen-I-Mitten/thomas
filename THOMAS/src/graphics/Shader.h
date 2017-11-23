@@ -4,11 +4,13 @@
 #include <d3dx11effect.h>
 #include <vector>
 #include <map>
+#include "../utils/Math.h"
 namespace thomas
 {
 	namespace graphics
 	{
 		class MaterialProperty;
+		class Texture;
 		class THOMAS_API Shader
 		{
 		public:
@@ -31,12 +33,27 @@ namespace thomas
 
 			void SetPass(int index);
 			void SetPass(const std::string& name);
+			void ApplyShader();
 
 			static void DestroyAllShaders();
 
+			static void SetGlobalColor(const std::string& name, math::Color value);
+
+			static void SetGlobalFloat(const std::string& name, float value);
+
+			static void SetGlobalInt(const std::string& name, int value);
+
+			static void SetGlobalMatrix(const std::string& name, math::Matrix value);
+
+			static void SetGlobalTexture(const std::string& name, Texture& value);
+
+			static void SetGlobalVector(const std::string& name, math::Vector4 value);
+
+
 			ID3DX11Effect* GetEffect();
 			bool HasProperty(const std::string& name);
-			MaterialProperty* GetProperty(const std::string& name);		
+			MaterialProperty* GetProperty(const std::string& name);
+
 		private:
 			struct ShaderPass
 			{

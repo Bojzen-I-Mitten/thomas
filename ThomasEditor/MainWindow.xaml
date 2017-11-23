@@ -37,7 +37,7 @@
                         </xcad:LayoutDocumentPane>
                         <xcad:LayoutDocumentPane>
                             <xcad:LayoutAnchorable ContentId="Console" Title="Console" >
-                                <ListBox Name="console">
+                                <ListBox Name="console" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                 </ListBox>
                             </xcad:LayoutAnchorable>
                         </xcad:LayoutDocumentPane>

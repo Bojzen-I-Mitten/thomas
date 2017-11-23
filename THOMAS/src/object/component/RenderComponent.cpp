@@ -3,6 +3,8 @@
 #include "../../graphics/Material.h"
 #include "../../graphics/Model.h"
 #include "../GameObject.h"
+#include "../../graphics/Renderer.h"
+#include "../../Scene.h"
 namespace thomas {
 	namespace object {
 		namespace component {
@@ -13,54 +15,46 @@ namespace thomas {
 
 			void RenderComponent::SetModel(std::string name)
 			{
-				m_model = graphics::Model::GetModelByName(name);
-				m_materials.clear();
-				
-				if (!m_model)
+
+				graphics::Model* model = graphics::Model::GetModelByName(name);				
+				if (!model)
 				{
 					LOG("ERROR: no model named \"" << name << "\" is loaded");
 				}
 				else
 				{
-					m_materials.resize(m_model->GetMeshes().size());
+					m_renderPairs.clear();
+					std::vector<graphics::Mesh*> meshes = model->GetMeshes();
+					for (graphics::Mesh* mesh : meshes)
+					{
+						graphics::RenderPair* renderPair = new graphics::RenderPair();
+						renderPair->mesh = mesh;
+						renderPair->material = NULL;
+						renderPair->transform = m_gameObject->m_transform;
+
+						m_renderPairs.push_back(renderPair);
+					}
 				}
 					
 			}
 
-			void RenderComponent::SetMaterial(graphics::Material * material)
+			void RenderComponent::Update()
 			{
-				if (m_model->GetMeshes().size() > 0)
-				{
-					m_materials[0] = material;
-				}
-					
+				std::vector<graphics::RenderPair*> setPairs;
+				for (auto pair : m_renderPairs)
+					if (pair->material)
+						m_scene->AddToRenderQueue(pair);
 			}
 
 			void RenderComponent::SetMaterial(int meshIndex, graphics::Material * material)
 			{
-				if (meshIndex < m_model->GetMeshes().size())
-					m_materials[meshIndex] = material;
+				if (meshIndex < m_renderPairs.size())
+					m_renderPairs[meshIndex]->material = material;
 			}
 
 			graphics::Model * RenderComponent::GetModel()
 			{
 				return m_model;
-			}
-			std::vector<graphics::Material*>* RenderComponent::GetMaterials()
-			{
-				return &m_materials;
-			}
-
-			void RenderComponent::Update()
-			{
-				for (graphics::Material* material : m_materials)
-				{
-					if (material != nullptr)
-					{
-						material->SetMatrix("worldMatrix", m_gameObject->GetComponent<Transform>()->GetWorldMatrix());
-					}
-				}
-				
 			}
 		}
 	}

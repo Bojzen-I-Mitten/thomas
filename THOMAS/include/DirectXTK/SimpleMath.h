@@ -229,6 +229,8 @@ struct Vector3 : public XMFLOAT3
     Vector3& operator= (const Vector3& V) { x = V.x; y = V.y; z = V.z; return *this; }
     Vector3& operator= (const XMFLOAT3& V) { x = V.x; y = V.y; z = V.z; return *this; }
     Vector3& operator= (const XMVECTORF32& F) { x = F.f[0]; y = F.f[1]; z = F.f[2]; return *this; }
+
+	
     Vector3& operator+= (const Vector3& V);
     Vector3& operator-= (const Vector3& V);
     Vector3& operator*= (const Vector3& V);
@@ -335,7 +337,7 @@ struct Vector4 : public XMFLOAT4
     explicit Vector4(const XMVECTORF32& F) { this->x = F.f[0]; this->y = F.f[1]; this->z = F.f[2]; this->w = F.f[3]; }
 
     operator XMVECTOR() const { return XMLoadFloat4( this ); }
-
+	
     // Comparison operators
     bool operator == ( const Vector4& V ) const;
     bool operator != ( const Vector4& V ) const;
@@ -344,6 +346,9 @@ struct Vector4 : public XMFLOAT4
     Vector4& operator= (const Vector4& V) { x = V.x; y = V.y; z = V.z; w = V.w; return *this; }
     Vector4& operator= (const XMFLOAT4& V) { x = V.x; y = V.y; z = V.z; w = V.w; return *this; }
     Vector4& operator= (const XMVECTORF32& F) { x = F.f[0]; y = F.f[1]; z = F.f[2]; w = F.f[3]; return *this; }
+
+	Vector4& operator= (const Vector3& V) { x = V.x; y = V.y; z = V.z; w = 0; return *this; }
+
     Vector4& operator+= (const Vector4& V);
     Vector4& operator-= (const Vector4& V);
     Vector4& operator*= (const Vector4& V);

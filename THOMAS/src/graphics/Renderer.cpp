@@ -14,6 +14,11 @@
 #include "../object/component/Transform.h"
 #include "../Input.h"
 
+#include "../ThomasTime.h"
+#include "Material.h"
+#include <algorithm>
+#include "../utils/DebugTools.h"
+
 namespace thomas
 {
 	namespace graphics
@@ -21,28 +26,16 @@ namespace thomas
 		
 		ID3D11RenderTargetView* Renderer::s_backBuffer = NULL;
 		ID3D11ShaderResourceView* Renderer::s_backBufferSRV = NULL;
-		ID3D11RasterizerState* Renderer::s_rasterState = NULL;
-		ID3D11RasterizerState* Renderer::s_wireframeRasterState = NULL;
 		ID3D11DepthStencilState* Renderer::s_depthStencilState = NULL;
 		ID3D11DepthStencilView* Renderer::s_depthStencilView = NULL;
 		ID3D11ShaderResourceView* Renderer::s_depthBufferSRV = NULL;
 		ID3D11DepthStencilView* Renderer::s_depthStencilViewReadOnly = NULL;
 
-		ID3D11Buffer* Renderer::s_objectBuffer;
-		Renderer::GameObjectBuffer Renderer::s_objectBufferStruct;
 
 		bool thomas::graphics::Renderer::Init()
 		{
 
-			if (utils::D3d::InitRenderer(s_backBuffer, s_backBufferSRV, s_depthStencilState, s_depthStencilView, s_depthStencilViewReadOnly, s_depthBufferSRV))
-			{
-				s_objectBuffer = utils::D3d::CreateDynamicBufferFromStruct(s_objectBufferStruct, D3D11_BIND_CONSTANT_BUFFER);
-				s_rasterState = utils::D3d::CreateRasterizer(D3D11_FILL_SOLID, D3D11_CULL_BACK);
-				s_wireframeRasterState = utils::D3d::CreateRasterizer(D3D11_FILL_WIREFRAME, D3D11_CULL_BACK);
-				return true;
-
-			}
-			return false;
+			return (utils::D3d::InitRenderer(s_backBuffer, s_backBufferSRV, s_depthStencilState, s_depthStencilView, s_depthStencilViewReadOnly, s_depthBufferSRV));
 		}
 
 		bool Renderer::Resize()
@@ -53,8 +46,7 @@ namespace thomas
 			SAFE_RELEASE(s_depthStencilView);
 			SAFE_RELEASE(s_depthStencilState);
 			SAFE_RELEASE(s_depthStencilViewReadOnly);
-			SAFE_RELEASE(s_depthBufferSRV);
-			
+			SAFE_RELEASE(s_depthBufferSRV);	
 
 			ThomasCore::GetSwapChain()->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 			ID3D11Texture2D* pBuffer;
@@ -75,32 +67,17 @@ namespace thomas
 		void thomas::graphics::Renderer::Render()
 		{
 			Scene::Render();
-
-
-
-			if (Input::GetKey(Input::Keys::X))
-			{
-				ThomasCore::GetDeviceContext()->RSSetState(s_wireframeRasterState);
-			}
-			else
-			{
-				ThomasCore::GetDeviceContext()->RSSetState(s_rasterState);
-			}
-
-			ThomasCore::GetSwapChain()->Present(0, 0);
+						
 		}
 
 		bool Renderer::Destroy()
 		{
 			SAFE_RELEASE(s_backBuffer);
 			SAFE_RELEASE(s_backBufferSRV);
-			SAFE_RELEASE(s_rasterState);
-			SAFE_RELEASE(s_wireframeRasterState);
 			SAFE_RELEASE(s_depthStencilState);
 			SAFE_RELEASE(s_depthStencilView);
 			SAFE_RELEASE(s_depthStencilViewReadOnly);
 			SAFE_RELEASE(s_depthBufferSRV);
-			SAFE_RELEASE(s_objectBuffer);
 			
 			return true;
 		}
@@ -113,26 +90,7 @@ namespace thomas
 			}
 			return cameras;
 		}
-		void Renderer::UpdateGameObjectBuffer(object::component::Camera * camera, object::GameObject * gameObject)
-		{
-			//Fill matrix buffer with gameObject info
-
-			s_objectBufferStruct.worldMatrix = gameObject->m_transform->GetWorldMatrix().Transpose();
-			s_objectBufferStruct.viewMatrix = camera->GetViewMatrix().Transpose();
-			s_objectBufferStruct.projectionMatrix = camera->GetProjMatrix().Transpose();
-			s_objectBufferStruct.mvpMatrix = s_objectBufferStruct.projectionMatrix * s_objectBufferStruct.viewMatrix * s_objectBufferStruct.worldMatrix;
-			s_objectBufferStruct.camPos = camera->GetPosition();
-			s_objectBufferStruct.camDir = camera->m_gameObject->m_transform->Forward();
-
-			utils::D3d::FillDynamicBufferStruct(s_objectBuffer, s_objectBufferStruct);
-
-			
-		}
-
-		void Renderer::BindGameObjectBuffer()
-		{
-			//thomas::graphics::Shader::GetCurrentBoundShader()->BindBuffer(s_objectBuffer, thomas::graphics::Shader::ResourceType::GAME_OBJECT);
-		}
+	
 
 		ID3D11ShaderResourceView* Renderer::GetDepthBufferSRV()
 		{
@@ -142,19 +100,90 @@ namespace thomas
 		{
 			return s_backBuffer;
 		}
-		void Renderer::UnBindGameObjectBuffer()
+
+		void Renderer::BindPerFrame()
 		{
-			//thomas::graphics::Shader::GetCurrentBoundShader()->BindBuffer(NULL, thomas::graphics::Shader::ResourceType::GAME_OBJECT);
+			//ThomasPerFrame
+			float realDeltaTime = ThomasTime::GetActualDeltaTime();
+			float dt = ThomasTime::GetDeltaTime();
+			math::Vector4 thomas_DeltaTime(realDeltaTime, 1 / realDeltaTime, dt, 1 / dt);
+
+			Shader::SetGlobalVector("thomas_DeltaTime", thomas_DeltaTime);
 		}
-		void Renderer::RenderSetup(object::component::Camera* camera)
+
+		void Renderer::BindPerCamera(thomas::object::component::Camera * camera)
 		{
 			ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &s_backBuffer, s_depthStencilView);
-			if(camera)
-				ThomasCore::GetDeviceContext()->RSSetViewports(1, camera->GetViewport().Get11());
-
-			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(s_depthStencilState, 1);
-			ThomasCore::GetDeviceContext()->RSSetState(s_rasterState);
+			ThomasCore::GetDeviceContext()->RSSetViewports(1, camera->GetViewport().Get11());
+			//ThomasPerCamera
+			Shader::SetGlobalMatrix("thomas_CameraProjection", camera->GetProjMatrix());
+			Shader::SetGlobalMatrix("thomas_MatrixV", camera->GetViewMatrix());
+			Shader::SetGlobalMatrix("thomas_MatrixInvV", camera->GetViewMatrix().Invert());
+			Shader::SetGlobalMatrix("thomas_MatrixVP", camera->GetViewProjMatrix());
+			
+			Shader::SetGlobalVector("_WorldSpaceCameraPos", (math::Vector4)camera->GetPosition());
 		}
+
+		void Renderer::BindPerObject(thomas::graphics::Material * material, thomas::object::component::Transform * transform)
+		{
+			thomas::graphics::MaterialProperty* prop;
+
+			prop = material->GetProperty("thomas_ObjectToWorld");
+			prop->SetMatrix(transform->GetWorldMatrix());
+			prop->ApplyProperty(material->GetShader());
+
+			prop = material->GetProperty("thomas_WorldToObject");
+			prop->SetMatrix(transform->GetWorldMatrix().Invert());
+			prop->ApplyProperty(material->GetShader());
+
+		}
+
+		void Renderer::Render(Scene * scene)
+		{
+			Clear();
+			ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &s_backBuffer, s_depthStencilView);
+			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(s_depthStencilState, 1);
+			BindPerFrame();
+
+			std::vector<object::component::Camera*> cameras = object::Object::FindObjectsOfType<object::component::Camera>();
+			for (object::component::Camera* camera : cameras)
+			{
+				ThomasCore::GetDeviceContext()->RSSetViewports(1, camera->GetViewport().Get11());
+				BindPerCamera(camera);
+				RenderQueue(scene->GetRenderQueue());
+
+				Physics::DrawDebug(camera);
+				
+			}
+			utils::DebugTools::Draw();
+			ThomasCore::GetSwapChain()->Present(0, 0);
+						
+		}
+
+		void Renderer::RenderQueue(std::vector<RenderPair*> renderQueue)
+		{
+
+			std::sort(renderQueue.begin(), renderQueue.end(), SortPairs);
+
+			Material* lastMaterial;
+			for (RenderPair* renderPair : renderQueue)
+			{
+				if (lastMaterial != renderPair->material)
+				{
+					lastMaterial = renderPair->material;
+					lastMaterial->Bind();
+				}
+				BindPerObject(lastMaterial, renderPair->transform);
+
+				lastMaterial->Draw(renderPair->mesh);
+			}
+		}
+
+		bool Renderer::SortPairs(RenderPair* a, RenderPair* b)
+		{
+			return a->material->GetId() < a->material->GetId();
+		}
+
 		void Renderer::BindDepthNormal()
 		{
 			ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &s_backBuffer, s_depthStencilView);

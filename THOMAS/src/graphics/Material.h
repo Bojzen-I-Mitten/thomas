@@ -13,12 +13,16 @@ namespace thomas
 		class THOMAS_API Material
 		{
 		protected:
-			void SetProperties();
 			void SetSampler(const std::string name, Texture& value);
-			MaterialProperty* GetProperty(const std::string& name);
-			void Bind();
+			
+			
 		public:
 			Material(Shader* shader);
+			Material(Material* original);
+			~Material();
+
+			void Bind();
+			MaterialProperty* GetProperty(const std::string& name);
 			void SetShader(Shader* shader);
 			Shader* GetShader();
 			std::string GetName();
@@ -52,16 +56,29 @@ namespace thomas
 			void Draw(Mesh* mesh);
 			void Draw(UINT vertexCount, UINT startVertexLocation);
 
-
+			Material* GetBaseMaterial();
 			static Material* Find(std::string name);
+
+			static std::vector<Material*>* GetMaterialInstances();
+
+			UINT GetId();
 
 		public:
 			int m_renderQueue;
 			std::string m_name;
 			D3D11_PRIMITIVE_TOPOLOGY m_topology;
 		private:
+			bool m_isInstance;
+			Material* m_baseMaterial;
+			UINT m_id;
 			Shader* m_shader;
 			std::vector<MaterialProperty*> m_properties;
+
+			static std::vector<Material*> s_materials;
+			static std::vector<Material*> s_materialInstances;
+
+
+			static UINT s_idCounter;
 		};
 	}
 }

@@ -22,6 +22,7 @@ namespace thomas
 	namespace graphics {
 		class Material;
 		class Model;
+		struct RenderPair;
 	}
 
 	class THOMAS_API Scene
@@ -34,6 +35,11 @@ namespace thomas
 		static void UnloadScene();
 		void static UpdateCurrentScene();
 		static void Render();
+
+		void AddToRenderQueue(graphics::RenderPair* renderPair);
+		void ClearRenderQueue();
+		std::vector<graphics::RenderPair*> GetRenderQueue();
+
 		void Render3D(object::component::Camera* camera);
 		void Render2D(object::component::Camera* camera);
 		//void RemoveMaterial(std::string name);
@@ -56,6 +62,7 @@ namespace thomas
 		std::string GetName() { return m_name; }
 		//static void SetStatPointer(PlayerStats* stats);
 	private:
+		std::vector<graphics::RenderPair*> m_renderQueue;
 		static Scene* s_currentScene;
 		static bool s_drawDebugPhysics;
 		//static PlayerStats* s_stats;
