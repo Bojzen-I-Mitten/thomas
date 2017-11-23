@@ -14,11 +14,12 @@
 //#include <Sound.h>
 #include <thomas\utils\DebugTools.h>
 
+#include <thomas\graphics\Shader.h>
+
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace thomas;
 using namespace thomas::object;
-
 
 
 namespace ThomasEditor {

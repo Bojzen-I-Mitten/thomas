@@ -39,8 +39,6 @@ namespace thomas {
 
 		bool init = Window::Initialized();
 
-		LOG(Window::GetWidth());
-
 		if (init)
 			init = Input::Init();
 

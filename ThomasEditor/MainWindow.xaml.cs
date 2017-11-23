@@ -83,7 +83,14 @@ namespace ThomasEditor
                 if(outputs.Count > 0)
                 {
                     foreach (String output in outputs)
-                        console.Items.Add(output);
+                    {
+                        TextBlock block = new TextBlock();
+                        block.Text = output;
+                        block.TextWrapping = TextWrapping.Wrap;
+                        console.Items.Add(block);
+                        console.Items.Add(new Separator());
+                    }
+                       
                 }
                 
 

@@ -6,6 +6,10 @@ namespace thomas
 {
 	namespace graphics
 	{
+		std::vector<Material*> Material::s_materials;
+		std::vector<Material*> Material::s_materialInstances;
+
+		UINT Material::s_idCounter = 0;
 
 		void Material::SetSampler(const std::string name, Texture & value)
 		{
@@ -18,6 +22,47 @@ namespace thomas
 		Material::Material(Shader * shader)
 		{
 			m_shader = shader;
+			s_materialInstances.push_back(this);
+			s_materials.push_back(this);
+			m_isInstance = false;
+			m_id = s_idCounter;
+			s_idCounter++;
+		}
+
+		Material::Material(Material * original)
+		{
+			m_baseMaterial = original->GetBaseMaterial();
+			m_isInstance = true;
+			m_shader = original->m_shader;
+			m_renderQueue = original->m_renderQueue;
+			m_name = original->m_name;
+			m_topology = original->m_topology;
+
+			for (MaterialProperty* prop : original->m_properties)
+			{
+				m_properties.push_back(new MaterialProperty(prop));
+			}
+			s_materialInstances.push_back(this);
+
+			m_id = s_idCounter;
+			s_idCounter++;
+		}
+
+		Material::~Material()
+		{
+			for (UINT i = 0; i < s_materialInstances.size(); i++)
+			{
+				if (s_materialInstances[i]->m_id == m_id)
+					s_materialInstances.erase(s_materialInstances.begin() + i);
+			}
+			if (!m_isInstance)
+			{
+				for (UINT i = 0; i < s_materials.size(); i++)
+				{
+					if (s_materials[i]->m_id == m_id)
+						s_materials.erase(s_materials.begin() + i);
+				}
+			}
 		}
 
 		void Material::SetShader(Shader * shader)
@@ -248,15 +293,16 @@ namespace thomas
 		}
 		void Material::Bind()
 		{
+			m_shader->Bind();
 			for (auto prop : m_properties)
 			{
 				prop->ApplyProperty(m_shader);
 			}
-			m_shader->Bind();
 		}
 		void Material::Draw(Mesh * mesh)
 		{
 			Bind();
+			m_shader->ApplyShader();
 			mesh->Draw(m_shader);
 		}
 		void Material::Draw(UINT vertexCount, UINT startVertexLocation)
@@ -264,9 +310,24 @@ namespace thomas
 			Bind();
 			ThomasCore::GetDeviceContext()->Draw(vertexCount, startVertexLocation);
 		}
+		Material * Material::GetBaseMaterial()
+		{
+			if (m_isInstance)
+				return m_baseMaterial->GetBaseMaterial();
+			else
+				return this;
+		}
 		Material * Material::Find(std::string name)
 		{
 			return nullptr;
+		}
+		std::vector<Material*>* Material::GetMaterialInstances()
+		{
+			return &s_materialInstances;
+		}
+		UINT Material::GetId()
+		{
+			return m_id;
 		}
 	}
 }

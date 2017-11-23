@@ -140,13 +140,17 @@ namespace thomas
 
 			MaterialProperty::MaterialProperty(const MaterialProperty* otherProperty)
 			{
-				m_isSet = false;
+				m_isSet = otherProperty->m_isSet;
 				m_index = otherProperty->m_index;
 				m_typeDesc = otherProperty->m_typeDesc;
 				m_variableDesc = otherProperty->m_variableDesc;
 				m_class = otherProperty->m_class;
 				m_type = otherProperty->m_type;
 				m_textureDimension = otherProperty->m_textureDimension;
+				m_value = otherProperty->m_value;
+				m_rawCount = otherProperty->m_rawCount;
+				m_rawSize = otherProperty->m_rawSize;
+				
 			}
 
 			void MaterialProperty::ApplyProperty(Shader * shader)

@@ -4,7 +4,7 @@
 
 namespace thomas
 {
-	namespace graphics { class Model; class Material; }
+	namespace graphics { class Model; class Material; struct RenderPair; }
 	namespace object
 	{
 		namespace component
@@ -19,16 +19,13 @@ namespace thomas
 				graphics::Model * GetModel();	
 				void Update();
 
-				void SetMaterial(graphics::Material* material);
 				void SetMaterial(int meshIndex, graphics::Material* material);
-				std::vector<graphics::Material*>* GetMaterials();
 
 			public:
 				graphics::Model* m_model;
 			private:
 				
-				std::vector<graphics::Material*> m_sharedMaterials;
-				std::vector<graphics::Material*> m_materials;
+				std::vector<graphics::RenderPair*> m_renderPairs;
 				//graphics::Geometry* m_geometry;
 			};
 		}

@@ -21,6 +21,7 @@
 #include "ThomasCore.h"
 #include "object\component\Camera.h"
 #include "graphics\Material.h"
+#
 namespace thomas
 {
 	Scene* Scene::s_currentScene;
@@ -67,8 +68,7 @@ namespace thomas
 	}
 	void Scene::UpdateCurrentScene()
 	{
-		//Temp fix for ocean.
-		graphics::Renderer::RenderSetup(NULL);
+		
 		if (s_currentScene)
 		{
 			std::string name = s_currentScene->GetName();
@@ -101,109 +101,21 @@ namespace thomas
 			LOG("No scene set")
 				return;
 		}
-		std::vector<object::GameObject*> cameraObjects = object::GameObject::FindGameObjectsWithComponent<object::component::Camera>();
-		std::vector<object::component::Camera*> cameras;
-		for (object::GameObject* object : cameraObjects)
-			cameras.push_back(object->GetComponent<object::component::Camera>());
-		for (object::component::Camera* camera : cameras)
-		{
-			graphics::Renderer::Clear();
-			graphics::Renderer::RenderSetup(camera);
-
-			s_currentScene->Render3D(camera);
-			if (s_drawDebugPhysics)
-				Physics::DrawDebug(camera);
-			s_currentScene->Render2D(camera);
-
-
-			utils::DebugTools::Draw();
-			ThomasCore::GetSwapChain()->Present(0, 0);
-		}
+		graphics::Renderer::Render(s_currentScene);
+		s_currentScene->ClearRenderQueue();
 	}
-	void Scene::Render3D(object::component::Camera * camera)
+	void Scene::AddToRenderQueue(graphics::RenderPair * renderPair)
 	{
-		std::vector<object::component::RenderComponent*> renderComponents = GetAllRenderComponents();
-
-		for (object::component::RenderComponent* renderComponent : renderComponents)
-		{
-			std::vector<thomas::graphics::Mesh*> meshes = renderComponent->GetModel()->GetMeshes();
-			std::vector<thomas::graphics::Material*>* materials = renderComponent->GetMaterials();
-
-			for (int i = 0; i < meshes.size(); i++)
-			{
-				graphics::Material* material = materials->at(i);
-				if (material != nullptr)
-				{
-					material->SetMatrix("viewProjMatrix", camera->GetViewProjMatrix());
-					material->Draw(meshes[i]);
-					
-				}
-			}
-		}
-		/*
-		
-
-		utils::FrustumCulling::GenerateClippingPlanes(camera);
-
-		for (graphics::Shader* shader : graphics::Shader::GetShadersByScene(s_currentScene))
-		{
-			shader->Bind();
-			camera->BindReflection();
-			graphics::Renderer::BindGameObjectBuffer();
-			graphics::LightManager::BindAllLights();
-			for (graphics::Material* material : graphics::Material::GetMaterialsByShader(shader))
-			{
-				bool matBound = false;
-				for (object::component::RenderComponent* renderComponent : renderComponents)
-				{
-					if (renderComponent->GetModel())
-					{
-						object::component::FrustumCullingComponent* frustumCullingComponent = renderComponent->m_gameObject->GetComponent<object::component::FrustumCullingComponent>();
-						if (frustumCullingComponent == NULL || utils::FrustumCulling::Cull(frustumCullingComponent))
-						{
-							std::vector<graphics::Mesh*> meshes = renderComponent->GetModel()->GetMeshesByMaterial(material);
-							if (!meshes.empty())
-							{
-								if (!matBound)
-								{
-									material->Bind();
-									matBound = true;
-								}
-								graphics::Renderer::UpdateGameObjectBuffer(camera, renderComponent->m_gameObject);
-								for (graphics::Mesh* mesh : meshes)
-								{
-									mesh->Bind();
-									mesh->Draw();
-									mesh->Unbind();
-								}
-							}
-						}
-					}
-				}
-				material->Unbind();
-			}
-			shader->Unbind();
-		}
-		
-		camera->BindSkybox();
-		camera->UnbindSkybox();
-
-
-		ThomasCore::GetDeviceContext()->OMSetDepthStencilState(graphics::ParticleSystem::GetDepthStencilState(), 1);
-		for (object::GameObject* gameObject : object::GameObject::FindGameObjectsWithComponent<object::component::ParticleEmitterComponent>())
-		{
-			if (gameObject->GetActive())
-				for (object::component::ParticleEmitterComponent* emitterComponent : gameObject->GetComponents<object::component::ParticleEmitterComponent>())
-				{
-					if (emitterComponent->GetActive() && emitterComponent->GetSpawnedParticleCount() > 0 && emitterComponent->GetDrawTimer() > 0)
-						graphics::ParticleSystem::DrawParticles(camera, emitterComponent);
-				}
-		}
-
-		graphics::Renderer::ResetDepthStencilState();
-		*/
+		m_renderQueue.push_back(renderPair);
 	}
-
+	void Scene::ClearRenderQueue()
+	{
+		m_renderQueue.clear();
+	}
+	std::vector<graphics::RenderPair*> Scene::GetRenderQueue()
+	{
+		return m_renderQueue;
+	}
 
 
 	void Scene::Render2D(object::component::Camera * camera)

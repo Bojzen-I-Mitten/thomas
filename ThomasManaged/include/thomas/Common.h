@@ -7,7 +7,7 @@
 
 
 #ifdef _DEBUG
-#define LOG(msg){std::stringstream __buff__; __buff__ << __FUNCTION__  << ": " << msg; thomas::ThomasCore::LogOutput(__buff__.str());}
+#define LOG(msg){std::stringstream __buff__; __buff__ << msg; thomas::ThomasCore::LogOutput(__buff__.str());}
 #else
 #define LOG(msg) ;
 #endif

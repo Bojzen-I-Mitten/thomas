@@ -38,6 +38,9 @@ namespace thomas
 
 			static std::vector<Object*> GetObjects();
 			static Object* GetObjectByType(std::string type);
+			
+			template<typename T>
+			static std::vector<T*> FindObjectsOfType();
 
 			static std::vector<Object*> GetAllObjectsInScene(Scene* scene);
 
@@ -59,6 +62,19 @@ namespace thomas
 			s_objects.push_back(object);
 			object->m_scene = scene;
 			return object;
+		}
+		template<typename T>
+		inline std::vector<T*> Object::FindObjectsOfType()
+		{
+			std::vector<T*> objects;
+			std::vector<GameObject*> gameObjectsWithComponent;
+			for (UINT i = 0; i < s_objects.size(); i++)
+			{
+				T* object = dynamic_cast<T*>(s_objects[i]);
+				if (object)
+					objects.push_back(object);
+			}
+			return objects;
 		}
 	}
 }
