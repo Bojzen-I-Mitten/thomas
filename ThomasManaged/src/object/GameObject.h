@@ -10,36 +10,84 @@
 #include "component\Transform.h"
 using namespace System;
 using namespace System::Collections::Generic;
+using namespace System::ComponentModel;
+using namespace System::Collections::ObjectModel;
+using namespace Mindscape::WpfElements::WpfPropertyGrid;
 namespace ThomasEditor {
 
-	public ref class GameObject : public Object
+	public ref class GameObject : public Object, public INotifyPropertyChanged
 	{
-		thomas::object::GameObject* nativePtr;
-		List<Component^> components;
+		
+		ObservableDictionary<String^,Component^> m_components;
 		Transform^ m_transform;
-	internal:
-		GameObject(thomas::object::GameObject* ptr) : Object((thomas::object::Object*)ptr) {
-			nativePtr = ptr;
-			m_transform = gcnew Transform(nativePtr->GetComponent<thomas::object::component::Transform>());
-		}
+		static ObservableCollection<GameObject^> s_gameObjects;
+		String^ m_name;
 	public:
-		GameObject(String^ type) : Object(type) {
-			nativePtr = new thomas::object::GameObject(msclr::interop::marshal_as<std::string>(type));
-			m_transform = gcnew Transform(nativePtr->GetComponent<thomas::object::component::Transform>());
+		GameObject(String^ name) {
+			m_name = name;
+			nativePtr = new thomas::object::GameObject(msclr::interop::marshal_as<std::string>(name));
+			m_transform = AddComponent<Transform^>();
+			s_gameObjects.Add(this);
+			
 		}
 
+		virtual event PropertyChangedEventHandler^ PropertyChanged;
+
+		property String^ Name
+		{
+			String^ get() { return m_name; }
+
+			void set(String^ value)
+			{
+				m_name = value;
+				OnPropertyChanged("Name");
+			}
+		}
+
+		property bool activeSelf
+		{
+			bool get()
+			{
+				return ((thomas::object::GameObject*)nativePtr)->m_activeSelf;
+			}
+			void set(bool value)
+			{
+				((thomas::object::GameObject*)nativePtr)->m_activeSelf = value;
+			}
+		}
+		
+
+		String^ ToString() override
+		{
+			return Name;
+		}
+
+		[BrowsableAttribute(false)]
 		property Transform^ transform {
 			Transform^ get() {
 				return m_transform;
 			}
 		}
 
+		property ObservableDictionary<String^, Component^>^ Components {
+			ObservableDictionary<String^, Component^>^ get() {
+				return %m_components;
+			}
+		}
+
+		static property ObservableCollection<GameObject^>^ GameObjects {
+			ObservableCollection<GameObject^>^ get() {
+				return %s_gameObjects;
+			}
+		}
+
 		generic<typename T>
 		where T : Component
-		T AddComponentWithType() {
+		T AddComponent() {
 			
 			T component = (T)Activator::CreateInstance(T::typeid);
-			components.Add((Component^)component);
+			((Component^)component)->setGameObject(this);
+			m_components.Add((T::typeid)->Name, (Component^)component);
 			return component;
 		}
 
@@ -47,57 +95,26 @@ namespace ThomasEditor {
 		where T : Component
 		T GetComponent()
 		{
-			for each(Component^ component in components) {
-				if (T comp = safe_cast<T>(component))
-					return comp;
-			}
-			return T();
+			if (m_components.ContainsKey((T::typeid)->Name))
+				return (T)m_components[(T::typeid)->Name];
+			else
+				return T();
 		}
 		
-		/*
 
-		generic<typename T>
-		T GetComponent() { return nativePtr->GetComponent<T>(); }
-		generic<typename T>
-		List<T> GetComponents() { return nativePtr->GetComponents<T>(); }
-		*/
-		static GameObject^ Find(String^ type) {
-			thomas::object::GameObject* nativeGameObject = thomas::object::GameObject::Find(msclr::interop::marshal_as<std::string>(type));
-			if (nativeGameObject != nullptr)
-				return gcnew GameObject(nativeGameObject);
-			else
-				return nullptr;
+		static GameObject^ Find(String^ name) {
+			for each(GameObject^ gameObject in s_gameObjects)
+			{
+				if (gameObject->Name == name)
+					return gameObject;
+			}
+			return nullptr;
 		};
 
 
-		/*
-		generic<typename T>
-		static List<GameObject^> FindGameObjectsWithComponent()
+		void OnPropertyChanged(String^ info)
 		{
-			std::vector<thomas::object::GameObject*> nativeGameObjects = thomas::object::GameObject::FindGameObjectsWithComponent<T>();
-
-			List<GameObject^>^ managedGameObjects = gcnew List<GameObject^>(nativeGameObjects.size());
-
-			for (thomas::object::GameObject* nativeGameObject : nativeGameObjects)
-			{
-				managedGameObjects->Add(gcnew GameObject(nativeGameObject));
-			}
-			return managedGameObjects;
-		};
-		*/
-
-
-		static List<GameObject^>^ GetGameObjects()
-		{
-			std::vector<thomas::object::GameObject*> nativeGameObjects = thomas::object::GameObject::GetGameObjects();
-
-			List<GameObject^>^ managedGameObjects = gcnew List<GameObject^>(nativeGameObjects.size());
-
-			for (thomas::object::GameObject* nativeGameObject : nativeGameObjects)
-			{
-				managedGameObjects->Add(gcnew GameObject(nativeGameObject));
-			}
-			return managedGameObjects;
+			PropertyChanged(this, gcnew PropertyChangedEventArgs(info));
 		}
 
 	};

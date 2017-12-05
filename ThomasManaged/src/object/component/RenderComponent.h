@@ -11,19 +11,18 @@ namespace ThomasEditor
 {
 	public ref class RenderComponent : public Component
 	{
-		thomas::object::component::RenderComponent* nativePtr;
 	internal:
-		RenderComponent(thomas::object::component::RenderComponent* ptr) : Component((thomas::object::component::Component*)ptr) {
+		RenderComponent(thomas::object::component::RenderComponent* ptr) {
 			nativePtr = ptr;
 		}
 	public:
-		RenderComponent() : Component("ModelComponent") {
+		RenderComponent() {
 			nativePtr = new thomas::object::component::RenderComponent();
 		}
-
+		/*/
 		void SetModel(String^ name) {
 			nativePtr->SetModel(msclr::interop::marshal_as<std::string>(name));
-		}
+		}*/
 
 		void Update() override { nativePtr->Update(); }
 	};

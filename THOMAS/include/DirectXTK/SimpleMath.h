@@ -56,7 +56,7 @@ struct Rectangle
     Rectangle() : x(0), y(0), width(0), height(0) {}
     Rectangle(long ix, long iy, long iw, long ih) : x(ix), y(iy), width(iw), height(ih) {}
     explicit Rectangle(const RECT& rct) : x(rct.left), y(rct.top), width(rct.right - rct.left), height(rct.bottom - rct.top) {}
-
+	
     operator RECT() { RECT rct; rct.left = x; rct.top = y; rct.right = (x + width); rct.bottom = (y + height); return rct; }
 #ifdef __cplusplus_winrt
     operator Windows::Foundation::Rect() { return Windows::Foundation::Rect(float(x), float(y), float(width), float(height)); }
@@ -674,6 +674,13 @@ struct Quaternion : public XMFLOAT4
     void Conjugate( Quaternion& result ) const;
 
     void Inverse( Quaternion& result ) const;
+
+	void ToAxisAngle(Vector3* pAxis, float* pAngle)
+	{
+		XMVECTOR pAxisXM;
+		XMQuaternionToAxisAngle(&pAxisXM, pAngle, *this);
+		*pAxis = pAxisXM;
+	}
 
     float Dot( const Quaternion& Q ) const;
 
