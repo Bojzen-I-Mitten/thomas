@@ -2,8 +2,11 @@
 #include "Component.h"
 
 #include "GameObject.h"
+#include <thomas\object\GameObject.h>
 
-ThomasEditor::GameObject^ ThomasEditor::Component::gameObject::get()
+
+void ThomasEditor::Component::setGameObject(GameObject ^ gObj)
 {
-	return gcnew ThomasEditor::GameObject(nativePtr->m_gameObject);
+	m_gameObject = gObj;
+	((thomas::object::component::Component*)nativePtr)->m_gameObject = (thomas::object::GameObject*)gObj->nativePtr;
 }

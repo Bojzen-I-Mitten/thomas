@@ -1,6 +1,7 @@
 // ThomasManaged.h
 #pragma once
 
+
 #include <thomas\Window.h>
 #include <thomas\ThomasCore.h>
 #include <thomas\ThomasTime.h>
@@ -9,17 +10,17 @@
 
 #include <thomas\Scene.h>
 #pragma unmanaged
-#include <thomas\TestScene.h>
+#include "Tests\TestScene.h"
 #pragma managed
 //#include <Sound.h>
 #include <thomas\utils\DebugTools.h>
 
 #include <thomas\graphics\Shader.h>
-
+#include "object\GameObject.h"
+#include "object\component\Transform.h"
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace thomas;
-using namespace thomas::object;
 
 
 namespace ThomasEditor {
@@ -43,22 +44,9 @@ namespace ThomasEditor {
 			thomas::Window::EventHandler((HWND)hWnd.ToPointer(), msg, (WPARAM)wParam.ToPointer(), (LPARAM)lParam.ToPointer());
 		}
 
-		static GameObject& Test() {
-			return *GameObject::GetAllGameObjectsInScene(thomas::Scene::GetCurrentScene())[0];
-		}
-
 		static void Resize()
 		{
 			thomas::ThomasCore::Resize();
-		}
-
-		static List<String^>^ GetObjects() {
-			List<String^>^ objects = gcnew List<String^>();
-			auto gameObjects = thomas::object::GameObject::GetAllGameObjectsInScene(thomas::Scene::GetCurrentScene());
-			for (int i = 0; i < gameObjects.size(); i++) {
-				objects->Add(gcnew String(gameObjects[i]->GetType().c_str()));
-			}
-			return objects;
 		}
 
 		static void Update() 
@@ -67,6 +55,8 @@ namespace ThomasEditor {
 			if (thomas::ThomasCore::Initialized() && thomas::Scene::GetCurrentScene() != NULL)
 			{
 				thomas::ThomasCore::Update();
+				thomas::Scene::UpdateCurrentScene();
+				thomas::Physics::Update();
 				thomas::ThomasCore::Render();
 			}
 			

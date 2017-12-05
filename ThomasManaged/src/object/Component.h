@@ -7,25 +7,24 @@
 #include "Object.h"
 using namespace System;
 using namespace System::Collections::Generic;
+using namespace System::ComponentModel;
+
+
 namespace ThomasEditor {
 
 	ref class GameObject;
-
+	[TypeConverter(ExpandableObjectConverter::typeid)]
 	public ref class Component : public Object
 	{
-		thomas::object::component::Component* nativePtr;
 	internal:
-		Component(thomas::object::component::Component* ptr) : Object((thomas::object::Object*)ptr) {
-			nativePtr = ptr;
-		}
+		GameObject^ m_gameObject;
+		void setGameObject(GameObject^ gObj);
 	public:
-		Component(String^ type) : Object(type) {
-			nativePtr = new thomas::object::component::Component(msclr::interop::marshal_as<std::string>(type));
-		}
 
+		[BrowsableAttribute(false)]
 		property GameObject^ gameObject
 		{
-			GameObject^ get();
+			GameObject^ get() { return m_gameObject; }
 		}
 
 

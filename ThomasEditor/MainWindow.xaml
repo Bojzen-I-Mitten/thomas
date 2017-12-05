@@ -5,8 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:local="clr-namespace:ThomasEditor"
+        xmlns:ms="http://namespaces.mindscape.co.nz/wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280">
+
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ContextMenu x:Key="gameObjectContext">
+                <MenuItem Header="Delete Object" Click="Menu_RemoveGameObject"/>
+            </ContextMenu>
+            
+            <ResourceDictionary.MergedDictionaries>
+                <ms:Whalesong/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
     <Grid>
         
         <!--<TabControl  HorizontalAlignment="Left" Height="533" VerticalAlignment="Top" Width="800">
@@ -17,26 +32,54 @@
             </TabItem>
         </TabControl>-->
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            
+        </Grid.RowDefinitions>
+
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_New"/>
+                </MenuItem>
+                <MenuItem Header="_Edit">
+                    
+                </MenuItem>
+                <MenuItem Header="_GameObject">
+                    <MenuItem Header="_Create Empty" Click="AddEmptyGameObject"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+
+
         <xcad:DockingManager Grid.Row="1"
                            AllowMixedOrientation="True"
                            BorderBrush="Black"
-                           BorderThickness="1">
+                           BorderThickness="1" x:Name="dockManager">
+            
             <xcad:LayoutRoot x:Name="__layoutRoot">
-                <xcad:LayoutPanel Orientation="Horizontal">
-                    <xcad:LayoutAnchorablePane DockWidth="500">
-                        <xcad:LayoutAnchorable ContentId="EditorView" Title="Editor View" CanHide="False" CanClose="False"
-                                            AutoHideWidth="240">
-                            <local:ThomasWindow x:Name="editor"/>
-                        </xcad:LayoutAnchorable>
-                    </xcad:LayoutAnchorablePane>
+                <xcad:LayoutPanel>
+
                     <xcad:LayoutDocumentPaneGroup>
+                        <xcad:LayoutDocumentPane DockWidth="500">
+                            <xcad:LayoutAnchorable ContentId="EditorView" Title="Editor View" CanHide="False" CanClose="False"
+                                            AutoHideWidth="240">
+                                <local:ThomasWindow x:Name="editor"/>
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutDocumentPane>
                         <xcad:LayoutDocumentPane>
                             <xcad:LayoutAnchorable ContentId="Hiearchy" Title="Hiearchy" >
                                 <TreeView Focusable="True" x:Name="thomasObjects"/>
                             </xcad:LayoutAnchorable>
                         </xcad:LayoutDocumentPane>
                         <xcad:LayoutDocumentPane>
-                            <xcad:LayoutAnchorable ContentId="Console" Title="Console" >
+                            <xcad:LayoutAnchorable ContentId="Inspector" Title="Inspector">
+                                <local:ThomasGameObjectInspector x:Name="__inspector"/>
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutDocumentPane>
+                        <xcad:LayoutDocumentPane>
+                            <xcad:LayoutAnchorable ContentId="Console" Title="Console">
                                 <ListBox Name="console" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                 </ListBox>
                             </xcad:LayoutAnchorable>

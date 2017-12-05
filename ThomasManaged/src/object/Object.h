@@ -10,15 +10,11 @@ using namespace System::Collections::Generic;
 namespace ThomasEditor {
 	public ref class Object
 	{
+		static List<Object^> s_objects;
+
+	internal:
 		thomas::object::Object* nativePtr;
-	protected:
-		Object(thomas::object::Object* ptr) {
-			nativePtr = ptr;
-		}
 	public:
-		Object(String^ type) {
-			nativePtr = new thomas::object::Object(msclr::interop::marshal_as<std::string>(type));
-		}
 
 		virtual void OnEnable() { nativePtr->OnEnable();}
 		virtual void OnDisable() { nativePtr->OnDisable(); }
@@ -28,9 +24,6 @@ namespace ThomasEditor {
 		virtual void FixedUpdate() { nativePtr->FixedUpdate(); }
 		virtual void LateUpdate() { nativePtr->LateUpdate(); }
 		virtual void Render() { nativePtr->Render(); }
-		virtual void SetActive(bool active) { nativePtr->SetActive(active); };
-		virtual bool GetActive() { return nativePtr->GetActive(); }
-		String^ GetType() { return gcnew String(nativePtr->GetType().c_str()); };
 		thomas::Scene* GetScene() { return nativePtr->GetScene(); } //TODO
 
 		static bool Destroy(Object^ object) {return thomas::object::Object::Destroy(object->nativePtr); };
@@ -38,27 +31,17 @@ namespace ThomasEditor {
 		static void Destroy() {return thomas::object::Object::Destroy(); }; //Maybe not
 		static bool IsAlive(const Object^ object) { return thomas::object::Object::IsAlive(object->nativePtr); };
 		bool Alive() { return nativePtr->Alive(); }
+
+		Object()
+		{
+			s_objects.Add(this);
+		}
+
 		//Clone object
 
 		//template<typename T>
 		//static T* Instantiate(Scene* scene) {};
 
-		static List<Object^>^ GetObjects() 
-		{
-				
-			std::vector<thomas::object::Object*> nativeObjects = thomas::object::Object::GetObjects();
-				
-			List<Object^>^ managedObjects = gcnew List<Object^>(nativeObjects.size());
-
-			for (thomas::object::Object* nativeObject : nativeObjects)
-			{
-				managedObjects->Add(gcnew Object(nativeObject));
-			}
-			return managedObjects;
-		};
-		static Object^ GetObjectByType(String^ type) {
-			return gcnew Object(thomas::object::Object::GetObjectByType(msclr::interop::marshal_as<std::string>(type)));
-		}
 
 		//static std::vector<Object*> GetAllObjectsInScene(Scene* scene);
 

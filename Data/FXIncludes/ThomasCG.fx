@@ -1,19 +1,25 @@
-#ifndef THOAMS_CG_INCLUDED
-#define THOAMS_CG_INCLUDED
+#ifndef THOMAS_CG_INCLUDED
+#define THOMAS_CG_INCLUDED
 
-#define THOAMS_PI            3.14159265359f
-#define THOAMS_TWO_PI        6.28318530718f
-#define THOAMS_FOUR_PI       12.56637061436f
-#define THOAMS_INV_PI        0.31830988618f
-#define THOAMS_INV_TWO_PI    0.15915494309f
-#define THOAMS_INV_FOUR_PI   0.07957747155f
-#define THOAMS_HALF_PI       1.57079632679f
-#define THOAMS_INV_HALF_PI   0.636619772367f
+#define THOMAS_PI            3.14159265359f
+#define THOMAS_TWO_PI        6.28318530718f
+#define THOMAS_FOUR_PI       12.56637061436f
+#define THOMAS_INV_PI        0.31830988618f
+#define THOMAS_INV_TWO_PI    0.15915494309f
+#define THOMAS_INV_FOUR_PI   0.07957747155f
+#define THOMAS_HALF_PI       1.57079632679f
+#define THOMAS_INV_HALF_PI   0.636619772367f
+
+
+
+#define VERT(vertex_shader) SetVertexShader( CompileShader( vs_5_0, vertex_shader) );
+#define FRAG(fragment_shader) SetPixelShader( CompileShader( ps_5_o, fragment_shader) );
+
 
 #include "ThomasShaderVariables.fx"
 #include "ThomasShaderUtilities.fx"
 
-#ifdef THOAMS_COLORSPACE_GAMMA
+#ifdef THOMAS_COLORSPACE_GAMMA
 #define thomas_ColorSpaceGrey fixed4(0.5, 0.5, 0.5, 0.5)
 #define thomas_ColorSpaceDouble fixed4(2.0, 2.0, 2.0, 2.0)
 #define thomas_ColorSpaceDielectricSpec half4(0.220916301, 0.220916301, 0.220916301, 1.0 - 0.220916301)
@@ -35,6 +41,15 @@
 // These constants must be kept in sync with RGBMRanges.h
 #define LIGHTMAP_RGBM_SCALE 5.0
 #define EMISSIVE_RGBM_SCALE 97.0
+
+
+struct appdata_thomas {
+	float3 vertex : POSITION;
+	float2 texcoord : TEXCOORD0;
+	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
+	float3 bitangent : BITANGENT;
+};
 
 
 struct appdata_base {
@@ -106,19 +121,19 @@ inline half3 LinearToGammaSpace (half3 linRGB)
 // Tranforms position from world to homogenous space
 inline float4 ThomasWorldToClipPos( in float3 pos )
 {
-    return mul(THOAMS_MATRIX_VP, float4(pos, 1.0));
+    return mul(THOMAS_MATRIX_VP, float4(pos, 1.0));
 }
 
 // Tranforms position from view to homogenous space
 inline float4 ThomasViewToClipPos( in float3 pos )
 {
-    return mul(THOAMS_MATRIX_P, float4(pos, 1.0));
+    return mul(THOMAS_MATRIX_P, float4(pos, 1.0));
 }
 
 // Tranforms position from object to camera space
 inline float3 ThomasObjectToViewPos( in float3 pos )
 {
-    return mul(THOAMS_MATRIX_V, mul(thomas_ObjectToWorld, float4(pos, 1.0))).xyz;
+    return mul(THOMAS_MATRIX_V, mul(thomas_ObjectToWorld, float4(pos, 1.0))).xyz;
 }
 inline float3 ThomasObjectToViewPos(float4 pos) // overload for float4; avoids "implicit truncation" warning for existing shaders
 {
@@ -128,7 +143,7 @@ inline float3 ThomasObjectToViewPos(float4 pos) // overload for float4; avoids "
 // Tranforms position from world to camera space
 inline float3 ThomasWorldToViewPos( in float3 pos )
 {
-    return mul(THOAMS_MATRIX_V, float4(pos, 1.0)).xyz;
+    return mul(THOMAS_MATRIX_V, float4(pos, 1.0)).xyz;
 }
 
 // Transforms direction from object to world space
@@ -146,7 +161,7 @@ inline float3 ThomasWorldToObjectDir( in float3 dir )
 // Transforms normal from object to world space
 inline float3 ThomasObjectToWorldNormal( in float3 norm )
 {
-#ifdef THOAMS_ASSUME_UNIFORM_SCALING
+#ifdef THOMAS_ASSUME_UNIFORM_SCALING
     return ThomasObjectToWorldDir(norm);
 #else
     // mul(IT_M, norm) => mul(norm, I_M) => {dot(norm, I_M.col0), dot(norm, I_M.col1), dot(norm, I_M.col2)}
@@ -255,9 +270,9 @@ float3 Shade4PointLights (
 float3 ShadeVertexLightsFull (float4 vertex, float3 normal, int lightCount, bool spotLight)
 {
     float3 viewpos = ThomasObjectToViewPos (vertex);
-    float3 viewN = normalize (mul ((float3x3)THOAMS_MATRIX_IT_MV, normal));
+    float3 viewN = normalize (mul ((float3x3)THOMAS_MATRIX_IT_MV, normal));
 
-    float3 lightColor = THOAMS_LIGHTMODEL_AMBIENT.xyz;
+    float3 lightColor = THOMAS_LIGHTMODEL_AMBIENT.xyz;
     for (int i = 0; i < lightCount; i++) {
         float3 toLight = thomas_LightPosition[i].xyz - viewpos.xyz * thomas_LightPosition[i].w;
         float lengthSq = dot(toLight, toLight);
@@ -326,7 +341,7 @@ half3 ShadeSH9 (half4 normal)
     // Quadratic polynomials
     res += SHEvalLinearL2 (normal);
 
-#   ifdef THOAMS_COLORSPACE_GAMMA
+#   ifdef THOMAS_COLORSPACE_GAMMA
         res = LinearToGammaSpace (res);
 #   endif
 
@@ -339,14 +354,14 @@ half3 ShadeSH3Order(half4 normal)
     // Quadratic polynomials
     half3 res = SHEvalLinearL2 (normal);
 
-#   ifdef THOAMS_COLORSPACE_GAMMA
+#   ifdef THOMAS_COLORSPACE_GAMMA
         res = LinearToGammaSpace (res);
 #   endif
 
     return res;
 }
 
-#if THOAMS_LIGHT_PROBE_PROXY_VOLUME
+#if THOMAS_LIGHT_PROBE_PROXY_VOLUME
 
 // normal should be normalized, w=1.0
 half3 SHEvalLinearL0L1_SampleProbeVolume (half4 normal, float3 worldPos)
@@ -369,13 +384,13 @@ half3 SHEvalLinearL0L1_SampleProbeVolume (half4 normal, float3 worldPos)
 
     // sampler state comes from SHr (all SH textures share the same sampler)
     texCoord.x = texCoordX;
-    half4 SHAr = THOAMS_SAMPLE_TEX3D_SAMPLER(thomas_ProbeVolumeSH, thomas_ProbeVolumeSH, texCoord);
+    half4 SHAr = THOMAS_SAMPLE_TEX3D_SAMPLER(thomas_ProbeVolumeSH, thomas_ProbeVolumeSH, texCoord);
 
     texCoord.x = texCoordX + 0.25f;
-    half4 SHAg = THOAMS_SAMPLE_TEX3D_SAMPLER(thomas_ProbeVolumeSH, thomas_ProbeVolumeSH, texCoord);
+    half4 SHAg = THOMAS_SAMPLE_TEX3D_SAMPLER(thomas_ProbeVolumeSH, thomas_ProbeVolumeSH, texCoord);
 
     texCoord.x = texCoordX + 0.5f;
-    half4 SHAb = THOAMS_SAMPLE_TEX3D_SAMPLER(thomas_ProbeVolumeSH, thomas_ProbeVolumeSH, texCoord);
+    half4 SHAb = THOMAS_SAMPLE_TEX3D_SAMPLER(thomas_ProbeVolumeSH, thomas_ProbeVolumeSH, texCoord);
 
     // Linear + constant polynomial terms
     half3 x1;
@@ -393,7 +408,7 @@ half3 ShadeSH12Order (half4 normal)
     // Linear + constant polynomial terms
     half3 res = SHEvalLinearL0L1 (normal);
 
-#   ifdef THOAMS_COLORSPACE_GAMMA
+#   ifdef THOMAS_COLORSPACE_GAMMA
         res = LinearToGammaSpace (res);
 #   endif
 
@@ -466,10 +481,10 @@ inline half3 DecodeHDR (half4 data, half4 decodeInstructions)
     half alpha = decodeInstructions.w * (data.a - 1.0) + 1.0;
 
     // If Linear mode is not supported we can skip exponent part
-    #if defined(THOAMS_COLORSPACE_GAMMA)
+    #if defined(THOMAS_COLORSPACE_GAMMA)
         return (decodeInstructions.x * alpha) * data.rgb;
     #else
-    #   if defined(THOAMS_USE_NATIVE_HDR)
+    #   if defined(THOMAS_USE_NATIVE_HDR)
             return decodeInstructions.x * data.rgb; // Multiplier for future HDRI relative to absolute conversion.
     #   else
             return (decodeInstructions.x * pow(alpha, decodeInstructions.y)) * data.rgb;
@@ -478,4 +493,4 @@ inline half3 DecodeHDR (half4 data, half4 decodeInstructions)
 }
 
 
-#endif // THOAMS_CG_INCLUDED
+#endif // THOMAS_CG_INCLUDED
