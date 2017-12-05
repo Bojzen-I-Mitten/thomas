@@ -17,7 +17,7 @@
             </ContextMenu>
             
             <ResourceDictionary.MergedDictionaries>
-                <ms:Whalesong/>
+                <ms:Alloy/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
