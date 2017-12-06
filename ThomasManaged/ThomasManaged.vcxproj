@@ -132,9 +132,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Reference Include="Mindscape.WpfElements">
-      <HintPath>C:\Program Files (x86)\Mindscape\WPF Elements\Bin\Mindscape.WpfElements.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />

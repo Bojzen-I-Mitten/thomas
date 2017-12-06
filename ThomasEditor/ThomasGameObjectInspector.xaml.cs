@@ -1,74 +1,75 @@
-﻿using Mindscape.WpfElements.PropertyEditing;
+﻿
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-using Mindscape.WpfElements.WpfPropertyGrid;
 using System.Globalization;
 using System.Windows.Threading;
-using Mindscape.WpfElements.Themes;
 using System.Collections.ObjectModel;
-using Mindscape.WpfElements;
-
-public class GetPropertyComponent : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        Node node = (Node)value;
-        return node.Source.ToString();
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class GetPropertyName : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        String node = (String)value;
-        return node.Split(':').Last<String>();
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-
+using Xceed.Wpf.Toolkit.PropertyGrid;
 
 namespace ThomasEditor
 {
+    public class ConvertVector3 : IValueConverter
+    {
+        Vector3 vector;
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            vector = (Vector3)value;
+            String type = (String)parameter;
+            switch(type)
+            {
+                case "x":return vector.x;
+                case "y": return vector.y;
+                case "z": return vector.z;
+                default: return vector.x;
+            }
+            
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            String type = (String)parameter;
+            switch (type)
+            {
+                case "x": vector.x = (float)(double)value; break;
+                case "y": vector.y = (float)(double)value; break;
+                case "z": vector.z = (float)(double)value; break;
+            }
+            return vector;
+        }
+    }
+
+    public class ComponentToNameConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.GetType().Name;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
     /// <summary>
     /// Interaction logic for ThomasGameObjectInspector.xaml
     /// </summary>
     public partial class ThomasGameObjectInspector : UserControl
     {
-        private PropertyGroupDescription grouper;
         private GameObject _gameObject;
+        public Collection<EditorDefinitionBase> customEditors;
         public ThomasGameObjectInspector()
         {
 
             InitializeComponent();
 
-
-            grouper = new PropertyGroupDescription("Node", new GetPropertyComponent());
-
-                        
-            TypeEditor editor = new TypeEditor();
-            editor.EditedType = typeof(Vector3);
-            editor.EditorTemplate = FindResource("Vector3Editor") as DataTemplate;
-
-           // propertyGrid.Editors.Add(editor);
+            // propertyGrid.Editors.Add(editor);
 
         }
-
         public GameObject gameObject
         {
             get
@@ -78,35 +79,32 @@ namespace ThomasEditor
             set
             {
                 _gameObject = value;
-                propertyGrid.ItemsSource = null;
+                gameObjectGrid.DataContext = null;
                 if(_gameObject != null)
                 {
-                    propertyGrid.ItemsSource = _gameObject.Components;
-                    gameObjectPanel.DataContext = _gameObject;
-                    Expand();
+                    gameObjectGrid.DataContext = _gameObject;
+                    //Expand();
+                    //CreatePropertyGrids();
                 }
                     
             }
         }
 
 
-        private void Expand()
+
+        private void PropertyGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            PropertyGridBindingView newBind = new PropertyGridBindingView(new ObservableCollection<Node>());
+            PropertyGrid grid = sender as PropertyGrid;
+            grid.ExpandAllProperties();
+        }
 
-            foreach (PropertyGridRow row in propertyGrid.BindingView)
-            {
-                foreach (PropertyGridRow child in row.Children)
-                {
-                    if(child.Node.Source is Component)
-                        newBind.Add(child);
-                }
-
-            }
-            propertyGrid.BindingView = newBind;
-            propertyGrid.Refresh();
-            propertyGrid.BindingView.DefaultView.GroupDescriptions.Clear();
-            propertyGrid.BindingView.DefaultView.GroupDescriptions.Add(grouper);
+        private void PropertyGrid_Initialized(object sender, EventArgs e)
+        {
+            PropertyGrid grid = sender as PropertyGrid;
+            EditorTemplateDefinition x = new EditorTemplateDefinition();
+            x.TargetProperties.Add(typeof(Vector3));
+            x.EditingTemplate = FindResource("Vector3Editor") as DataTemplate;
+            grid.EditorDefinitions.Add(x);
         }
     }
 

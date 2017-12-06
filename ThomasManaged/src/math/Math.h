@@ -26,8 +26,6 @@ namespace ThomasEditor
 		property float w;
 	};
 
-
-	[TypeConverter(ExpandableObjectConverter::typeid)]
 	public value class Vector3
 	{
 	private:

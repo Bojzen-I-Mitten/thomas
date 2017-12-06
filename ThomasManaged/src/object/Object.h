@@ -23,18 +23,22 @@ namespace ThomasEditor {
 		virtual void Update() { nativePtr->Update(); }
 		virtual void FixedUpdate() { nativePtr->FixedUpdate(); }
 		virtual void LateUpdate() { nativePtr->LateUpdate(); }
-		virtual void Render() { nativePtr->Render(); }
 		thomas::Scene* GetScene() { return nativePtr->GetScene(); } //TODO
 
-		static bool Destroy(Object^ object) {return thomas::object::Object::Destroy(object->nativePtr); };
+		static void Destroy(Object^ object) { object->Destroy(); }
 		//static void Destroy(thomas::object:Scene* scene);
-		static void Destroy() {return thomas::object::Object::Destroy(); }; //Maybe not
 		static bool IsAlive(const Object^ object) { return thomas::object::Object::IsAlive(object->nativePtr); };
 		bool Alive() { return nativePtr->Alive(); }
 
 		Object()
 		{
 			s_objects.Add(this);
+		}
+
+		virtual void Destroy()
+		{
+			nativePtr->Destroy(nativePtr);
+			s_objects.Remove(this);
 		}
 
 		//Clone object
@@ -44,6 +48,11 @@ namespace ThomasEditor {
 
 
 		//static std::vector<Object*> GetAllObjectsInScene(Scene* scene);
+
+		static List<Object^>^ GetObjects()
+		{
+			return %s_objects;
+		}
 
 		static void Clean() { thomas::object::Object::Clean(); };
 	};

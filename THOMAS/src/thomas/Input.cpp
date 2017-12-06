@@ -30,6 +30,7 @@ namespace thomas
 		s_mouse = std::make_unique<DirectX::Mouse>();
 		s_gamePad = std::make_unique<DirectX::GamePad>();
 		
+		
 		s_mouseMode = MouseMode::POSITION_ABSOLUTE;
 		s_mouse->SetWindow(Window::GetWindowHandler());
 		s_initialized = Window::Initialized();
@@ -53,7 +54,7 @@ namespace thomas
 			s_mouseTracker.Update(s_mouseState);
 			s_gamePadTracker.Update(s_gamePadState);
 			s_mousePosition = math::Vector2(s_mouseState.x, s_mouseState.y);
-			
+						
 			if (s_mousePosition == math::Vector2(0, 0))
 				s_recordPosition = true;
 		}
@@ -138,14 +139,16 @@ namespace thomas
 
 	void Input::SetMouseMode(MouseMode mode)
 	{
-		if(s_mouseMode == mode)
-			return
+		if (s_mouseMode == mode)
+			return;
 		s_mouse->SetMode((DirectX::Mouse::Mode)mode);
 		s_mouseMode = mode;
 		if (mode == MouseMode::POSITION_RELATIVE)
 		{
 			s_recordPosition = false;
 		}
+		else
+			s_recordPosition = true;
 		Update();
 			
 	}
@@ -294,12 +297,12 @@ namespace thomas
 
 	LONG Input::GetMouseY()
 	{
-		return s_mouseState.y;
+		return GetMousePosition().y;
 	}
 
 	LONG Input::GetMouseX()
 	{
-		return s_mouseState.x;
+		return GetMousePosition().x;
 	}
 
 	float Input::GetMouseScroll()

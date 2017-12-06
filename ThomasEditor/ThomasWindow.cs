@@ -174,7 +174,6 @@ namespace ThomasEditor
                 {
                     Paint paint;
                     BeginPaint(handle, out paint);
-                    Console.WriteLine("paint!");
                     EndPaint(handle, ref paint);
                     handled = true;
                 }else if (message == WM_SIZE)

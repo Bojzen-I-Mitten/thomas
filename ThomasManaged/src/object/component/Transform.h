@@ -23,7 +23,6 @@ namespace ThomasEditor
 			nativePtr = new thomas::object::component::Transform();
 		}
 
-
 		[BrowsableAttribute(false)]
 		property Transform^ parent {
 			Transform^ get() {

@@ -48,7 +48,6 @@ namespace thomas
 			virtual void Update() {}
 			virtual void FixedUpdate() {}
 			virtual void LateUpdate() {}
-			virtual void Render() {}
 			bool GetActive();
 			virtual void OnCollision(component::RigidBodyComponent::Collision collision) {}
 			static std::vector<GameObject*> GetAllGameObjectsInScene(Scene* scene);

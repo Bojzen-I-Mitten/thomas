@@ -23,6 +23,7 @@
 #include "Window.h"
 #include "ThomasTime.h"
 #include <time.h>
+#include "../thomas/editor/EditorCamera.h"
 
 namespace thomas {
 	ID3D11Debug* ThomasCore::s_debug;
@@ -73,6 +74,11 @@ namespace thomas {
 
 		//graphics::ParticleSystem::Init();
 		
+		graphics::Shader::Init();
+		graphics::Material::Init();
+
+		editor::EditorCamera::Init();
+
 		s_initialized = init;
 		return s_initialized;
 	}

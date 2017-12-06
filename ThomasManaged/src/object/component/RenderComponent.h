@@ -1,6 +1,7 @@
 #pragma once
 #pragma unmanaged
 #include <thomas\object\component\RenderComponent.h>
+#include <thomas\graphics\Model.h>
 #pragma managed
 
 #include "../Component.h"
@@ -19,10 +20,21 @@ namespace ThomasEditor
 		RenderComponent() {
 			nativePtr = new thomas::object::component::RenderComponent();
 		}
-		/*/
-		void SetModel(String^ name) {
-			nativePtr->SetModel(msclr::interop::marshal_as<std::string>(name));
-		}*/
+
+		property String^ Model {
+			String^ get() {
+				thomas::graphics::Model* model = ((thomas::object::component::RenderComponent*)nativePtr)->GetModel();
+				if (model)
+					return gcnew String(model->GetName().c_str());
+				else
+					return "";
+			}
+			void set(String^ value)
+			{
+				thomas::graphics::Model* model = thomas::graphics::Model::GetModelByName(msclr::interop::marshal_as<std::string>(value));
+				((thomas::object::component::RenderComponent*)nativePtr)->SetModel(model);
+			}
+		}
 
 		void Update() override { nativePtr->Update(); }
 	};

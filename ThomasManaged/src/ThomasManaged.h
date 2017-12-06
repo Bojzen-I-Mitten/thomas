@@ -56,6 +56,10 @@ namespace ThomasEditor {
 			{
 				thomas::ThomasCore::Update();
 				thomas::Scene::UpdateCurrentScene();
+				for each(ThomasEditor::Object^ object in ThomasEditor::Object::GetObjects())
+				{
+					object->Update();
+				}
 				thomas::Physics::Update();
 				thomas::ThomasCore::Render();
 			}

@@ -26,12 +26,12 @@ namespace ThomasEditor
 
     public partial class MainWindow : Window
     {
+        double scrollRatio = 0;
         TimeSpan lastRender;
         public MainWindow()
         {
-           
             InitializeComponent();
-            
+            //dockManager.Theme = new VS2010Theme();
             CompositionTarget.Rendering += DoUpdates;
             thomasObjects.SelectedItemChanged += ThomasObjects_SelectedItemChanged;
 
@@ -61,6 +61,7 @@ namespace ThomasEditor
             {
                 foreach (GameObject oldItem in e.OldItems)
                 {
+                    oldItem.Destroy();
                     foreach (TreeViewItem node in thomasObjects.Items)
                     {
                         if (node.DataContext == oldItem)
@@ -120,6 +121,9 @@ namespace ThomasEditor
                 List<String> outputs = ThomasWrapper.GetLogOutput();
                 if(outputs.Count > 0)
                 {
+                  
+
+                    
                     foreach (String output in outputs)
                     {
                         TextBlock block = new TextBlock();
@@ -127,8 +131,10 @@ namespace ThomasEditor
                         block.TextWrapping = TextWrapping.Wrap;
                         console.Items.Add(block);
                         console.Items.Add(new Separator());
+                        if (console.Items.Count > 150)
+                            console.Items.RemoveAt(0);
                     }
-                       
+                    
                 }
                 
 
@@ -140,13 +146,71 @@ namespace ThomasEditor
         private void AddEmptyGameObject(object sender, RoutedEventArgs e)
         {
             var x = new GameObject("gameObject");
-            x.AddComponent<TestComponent>();
+            x.AddComponent<RenderComponent>();
         }
 
         private void Menu_RemoveGameObject(object sender, RoutedEventArgs e)
         {
             var x = sender as MenuItem;
             GameObject.GameObjects.Remove(x.DataContext as GameObject);
+        }
+
+        private void console_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+
+            ScrollViewer scrollViewer = Extensions.GetDescendantByType<ScrollViewer>(sender as ListBox);
+
+            if (e.ExtentWidthChange != 0 || e.ExtentHeightChange != 0)
+            {
+                //calculate and set accordingly
+                double offset = scrollRatio * e.ExtentHeight - 0.5 * e.ViewportHeight;
+                //see if it is negative because of initial values
+                if (offset < 0)
+                {
+                    //center the content
+                    //this can be set to 0 if center by default is not needed
+                    offset = 0.5 * scrollViewer.ScrollableHeight;
+                }
+                scrollViewer.ScrollToVerticalOffset(offset);
+            }
+            else
+            {
+                //store the relative values if normal scroll
+                if(e.ExtentHeight > 0)
+                    scrollRatio = (e.VerticalOffset + 0.5 * e.ViewportHeight) / e.ExtentHeight;
+            }
+
+
+        }
+    }
+
+    public static class Extensions
+    {
+        public static T GetDescendantByType<T>(this Visual element) where T : class
+        {
+            if (element == null)
+            {
+                return default(T);
+            }
+            if (element.GetType() == typeof(T))
+            {
+                return element as T;
+            }
+            T foundElement = null;
+            if (element is FrameworkElement)
+            {
+                (element as FrameworkElement).ApplyTemplate();
+            }
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+            {
+                var visual = VisualTreeHelper.GetChild(element, i) as Visual;
+                foundElement = visual.GetDescendantByType<T>();
+                if (foundElement != null)
+                {
+                    break;
+                }
+            }
+            return foundElement;
         }
     }
 }
