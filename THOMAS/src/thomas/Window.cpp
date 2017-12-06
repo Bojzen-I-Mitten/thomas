@@ -2,19 +2,12 @@
 #include "Input.h"
 #include "utils\DebugTools.h"
 #include "ThomasCore.h"
+#include "utils\d3d.h"
 namespace thomas 
 {
-	LONG Window::s_width;
-	LONG Window::s_height;
-	float Window::s_aspectRatio;
-	WNDCLASSEX Window::s_windowClassInfo;
-	HWND Window::s_windowHandler;
-	RECT Window::s_windowRectangle;
-	LPWSTR Window::s_title;
-	bool Window::s_initialized;
-	bool Window::s_showCursor;
-	Window::Ratio Window::s_ratio;
-	bool Window::s_fullScreen;
+
+	std::vector<Window*> Window::s_windows;
+	Window* Window::s_editorWindow = nullptr;
 
 	LRESULT CALLBACK Window::EventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
@@ -24,7 +17,11 @@ namespace thomas
 		switch (message)
 		{
 		case WM_SIZE:
-			ThomasCore::Resize();
+			{
+				Window* window = GetWindow(hWnd);
+				if (window)
+					window->Resize();
+			}
 			break;
 		case WM_SETFOCUS:
 		case WM_KILLFOCUS:
@@ -32,7 +29,7 @@ namespace thomas
 			break;
 		case WM_ACTIVATEAPP:
 			Input::ProcessKeyboard(message, wParam, lParam);
-			Input::ProcessMouse(message, wParam, lParam);
+			Input::ProcessMouse(message, wParam, lParam, hWnd);
 			break;
 		case WM_INPUT:
 		case WM_MOUSEMOVE:
@@ -46,7 +43,7 @@ namespace thomas
 		case WM_XBUTTONDOWN:
 		case WM_XBUTTONUP:
 		case WM_MOUSEHOVER:
-			Input::ProcessMouse(message, wParam, lParam);
+			Input::ProcessMouse(message, wParam, lParam, hWnd);
 			break;
 		case WM_KEYDOWN:
 		case WM_SYSKEYDOWN:
@@ -62,97 +59,194 @@ namespace thomas
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
+	void Window::InitEditor(HWND hWnd)
+	{
+		s_editorWindow = Create(hWnd);
+	}
+
+	Window* Window::Create(HWND hWnd)
+	{
+		Window* window = new Window(hWnd);
+		if (window->Initialized())
+		{
+			s_windows.push_back(window);
+			return window;
+		}
+		return nullptr;
+	}
+
+	Window * Window::GetEditorWindow()
+	{
+		return s_editorWindow;
+	}
+
+	Window * Window::GetWindow(int index)
+	{
+		if (s_windows.size() > index)
+			return s_windows[index];
+		return nullptr;
+	}
+
+	Window * Window::GetWindow(HWND hWnd)
+	{
+		for (Window* window : s_windows)
+		{
+			if (window->GetWindowHandler() == hWnd)
+				return window;
+		}
+		return nullptr;
+	}
+
+	std::vector<Window*> Window::GetWindows()
+	{
+		return s_windows;
+	}
+
 	bool Window::UpdateWindow()
 	{
 		return false;
 	}
 
-	bool Window::Init(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPWSTR title)
+	bool Window::InitDxBuffers()
 	{
-		if (s_initialized)
-			return false;
+		bool hr = utils::D3d::CreateBackBuffer(ThomasCore::GetDevice(), m_swapChain, m_dxBuffers.backBuffer, m_dxBuffers.backBufferSRV);
+		if (hr)
+		{
+			hr = utils::D3d::CreateDepthStencilView(ThomasCore::GetDevice(), m_width, m_height, m_dxBuffers.depthStencilView, m_dxBuffers.depthStencilViewReadOnly, m_dxBuffers.depthBufferSRV);
+			if (hr)
+			{
+				hr = m_dxBuffers.depthStencilState = utils::D3d::CreateDepthStencilState(D3D11_COMPARISON_LESS, true);
+				if (hr)
+				{
+					return true;
+				}
+			}
+		}
+		LOG("Failed to create DirectX window buffers");
+		return false;
+		
+	}
 
-		s_height = height;
-		s_width = width;
-		s_title = title;
-		s_initialized = false;
-		s_showCursor = true;
-		s_fullScreen = false;
+	Window::Window(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPWSTR title)
+	{
+		m_height = height;
+		m_width = width;
+		m_title = title;
+		m_showCursor = true;
+		m_fullScreen = false;
 
 		SetAspectRatio();
 
-		s_windowClassInfo = { 0 };
-		s_windowClassInfo.cbSize = sizeof(WNDCLASSEX);
-		s_windowClassInfo.style = CS_HREDRAW | CS_VREDRAW;
-		s_windowClassInfo.lpfnWndProc = EventHandler; //Callback for EVENTS
-		s_windowClassInfo.hInstance = hInstance;
-		s_windowClassInfo.lpszClassName = L"ThomasWindow";
-		s_windowClassInfo.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(101));
+		m_windowClassInfo = { 0 };
+		m_windowClassInfo.cbSize = sizeof(WNDCLASSEX);
+		m_windowClassInfo.style = CS_HREDRAW | CS_VREDRAW;
+		m_windowClassInfo.lpfnWndProc = EventHandler; //Callback for EVENTS
+		m_windowClassInfo.hInstance = hInstance;
+		m_windowClassInfo.lpszClassName = L"ThomasWindow";
+		m_windowClassInfo.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(101));
 
-		if (!RegisterClassEx(&s_windowClassInfo))
-			return false;
+		if (!RegisterClassEx(&m_windowClassInfo))
+			LOG("Failed to create window")
 
-		s_windowRectangle = { 0, 0, width, height };
+		m_windowRectangle = { 0, 0, width, height };
 
 
 		//Properties for window
-		AdjustWindowRect(&s_windowRectangle, WS_OVERLAPPEDWINDOW, FALSE);
+		AdjustWindowRect(&m_windowRectangle, WS_OVERLAPPEDWINDOW, FALSE);
 
-		s_windowHandler = CreateWindow(
-			L"ThomasWindow",			// CLASS, if does not exists fails!
+		m_windowHandler = CreateWindow(
+			L"ThomasEngine",			// CLASS, if does not exists fails!
 			title,		// Window name (title)
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
-			s_windowRectangle.right - s_windowRectangle.left,
-			s_windowRectangle.bottom - s_windowRectangle.top,
+			m_windowRectangle.right - m_windowRectangle.left,
+			m_windowRectangle.bottom - m_windowRectangle.top,
 			nullptr,
 			nullptr,
 			hInstance,
 			nullptr);
 
-
-		if (s_windowHandler)
+		m_initialized = false;
+		if (m_windowHandler)
 		{
-			s_initialized = true;
-			ChangeWindowShowState(nCmdShow);
-			LOG("Initiating Window");
+			bool hr = utils::D3d::CreateSwapChain(m_width, m_height, m_windowHandler, m_swapChain, ThomasCore::GetDevice());
+			if (hr && InitDxBuffers())
+			{
+				ChangeWindowShowState(nCmdShow);
+				m_initialized = true;
+			}
 		}
-
-		return s_initialized;
 	}
 
-	bool Window::Init(HWND hWnd)
+	Window::Window(HWND hWnd)
 	{
-		
-		if (s_initialized)
-			return false;
-
-		bool result = GetWindowRect(hWnd, &s_windowRectangle);
+		m_initialized = false;
+		bool result = GetWindowRect(hWnd, &m_windowRectangle);
 		if (result)
 		{
-			s_height = s_windowRectangle.bottom;
-			s_width = s_windowRectangle.right;
-			s_showCursor = true;
-			s_fullScreen = false;
+			m_height = m_windowRectangle.bottom;
+			m_width = m_windowRectangle.right;
+			m_showCursor = true;
+			m_fullScreen = false;
 
 			SetAspectRatio();
-			s_windowHandler = hWnd;
-			s_initialized = true;
-			return true;
+			m_windowHandler = hWnd;
+			bool hr = utils::D3d::CreateSwapChain(m_width, m_height, m_windowHandler, m_swapChain, ThomasCore::GetDevice());
+			if (hr && InitDxBuffers())
+				m_initialized = true;
 		}
 		else
-			return false;
+			LOG("Failed to create window");
 			
 		
 
 	}
 
+	Window::~Window()
+	{
+		SAFE_RELEASE(m_dxBuffers.backBuffer);
+		SAFE_RELEASE(m_dxBuffers.backBufferSRV);
+		SAFE_RELEASE(m_dxBuffers.depthStencilState);
+		SAFE_RELEASE(m_dxBuffers.depthStencilView);
+		SAFE_RELEASE(m_dxBuffers.depthStencilViewReadOnly);
+		SAFE_RELEASE(m_dxBuffers.depthBufferSRV);
+		SAFE_RELEASE(m_swapChain);
+		DestroyWindow(m_windowHandler);
+	}
+
+	IDXGISwapChain * Window::GetSwapChain()
+	{
+		return m_swapChain;
+	}
+
+	void Window::Clear()
+	{
+		float color[4] = { 0.0f, 0.5f, 0.75f, 1.0f };
+		ThomasCore::GetDeviceContext()->ClearRenderTargetView(m_dxBuffers.backBuffer, color);
+		ThomasCore::GetDeviceContext()->ClearDepthStencilView(m_dxBuffers.depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
+	}
+
+	void Window::BeginRender()
+	{
+		Clear();
+		
+		ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &m_dxBuffers.backBuffer, m_dxBuffers.depthStencilView);
+		ThomasCore::GetDeviceContext()->OMSetDepthStencilState(m_dxBuffers.depthStencilState, 1);
+	}
+
+	void Window::EndRender()
+	{
+		utils::DebugTools::Draw();
+		m_swapChain->Present(0, 0);
+	}
+
+
 	bool Window::SetHeight(LONG height)
 	{
 		if (height > 0 && height <= GetVerticalResolution())
 		{
-			s_height = height;
+			m_height = height;
 			return UpdateWindow();
 		}
 
@@ -163,7 +257,7 @@ namespace thomas
 	{
 		if (width > 0 && width <= GetHorizontalResolution())
 		{
-			s_width = width;
+			m_width = width;
 			return UpdateWindow();
 		}
 
@@ -182,13 +276,24 @@ namespace thomas
 
 	bool Window::Resize()
 	{
-		bool result = GetWindowRect(s_windowHandler, &s_windowRectangle);
+		bool result = GetWindowRect(m_windowHandler, &m_windowRectangle);
 		if (result)
 		{
-			s_height = s_windowRectangle.bottom;
-			s_width = s_windowRectangle.right;
+			m_height = m_windowRectangle.bottom;
+			m_width = m_windowRectangle.right;
 			SetAspectRatio();
-			return true;
+
+			ThomasCore::GetDeviceContext()->OMSetRenderTargets(0, 0, 0);
+			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(NULL, 1);
+			SAFE_RELEASE(m_dxBuffers.backBuffer);
+			SAFE_RELEASE(m_dxBuffers.backBufferSRV);
+			SAFE_RELEASE(m_dxBuffers.depthStencilState);
+			SAFE_RELEASE(m_dxBuffers.depthStencilView);
+			SAFE_RELEASE(m_dxBuffers.depthStencilViewReadOnly);
+			SAFE_RELEASE(m_dxBuffers.depthBufferSRV);
+
+			m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+			return InitDxBuffers();
 		}
 		else
 			return false;
@@ -196,27 +301,27 @@ namespace thomas
 
 	LONG Window::GetHeight()
 	{
-		return s_height;
+		return m_height;
 	}
 
 	LONG Window::GetWidth()
 	{
-		return s_width;
+		return m_width;
 	}
 
 	Window::Ratio Window::GetAspectRatio()
 	{
-		return s_ratio;
+		return m_ratio;
 	}
 
 	float Window::GetRealAspectRatio()
 	{
-		return (float)s_width / (float)s_height;
+		return (float)m_width / (float)m_height;
 	}
 
 	HWND Window::GetWindowHandler()
 	{
-		return s_windowHandler;
+		return m_windowHandler;
 	}
 
 	LONG Window::GetHorizontalResolution()
@@ -235,21 +340,26 @@ namespace thomas
 		return desktop.bottom;
 	}
 
+	bool Window::Initialized()
+	{
+		return m_initialized;
+	}
+
 	bool Window::SetAspectRatio()
 	{
-		s_aspectRatio = float(s_width) / float(s_height);
+		m_aspectRatio = float(m_width) / float(m_height);
 
-		if (s_aspectRatio > 1.7f && s_aspectRatio < 1.8f)
+		if (m_aspectRatio > 1.7f && m_aspectRatio < 1.8f)
 		{
-			s_ratio = Ratio::STANDARD_169;
+			m_ratio = Ratio::STANDARD_169;
 		}
-		else if (s_aspectRatio > 1.32f && s_aspectRatio < 1.34f)
+		else if (m_aspectRatio > 1.32f && m_aspectRatio < 1.34f)
 		{
-			s_ratio = Ratio::STANDARD_43;
+			m_ratio = Ratio::STANDARD_43;
 		}
-		else if (s_aspectRatio > 1.5f && s_aspectRatio < 1.7f)
+		else if (m_aspectRatio > 1.5f && m_aspectRatio < 1.7f)
 		{
-			s_ratio = Ratio::STANDARD_1610;
+			m_ratio = Ratio::STANDARD_1610;
 		}
 		return true;
 	}
@@ -257,34 +367,32 @@ namespace thomas
 
 	void Window::SetCursor(bool visible)
 	{
-		if (s_showCursor != visible)
+		if (m_showCursor != visible)
 		{
-			s_showCursor = visible;
+			m_showCursor = visible;
 			ShowCursor(visible);
 		}
 	}
 
-	bool Window::Destroy()
+	void Window::Destroy()
 	{
-		return DestroyWindow(s_windowHandler);
+		for (Window* window : s_windows)
+		{
+			delete window;
+		}
+		s_windows.clear();
 	}
-
-	bool Window::Initialized()
-	{
-		return s_initialized;
-	}
-
 	bool Window::ChangeWindowShowState(int nCmdShow)
 	{
-		return ShowWindow(s_windowHandler, nCmdShow);
+		return ShowWindow(m_windowHandler, nCmdShow);
 	}
 
 	void Window::SetFullScreen(bool fullSceeen)
 	{
-		if (s_fullScreen != fullSceeen)
+		if (m_fullScreen != fullSceeen)
 		{
-			s_fullScreen = fullSceeen;
-			ThomasCore::GetSwapChain()->SetFullscreenState(fullSceeen, NULL);
+			m_fullScreen = fullSceeen;
+			m_swapChain->SetFullscreenState(fullSceeen, NULL);
 		}
 	}
 

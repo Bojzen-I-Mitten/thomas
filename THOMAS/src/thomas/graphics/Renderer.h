@@ -32,18 +32,9 @@ namespace thomas {
 		public:
 
 			
-			static bool Init();
-			static bool Resize();
-
-			static void Clear();
 			static void Render();
-
-			static bool Destroy();
-
 			static std::vector<object::component::Camera*> GetCameras();
 			
-			static ID3D11ShaderResourceView* GetDepthBufferSRV();
-			static ID3D11RenderTargetView* GetBackBuffer();
 						
 			static void BindPerFrame();
 			static void BindPerCamera(thomas::object::component::Camera* camera);
@@ -53,28 +44,12 @@ namespace thomas {
 			static void Render(Scene* scene);
 			static void RenderCamera(thomas::object::component::Camera* camera);
 
-			static void BeginRender();
-			static void EndRender();
 
 			static void RenderQueue(std::vector<RenderPair*> renderQueue);
 
 			static bool SortPairs(RenderPair* a, RenderPair* b);
 
-			static void BindDepthNormal();
-			static void BindDepthReadOnly();
 
-			static void BindDepthBufferTexture();
-			static void UnbindDepthBufferTexture();
-
-			static void ResetDepthStencilState();
-
-		private:
-			static ID3D11RenderTargetView* s_backBuffer;
-			static ID3D11ShaderResourceView* s_backBufferSRV;
-			static ID3D11DepthStencilState* s_depthStencilState;
-			static ID3D11DepthStencilView* s_depthStencilView;
-			static ID3D11DepthStencilView* s_depthStencilViewReadOnly;
-			static ID3D11ShaderResourceView* s_depthBufferSRV;
 		};
 	}
 }

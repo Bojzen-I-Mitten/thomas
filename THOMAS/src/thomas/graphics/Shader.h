@@ -25,7 +25,7 @@ namespace thomas
 			
 		public:
 
-			static void Init();
+			static bool Init();
 			static Shader* GetStandardShader();
 
 			static Shader* CreateShader(std::string name, std::string filePath);

@@ -24,7 +24,7 @@ namespace thomas
 		{
 			TwInit(TW_DIRECT3D11, ThomasCore::GetDevice());
 			TwCopyStdStringToClientFunc(CopyStdStringToClient);
-			TwWindowSize(Window::GetWidth(), Window::GetHeight());
+			//TwWindowSize(Window::GetWidth(), Window::GetHeight());
 
 			CreateBar("mainBar");
 			TwDefine("mainBar fontsize=3 iconifiable=false");
@@ -40,7 +40,7 @@ namespace thomas
 
 		void DebugTools::Resize()
 		{
-			TwWindowSize(Window::GetWidth(), Window::GetHeight());
+			//TwWindowSize(Window::GetWidth(), Window::GetHeight());
 		}
 
 		void DebugTools::RemoveAllVariables(std::string barName)
@@ -153,7 +153,7 @@ namespace thomas
 
 		void DebugTools::Draw()
 		{
-			TwDraw();
+			//TwDraw();
 		}
 
 		void DebugTools::ToggleVisibility(std::string barName)

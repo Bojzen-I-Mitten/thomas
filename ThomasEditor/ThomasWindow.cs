@@ -9,11 +9,22 @@ using System.Windows.Interop;
 
 namespace ThomasEditor
 {
+
     public class ThomasWindow : HwndHost
     {
 
+        public static readonly DependencyProperty IsEditorProperty =
+            DependencyProperty.Register(
+                "IsEditor", typeof(Boolean), typeof(ThomasWindow), new PropertyMetadata(false));
 
-    
+        public bool IsEditor
+        {
+            get { return (bool)GetValue(IsEditorProperty); }
+            set
+            {
+                SetValue(IsEditorProperty, value);
+            }
+        }
 
         public new IntPtr Handle { get; private set; }
         Procedure procedure;
@@ -152,9 +163,8 @@ namespace ThomasEditor
                 window, point, point, width, height,
                 parent.Handle, zero, zero, zero);
 
-            var success = ThomasWrapper.Init(Handle);
-            Console.WriteLine("window: " + success);
-            ThomasWrapper.Start();
+
+            ThomasWrapper.CreateThomasWindow(Handle, IsEditor);
 
             return new HandleRef(this, Handle);
         }
@@ -167,7 +177,6 @@ namespace ThomasEditor
 
         protected override IntPtr WndProc(IntPtr handle, int message, IntPtr wparam, IntPtr lparam, ref bool handled)
         {
-           
             try
             {
                 if (message == WM_PAINT)
@@ -178,7 +187,7 @@ namespace ThomasEditor
                     handled = true;
                 }else if (message == WM_SIZE)
                 {
-                    ThomasWrapper.Resize();
+                    ThomasWrapper.Resize(handle);
                     handled = true;
                 }else if(message == WM_LBUTTONDOWN)
                 {

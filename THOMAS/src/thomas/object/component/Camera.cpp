@@ -13,11 +13,12 @@ namespace thomas
 		{
 			void Camera::UpdateProjMatrix()
 			{
-				m_projMatrix = math::Matrix::CreatePerspectiveFieldOfView(math::DegreesToRadians(m_fov), m_viewport.AspectRatio() * Window::GetRealAspectRatio(), m_near, m_far);
+				m_projMatrix = math::Matrix::CreatePerspectiveFieldOfView(math::DegreesToRadians(m_fov), m_viewport.AspectRatio() * Window::GetWindow(m_windowIndex)->GetRealAspectRatio(), m_near, m_far);
 			}
 
 			Camera::Camera()
 			{
+				m_windowIndex = 0; //TODO
 				m_fov = 70;
 				m_near = 0.5;
 				m_far = 10000;
@@ -85,7 +86,8 @@ namespace thomas
 			math::Viewport Camera::GetViewport()
 			{
 				UpdateProjMatrix();
-				return math::Viewport(m_viewport.x, m_viewport.y, m_viewport.width * Window::GetWidth(), m_viewport.height * Window::GetHeight());
+				Window* window = Window::GetWindow(m_windowIndex);
+				return math::Viewport(m_viewport.x, m_viewport.y, m_viewport.width * window->GetWidth(), m_viewport.height * window->GetHeight());
 			}
 
 			void Camera::SetViewport(math::Viewport viewport)

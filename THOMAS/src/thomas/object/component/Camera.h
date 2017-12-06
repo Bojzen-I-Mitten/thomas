@@ -47,6 +47,7 @@ namespace thomas
 				float m_fov;
 				float m_near;
 				float m_far;
+				int m_windowIndex;
 				math::Viewport m_viewport;
 
 			};

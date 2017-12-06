@@ -8,8 +8,11 @@ namespace thomas
 	{
 	private:
 		
-		static bool UpdateWindow();
+		bool UpdateWindow();
+		bool InitDxBuffers();
 
+		Window(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPWSTR title);
+		Window(HWND hWnd);
 	public:
 		enum class Ratio
 		{
@@ -18,48 +21,78 @@ namespace thomas
 			STANDARD_43 = 2,
 		};
 
+		struct DXBuffers
+		{
+			ID3D11RenderTargetView* backBuffer;
+			ID3D11ShaderResourceView* backBufferSRV;
+			ID3D11DepthStencilState* depthStencilState;
+			ID3D11DepthStencilView* depthStencilView;
+			ID3D11DepthStencilView* depthStencilViewReadOnly;
+			ID3D11ShaderResourceView* depthBufferSRV;
+		}m_dxBuffers;
+
 	public:
 
 		static LRESULT CALLBACK EventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-		static bool Init(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPWSTR title);
+		static void InitEditor(HWND hWnd);
+		static Window* Create(HWND hWnd);
+		static Window* GetEditorWindow();
+		static Window* GetWindow(int index);
+		static Window* GetWindow(HWND hWnd);
+		static std::vector<Window*> GetWindows();
+		static void Destroy();
 
-		static bool Init(HWND hWnd);
+	
+		~Window();
 
-		static bool SetHeight(LONG height);
-		static bool SetWidth(LONG width);
-		static bool SetAspectRatio();
-		static bool SetSize(LONG height, LONG width);
-		static bool Resize();
+		IDXGISwapChain* GetSwapChain();
+		void Clear();
+		void BeginRender();
+		void EndRender();
 
-		static LONG GetHeight();
-		static LONG GetWidth();
-		static Ratio GetAspectRatio();
-		static float GetRealAspectRatio();
-		static HWND GetWindowHandler();
-		static LONG GetHorizontalResolution();
-		static LONG GetVerticalResolution();
+		bool SetHeight(LONG height);
+		bool SetWidth(LONG width);
+		bool SetAspectRatio();
+		bool SetSize(LONG height, LONG width);
+		bool Resize();
+
+		LONG GetHeight();
+		LONG GetWidth();
+		Ratio GetAspectRatio();
+		float GetRealAspectRatio();
+		HWND GetWindowHandler();
+		LONG GetHorizontalResolution();
+		LONG GetVerticalResolution();
+		
+		bool Initialized();
+
+		void SetCursor(bool visible);
 		
 
-		static void SetCursor(bool visible);
-		static bool Destroy();
-		static bool Initialized();
+		bool ChangeWindowShowState(int nCmdShow);
 
-		static bool ChangeWindowShowState(int nCmdShow);
-
-		static void SetFullScreen(bool fullSceeen);
+		void SetFullScreen(bool fullSceeen);
 	private:
-		static LONG s_width;
-		static LONG s_height;
-		static float s_aspectRatio;
-		static WNDCLASSEX s_windowClassInfo;
-		static HWND s_windowHandler;
-		static RECT s_windowRectangle;
-		static LPWSTR s_title;
-		static bool s_initialized;
-		static bool s_showCursor;
-		static Ratio s_ratio;
-		static bool s_fullScreen;
+		LONG m_width;
+		LONG m_height;
+		float m_aspectRatio;
+		WNDCLASSEX m_windowClassInfo;
+		HWND m_windowHandler;
+		RECT m_windowRectangle;
+		LPWSTR m_title;
+		bool m_showCursor;
+		Ratio m_ratio;
+		bool m_fullScreen;
+		bool m_initialized;
+
+		IDXGISwapChain* m_swapChain;
+
+		static std::vector<Window*> s_windows;
+		static Window* s_editorWindow;
+
+	private:
+
 	};
 }
 

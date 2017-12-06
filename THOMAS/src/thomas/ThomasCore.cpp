@@ -26,31 +26,28 @@
 #include "../thomas/editor/EditorCamera.h"
 
 namespace thomas {
-	ID3D11Debug* ThomasCore::s_debug;
-	ID3D11Device* ThomasCore::s_device;
-	ID3D11DeviceContext* ThomasCore::s_context;
-	IDXGISwapChain* ThomasCore::s_swapchain;
-	HINSTANCE ThomasCore::s_hInstance;
+	ID3D11Debug* ThomasCore::s_debug = nullptr;
+	ID3D11Device* ThomasCore::s_device = nullptr;
+	ID3D11DeviceContext* ThomasCore::s_context = nullptr;
 	std::vector<std::string> ThomasCore::s_logOutput;
 	bool ThomasCore::s_initialized;
 
 	bool ThomasCore::Init()
 	{
+		if (!s_device)
+		{
+			LOG("DirectX Not initialized. Run initDirectX first");
+			s_initialized = false;
+			return false;
+		}
 		srand(time(NULL));
 
-		bool init = Window::Initialized();
 
-		if (init)
-			init = Input::Init();
-
-		if (init)
-			init = utils::D3d::Init(s_device, s_context, s_swapchain, s_debug);
+		bool init = Input::Init();
 
 		if (init)
 			init = graphics::Texture::Init();
 
-		if (init)
-			init = graphics::Renderer::Init();
 
 		utils::DebugTools::Init();
 
@@ -70,22 +67,33 @@ namespace thomas {
 			init = Physics::Init();
 
 
-		utils::DebugTools::Init();
+		
 
 		//graphics::ParticleSystem::Init();
-		
-		graphics::Shader::Init();
-		graphics::Material::Init();
-
-		editor::EditorCamera::Init();
+		if(init)
+			init = graphics::Shader::Init();
+		if(init)
+			graphics::Material::Init();
+		if(init)
+			editor::EditorCamera::Init();
 
 		s_initialized = init;
 		return s_initialized;
 	}
 
-	HINSTANCE ThomasCore::GetHInstance()
+	bool ThomasCore::InitDirectX()
 	{
-		return s_hInstance;
+		if (!s_device)
+		{
+			bool hr = utils::D3d::CreateDeviceAndContext(s_device, s_context);
+			if(!hr)
+				LOG("Failed to init DirectX Device");
+			#ifdef _DEBUG_DX
+				utils::D3d::CreateDebug(s_debug);
+			#endif // _DEBUG_DX
+			return hr;
+		}
+		return true;
 	}
 
 	void ThomasCore::Update()
@@ -94,7 +102,6 @@ namespace thomas {
 		ThomasTime::Update();
 
 		std::string title = "FPS: " + std::to_string(ThomasTime::GetFPS()) + " FrameTime: " + std::to_string(ThomasTime::GetFrameTime());
-		SetWindowText(Window::GetWindowHandler(), CA2W(title.c_str()));
 
 		if (Input::GetKeyDown(Input::Keys::F1))
 			utils::DebugTools::ToggleVisibility();
@@ -132,7 +139,6 @@ namespace thomas {
 				}
 			}
 			Destroy();
-			Window::Destroy();
 
 		}
 		else
@@ -151,22 +157,10 @@ namespace thomas {
 		return s_initialized;
 	}
 
-	bool ThomasCore::Resize()
-	{
-		if (s_initialized) {
-			Window::Resize();
-			graphics::Renderer::Resize();
-			utils::DebugTools::Resize();
-			//utils::D3d::CreateDebugInfoQueue();
-			return true;
-		}
-		return false;
-		
-	}
-
 	bool ThomasCore::Destroy()
 	{
 		Scene::UnloadScene();
+		Window::Destroy();
 		graphics::LightManager::Destroy();
 		graphics::ParticleSystem::Destroy();
 		graphics::Sprite::Destroy();
@@ -174,15 +168,11 @@ namespace thomas {
 		graphics::Texture::ReleaseSamplers();
 		graphics::Texture::Destroy();
 		graphics::Model::Destroy();
-		graphics::Renderer::Destroy();
 		utils::DebugTools::Destroy();
 		object::Object::Destroy();
-		s_swapchain->Release();
 		s_context->Release();
 		s_device->Release();
 
-		
-		s_swapchain = nullptr;
 		s_context = nullptr;
 		s_device = nullptr;
 		
@@ -199,7 +189,6 @@ namespace thomas {
 	}
 	void ThomasCore::Exit()
 	{
-		Window::Destroy();
 	}
 	ID3D11Device * ThomasCore::GetDevice()
 	{
@@ -208,10 +197,6 @@ namespace thomas {
 	ID3D11DeviceContext* ThomasCore::GetDeviceContext()
 	{
 		return s_context;
-	}
-	IDXGISwapChain * ThomasCore::GetSwapChain()
-	{
-		return s_swapchain;
 	}
 	void ThomasCore::LogOutput(std::string message)
 	{

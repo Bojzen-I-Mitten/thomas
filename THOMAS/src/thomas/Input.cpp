@@ -32,8 +32,7 @@ namespace thomas
 		
 		
 		s_mouseMode = MouseMode::POSITION_ABSOLUTE;
-		s_mouse->SetWindow(Window::GetWindowHandler());
-		s_initialized = Window::Initialized();
+		s_initialized = true;
 		LOG("Initiating Input");
 		return s_initialized;
 	}
@@ -67,10 +66,11 @@ namespace thomas
 			s_keyboard->ProcessMessage(message, wParam, lParam);
 	}
 
-	void Input::ProcessMouse(UINT message, WPARAM wParam, LPARAM lParam)
+	void Input::ProcessMouse(UINT message, WPARAM wParam, LPARAM lParam, HWND handle)
 	{
 		if (s_initialized)
 		{
+			s_mouse->SetWindow(handle);
 			s_mouse->ProcessMessage(message, wParam, lParam);
 		}
 			

@@ -12,25 +12,26 @@
 
 namespace thomas 
 {
+	class Window;
 	namespace utils
 	{	
 		class D3d
 		{
-		private:
-			static bool CreateSwapchainAndDeviceAndContext(LONG witdh, LONG height, ID3D11Device*& device, ID3D11DeviceContext*& context, IDXGISwapChain*& swapchain, HWND handle);
-			static bool CreateBackBuffer(ID3D11Device* device, IDXGISwapChain* swapchain, ID3D11RenderTargetView*& backBuffer, ID3D11ShaderResourceView*& backBufferSRV);
-			static bool CreateDepthStencilView(ID3D11Device* device, ID3D11DepthStencilView *& stencilView,ID3D11DepthStencilView*& depthStencilViewReadOnly, ID3D11ShaderResourceView *& depthBufferSRV);
-			static ID3D11Debug* CreateDebug();
-			
-
 		public:
+
+			static bool CreateBackBuffer(ID3D11Device* device, IDXGISwapChain* swapchain, ID3D11RenderTargetView*& backBuffer, ID3D11ShaderResourceView*& backBufferSRV);
+			static bool CreateDepthStencilView(ID3D11Device* device, LONG width, LONG height, ID3D11DepthStencilView *& stencilView, ID3D11DepthStencilView*& depthStencilViewReadOnly, ID3D11ShaderResourceView *& depthBufferSRV);
+
+			static bool CreateDeviceAndContext(ID3D11Device*& device, ID3D11DeviceContext*& context);
+			static bool CreateSwapChain(LONG width, LONG height, HWND handle, IDXGISwapChain*& swapchain, ID3D11Device* device);
+			static bool CreateDebug(ID3D11Debug*& debug);
+
 			static ID3D11InfoQueue* CreateDebugInfoQueue();
 
-			static bool CreateRenderTargetView(ID3D11RenderTargetView*& rtv, ID3D11ShaderResourceView*& srv);
-			static bool Init(ID3D11Device*& device, ID3D11DeviceContext*& context, IDXGISwapChain*& swapchain, ID3D11Debug*& debug);
-			static ID3D11DepthStencilState* CreateDepthStencilState(D3D11_COMPARISON_FUNC func, bool depth);
-			static bool InitRenderer(ID3D11RenderTargetView*& backBuffer, ID3D11ShaderResourceView *& backBufferSRV, ID3D11DepthStencilState*& depthStencilState, ID3D11DepthStencilView*& depthStencilView, ID3D11DepthStencilView*& depthStencilViewReadOnly, ID3D11ShaderResourceView *& depthBufferSRV);
+			static bool CreateRenderTargetView(LONG width, LONG height, ID3D11RenderTargetView*& rtv, ID3D11ShaderResourceView*& srv);
 
+			static ID3D11DepthStencilState* CreateDepthStencilState(D3D11_COMPARISON_FUNC func, bool depth);
+			
 			static bool LoadTextureFromFile(ID3D11Device* device, _In_opt_ ID3D11DeviceContext* context, std::string fileName, _Outptr_opt_ ID3D11Resource*& texture, _Outptr_opt_ ID3D11ShaderResourceView*& textureView);
 			static bool LoadCubeTextureFromFile(ID3D11Device* device, _In_opt_ ID3D11DeviceContext* context, std::string fileName, _Outptr_opt_ ID3D11Resource*& texture, _Outptr_opt_ ID3D11ShaderResourceView*& textureView);
 			static ID3D11RasterizerState* CreateRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode);
