@@ -3,20 +3,20 @@
 #include <AtlBase.h>
 #include <atlconv.h>
 #include "Math.h"
-
+#include "../Window.h"
 #include "DirectXTK/WICTextureLoader.h"
 #include "DirectXTK/DDSTextureLoader.h"
-#include "../Window.h"
+#include <dxgi.h>
 namespace thomas
 {
 	namespace utils
 	{
-		bool D3d::CreateRenderTargetView(ID3D11RenderTargetView *& rtv, ID3D11ShaderResourceView *& srv)
+		bool D3d::CreateRenderTargetView(LONG width, LONG height, ID3D11RenderTargetView *& rtv, ID3D11ShaderResourceView *& srv)
 		{
 			D3D11_TEXTURE2D_DESC textureDesc;
 			ZeroMemory(&textureDesc, sizeof(textureDesc));
-			textureDesc.Width = Window::GetWidth();
-			textureDesc.Height = Window::GetHeight();
+			textureDesc.Width = width;
+			textureDesc.Height = height;
 			textureDesc.MipLevels = 1;
 			textureDesc.ArraySize = 1;
 			textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -43,54 +43,11 @@ namespace thomas
 			
 			return true;
 		}
-		bool D3d::Init(ID3D11Device*& device, ID3D11DeviceContext*& context,
-			IDXGISwapChain*& swapchain, ID3D11Debug*& debug)
+		
+		bool D3d::CreateDeviceAndContext(ID3D11Device *& device, ID3D11DeviceContext *& context)
 		{
-			LOG("Initiating DirectX");
-			//#define _DEBUG_DX
-
-			if (!CreateSwapchainAndDeviceAndContext(Window::GetWidth(), Window::GetHeight(), device, context, swapchain, Window::GetWindowHandler()))
-				return false;
-
-			
-
-			#ifdef _DEBUG_DX
-			debug = CreateDebug();
-			if (debug == nullptr)
-				return false;
-			#endif
-
-				
-
-			
-			LOG("DirectX initiated, welcome to the masterace");
-			return true;
-		}
-
-		bool D3d::CreateSwapchainAndDeviceAndContext(LONG width, LONG height, ID3D11Device*& device, 
-			ID3D11DeviceContext*& context, IDXGISwapChain*& swapchain, HWND handle)
-		{
-			HRESULT hr;
-			DXGI_SWAP_CHAIN_DESC scd;
-			ZeroMemory(&scd, sizeof(scd));
-
-			scd.BufferCount = 1;
-			scd.BufferDesc.Height = height;
-			scd.BufferDesc.Width = width;
-			scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
-			scd.OutputWindow = handle;
-			scd.Flags = 0;
-			
-			scd.SampleDesc.Count = THOMAS_AA_COUNT; // AA times 1
-			scd.SampleDesc.Quality = THOMAS_AA_QUALITY;
-			scd.Windowed = TRUE;
-			scd.BufferDesc.RefreshRate.Numerator = 0; // change 0 to numerator for vsync
-			scd.BufferDesc.RefreshRate.Denominator = 1; // change 1 to denominator for vynsc
-			
-			
-			
-			hr = D3D11CreateDeviceAndSwapChain(NULL,
+			HRESULT hr = D3D11CreateDevice(
+				NULL,
 				D3D_DRIVER_TYPE_HARDWARE,
 				NULL,
 				#ifdef _DEBUG_DX
@@ -101,21 +58,77 @@ namespace thomas
 				NULL,
 				NULL,
 				D3D11_SDK_VERSION,
-				&scd,
-				&swapchain,
 				&device,
 				NULL,
-				&context);
-
+				&context
+			);
 			if (FAILED(hr))
 			{
 				LOG_HR(hr);
 				return false;
 			}
-
 			return true;
-
 		}
+
+		bool D3d::CreateSwapChain(LONG width, LONG height, HWND handle, IDXGISwapChain*& swapchain, ID3D11Device* device)
+		{
+
+
+			IDXGIDevice * dxgiDevice = 0;
+			HRESULT hr = ThomasCore::GetDevice()->QueryInterface(__uuidof(IDXGIDevice), (void **)& dxgiDevice);
+			if (SUCCEEDED(hr))
+			{
+				IDXGIAdapter * dxgiAdapter = 0;
+				hr = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void **)& dxgiAdapter);
+				if (SUCCEEDED(hr))
+				{
+					IDXGIFactory * dxgiFactory = 0;
+					hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void **)& dxgiFactory);
+					if (SUCCEEDED(hr))
+					{
+						DXGI_SWAP_CHAIN_DESC scd;
+						ZeroMemory(&scd, sizeof(scd));
+
+						scd.BufferCount = 1;
+						scd.BufferDesc.Height = height;
+						scd.BufferDesc.Width = width;
+						scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+						scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
+						scd.OutputWindow = handle;
+						scd.Flags = 0;
+
+						scd.SampleDesc.Count = THOMAS_AA_COUNT; // AA times 1
+						scd.SampleDesc.Quality = THOMAS_AA_QUALITY;
+						scd.Windowed = TRUE;
+						scd.BufferDesc.RefreshRate.Numerator = 0; // change 0 to numerator for vsync
+						scd.BufferDesc.RefreshRate.Denominator = 1; // change 1 to denominator for vynsc
+						
+						hr = dxgiFactory->CreateSwapChain(
+							device,
+							&scd,
+							&swapchain
+						);
+
+						if (!SUCCEEDED(hr))
+						{
+							LOG("Failed to create swapchain");
+						}
+						else
+							return true;
+							
+
+						dxgiFactory->Release();
+					}
+					dxgiAdapter->Release();
+					
+				}
+				dxgiDevice->Release();
+			}
+			return false;
+		}
+
+
+	
 
 		bool D3d::CreateBackBuffer(ID3D11Device * device, IDXGISwapChain * swapchain, ID3D11RenderTargetView*& backBuffer, ID3D11ShaderResourceView*& backbufferSRV)
 		{
@@ -192,7 +205,7 @@ namespace thomas
 			return stencilState;
 		}
 		
-		bool D3d::CreateDepthStencilView(ID3D11Device * device, ID3D11DepthStencilView *& stencilView, ID3D11DepthStencilView*& depthStencilViewReadOnly,
+		bool D3d::CreateDepthStencilView(ID3D11Device * device, LONG width, LONG height, ID3D11DepthStencilView *& stencilView, ID3D11DepthStencilView*& depthStencilViewReadOnly,
 			ID3D11ShaderResourceView *& depthBufferSRV)
 		{
 			D3D11_TEXTURE2D_DESC depthStencilBufferDesc;
@@ -202,8 +215,8 @@ namespace thomas
 			ZeroMemory(&depthViewDesc, sizeof(depthViewDesc));
 
 			// Z-buffer texture desc
-			depthStencilBufferDesc.Width = Window::GetWidth();
-			depthStencilBufferDesc.Height = Window::GetHeight();
+			depthStencilBufferDesc.Width = width;
+			depthStencilBufferDesc.Height = height;
 			depthStencilBufferDesc.MipLevels = 1;
 			depthStencilBufferDesc.ArraySize = 1;
 			depthStencilBufferDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
@@ -269,9 +282,9 @@ namespace thomas
 			return true;
 			
 		}
-		ID3D11Debug * D3d::CreateDebug()
+		
+		bool D3d::CreateDebug(ID3D11Debug *& debug)
 		{
-			ID3D11Debug* debug;
 			HRESULT hr = ThomasCore::GetDevice()->QueryInterface(IID_PPV_ARGS(&debug));
 			if (FAILED(hr))
 			{
@@ -301,18 +314,6 @@ namespace thomas
 		}
 
 
-
-
-		bool D3d::InitRenderer(ID3D11RenderTargetView *& backBuffer, ID3D11ShaderResourceView *& backBufferSRV, ID3D11DepthStencilState *& depthStencilState, ID3D11DepthStencilView *& depthStencilView, ID3D11DepthStencilView*& depthStencilViewReadOnly, ID3D11ShaderResourceView *& depthBufferSRV)
-		{
-			CreateBackBuffer(ThomasCore::GetDevice(), ThomasCore::GetSwapChain(), backBuffer, backBufferSRV);
-			CreateDepthStencilView(ThomasCore::GetDevice(), depthStencilView, depthStencilViewReadOnly, depthBufferSRV);
-		
-			depthStencilState = CreateDepthStencilState(D3D11_COMPARISON_LESS, true);
-
-
-			return true;
-		}
 
 
 

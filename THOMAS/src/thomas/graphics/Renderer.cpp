@@ -24,64 +24,12 @@ namespace thomas
 	namespace graphics
 	{
 		
-		ID3D11RenderTargetView* Renderer::s_backBuffer = NULL;
-		ID3D11ShaderResourceView* Renderer::s_backBufferSRV = NULL;
-		ID3D11DepthStencilState* Renderer::s_depthStencilState = NULL;
-		ID3D11DepthStencilView* Renderer::s_depthStencilView = NULL;
-		ID3D11ShaderResourceView* Renderer::s_depthBufferSRV = NULL;
-		ID3D11DepthStencilView* Renderer::s_depthStencilViewReadOnly = NULL;
-
-
-		bool thomas::graphics::Renderer::Init()
-		{
-
-			return (utils::D3d::InitRenderer(s_backBuffer, s_backBufferSRV, s_depthStencilState, s_depthStencilView, s_depthStencilViewReadOnly, s_depthBufferSRV));
-		}
-
-		bool Renderer::Resize()
-		{
-			ThomasCore::GetDeviceContext()->OMSetRenderTargets(0, 0, 0);
-			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(NULL, 1);
-			SAFE_RELEASE(s_backBuffer);
-			SAFE_RELEASE(s_backBufferSRV);
-			SAFE_RELEASE(s_depthStencilView);
-			SAFE_RELEASE(s_depthStencilState);
-			SAFE_RELEASE(s_depthStencilViewReadOnly);
-			SAFE_RELEASE(s_depthBufferSRV);	
-
-			ThomasCore::GetSwapChain()->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-			ID3D11Texture2D* pBuffer;
-
-			utils::D3d::InitRenderer(s_backBuffer, s_backBufferSRV, s_depthStencilState, s_depthStencilView, s_depthStencilViewReadOnly, s_depthBufferSRV);
-					
-			return true;
-		}
-
-		void thomas::graphics::Renderer::Clear()
-		{
-			float color[4] = { 0.0f, 0.5f, 0.75f, 1.0f };
-			ThomasCore::GetDeviceContext()->ClearRenderTargetView(s_backBuffer, color);
-			ThomasCore::GetDeviceContext()->ClearDepthStencilView(s_depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
-
-		}
-
 		void thomas::graphics::Renderer::Render()
 		{
 			Scene::Render();
 						
 		}
 
-		bool Renderer::Destroy()
-		{
-			SAFE_RELEASE(s_backBuffer);
-			SAFE_RELEASE(s_backBufferSRV);
-			SAFE_RELEASE(s_depthStencilState);
-			SAFE_RELEASE(s_depthStencilView);
-			SAFE_RELEASE(s_depthStencilViewReadOnly);
-			SAFE_RELEASE(s_depthBufferSRV);
-			
-			return true;
-		}
 		std::vector<object::component::Camera*> Renderer::GetCameras()
 		{
 			std::vector<object::component::Camera*> cameras;
@@ -92,15 +40,6 @@ namespace thomas
 			return cameras;
 		}
 	
-
-		ID3D11ShaderResourceView* Renderer::GetDepthBufferSRV()
-		{
-			return s_depthBufferSRV;
-		}
-		ID3D11RenderTargetView * Renderer::GetBackBuffer()
-		{
-			return s_backBuffer;
-		}
 
 		void Renderer::BindPerFrame()
 		{
@@ -150,24 +89,10 @@ namespace thomas
 
 		void Renderer::RenderCamera(thomas::object::component::Camera * camera)
 		{
-			ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &s_backBuffer, s_depthStencilView);
-			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(s_depthStencilState, 1);
 			BindPerCamera(camera);
 			RenderQueue(Scene::GetCurrentScene()->GetRenderQueue());
 
 			Physics::DrawDebug(camera);
-		}
-
-		void Renderer::BeginRender()
-		{
-			Clear();
-			BindPerFrame();
-		}
-
-		void Renderer::EndRender()
-		{
-			utils::DebugTools::Draw();
-			ThomasCore::GetSwapChain()->Present(0, 0);
 		}
 
 		void Renderer::RenderQueue(std::vector<RenderPair*> renderQueue)
@@ -194,31 +119,6 @@ namespace thomas
 			return a->material->GetId() < a->material->GetId();
 		}
 
-		void Renderer::BindDepthNormal()
-		{
-			ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &s_backBuffer, s_depthStencilView);
-		}
-		void Renderer::BindDepthReadOnly()
-		{
-			ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &s_backBuffer, s_depthStencilViewReadOnly);
-		}
-		void Renderer::BindDepthBufferTexture()
-		{
-			BindDepthReadOnly();
-			ID3D11SamplerState* sampler = Texture::GetSamplerState(Texture::SamplerState::WRAP);
-			ThomasCore::GetDeviceContext()->PSSetSamplers(5, 1, &sampler);
-			ThomasCore::GetDeviceContext()->PSSetShaderResources(5, 1, &s_depthBufferSRV);
-		}
-		void Renderer::UnbindDepthBufferTexture()
-		{
-			ID3D11ShaderResourceView* nullSRV = NULL;
-			ThomasCore::GetDeviceContext()->PSSetShaderResources(5, 1, &nullSRV);
-			BindDepthNormal();
-		}
-		void Renderer::ResetDepthStencilState()
-		{
-			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(s_depthStencilState, 1);
-		}
 	}
 }
 

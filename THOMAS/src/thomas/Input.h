@@ -244,7 +244,7 @@ namespace thomas
 		static bool Init();
 		static void Update();
 		static void ProcessKeyboard(UINT message, WPARAM wParam, LPARAM lParam);
-		static void ProcessMouse(UINT message, WPARAM wParam, LPARAM lParam);
+		static void ProcessMouse(UINT message, WPARAM wParam, LPARAM lParam, HWND handle);
 		static void ProcessGamePad(UINT message, WPARAM wParam, LPARAM lParam);
 
 		//Mouse

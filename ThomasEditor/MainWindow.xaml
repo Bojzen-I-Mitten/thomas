@@ -57,12 +57,22 @@
                 <xcad:LayoutPanel>
 
                     <xcad:LayoutDocumentPaneGroup>
-                        <xcad:LayoutDocumentPane DockWidth="500">
-                            <xcad:LayoutAnchorable ContentId="EditorView" Title="Editor View" CanHide="False" CanClose="False"
+                        <xcad:LayoutDocumentPaneGroup Orientation="Vertical">
+                            <xcad:LayoutDocumentPane>
+                                <xcad:LayoutAnchorable ContentId="EditorView" Title="Editor View" CanHide="False" CanClose="False"
                                             AutoHideWidth="240">
-                                <local:ThomasWindow x:Name="editor"/>
-                            </xcad:LayoutAnchorable>
-                        </xcad:LayoutDocumentPane>
+                                    <local:ThomasWindow x:Name="editor" IsEditor="True"/>
+                                </xcad:LayoutAnchorable>
+                            </xcad:LayoutDocumentPane>
+
+                            <xcad:LayoutDocumentPane>
+                                <xcad:LayoutAnchorable ContentId="Game View" Title="Game View" CanHide="False" CanClose="False"
+                                            AutoHideWidth="240">
+                                    <local:ThomasWindow x:Name="game" IsEditor="False"/>
+                                </xcad:LayoutAnchorable>
+                            </xcad:LayoutDocumentPane>
+                        </xcad:LayoutDocumentPaneGroup>
+
                         <xcad:LayoutDocumentPane>
                             <xcad:LayoutAnchorable ContentId="Hiearchy" Title="Hiearchy" >
                                 <TreeView Focusable="True" x:Name="thomasObjects"/>

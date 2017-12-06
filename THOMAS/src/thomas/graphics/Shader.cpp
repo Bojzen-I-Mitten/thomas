@@ -178,6 +178,7 @@ namespace thomas
 				else
 				{
 					LOG("Error compiling shader: " << filePath << " error:");
+					LOG_HR(result);
 				}
 				return false;
 			}
@@ -193,9 +194,12 @@ namespace thomas
 			return true;
 		}
 
-		void Shader::Init()
+		bool Shader::Init()
 		{
 			s_standardShader = CreateShader("Standard", "../Data/FXIncludes/StandardShader.fx");
+			if (!s_standardShader)
+				return false;
+			return true;
 		}
 
 		Shader * Shader::GetStandardShader()

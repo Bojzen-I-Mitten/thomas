@@ -27,26 +27,40 @@ namespace ThomasEditor {
 
 	public ref class ThomasWrapper
 	{
-
-	public:
-		static bool Init(IntPtr hWnd) {
-			thomas::Window::Init((HWND)hWnd.ToPointer());
+	private:
+		static void Start() {
 			thomas::ThomasCore::Init();
 			thomas::Scene::LoadScene<TestScene>();
-			return thomas::ThomasCore::Initialized();
-		}
-		static void Start() {
-			SetFocus(thomas::Window::GetWindowHandler());
+			if(thomas::Window::GetEditorWindow())
+				SetFocus(thomas::Window::GetEditorWindow()->GetWindowHandler());
 			LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
 		}
+	public:
+		static void CreateThomasWindow(IntPtr hWnd, bool isEditor)
+		{
+			if (thomas::ThomasCore::InitDirectX()) {
+				if (isEditor)
+					thomas::Window::InitEditor((HWND)hWnd.ToPointer());
+				else
+					thomas::Window::Create((HWND)hWnd.ToPointer());
+
+				if (!ThomasCore::Initialized())
+					Start();
+			}
+				
+		}
+
+		
 
 		static void eventHandler(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam) {
 			thomas::Window::EventHandler((HWND)hWnd.ToPointer(), msg, (WPARAM)wParam.ToPointer(), (LPARAM)lParam.ToPointer());
 		}
 
-		static void Resize()
+		static void Resize(IntPtr hWnd)
 		{
-			thomas::ThomasCore::Resize();
+			Window* window = thomas::Window::GetWindow((HWND)hWnd.ToPointer());
+			if (window)
+				window->Resize();
 		}
 
 		static void Update() 

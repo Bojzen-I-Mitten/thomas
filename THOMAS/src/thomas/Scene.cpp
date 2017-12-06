@@ -22,6 +22,7 @@
 #include "object\component\Camera.h"
 #include "graphics\Material.h"
 #include "editor\EditorCamera.h"
+#include "Window.h"
 namespace thomas
 {
 	Scene* Scene::s_currentScene;
@@ -57,7 +58,6 @@ namespace thomas
 	{
 		
 		editor::EditorCamera::Update();
-		graphics::Renderer::ResetDepthStencilState();
 		object::Object::Clean();
 	}
 	void Scene::Render()
@@ -67,10 +67,14 @@ namespace thomas
 			LOG("No scene set")
 				return;
 		}
-		graphics::Renderer::BeginRender();
-		editor::EditorCamera::Render();
-		graphics::Renderer::Render(s_currentScene);
-		graphics::Renderer::EndRender();
+		graphics::Renderer::BindPerFrame();
+		for (Window* window : Window::GetWindows())
+		{
+			window->BeginRender();
+			editor::EditorCamera::Render();
+			graphics::Renderer::Render(s_currentScene);
+			window->EndRender();
+		}
 		s_currentScene->ClearRenderQueue();
 	}
 	void Scene::AddToRenderQueue(graphics::RenderPair * renderPair)

@@ -13,7 +13,7 @@
 #endif
 
 #ifdef _DEBUG
-#define LOG_HR(hr) 	_com_error err(hr); LPCTSTR  errMsg = err.ErrorMessage(); std::cout <<__FUNCTION__  << ": "; std::wcout << errMsg << std::endl;
+#define LOG_HR(hr){	_com_error err(hr); LPCTSTR  errMsg = err.ErrorMessage(); std::stringstream __buff__;  __buff__ << errMsg; thomas::ThomasCore::LogOutput(__buff__.str());}
 #else
 #define LOG_HR(hr) 
 #endif
