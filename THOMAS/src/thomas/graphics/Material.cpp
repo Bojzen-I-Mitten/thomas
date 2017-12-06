@@ -8,6 +8,7 @@ namespace thomas
 	{
 		std::vector<Material*> Material::s_materials;
 		std::vector<Material*> Material::s_materialInstances;
+		Material* Material::s_standardMaterial;
 
 		UINT Material::s_idCounter = 0;
 
@@ -17,6 +18,16 @@ namespace thomas
 			{
 				GetProperty(name)->SetSampler(value);
 			}
+		}
+
+		void Material::Init()
+		{
+			s_standardMaterial = new Material(Shader::GetStandardShader());
+		}
+
+		Material * Material::GetStandardMaterial()
+		{
+			return s_standardMaterial;
 		}
 
 		Material::Material(Shader * shader)

@@ -5,33 +5,44 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ThomasEditor"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:ms="http://namespaces.mindscape.co.nz/wpf" x:Class="ThomasEditor.ThomasGameObjectInspector"
+             x:Class="ThomasEditor.ThomasGameObjectInspector"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              x:Name="_this">
 
 
     <UserControl.Resources>
-        <DataTemplate x:Key="Vector3Editor">
-            <StackPanel>
-                <Label Content="X"/>
-                <TextBox Text="{Binding Path=x, Mode=TwoWay}"/>
-                <Label Content="Y"/>
-                <TextBox Text="{Binding Path=Value.y}"/>
-                <Label Content="Z"/>
-                <TextBox Text="{Binding Path=Value.z}"/>
-            </StackPanel>
+
+        <local:ComponentToNameConverter x:Key="converter"/>
+        <local:ConvertVector3 x:Key="convertVector3" x:Shared="False"/>
+
+        <DataTemplate x:Key="Vector3Editor" x:Name="vector3Test">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="X"/>
+                <xctk:DoubleUpDown TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="1" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='x'}"/>
+                <Label Grid.Column="2" Content="Y"/>
+                <xctk:DoubleUpDown TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="3" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='y'}"/>
+                <Label Grid.Column="4" Content="Z"/>
+                <xctk:DoubleUpDown TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="5" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='z'}"/>
+            </Grid>
         </DataTemplate>
     </UserControl.Resources>
-    
-    <Grid>
+
+    <Grid x:Name="gameObjectGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
-
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" x:Name="gameObjectPanel">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
@@ -41,9 +52,16 @@
             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
             <xctk:DropDownButton Grid.Column="2"></xctk:DropDownButton>
         </Grid>
-
-        <ms:PropertyGrid x:Name="propertyGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
-        </ms:PropertyGrid>
+        <ItemsControl ItemsSource="{Binding Components}" Grid.Row="1" Background="#333333">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Expander Header="{Binding Converter={StaticResource converter}}" IsExpanded="True">
+                        <xctk:PropertyGrid NameColumnWidth="75" IsCategorized="False" UpdateTextBoxSourceOnEnterKey="True"  Background="Aqua" AutoGenerateProperties="True" SelectedObject="{Binding}" ShowAdvancedOptions="False" ShowSummary="False" ShowSortOptions="False" ShowTitle="False" ShowSearchBox="False" Loaded="PropertyGrid_Loaded" Initialized="PropertyGrid_Initialized" >
+                        </xctk:PropertyGrid>
+                    </Expander>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 
 

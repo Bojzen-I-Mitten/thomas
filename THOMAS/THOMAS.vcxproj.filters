@@ -41,6 +41,7 @@
     <ClCompile Include="src\thomas\ThomasCore.cpp" />
     <ClCompile Include="src\thomas\ThomasTime.cpp" />
     <ClCompile Include="src\thomas\Window.cpp" />
+    <ClCompile Include="src\thomas\editor\EditorCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />
@@ -132,5 +133,6 @@
     <ClInclude Include="src\thomas\ThomasTime.h" />
     <ClInclude Include="src\thomas\Window.h" />
     <ClInclude Include="src\thomas\object\component\ScriptComponent.h" />
+    <ClInclude Include="src\thomas\editor\EditorCamera.h" />
   </ItemGroup>
 </Project>

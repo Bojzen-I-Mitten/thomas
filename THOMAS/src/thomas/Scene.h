@@ -27,9 +27,6 @@ namespace thomas
 
 	class THOMAS_API Scene
 	{
-	private:
-		std::vector<object::component::RenderComponent*> GetAllRenderComponents();
-		std::vector<object::component::FrustumCullingComponent*> GetAllFrustrumCullingComponents();
 	public:
 		
 		static void UnloadScene();

@@ -39,6 +39,7 @@ namespace thomas
 
 				float GetAspectRatio();
 
+				void Render();
 
 				
 			private:

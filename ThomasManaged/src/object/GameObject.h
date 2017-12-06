@@ -12,13 +12,12 @@ using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::ComponentModel;
 using namespace System::Collections::ObjectModel;
-using namespace Mindscape::WpfElements::WpfPropertyGrid;
 namespace ThomasEditor {
 
 	public ref class GameObject : public Object, public INotifyPropertyChanged
 	{
 		
-		ObservableDictionary<String^,Component^> m_components;
+		ObservableCollection<Component^> m_components;
 		Transform^ m_transform;
 		static ObservableCollection<GameObject^> s_gameObjects;
 		String^ m_name;
@@ -27,8 +26,18 @@ namespace ThomasEditor {
 			m_name = name;
 			nativePtr = new thomas::object::GameObject(msclr::interop::marshal_as<std::string>(name));
 			m_transform = AddComponent<Transform^>();
+			((thomas::object::GameObject*)nativePtr)->m_transform = (thomas::object::component::Transform*)m_transform->nativePtr;
 			s_gameObjects.Add(this);
 			
+		}
+
+		virtual void Destroy() override
+		{
+			for each(Component^ component in m_components)
+			{
+				component->Destroy();
+			}
+			m_components.Clear();
 		}
 
 		virtual event PropertyChangedEventHandler^ PropertyChanged;
@@ -69,8 +78,8 @@ namespace ThomasEditor {
 			}
 		}
 
-		property ObservableDictionary<String^, Component^>^ Components {
-			ObservableDictionary<String^, Component^>^ get() {
+		property ObservableCollection<Component^>^ Components {
+			ObservableCollection<Component^>^ get() {
 				return %m_components;
 			}
 		}
@@ -87,7 +96,7 @@ namespace ThomasEditor {
 			
 			T component = (T)Activator::CreateInstance(T::typeid);
 			((Component^)component)->setGameObject(this);
-			m_components.Add((T::typeid)->Name, (Component^)component);
+			m_components.Add((Component^)component);
 			return component;
 		}
 
@@ -95,10 +104,12 @@ namespace ThomasEditor {
 		where T : Component
 		T GetComponent()
 		{
-			if (m_components.ContainsKey((T::typeid)->Name))
-				return (T)m_components[(T::typeid)->Name];
-			else
-				return T();
+			for each(Component^ component in m_components)
+			{
+				if (T::typeid == component::typeid)
+					return (T)component;
+			}
+			return T();
 		}
 		
 

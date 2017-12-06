@@ -4,6 +4,7 @@
 #include "../../graphics/Skybox.h"
 #include "../../graphics/TextRender.h"
 #include "Transform.h"
+#include "../../graphics/Renderer.h"
 namespace thomas
 {
 	namespace object
@@ -101,6 +102,12 @@ namespace thomas
 			float Camera::GetAspectRatio()
 			{
 				return m_viewport.AspectRatio();
+			}
+
+			void Camera::Render()
+			{
+				ThomasCore::GetDeviceContext()->RSSetViewports(1, GetViewport().Get11());
+				graphics::Renderer::RenderCamera(this);
 			}
 
 

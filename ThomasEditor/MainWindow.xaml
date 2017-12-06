@@ -15,10 +15,6 @@
             <ContextMenu x:Key="gameObjectContext">
                 <MenuItem Header="Delete Object" Click="Menu_RemoveGameObject"/>
             </ContextMenu>
-            
-            <ResourceDictionary.MergedDictionaries>
-                <ms:Alloy/>
-            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -52,7 +48,6 @@
             </Menu>
         </DockPanel>
 
-
         <xcad:DockingManager Grid.Row="1"
                            AllowMixedOrientation="True"
                            BorderBrush="Black"
@@ -80,7 +75,7 @@
                         </xcad:LayoutDocumentPane>
                         <xcad:LayoutDocumentPane>
                             <xcad:LayoutAnchorable ContentId="Console" Title="Console">
-                                <ListBox Name="console" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox Name="console" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.ScrollChanged="console_ScrollChanged">
                                 </ListBox>
                             </xcad:LayoutAnchorable>
                         </xcad:LayoutDocumentPane>

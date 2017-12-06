@@ -51,6 +51,10 @@ namespace thomas {
 			
 
 			static void Render(Scene* scene);
+			static void RenderCamera(thomas::object::component::Camera* camera);
+
+			static void BeginRender();
+			static void EndRender();
 
 			static void RenderQueue(std::vector<RenderPair*> renderQueue);
 

@@ -20,6 +20,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\thomas\editor\EditorCamera.cpp" />
     <ClCompile Include="src\thomas\graphics\BulletDebugDraw.cpp" />
     <ClCompile Include="src\thomas\graphics\ComputeShader.cpp" />
     <ClCompile Include="src\thomas\graphics\LightManager.cpp" />
@@ -63,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\thomas\Common.h" />
+    <ClInclude Include="src\thomas\editor\EditorCamera.h" />
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />
     <ClInclude Include="src\thomas\graphics\ComputeShader.h" />
     <ClInclude Include="src\thomas\graphics\LightManager.h" />

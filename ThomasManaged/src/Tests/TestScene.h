@@ -11,7 +11,6 @@ class TestScene : public thomas::Scene
 public:
 	TestScene() : Scene("testScene")
 	{
-		new thomas::graphics::Material("testMat", thomas::graphics::Shader::CreateShader("standardShader", "../Data/FXIncludes/ThomasStandardShader.fx"));
 		thomas::utils::AssimpLoader::LoadModel("testModel","../Data/box.obj", "poop");
 	}
 };

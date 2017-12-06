@@ -9,6 +9,7 @@ namespace thomas
 	namespace graphics
 	{
 		std::vector<Shader*> Shader::s_loadedShaders;
+		Shader* Shader::s_standardShader;
 
 		Shader::Shader(std::string name, ID3DX11Effect* effect)
 		{
@@ -151,8 +152,8 @@ namespace thomas
 
 		bool Shader::Compile(std::string filePath, ID3DX11Effect** effect)
 		{
-			ID3DX11Effect* tempEffect;
-			ID3DBlob* errorBlob;
+			ID3DX11Effect* tempEffect = nullptr;
+			ID3DBlob* errorBlob = nullptr;
 			HRESULT result = D3DX11CompileEffectFromFile(
 				CA2W(filePath.c_str()),
 				nullptr,
@@ -176,7 +177,7 @@ namespace thomas
 				}
 				else
 				{
-					LOG("Error compiling shader: " << filePath << " error:" << result);
+					LOG("Error compiling shader: " << filePath << " error:");
 				}
 				return false;
 			}
@@ -190,6 +191,16 @@ namespace thomas
 			}
 			*effect = tempEffect;
 			return true;
+		}
+
+		void Shader::Init()
+		{
+			s_standardShader = CreateShader("Standard", "../Data/FXIncludes/StandardShader.fx");
+		}
+
+		Shader * Shader::GetStandardShader()
+		{
+			return s_standardShader;
 		}
 
 		Shader * Shader::CreateShader(std::string name, std::string filePath)

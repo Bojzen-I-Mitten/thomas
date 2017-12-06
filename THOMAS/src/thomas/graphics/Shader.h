@@ -24,6 +24,10 @@ namespace thomas
 			
 			
 		public:
+
+			static void Init();
+			static Shader* GetStandardShader();
+
 			static Shader* CreateShader(std::string name, std::string filePath);
 			void BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY type);
 			void BindVertexBuffer(ID3D11Buffer * vertexBuffer, UINT stride, UINT offset = 0);
@@ -69,6 +73,7 @@ namespace thomas
 			std::vector<ShaderPass> m_passes;
 			
 			static std::vector<Shader*> s_loadedShaders;
+			static Shader* s_standardShader;
 
 		};
 	}

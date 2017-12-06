@@ -140,31 +140,40 @@ namespace thomas
 
 		void Renderer::Render(Scene * scene)
 		{
-			Clear();
-			ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &s_backBuffer, s_depthStencilView);
-			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(s_depthStencilState, 1);
-			BindPerFrame();
-
 			std::vector<object::component::Camera*> cameras = object::Object::FindObjectsOfType<object::component::Camera>();
 			for (object::component::Camera* camera : cameras)
 			{
-				ThomasCore::GetDeviceContext()->RSSetViewports(1, camera->GetViewport().Get11());
-				BindPerCamera(camera);
-				RenderQueue(scene->GetRenderQueue());
-
-				Physics::DrawDebug(camera);
-				
+				RenderCamera(camera);
 			}
+						
+		}
+
+		void Renderer::RenderCamera(thomas::object::component::Camera * camera)
+		{
+			ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &s_backBuffer, s_depthStencilView);
+			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(s_depthStencilState, 1);
+			BindPerCamera(camera);
+			RenderQueue(Scene::GetCurrentScene()->GetRenderQueue());
+
+			Physics::DrawDebug(camera);
+		}
+
+		void Renderer::BeginRender()
+		{
+			Clear();
+			BindPerFrame();
+		}
+
+		void Renderer::EndRender()
+		{
 			utils::DebugTools::Draw();
 			ThomasCore::GetSwapChain()->Present(0, 0);
-						
 		}
 
 		void Renderer::RenderQueue(std::vector<RenderPair*> renderQueue)
 		{
-
 			std::sort(renderQueue.begin(), renderQueue.end(), SortPairs);
-						
+
 			Material* lastMaterial = nullptr;
 			for (RenderPair* renderPair : renderQueue)
 			{
@@ -177,6 +186,7 @@ namespace thomas
 
 				lastMaterial->Draw(renderPair->mesh);
 			}
+
 		}
 
 		bool Renderer::SortPairs(RenderPair* a, RenderPair* b)

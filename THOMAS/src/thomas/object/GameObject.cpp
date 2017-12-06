@@ -1,5 +1,4 @@
 #include "GameObject.h"
-#include "component\Transform.h"
 namespace thomas
 {
 	namespace object

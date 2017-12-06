@@ -13,7 +13,6 @@ using namespace System::ComponentModel;
 namespace ThomasEditor {
 
 	ref class GameObject;
-	[TypeConverter(ExpandableObjectConverter::typeid)]
 	public ref class Component : public Object
 	{
 	internal:

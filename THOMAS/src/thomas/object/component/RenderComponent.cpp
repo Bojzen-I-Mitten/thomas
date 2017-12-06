@@ -11,6 +11,7 @@ namespace thomas {
 
 			RenderComponent::RenderComponent()
 			{
+				m_model = nullptr;
 			}
 
 			void RenderComponent::SetModel(graphics::Model* model)
@@ -27,11 +28,12 @@ namespace thomas {
 					{
 						graphics::RenderPair* renderPair = new graphics::RenderPair();
 						renderPair->mesh = mesh;
-						renderPair->material = NULL;
+						renderPair->material = graphics::Material::GetStandardMaterial();
 						renderPair->transform = m_gameObject->m_transform;
 
 						m_renderPairs.push_back(renderPair);
 					}
+					m_model = model;
 				}
 					
 			}
@@ -42,7 +44,7 @@ namespace thomas {
 				std::vector<graphics::RenderPair*> setPairs;
 				for (auto pair : m_renderPairs)
 					if (pair->material)
-						m_scene->AddToRenderQueue(pair);
+						thomas::Scene::GetCurrentScene()->AddToRenderQueue(pair);
 			}
 
 			void RenderComponent::SetMaterial(int meshIndex, graphics::Material * material)

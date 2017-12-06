@@ -21,27 +21,14 @@
 #include "ThomasCore.h"
 #include "object\component\Camera.h"
 #include "graphics\Material.h"
-#
+#include "editor\EditorCamera.h"
 namespace thomas
 {
 	Scene* Scene::s_currentScene;
 	bool Scene::s_drawDebugPhysics;
 	//PlayerStats* Scene::s_stats;
 
-	std::vector<object::component::RenderComponent*> Scene::GetAllRenderComponents()
-	{
-		std::vector<object::component::RenderComponent*> renderComponents;
-		for (object::GameObject* gameObject : object::GameObject::FindGameObjectsWithComponent<object::component::RenderComponent>())
-		{
-			if (gameObject->GetActive())
-				for (object::component::RenderComponent* renderComponent : gameObject->GetComponents<object::component::RenderComponent>())
-				{
-					if (renderComponent->GetActive())
-						renderComponents.push_back(renderComponent);
-				}
-		}
-		return renderComponents;
-	}
+	
 	void Scene::UnloadScene()
 	{
 		utils::DebugTools::RemoveAllVariables();
@@ -69,27 +56,7 @@ namespace thomas
 	void Scene::UpdateCurrentScene()
 	{
 		
-		if (s_currentScene)
-		{
-			std::string name = s_currentScene->GetName();
-			for (object::Object* object : object::Object::GetAllObjectsInScene(s_currentScene))
-			{
-				if (name != s_currentScene->GetName())
-					break;
-				
-				object->Update();
-				
-			}
-			for (object::Object* object : object::Object::GetAllObjectsInScene(s_currentScene))
-			{
-				if (name != s_currentScene->GetName())
-					break;
-				object->LateUpdate();
-			}
-
-		}
-		else
-			LOG("No scene set");
+		editor::EditorCamera::Update();
 		graphics::Renderer::ResetDepthStencilState();
 		object::Object::Clean();
 	}
@@ -100,7 +67,10 @@ namespace thomas
 			LOG("No scene set")
 				return;
 		}
+		graphics::Renderer::BeginRender();
+		editor::EditorCamera::Render();
 		graphics::Renderer::Render(s_currentScene);
+		graphics::Renderer::EndRender();
 		s_currentScene->ClearRenderQueue();
 	}
 	void Scene::AddToRenderQueue(graphics::RenderPair * renderPair)

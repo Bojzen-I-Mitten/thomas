@@ -17,6 +17,10 @@ namespace thomas
 			
 			
 		public:
+
+			static void Init();
+			static Material* GetStandardMaterial();
+
 			Material(Shader* shader);
 			Material(std::string name, Shader* shader);
 			Material(Material* original);
@@ -78,6 +82,7 @@ namespace thomas
 			static std::vector<Material*> s_materials;
 			static std::vector<Material*> s_materialInstances;
 
+			static Material* s_standardMaterial;
 
 			static UINT s_idCounter;
 		};
