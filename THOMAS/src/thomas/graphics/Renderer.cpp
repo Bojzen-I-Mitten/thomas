@@ -18,7 +18,7 @@
 #include "Material.h"
 #include <algorithm>
 #include "../utils/DebugTools.h"
-
+#include "../Window.h"
 namespace thomas
 {
 	namespace graphics
@@ -89,6 +89,13 @@ namespace thomas
 
 		void Renderer::RenderCamera(thomas::object::component::Camera * camera)
 		{
+			int displayIndex = camera->GetTargetDisplayIndex();
+			if (displayIndex == -1) //EDITOR
+				Window::GetEditorWindow()->Bind();
+			else
+			{
+				Window::GetWindow(displayIndex)->Bind();
+			}
 			BindPerCamera(camera);
 			RenderQueue(Scene::GetCurrentScene()->GetRenderQueue());
 
@@ -116,7 +123,7 @@ namespace thomas
 
 		bool Renderer::SortPairs(RenderPair* a, RenderPair* b)
 		{
-			return a->material->GetId() < a->material->GetId();
+			return a->material->GetId() < b->material->GetId();
 		}
 
 	}

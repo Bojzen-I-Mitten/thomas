@@ -5,15 +5,28 @@
 #include "../../graphics/TextRender.h"
 #include "Transform.h"
 #include "../../graphics/Renderer.h"
+#include <algorithm>
 namespace thomas
 {
 	namespace object
 	{
 		namespace component
 		{
+			std::vector<Camera*> Camera::s_allCameras;
 			void Camera::UpdateProjMatrix()
 			{
 				m_projMatrix = math::Matrix::CreatePerspectiveFieldOfView(math::DegreesToRadians(m_fov), m_viewport.AspectRatio() * Window::GetWindow(m_windowIndex)->GetRealAspectRatio(), m_near, m_far);
+			}
+
+			Camera::Camera(bool dontAddTolist)
+			{
+				m_windowIndex = 0; //TODO
+				m_fov = 70;
+				m_near = 0.5;
+				m_far = 10000;
+				m_viewport = math::Viewport(0, 0, 1, 1);
+				UpdateProjMatrix();
+				m_targetDisplay = 0;
 			}
 
 			Camera::Camera()
@@ -24,9 +37,24 @@ namespace thomas
 				m_far = 10000;
 				m_viewport = math::Viewport(0, 0, 1,1);
 				UpdateProjMatrix();
+				m_targetDisplay = 0;
+				s_allCameras.push_back(this);
+				std::sort(s_allCameras.begin(), s_allCameras.end(), [](Camera* a, Camera* b) 
+				{
+					return a->GetTargetDisplayIndex() < b->GetTargetDisplayIndex();
+				});
 			}
 			Camera::~Camera()
 			{
+				for (int i = 0; i < s_allCameras.size(); i++)
+				{
+					if (s_allCameras[i] == this)
+					{
+						s_allCameras.erase(s_allCameras.begin() + i);
+						break;
+					}
+						
+				}
 			}
 
 			math::Matrix Camera::GetProjMatrix()
@@ -108,10 +136,21 @@ namespace thomas
 
 			void Camera::Render()
 			{
-				ThomasCore::GetDeviceContext()->RSSetViewports(1, GetViewport().Get11());
+				
 				graphics::Renderer::RenderCamera(this);
 			}
 
+			void Camera::SetTargetDisplay(int index)
+			{
+				if (Window::GetWindows().size() < index)
+					m_targetDisplay = index;
+				
+			}
+
+			int Camera::GetTargetDisplayIndex()
+			{
+				return m_targetDisplay;
+			}
 
 		}
 	}

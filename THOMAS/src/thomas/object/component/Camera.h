@@ -17,7 +17,10 @@ namespace thomas
 				void UpdateProjMatrix();
 
 			public:
+				static std::vector<Camera*> s_allCameras;
+
 				Camera();
+				Camera(bool dontAddTolist);
 				~Camera();
 				math::Matrix GetViewMatrix();
 				math::Matrix GetProjMatrix();
@@ -41,6 +44,8 @@ namespace thomas
 
 				void Render();
 
+				void SetTargetDisplay(int index);
+				int GetTargetDisplayIndex();
 				
 			private:
 				math::Matrix m_projMatrix;
@@ -48,6 +53,7 @@ namespace thomas
 				float m_near;
 				float m_far;
 				int m_windowIndex;
+				int m_targetDisplay;
 				math::Viewport m_viewport;
 
 			};
