@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#define TW_NO_LIB_PRAGMA
 #include <AntTweakBar.h>
 #include "Math.h"
 

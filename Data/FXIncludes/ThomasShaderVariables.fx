@@ -1,7 +1,7 @@
 #ifndef THOMAS_SHADER_VARIABLES_INCLUDED
 #define THOMAS_SHADER_VARIABLES_INCLUDED
 
-#define THOMAS_MATRIX_P glstate_matrix_projection
+#define THOMAS_MATRIX_P thomas_MatrixP
 #define THOMAS_MATRIX_V thomas_MatrixV
 #define THOMAS_MATRIX_I_V thomas_MatrixInvV
 #define THOMAS_MATRIX_VP thomas_MatrixVP
@@ -12,7 +12,6 @@
 #define THOMAS_MATRIX_T_MV transpose(THOMAS_MATRIX_MV)
 #define THOMAS_MATRIX_IT_MV transpose(mul(thomas_WorldToObject, thomas_MatrixInvV))
 
-#define THOMAS_LIGHTMODEL_AMBIENT (glstate_lightmodel_ambient * 2)
 
 // ----------------------------------------------------------------------------
 
@@ -25,7 +24,7 @@ cbuffer ThomasPerFrame
 
 cbuffer ThomasPerCamera
 {
-	float4 thomas_CameraWorldClipPlanes[6];
+	//float4 thomas_CameraWorldClipPlanes[6];
 
 	float4x4 thomas_MatrixP;
 	float4x4 thomas_MatrixV;

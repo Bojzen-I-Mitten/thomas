@@ -10,23 +10,24 @@
 #define THOMAS_HALF_PI       1.57079632679f
 #define THOMAS_INV_HALF_PI   0.636619772367f
 
+#pragma warning(disable:4717) // removes effect deprecation warning.
 
 
-#define VERT(vertex_shader) SetVertexShader( CompileShader( vs_5_0, vertex_shader) );
-#define FRAG(fragment_shader) SetPixelShader( CompileShader( ps_5_o, fragment_shader) );
+#define VERT(vertex_shader) SetVertexShader( CompileShader( vs_5_0, vertex_shader) )
+#define FRAG(fragment_shader) SetPixelShader( CompileShader( ps_5_0, fragment_shader) )
 
 
 #include "ThomasShaderVariables.fx"
 #include "ThomasShaderUtilities.fx"
 
 #ifdef THOMAS_COLORSPACE_GAMMA
-#define thomas_ColorSpaceGrey fixed4(0.5, 0.5, 0.5, 0.5)
-#define thomas_ColorSpaceDouble fixed4(2.0, 2.0, 2.0, 2.0)
+#define thomas_ColorSpaceGrey float4(0.5, 0.5, 0.5, 0.5)
+#define thomas_ColorSpaceDouble float4(2.0, 2.0, 2.0, 2.0)
 #define thomas_ColorSpaceDielectricSpec half4(0.220916301, 0.220916301, 0.220916301, 1.0 - 0.220916301)
 #define thomas_ColorSpaceLuminance half4(0.22, 0.707, 0.071, 0.0) // Legacy: alpha is set to 0.0 to specify gamma mode
 #else // Linear values
-#define thomas_ColorSpaceGrey fixed4(0.214041144, 0.214041144, 0.214041144, 0.5)
-#define thomas_ColorSpaceDouble fixed4(4.59479380, 4.59479380, 4.59479380, 2.0)
+#define thomas_ColorSpaceGrey float4(0.214041144, 0.214041144, 0.214041144, 0.5)
+#define thomas_ColorSpaceDouble float4(4.59479380, 4.59479380, 4.59479380, 2.0)
 #define thomas_ColorSpaceDielectricSpec half4(0.04, 0.04, 0.04, 1.0 - 0.04) // standard dielectric reflectivity coef at incident angle (= 4%)
 #define thomas_ColorSpaceLuminance half4(0.0396819152, 0.458021790, 0.00609653955, 1.0) // Legacy: alpha is set to 1.0 to specify linear mode
 #endif
@@ -73,7 +74,7 @@ struct appdata_full {
     float4 texcoord1 : TEXCOORD1;
     float4 texcoord2 : TEXCOORD2;
     float4 texcoord3 : TEXCOORD3;
-    fixed4 color : COLOR;
+    float4 color : COLOR;
 };
 
 
@@ -168,6 +169,8 @@ inline float3 ThomasObjectToWorldNormal( in float3 norm )
     return normalize(mul(norm, (float3x3)thomas_WorldToObject));
 #endif
 }
+
+/*
 
 // Computes world space light direction, from world space position
 inline float3 ThomasWorldSpaceLightDir( in float3 worldPos )
@@ -422,14 +425,14 @@ half3 ShadeSH12Order (half4 normal)
 
 struct v2f_vertex_lit {
     float2 uv   : TEXCOORD0;
-    fixed4 diff : COLOR0;
-    fixed4 spec : COLOR1;
+    float4 diff : COLOR0;
+    float4 spec : COLOR1;
 };
 
-inline fixed4 VertexLight( v2f_vertex_lit i, sampler2D mainTex )
+inline float4 VertexLight( v2f_vertex_lit i, sampler2D mainTex )
 {
-    fixed4 texcol = tex2D( mainTex, i.uv );
-    fixed4 c;
+    float4 texcol = tex2D( mainTex, i.uv );
+    float4 c;
     c.xyz = ( texcol.xyz * i.diff.xyz + i.spec.xyz * texcol.a );
     c.w = texcol.w * i.diff.w;
     return c;
@@ -492,5 +495,6 @@ inline half3 DecodeHDR (half4 data, half4 decodeInstructions)
     #endif
 }
 
+*/
 
 #endif // THOMAS_CG_INCLUDED

@@ -148,4 +148,8 @@
     <Folder Include="bin\Data\FXIncludes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(SolutionDir)Data" "$(ProjectDir)bin\Data" /e /y /i
+copy "$(SolutionDir)thomas\dlls"  "$(TargetDir)" /y</PostBuildEvent>
+  </PropertyGroup>
 </Project>
