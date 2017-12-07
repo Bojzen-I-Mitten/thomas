@@ -67,14 +67,23 @@ namespace thomas
 			LOG("No scene set")
 				return;
 		}
+
+
+
+
+		Window::ClearAllWindows();
+
 		graphics::Renderer::BindPerFrame();
-		for (Window* window : Window::GetWindows())
+		//Editor rendering
+		editor::EditorCamera::Render();
+		//end editor rendering
+
+		for (object::component::Camera* camera : object::component::Camera::s_allCameras)
 		{
-			window->BeginRender();
-			editor::EditorCamera::Render();
-			graphics::Renderer::Render(s_currentScene);
-			window->EndRender();
+			camera->Render();
 		}
+		Window::PresentAllWindows();
+
 		s_currentScene->ClearRenderQueue();
 	}
 	void Scene::AddToRenderQueue(graphics::RenderPair * renderPair)

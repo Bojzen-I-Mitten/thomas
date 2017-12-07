@@ -8,6 +8,7 @@ namespace thomas
 
 	std::vector<Window*> Window::s_windows;
 	Window* Window::s_editorWindow = nullptr;
+	Window* Window::s_current = nullptr;
 
 	LRESULT CALLBACK Window::EventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
@@ -31,13 +32,14 @@ namespace thomas
 			Input::ProcessKeyboard(message, wParam, lParam);
 			Input::ProcessMouse(message, wParam, lParam, hWnd);
 			break;
+		case WM_RBUTTONDOWN:
+		case WM_LBUTTONDOWN:
+		case WM_MBUTTONDOWN:
+			SetFocus(hWnd);
 		case WM_INPUT:
 		case WM_MOUSEMOVE:
-		case WM_LBUTTONDOWN:
 		case WM_LBUTTONUP:
-		case WM_RBUTTONDOWN:
 		case WM_RBUTTONUP:
-		case WM_MBUTTONDOWN:
 		case WM_MBUTTONUP:
 		case WM_MOUSEWHEEL:
 		case WM_XBUTTONDOWN:
@@ -61,7 +63,12 @@ namespace thomas
 
 	void Window::InitEditor(HWND hWnd)
 	{
-		s_editorWindow = Create(hWnd);
+		Window* window = new Window(hWnd);
+		if (window->Initialized())
+		{
+			s_editorWindow = Create(hWnd);
+		}
+		
 	}
 
 	Window* Window::Create(HWND hWnd)
@@ -89,6 +96,10 @@ namespace thomas
 
 	Window * Window::GetWindow(HWND hWnd)
 	{
+		//Maybe define editor or something???
+		if (s_editorWindow && s_editorWindow->GetWindowHandler() == hWnd)
+			return s_editorWindow;
+		
 		for (Window* window : s_windows)
 		{
 			if (window->GetWindowHandler() == hWnd)
@@ -227,19 +238,6 @@ namespace thomas
 		ThomasCore::GetDeviceContext()->ClearDepthStencilView(m_dxBuffers.depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 	}
 
-	void Window::BeginRender()
-	{
-		Clear();
-		
-		ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &m_dxBuffers.backBuffer, m_dxBuffers.depthStencilView);
-		ThomasCore::GetDeviceContext()->OMSetDepthStencilState(m_dxBuffers.depthStencilState, 1);
-	}
-
-	void Window::EndRender()
-	{
-		utils::DebugTools::Draw();
-		m_swapChain->Present(0, 0);
-	}
 
 
 	bool Window::SetHeight(LONG height)
@@ -381,6 +379,39 @@ namespace thomas
 			delete window;
 		}
 		s_windows.clear();
+	}
+	void Window::ClearAllWindows()
+	{
+		if (s_editorWindow)
+			s_editorWindow->Clear();
+		for (Window* window : s_windows)
+		{
+			window->Clear();
+		}
+	}
+	void Window::PresentAllWindows()
+	{
+		if (s_editorWindow)
+			s_editorWindow->Present();
+		for (Window* window : s_windows)
+		{
+			window->Present();
+		}
+	}
+
+	void Window::Bind()
+	{
+		if (s_current != this)
+		{
+			ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &m_dxBuffers.backBuffer, m_dxBuffers.depthStencilView);
+			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(m_dxBuffers.depthStencilState, 1);
+			s_current = this;
+		}
+	}
+	void Window::Present()
+	{
+		//utils::DebugTools::Draw();
+		m_swapChain->Present(0, 0);
 	}
 	bool Window::ChangeWindowShowState(int nCmdShow)
 	{

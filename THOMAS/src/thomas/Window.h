@@ -43,13 +43,16 @@ namespace thomas
 		static std::vector<Window*> GetWindows();
 		static void Destroy();
 
-	
+		static void ClearAllWindows();
+		static void PresentAllWindows();
+
+		void Bind();
+		void Present();
+
 		~Window();
 
 		IDXGISwapChain* GetSwapChain();
 		void Clear();
-		void BeginRender();
-		void EndRender();
 
 		bool SetHeight(LONG height);
 		bool SetWidth(LONG width);
@@ -90,6 +93,7 @@ namespace thomas
 
 		static std::vector<Window*> s_windows;
 		static Window* s_editorWindow;
+		static Window* s_current;
 
 	private:
 

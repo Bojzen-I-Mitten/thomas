@@ -3,6 +3,7 @@
 #include "../Input.h"
 #include "../ThomasTime.h"
 #include <algorithm>
+#include "../Window.h"
 namespace thomas
 {
 	namespace editor
@@ -14,7 +15,8 @@ namespace thomas
 		{
 			m_transform = new object::component::Transform();
 			m_transform->m_gameObject = this;
-			m_cameraComponent = new object::component::Camera();
+			m_cameraComponent = new object::component::Camera(true);
+			m_cameraComponent->SetTargetDisplay(-1);
 			m_cameraComponent->m_gameObject = this;
 		}
 
@@ -44,6 +46,9 @@ namespace thomas
 		}
 		void EditorCamera::updateCamera()
 		{
+			if (!Window::GetEditorWindow() || Window::GetEditorWindow()->GetWindowHandler() != GetFocus())
+				return;
+
 			if (Input::GetMouseButtonDown(Input::MouseButtons::RIGHT))
 			{
 				Input::SetMouseMode(Input::MouseMode::POSITION_RELATIVE);

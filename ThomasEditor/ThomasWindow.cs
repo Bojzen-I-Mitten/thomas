@@ -189,9 +189,6 @@ namespace ThomasEditor
                 {
                     ThomasWrapper.Resize(handle);
                     handled = true;
-                }else if(message == WM_LBUTTONDOWN)
-                {
-                    SetFocus(handle);
                 }else
                 {
                     ThomasWrapper.eventHandler(handle, message, wparam, lparam);
