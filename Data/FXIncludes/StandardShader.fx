@@ -1,3 +1,5 @@
+#pragma warning(disable: 4717) // removes effect deprecation warning.
+
 #include "ThomasCG.fx"
 
 
@@ -7,6 +9,15 @@ DepthStencilState EnableDepth
 	DepthWriteMask = ALL;
 	DepthFunc = LESS_EQUAL;
 };
+
+RasterizerState TestRasterizer
+{
+	FillMode = SOLID;
+	CullMode = BACK;
+	FrontCounterClockWise = TRUE;
+	DepthClipEnable = FALSE;
+};
+
 
 
 struct v2f {
@@ -23,7 +34,7 @@ v2f vert(appdata_thomas v)
 
 float4 frag(v2f i): SV_TARGET
 {
-	return float4(0.5f,0.5f,0.5f);
+	return float4(1,0,0, 1.0f);
 }
 
 
@@ -33,5 +44,6 @@ technique11 Standard {
 		SetGeometryShader(NULL);
 		FRAG(frag());
 		SetDepthStencilState(EnableDepth, 0);
-	};
+		SetRasterizerState(TestRasterizer);
+	}
 }

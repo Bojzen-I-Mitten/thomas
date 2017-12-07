@@ -15,7 +15,7 @@ namespace thomas
 		{
 
 			//Create VS shader
-			Shader* shader = Shader::CreateShader("debugDraw", "../res/thomasShaders/lineShader.hlsl");
+			Shader* shader = Shader::CreateShader("debugDraw", "../Data/oldShaders/lineShader.hlsl");
 			if (shader != nullptr)
 			{
 				m_material = new Material(shader);
