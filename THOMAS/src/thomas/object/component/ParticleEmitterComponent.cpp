@@ -19,27 +19,6 @@ namespace thomas
 		{
 			thomas::object::component::ParticleEmitterComponent::ParticleEmitterComponent()
 			{
-
-			}
-
-			ParticleEmitterComponent::~ParticleEmitterComponent()
-			{
-				
-				SAFE_RELEASE(m_d3dData.particleBuffer1);
-				SAFE_RELEASE(m_d3dData.particleBuffer2);
-				SAFE_RELEASE(m_d3dData.particleUAV1);
-				SAFE_RELEASE(m_d3dData.particleUAV2);
-				SAFE_RELEASE(m_d3dData.particleSRV1);
-				SAFE_RELEASE(m_d3dData.particleSRV2);
-				SAFE_RELEASE(m_d3dData.billboardBuffer);
-				SAFE_RELEASE(m_d3dData.billboardsSRV);
-				SAFE_RELEASE(m_d3dData.billboardsUAV);
-				if(!m_debugBarName.empty())
-					utils::DebugTools::RemoveBar(m_debugBarName);
-			}
-
-			void ParticleEmitterComponent::Start()
-			{
 				m_blendState = BlendStates::ALPHA_BLEND;
 				m_offset = math::Vector3(0, 0, 0);
 				m_shouldUpdateResources = true;
@@ -82,6 +61,22 @@ namespace thomas
 				m_spawnedParticleCount = 0;
 				CalculateMaxNrOfParticles();
 				CreateInitBuffer();
+			}
+
+			ParticleEmitterComponent::~ParticleEmitterComponent()
+			{
+				
+				SAFE_RELEASE(m_d3dData.particleBuffer1);
+				SAFE_RELEASE(m_d3dData.particleBuffer2);
+				SAFE_RELEASE(m_d3dData.particleUAV1);
+				SAFE_RELEASE(m_d3dData.particleUAV2);
+				SAFE_RELEASE(m_d3dData.particleSRV1);
+				SAFE_RELEASE(m_d3dData.particleSRV2);
+				SAFE_RELEASE(m_d3dData.billboardBuffer);
+				SAFE_RELEASE(m_d3dData.billboardsSRV);
+				SAFE_RELEASE(m_d3dData.billboardsUAV);
+				if(!m_debugBarName.empty())
+					utils::DebugTools::RemoveBar(m_debugBarName);
 			}
 
 			void ParticleEmitterComponent::Update()

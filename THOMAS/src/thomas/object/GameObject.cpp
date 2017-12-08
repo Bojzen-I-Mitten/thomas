@@ -18,7 +18,7 @@ namespace thomas
 				if (this->m_components[i])
 				{
 					Object::Destroy(this->m_components[i]);
-				}            
+				}     
 					
 			}
 			this->m_components.clear();
@@ -81,6 +81,16 @@ namespace thomas
 			{
 				Destroy(s_gameObjects[i]);
 			}
+			s_gameObjects.clear();
+		}
+		void GameObject::UpdateComponents()
+		{
+			if (GetActive())
+			{
+				for (component::Component* component : m_components)
+					component->Update();
+			}
+			
 		}
 		bool GameObject::GetActive()
 		{
@@ -91,17 +101,14 @@ namespace thomas
 			return m_activeSelf;
 		}
 
-		std::vector<GameObject*> GameObject::GetAllGameObjectsInScene(Scene* scene)
+		void GameObject::SetActive(bool active)
 		{
-			std::vector<GameObject*> output;
-			for (GameObject* gameObject : s_gameObjects)
-				if (gameObject->m_scene == scene)
-					output.push_back(gameObject);
-			return output;
+			m_activeSelf = active;
+			if (m_transform && m_transform->GetParent())
+			{
+				return m_transform->GetParent()->m_gameObject->SetActive(active);
+			}
 		}
-
-		
-		
 
 	}
 }

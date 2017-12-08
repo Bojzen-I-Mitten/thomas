@@ -20,6 +20,16 @@ namespace thomas
 			}
 			RigidBodyComponent::RigidBodyComponent() : btRigidBody(1, NULL, NULL)
 			{
+				Physics::s_world->removeRigidBody(this);
+				btDefaultMotionState* motionState = new btDefaultMotionState();
+				btCollisionShape* collider = new btBoxShape(btVector3(1, 1, 1));
+				btVector3 inertia(0, 0, 0);
+				collider->calculateLocalInertia(1, inertia);
+				setMotionState(motionState);
+				setCollisionShape(collider);
+				setMassProps(1, inertia);
+				Physics::s_world->addRigidBody(this);
+				m_kinematic = false;
 			}
 
 
@@ -43,19 +53,6 @@ namespace thomas
 				Physics::s_world->removeRigidBody(this);
 			}
 
-			void RigidBodyComponent::Start()
-			{
-				Physics::s_world->removeRigidBody(this);
-				btDefaultMotionState* motionState = new btDefaultMotionState(btTransform(*(btQuaternion*)&m_gameObject->m_transform->GetRotation(), *(btVector3*)&m_gameObject->m_transform->GetPosition()));
-				btCollisionShape* collider = new btBoxShape(btVector3(1, 1, 1));
-				btVector3 inertia(0, 0, 0);
-				collider->calculateLocalInertia(1, inertia);
-				setMotionState(motionState);
-				setCollisionShape(collider);
-				setMassProps(1, inertia);
-				Physics::s_world->addRigidBody(this);
-				m_kinematic = false;
-			}
 
 			void RigidBodyComponent::Update()
 			{

@@ -102,7 +102,6 @@ namespace thomas
 				ParticleEmitterComponent();
 				~ParticleEmitterComponent();
 
-				void Start();
 				void Update();
 
 				void TogglePause();

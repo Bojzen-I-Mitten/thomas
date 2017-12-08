@@ -35,7 +35,5 @@ namespace ThomasEditor
 				((thomas::object::component::RenderComponent*)nativePtr)->SetModel(model);
 			}
 		}
-
-		void Update() override { nativePtr->Update(); }
 	};
 }

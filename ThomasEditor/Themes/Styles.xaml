@@ -3,6 +3,7 @@
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:darkBlendTheme="clr-namespace:DarkBlendTheme"
+                    xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
                     mc:Ignorable="d">
 
     <!--Converters-->
@@ -141,6 +142,11 @@
     <Style TargetType="{x:Type UserControl}">
         <Setter Property="FontFamily" Value="Arial"/>
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+    </Style>
+
+
+    <Style TargetType="{x:Type xcad:DockingManager}">
+        <Setter Property="Background" Value="{StaticResource Expander.Background}"/>
     </Style>
 
 
@@ -807,6 +813,7 @@
     <!-- TextBox -->
     <Style BasedOn="{StaticResource {x:Type Control}}" TargetType="{x:Type TextBox}">
         <Setter Property="Background" Value="{StaticResource TextBoxBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource TextBoxBorder}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="2,2,2,1"/>

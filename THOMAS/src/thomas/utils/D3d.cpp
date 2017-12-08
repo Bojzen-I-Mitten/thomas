@@ -109,12 +109,11 @@ namespace thomas
 							&swapchain
 						);
 
-						if (!SUCCEEDED(hr))
+						if (SUCCEEDED(hr))
 						{
-							LOG("Failed to create swapchain");
-						}
-						else
 							return true;
+						}
+							
 							
 
 						dxgiFactory->Release();
@@ -124,6 +123,8 @@ namespace thomas
 				}
 				dxgiDevice->Release();
 			}
+			LOG("Failed to create swapchain");
+			LOG_HR(hr);
 			return false;
 		}
 
@@ -139,6 +140,8 @@ namespace thomas
 
 			D3D11_TEXTURE2D_DESC backBufferDesc;
 			pbackBuffer->GetDesc(&backBufferDesc);
+
+
 			if (FAILED(hr))
 			{
 				LOG_HR(hr);

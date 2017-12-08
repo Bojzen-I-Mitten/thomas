@@ -9,11 +9,6 @@ namespace ThomasEditor
     class TestComponent : ScriptComponent
     {
         public int testVar { get; set; }
-
-        void Start()
-        {
-            Console.WriteLine("test");
-        }
     }
 }
 

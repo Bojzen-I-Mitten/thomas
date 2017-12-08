@@ -24,23 +24,6 @@ namespace thomas
 	namespace graphics
 	{
 		
-		void thomas::graphics::Renderer::Render()
-		{
-			Scene::Render();
-						
-		}
-
-		std::vector<object::component::Camera*> Renderer::GetCameras()
-		{
-			std::vector<object::component::Camera*> cameras;
-			for (object::GameObject* gameObject : object::GameObject::FindGameObjectsWithComponent<object::component::Camera>())
-			{
-				cameras.push_back(gameObject->GetComponent<object::component::Camera>());
-			}
-			return cameras;
-		}
-	
-
 		void Renderer::BindPerFrame()
 		{
 			//ThomasPerFrame
@@ -77,25 +60,15 @@ namespace thomas
 
 		}
 
-		void Renderer::Render(Scene * scene)
+		void Renderer::Begin()
 		{
-			std::vector<object::component::Camera*> cameras = object::Object::FindObjectsOfType<object::component::Camera>();
-			for (object::component::Camera* camera : cameras)
-			{
-				RenderCamera(camera);
-			}
-						
+			BindPerFrame();
 		}
 
 		void Renderer::RenderCamera(thomas::object::component::Camera * camera)
 		{
 			int displayIndex = camera->GetTargetDisplayIndex();
-			if (displayIndex == -1) //EDITOR
-				Window::GetEditorWindow()->Bind();
-			else
-			{
-				Window::GetWindow(displayIndex)->Bind();
-			}
+			Window::GetWindow(displayIndex)->Bind();
 			BindPerCamera(camera);
 			RenderQueue(Scene::GetCurrentScene()->GetRenderQueue());
 

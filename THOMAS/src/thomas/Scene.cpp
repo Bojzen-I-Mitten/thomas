@@ -41,9 +41,9 @@ namespace thomas
 		Physics::Destroy();
 		//graphics::Sprite::Destroy();
 		//graphics::TextRender::Destroy();
-		object::Object::Destroy(s_currentScene);
-		
+
 		object::GameObject::Destroy();
+		object::Object::Destroy();
 		//object::Object::Destroy();
 		//graphics::ParticleSystem::Destroy();
 		//graphics::ParticleSystem::Init();
@@ -52,13 +52,10 @@ namespace thomas
 		delete s_currentScene;
 		s_currentScene = nullptr;
 		ThomasTime::SetTimescale(1.0f);
-		object::Object::Clean();
 	}
 	void Scene::UpdateCurrentScene()
 	{
-		
 		editor::EditorCamera::Update();
-		object::Object::Clean();
 	}
 	void Scene::Render()
 	{
@@ -73,7 +70,7 @@ namespace thomas
 
 		Window::ClearAllWindows();
 
-		graphics::Renderer::BindPerFrame();
+		graphics::Renderer::Begin();
 		//Editor rendering
 		editor::EditorCamera::Render();
 		//end editor rendering
@@ -104,7 +101,7 @@ namespace thomas
 	{
 
 
-		for (object::GameObject* gameObject : object::GameObject::FindGameObjectsWithComponent<object::component::SpriteComponent>())
+		/*for (object::GameObject* gameObject : object::GameObject::FindGameObjectsWithComponent<object::component::SpriteComponent>())
 		{
 			if (gameObject->GetActive())
 				for (object::component::SpriteComponent* sprite : gameObject->GetComponents<object::component::SpriteComponent>())
@@ -122,7 +119,7 @@ namespace thomas
 					if (text->GetActive())
 						graphics::TextRender::RenderText(text);
 				}
-		}
+		}*/
 	}
 
 

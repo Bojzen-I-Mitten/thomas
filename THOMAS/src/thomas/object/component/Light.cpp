@@ -42,11 +42,6 @@ namespace thomas
 			{
 			}
 
-			void DirectionalLight::Start()
-			{
-				m_thisLight.lightDirection = m_gameObject->m_transform->Forward();
-			}
-
 			bool DirectionalLight::Bind()
 			{
 				return true;
