@@ -22,7 +22,6 @@ namespace thomas
 				~RigidBodyComponent();
 				void OnEnable();
 				void OnDisable();
-				void Start();
 				void Update();
 				void SetKinematic(bool kinematic);
 				bool IsKinematic();

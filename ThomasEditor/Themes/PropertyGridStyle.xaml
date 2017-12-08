@@ -550,8 +550,35 @@
     </Style>
 
 
+
+
+    <Style TargetType="{x:Type xceed:PropertyGridEditorDoubleUpDown}">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="Background" Value="#595959"/>
+    </Style>
+
+    <Style TargetType="xceed:WatermarkTextBox">
+        <Setter Property="CaretBrush" Value="{DynamicResource ForegroundBrush}"/>
+    </Style>
+
+    <Style TargetType="{x:Type xceed:PropertyGridEditorComboBox}">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+    </Style>
+
+    <Style TargetType="{x:Type xceed:PropertyGridEditorTextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+    </Style>
+
+    <Style TargetType="{x:Type xceed:PropertyGridEditorTextBox}">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource ForegroundBrush}"/>
+    </Style>
+
+
+
     <Style x:Key="PIB" TargetType="{x:Type xceed:PropertyItemBase}">
         <Setter Property="Background" Value="{DynamicResource PanelBackground}" />
+
         <Setter Property="Margin" Value="0,3,5,3" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Focusable" Value="True" />
@@ -618,11 +645,12 @@
                             </Border>
 
                             <Border x:Name="PART_Editor" Grid.Column="1" 
-                                               Background="Transparent"   
+                                               Background="Transparent"  
                                                VerticalAlignment="Stretch" 
                                                HorizontalAlignment="Stretch">
                                 <ContentControl x:Name="PART_ValueContainer" 
                                           Content="{TemplateBinding Editor}" 
+                                          Foreground="Red"    
                                           Focusable="False" IsTabStop="False" 
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                           IsEnabled="{Binding IsReadOnly, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=xceed:PropertyGrid}, Converter={StaticResource InverseBoolConverter}}" >

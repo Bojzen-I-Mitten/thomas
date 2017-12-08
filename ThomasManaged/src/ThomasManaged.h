@@ -1,7 +1,6 @@
 // ThomasManaged.h
 #pragma once
 
-
 #include <thomas\Window.h>
 #include <thomas\ThomasCore.h>
 #include <thomas\ThomasTime.h>
@@ -70,12 +69,13 @@ namespace ThomasEditor {
 			{
 				thomas::ThomasCore::Update();
 				thomas::Scene::UpdateCurrentScene();
-				for each(ThomasEditor::Object^ object in ThomasEditor::Object::GetObjects())
+				for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
 				{
-					object->Update();
+					gameObject->UpdateComponents();
 				}
 				thomas::Physics::Update();
 				thomas::ThomasCore::Render();
+					
 			}
 			
 		}

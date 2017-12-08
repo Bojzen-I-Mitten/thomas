@@ -37,7 +37,6 @@
     <ClCompile Include="src\thomas\graphics\Texture.cpp" />
     <ClCompile Include="src\thomas\Input.cpp" />
     <ClCompile Include="src\thomas\object\component\Camera.cpp" />
-    <ClCompile Include="src\thomas\object\component\Component.cpp" />
     <ClCompile Include="src\thomas\object\component\FrustumCullingComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\Light.cpp" />
     <ClCompile Include="src\thomas\object\component\ParticleEmitterComponent.cpp" />
@@ -230,7 +229,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;THOMAS_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;THOMAS_EXPORT;_DEBUG_DX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>

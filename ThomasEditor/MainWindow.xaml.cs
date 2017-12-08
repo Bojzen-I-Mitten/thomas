@@ -14,9 +14,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Interop;
 
-using Xceed.Wpf.AvalonDock.Themes;
 using System.Reflection;
 using System.ComponentModel;
+
+
 namespace ThomasEditor
 {
     /// <summary>
@@ -30,8 +31,8 @@ namespace ThomasEditor
         TimeSpan lastRender;
         public MainWindow()
         {
+
             InitializeComponent();
-            //dockManager.Theme = new VS2010Theme();
             CompositionTarget.Rendering += DoUpdates;
             thomasObjects.SelectedItemChanged += ThomasObjects_SelectedItemChanged;
 
@@ -41,14 +42,14 @@ namespace ThomasEditor
 
         private void GameObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if(e.NewItems != null)
+            if (e.NewItems != null)
             {
+
                 foreach (GameObject newItem in e.NewItems)
                 {
                     if (newItem.transform.parent == null)
                     {
-                        TreeViewItem node = new TreeViewItem();
-                        node.DataContext = newItem;
+                        TreeViewItem node = new TreeViewItem { DataContext = newItem};
                         node.MouseRightButtonUp += Node_MouseRightButtonUp;
                         node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
                         BuildTree(newItem.transform, node);
@@ -87,10 +88,10 @@ namespace ThomasEditor
         {
             ItemContainerGenerator gen = thomasObjects.ItemContainerGenerator;
             TreeViewItem item = gen.ContainerFromItem(thomasObjects.SelectedItem) as TreeViewItem;
-            __inspector.gameObject = null;
+            __inspector.SelectedGameObject = null;
             if (item != null)
             {                
-                __inspector.gameObject = ((GameObject)item.DataContext);
+                __inspector.SelectedGameObject = ((GameObject)item.DataContext);
             }
             
         }
@@ -100,8 +101,7 @@ namespace ThomasEditor
             parentTree.IsExpanded = true;
             foreach(Transform child in parent.children)
             {
-                TreeViewItem node = new TreeViewItem();
-                node.DataContext = child.gameObject;
+                TreeViewItem node = new TreeViewItem {DataContext = child.gameObject};
                 node.MouseRightButtonUp += Node_MouseRightButtonUp;
                 node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
                 BuildTree(child, node);
@@ -126,9 +126,11 @@ namespace ThomasEditor
                     
                     foreach (String output in outputs)
                     {
-                        TextBlock block = new TextBlock();
-                        block.Text = output;
-                        block.TextWrapping = TextWrapping.Wrap;
+                        TextBlock block = new TextBlock
+                        {
+                            Text = output,
+                            TextWrapping = TextWrapping.Wrap
+                        };
                         console.Items.Add(block);
                         console.Items.Add(new Separator());
                         if (console.Items.Count > 150)
@@ -155,7 +157,7 @@ namespace ThomasEditor
             GameObject.GameObjects.Remove(x.DataContext as GameObject);
         }
 
-        private void console_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void Console_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
 
             ScrollViewer scrollViewer = Extensions.GetDescendantByType<ScrollViewer>(sender as ListBox);
@@ -186,6 +188,32 @@ namespace ThomasEditor
 
     public static class Extensions
     {
+
+        public static List<Type> GetAllComponentTypes()
+        {
+
+            Type componenType = typeof(Component);
+            List<Type> componenTypesFromEngine = Assembly.GetAssembly(componenType).GetTypes()
+                .Where(t =>
+                t != componenType &&
+                t != typeof(ScriptComponent) &&
+                t != typeof(Transform) &&
+                componenType.IsAssignableFrom(t)
+                ).ToList();
+
+            List<Type> componentTypesFromEditor = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t =>
+                t != componenType &&
+                componenType.IsAssignableFrom(t)
+                ).ToList();
+
+            List<Type> allComponentTypes = new List<Type>();
+            allComponentTypes.AddRange(componenTypesFromEngine);
+            allComponentTypes.AddRange(componentTypesFromEditor);
+
+            return allComponentTypes;
+        }
+
         public static T GetDescendantByType<T>(this Visual element) where T : class
         {
             if (element == null)

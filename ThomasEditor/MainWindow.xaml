@@ -2,12 +2,12 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:local="clr-namespace:ThomasEditor"
-        xmlns:ms="http://namespaces.mindscape.co.nz/wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280">
+        Title="MainWindow" Height="720" Width="1366">
 
 
     <Window.Resources>
@@ -15,7 +15,12 @@
             <ContextMenu x:Key="gameObjectContext">
                 <MenuItem Header="Delete Object" Click="Menu_RemoveGameObject"/>
             </ContextMenu>
+            <!--<ResourceDictionary.MergedDictionaries>
+                <xcad:AvalonDockMetroDarkThemeResourceDictionary AccentBrush="DarkBlue"/>
+            </ResourceDictionary.MergedDictionaries>-->
         </ResourceDictionary>
+        
+        
     </Window.Resources>
 
     <Grid>
@@ -52,41 +57,49 @@
                            AllowMixedOrientation="True"
                            BorderBrush="Black"
                            BorderThickness="1" x:Name="dockManager">
-            
+
+            <xcad:DockingManager.Theme>
+                <xcad:Office2007BlackTheme/>
+            </xcad:DockingManager.Theme>
             <xcad:LayoutRoot x:Name="__layoutRoot">
                 <xcad:LayoutPanel>
 
                     <xcad:LayoutDocumentPaneGroup>
-                        <xcad:LayoutDocumentPaneGroup Orientation="Vertical">
+                        <xcad:LayoutDocumentPaneGroup Orientation="Vertical" DockWidth="3*">
                             <xcad:LayoutDocumentPane>
-                                <xcad:LayoutAnchorable ContentId="EditorView" Title="Editor View" CanHide="False" CanClose="False"
-                                            AutoHideWidth="240">
-                                    <local:ThomasWindow x:Name="editor" IsEditor="True"/>
+                                <xcad:LayoutAnchorable ContentId="EditorView" Title="Editor View" CanHide="False" CanClose="False">
+                                    <local:ThomasWindow x:Name="editor" IsEditor="True" />
                                 </xcad:LayoutAnchorable>
                             </xcad:LayoutDocumentPane>
 
-                            <xcad:LayoutDocumentPane>
+                            <!--<xcad:LayoutDocumentPane>
                                 <xcad:LayoutAnchorable ContentId="Game View" Title="Game View" CanHide="False" CanClose="False"
                                             AutoHideWidth="240">
                                     <local:ThomasWindow x:Name="game" IsEditor="False"/>
                                 </xcad:LayoutAnchorable>
+                            </xcad:LayoutDocumentPane>-->
+                        </xcad:LayoutDocumentPaneGroup>
+
+                        <xcad:LayoutDocumentPaneGroup Orientation="Vertical" DockWidth="1*">
+                            <xcad:LayoutDocumentPane>
+                                <xcad:LayoutAnchorable ContentId="Hiearchy" Title="Hiearchy" >
+                                    <TreeView Focusable="True" x:Name="thomasObjects" Background="#444444"/>
+                                </xcad:LayoutAnchorable>
+                            </xcad:LayoutDocumentPane>
+                            <xcad:LayoutDocumentPane>
+                                <xcad:LayoutAnchorable ContentId="Project" Title="Project" >
+                                    <TreeView Focusable="True" x:Name="thomasProjectView" Background="#444444"/>
+                                </xcad:LayoutAnchorable>
+                                <xcad:LayoutAnchorable ContentId="Console" Title="Console">
+                                    <ListBox Name="console" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.ScrollChanged="Console_ScrollChanged">
+                                    </ListBox>
+                                </xcad:LayoutAnchorable>
                             </xcad:LayoutDocumentPane>
                         </xcad:LayoutDocumentPaneGroup>
 
-                        <xcad:LayoutDocumentPane>
-                            <xcad:LayoutAnchorable ContentId="Hiearchy" Title="Hiearchy" >
-                                <TreeView Focusable="True" x:Name="thomasObjects"/>
-                            </xcad:LayoutAnchorable>
-                        </xcad:LayoutDocumentPane>
-                        <xcad:LayoutDocumentPane>
+                        <xcad:LayoutDocumentPane DockWidth="2*">
                             <xcad:LayoutAnchorable ContentId="Inspector" Title="Inspector">
-                                <local:ThomasGameObjectInspector x:Name="__inspector"/>
-                            </xcad:LayoutAnchorable>
-                        </xcad:LayoutDocumentPane>
-                        <xcad:LayoutDocumentPane>
-                            <xcad:LayoutAnchorable ContentId="Console" Title="Console">
-                                <ListBox Name="console" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.ScrollChanged="console_ScrollChanged">
-                                </ListBox>
+                                <local:ThomasGameObjectInspector x:Name="__inspector" Background="#444444"/>
                             </xcad:LayoutAnchorable>
                         </xcad:LayoutDocumentPane>
                     </xcad:LayoutDocumentPaneGroup>

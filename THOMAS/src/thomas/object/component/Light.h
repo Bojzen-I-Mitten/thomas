@@ -22,7 +22,6 @@ namespace thomas
 			private:
 				
 			public:
-				virtual void Start() {};
 				virtual bool SetLightColor(thomas::math::Vector4 other) = 0;
 
 				virtual bool Bind() = 0;
@@ -38,8 +37,6 @@ namespace thomas
 			public:
 				DirectionalLight();
 				~DirectionalLight();
-
-				void Start();
 
 				bool SetLightColor(thomas::math::Vector4 other);
 

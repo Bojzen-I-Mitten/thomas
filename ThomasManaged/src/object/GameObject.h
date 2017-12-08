@@ -21,6 +21,12 @@ namespace ThomasEditor {
 		Transform^ m_transform;
 		static ObservableCollection<GameObject^> s_gameObjects;
 		String^ m_name;
+
+	internal:
+		void UpdateComponents()
+		{
+			((thomas::object::GameObject*)nativePtr)->UpdateComponents();
+		}
 	public:
 		GameObject(String^ name) {
 			m_name = name;
@@ -123,6 +129,17 @@ namespace ThomasEditor {
 		};
 
 
+		bool GetActive()
+		{
+			return ((thomas::object::GameObject*)nativePtr)->GetActive();
+		}
+
+		void SetActive(bool active)
+		{
+			((thomas::object::GameObject*)nativePtr)->SetActive(active);
+		}
+
+		
 		void OnPropertyChanged(String^ info)
 		{
 			PropertyChanged(this, gcnew PropertyChangedEventArgs(info));

@@ -9,35 +9,40 @@ using System.Globalization;
 using System.Windows.Threading;
 using System.Collections.ObjectModel;
 using Xceed.Wpf.Toolkit.PropertyGrid;
+using System.Windows.Input;
 
 namespace ThomasEditor
 {
-    public class ConvertVector3 : IValueConverter
+    public class Vector3Converter : IValueConverter
     {
         Vector3 vector;
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             vector = (Vector3)value;
             String type = (String)parameter;
-            switch(type)
+            switch (type)
             {
-                case "x":return vector.x;
+                case "x": return vector.x;
                 case "y": return vector.y;
                 case "z": return vector.z;
                 default: return vector.x;
             }
-            
+
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             String type = (String)parameter;
-            switch (type)
+            if(value != null)
             {
-                case "x": vector.x = (float)(double)value; break;
-                case "y": vector.y = (float)(double)value; break;
-                case "z": vector.z = (float)(double)value; break;
+                switch (type)
+                {
+                    case "x": vector.x = (float)(double)value; break;
+                    case "y": vector.y = (float)(double)value; break;
+                    case "z": vector.z = (float)(double)value; break;
+                }
             }
+            
             return vector;
         }
     }
@@ -70,7 +75,7 @@ namespace ThomasEditor
             // propertyGrid.Editors.Add(editor);
 
         }
-        public GameObject gameObject
+        public GameObject SelectedGameObject
         {
             get
             {
@@ -80,9 +85,11 @@ namespace ThomasEditor
             {
                 _gameObject = value;
                 gameObjectGrid.DataContext = null;
+                gameObjectGrid.Visibility = Visibility.Hidden;
                 if(_gameObject != null)
                 {
                     gameObjectGrid.DataContext = _gameObject;
+                    gameObjectGrid.Visibility = Visibility.Visible;
                     //Expand();
                     //CreatePropertyGrids();
                 }
@@ -98,13 +105,32 @@ namespace ThomasEditor
             grid.ExpandAllProperties();
         }
 
-        private void PropertyGrid_Initialized(object sender, EventArgs e)
+        private bool ComponentsFilter(object item)
         {
-            PropertyGrid grid = sender as PropertyGrid;
-            EditorTemplateDefinition x = new EditorTemplateDefinition();
-            x.TargetProperties.Add(typeof(Vector3));
-            x.EditingTemplate = FindResource("Vector3Editor") as DataTemplate;
-            grid.EditorDefinitions.Add(x);
+            if (String.IsNullOrEmpty(AddComponentsFilter.Text))
+                return true;
+            else
+                return ((item as Type).Name.IndexOf(AddComponentsFilter.Text, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
+        private void AddComponentButton_Click(object sender, RoutedEventArgs e)
+        {
+            addComponentsListContainer.Visibility = Visibility.Visible;
+            AddComponentsFilter.Focus();
+            addComponentList.ItemsSource = Extensions.GetAllComponentTypes();
+            CollectionViewSource.GetDefaultView(addComponentList.ItemsSource).Filter = ComponentsFilter;
+        }
+
+
+        private void AddComponentsListContainer_LostFocus(object sender, RoutedEventArgs e)
+        {
+            DockPanel panel = sender as DockPanel;
+            panel.Visibility = Visibility.Hidden;
+        }
+
+        private void AddComponentsFilter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CollectionViewSource.GetDefaultView(addComponentList.ItemsSource).Refresh();
         }
     }
 

@@ -12,8 +12,6 @@ namespace thomas
 			{
 			public:
 				FrustumCullingComponent();
-
-				void Start();
 				void Update();
 
 				void SetRadius(float radius);

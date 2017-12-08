@@ -15,17 +15,12 @@ namespace thomas
 		private:
 			
 		public:
+			std::vector<component::Component*> m_components;
 			component::Transform* m_transform;
 			bool m_activeSelf;
 
 			GameObject(std::string type);
 			~GameObject();
-			template<typename T>
-			T* AddComponent();
-			template<typename T>
-			T* GetComponent();
-			template<typename T>
-			std::vector<T*> GetComponents();
 
 			static GameObject* Find(std::string type);
 
@@ -43,63 +38,14 @@ namespace thomas
 			static T* Instantiate(math::Vector3 position, math::Quaternion rotation, Scene* scene);
 			template<typename T>
 			static T* Instantiate(math::Vector3 position, math::Quaternion rotation, component::Transform* parent, Scene* scene);
-
-			virtual void Start() {}
-			virtual void Update() {}
-			virtual void FixedUpdate() {}
-			virtual void LateUpdate() {}
+			void UpdateComponents();
 			bool GetActive();
-			virtual void OnCollision(component::RigidBodyComponent::Collision collision) {}
-			static std::vector<GameObject*> GetAllGameObjectsInScene(Scene* scene);
+			void SetActive(bool active);
 
 		private:
 			static std::vector<GameObject*> s_gameObjects;
-		protected:
-			std::vector<component::Component*> m_components;
-			
 		};
 		
-
-		template<typename T>
-		T* GameObject::AddComponent()
-		{
-			if (std::is_base_of<component::Component, T>::value)
-			{
-				T* component = Object::Instantiate<T>(this->GetScene());
-				component->m_gameObject = this;
-				m_components.push_back(component);
-				component->SetActive(true);
-				component->Start();
-				return component;
-			}
-			LOG("Invalid component");
-			return NULL;
-		}
-		template<typename T>
-		T* GameObject::GetComponent()
-		{
-
-			for (UINT i = 0; i < m_components.size(); i++)
-			{
-				T* comp = dynamic_cast<T*>(m_components[i]);
-				if (comp)
-					return comp;
-			}
-			return NULL;
-		}
-
-		template<typename T>
-		std::vector<T*> GameObject::GetComponents()
-		{
-			std::vector<T*> components;
-			for (UINT i = 0; i < m_components.size(); i++)
-			{
-				T* comp = dynamic_cast<T*>(m_components[i]);
-				if (comp)
-					components.push_back(comp);
-			}
-			return components;
-		}
 
 		template<typename T>
 		std::vector<GameObject*> GameObject::FindGameObjectsWithComponent()
@@ -112,17 +58,6 @@ namespace thomas
 					gameObjectsWithComponent.push_back(s_gameObjects[i]);
 			}
 			return gameObjectsWithComponent;
-		}
-
-		template<typename T>
-		T * GameObject::Instantiate(Scene * scene)
-		{
-			T* gameObject = Object::Instantiate<T>(scene);
-			s_gameObjects.push_back(gameObject);
-			gameObject->m_transform = gameObject->AddComponent<component::Transform>();
-			gameObject->SetActive(true);
-			gameObject->Start();
-			return gameObject;
 		}
 
 		template<typename T>

@@ -58,7 +58,7 @@ namespace thomas
 			object::component::RigidBodyComponent* rbA = static_cast<object::component::RigidBodyComponent*>(obA);
 			object::component::RigidBodyComponent* rbB = static_cast<object::component::RigidBodyComponent*>(obB);
 
-			if (object::Object::IsAlive(rbA) && object::Object::IsAlive(rbB))
+			if (rbA->isActive() && rbB->isActive())
 			{
 				object::component::RigidBodyComponent::Collision colA;
 				object::component::RigidBodyComponent::Collision colB;
@@ -66,8 +66,8 @@ namespace thomas
 				colA.otherRigidbody = rbB;
 				colB.thisRigidbody = rbB;
 				colB.otherRigidbody = rbA;
-				rbA->m_gameObject->OnCollision(colA);
-				rbB->m_gameObject->OnCollision(colB);
+				/*rbA->m_gameObject->OnCollision(colA);
+				rbB->m_gameObject->OnCollision(colB);*/
 			}
 				
 		}

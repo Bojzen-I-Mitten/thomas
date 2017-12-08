@@ -13,8 +13,7 @@ namespace thomas
 			private:
 			public:
 				GameObject* m_gameObject;
-				
-				bool GetActive();
+				virtual void Update() {};
 			private:
 			protected:
 				

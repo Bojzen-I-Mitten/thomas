@@ -18,6 +18,7 @@ namespace ThomasEditor {
 	internal:
 		GameObject^ m_gameObject;
 		void setGameObject(GameObject^ gObj);
+		virtual void Update() {};
 	public:
 
 		[BrowsableAttribute(false)]

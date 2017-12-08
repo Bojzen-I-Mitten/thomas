@@ -89,7 +89,9 @@ namespace thomas
 
 	Window * Window::GetWindow(int index)
 	{
-		if (s_windows.size() > index)
+		if (index == -1 && s_editorWindow)
+			return s_editorWindow;
+		else if (s_windows.size() > index)
 			return s_windows[index];
 		return nullptr;
 	}
@@ -120,6 +122,7 @@ namespace thomas
 
 	bool Window::InitDxBuffers()
 	{
+		LOG("Real size: (" << m_width << "," << m_height << ")");
 		bool hr = utils::D3d::CreateBackBuffer(ThomasCore::GetDevice(), m_swapChain, m_dxBuffers.backBuffer, m_dxBuffers.backBufferSRV);
 		if (hr)
 		{
@@ -274,9 +277,12 @@ namespace thomas
 
 	bool Window::Resize()
 	{
+		
 		bool result = GetWindowRect(m_windowHandler, &m_windowRectangle);
 		if (result)
 		{
+			if (m_height == m_windowRectangle.bottom && m_width == m_windowRectangle.right)
+				return false;
 			m_height = m_windowRectangle.bottom;
 			m_width = m_windowRectangle.right;
 			SetAspectRatio();
@@ -290,7 +296,9 @@ namespace thomas
 			SAFE_RELEASE(m_dxBuffers.depthStencilViewReadOnly);
 			SAFE_RELEASE(m_dxBuffers.depthBufferSRV);
 
-			m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+			m_swapChain->ResizeBuffers(0, m_width, m_height, DXGI_FORMAT_UNKNOWN, 0);
+			if (s_current == this)
+				s_current = nullptr;
 			return InitDxBuffers();
 		}
 		else
@@ -347,6 +355,7 @@ namespace thomas
 	{
 		m_aspectRatio = float(m_width) / float(m_height);
 
+
 		if (m_aspectRatio > 1.7f && m_aspectRatio < 1.8f)
 		{
 			m_ratio = Ratio::STANDARD_169;
@@ -397,6 +406,7 @@ namespace thomas
 		{
 			window->Present();
 		}
+		s_current = nullptr;
 	}
 
 	void Window::Bind()

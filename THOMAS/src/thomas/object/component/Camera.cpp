@@ -15,29 +15,27 @@ namespace thomas
 			std::vector<Camera*> Camera::s_allCameras;
 			void Camera::UpdateProjMatrix()
 			{
-				m_projMatrix = math::Matrix::CreatePerspectiveFieldOfView(math::DegreesToRadians(m_fov), m_viewport.AspectRatio() * Window::GetWindow(m_windowIndex)->GetRealAspectRatio(), m_near, m_far);
+				m_projMatrix = math::Matrix::CreatePerspectiveFieldOfView(math::DegreesToRadians(m_fov), m_viewport.AspectRatio() * Window::GetWindow(m_targetDisplay)->GetRealAspectRatio(), m_near, m_far);
 			}
 
 			Camera::Camera(bool dontAddTolist)
 			{
-				m_windowIndex = 0; //TODO
 				m_fov = 70;
 				m_near = 0.5;
 				m_far = 10000;
 				m_viewport = math::Viewport(0, 0, 1, 1);
-				UpdateProjMatrix();
 				m_targetDisplay = 0;
+				UpdateProjMatrix();
 			}
 
 			Camera::Camera()
 			{
-				m_windowIndex = 0; //TODO
 				m_fov = 70;
 				m_near = 0.5;
 				m_far = 10000;
 				m_viewport = math::Viewport(0, 0, 1,1);
-				UpdateProjMatrix();
 				m_targetDisplay = 0;
+				UpdateProjMatrix();
 				s_allCameras.push_back(this);
 				std::sort(s_allCameras.begin(), s_allCameras.end(), [](Camera* a, Camera* b) 
 				{
@@ -114,7 +112,7 @@ namespace thomas
 			math::Viewport Camera::GetViewport()
 			{
 				UpdateProjMatrix();
-				Window* window = Window::GetWindow(m_windowIndex);
+				Window* window = Window::GetWindow(m_targetDisplay);
 				return math::Viewport(m_viewport.x, m_viewport.y, m_viewport.width * window->GetWidth(), m_viewport.height * window->GetHeight());
 			}
 
@@ -143,7 +141,11 @@ namespace thomas
 			void Camera::SetTargetDisplay(int index)
 			{
 				if (Window::GetWindows().size() < index)
+				{
 					m_targetDisplay = index;
+					UpdateProjMatrix();
+				}
+					
 				
 			}
 

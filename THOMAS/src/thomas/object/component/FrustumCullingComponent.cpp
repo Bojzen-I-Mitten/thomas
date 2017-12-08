@@ -9,10 +9,6 @@ namespace thomas
 		{
 			FrustumCullingComponent::FrustumCullingComponent()
 			{
-
-			}
-			void FrustumCullingComponent::Start()
-			{
 				m_radius = 0.0f;
 				m_position = math::Vector3(0.0f, 0.0f, 0.0f);
 			}
