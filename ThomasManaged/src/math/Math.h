@@ -98,16 +98,8 @@ namespace ThomasEditor
 
 		property Vector3 eulerAngles {
 			Vector3 get() {
-				float yaw = asin(-2.0f * (x*z - w*y));
-				yaw = thomas::math::RadiansToDegrees(yaw);
-				yaw = roundf(yaw * 100000.0f) / 100000.0f;
-				float pitch = atan2(2.0f * (y*z + w*x), w*w - x*x - y*y + z*z);
-				pitch = thomas::math::RadiansToDegrees(pitch);
-				pitch = roundf(pitch * 100000.0f) / 100000.0f;
-				float roll = atan2(2.0 * (x*y + w*z), w*w + x*x - y*y - z*z);
-				roll = thomas::math::RadiansToDegrees(roll);
-				roll = roundf(roll * 100000.0f) / 100000.0f;
-				return Vector3(pitch,yaw,roll);
+
+				return Vector3(thomas::math::ToEuler(thomas::math::Quaternion(x, y, z, w)));
 			}
 		}
 	

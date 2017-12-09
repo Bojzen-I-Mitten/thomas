@@ -75,7 +75,6 @@ namespace ThomasEditor {
 				}
 				thomas::Physics::Update();
 				thomas::ThomasCore::Render();
-					
 			}
 			
 		}

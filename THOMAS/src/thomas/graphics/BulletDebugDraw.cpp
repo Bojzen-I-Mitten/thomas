@@ -13,9 +13,9 @@ namespace thomas
 
 		BulletDebugDraw::BulletDebugDraw()
 		{
-
+			m_initialized = false;
 			//Create VS shader
-			Shader* shader = Shader::CreateShader("debugDraw", "../Data/oldShaders/lineShader.hlsl");
+			Shader* shader = Shader::CreateShader("debugDraw", "../Data/FXIncludes/lineShader.fx");
 			if (shader != nullptr)
 			{
 				m_material = new Material(shader);
@@ -27,6 +27,7 @@ namespace thomas
 				m_lines.push_back(a); //Line end
 
 				m_vertexBuffer = utils::D3d::CreateDynamicBufferFromVector(m_lines, D3D11_BIND_VERTEX_BUFFER);
+				m_initialized = true;
 			}
 			
 
@@ -35,29 +36,19 @@ namespace thomas
 		void BulletDebugDraw::drawLine(const btVector3 & from, const btVector3 & to, const btVector3 & fromColor, const btVector3 & toColor)
 		{
 
-			DirectX::CommonStates states(ThomasCore::GetDevice());
-			ThomasCore::GetDeviceContext()->OMSetBlendState(states.Opaque(), nullptr, 0xFFFFFFFF);
-			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(states.DepthNone(), 0);
-			ThomasCore::GetDeviceContext()->RSSetState(states.CullNone());
 			
-			m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP;
+			LineVertex fromLine;
+			LineVertex toLine;
 
-			m_lines[0].pos = math::Vector3(from.x(), from.y(), from.z());
-			m_lines[0].color = math::Vector3(fromColor.x(), fromColor.y(), fromColor.z());
+			fromLine.pos = math::Vector3(from.x(), from.y(), from.z());
+			fromLine.color = math::Vector3(fromColor.x(), fromColor.y(), fromColor.z());
 
-			m_lines[1].pos = math::Vector3(to.x(), to.y(), to.z());
-			m_lines[1].color = math::Vector3(toColor.x(), toColor.y(), toColor.z());
+			toLine.pos = math::Vector3(to.x(), to.y(), to.z());
+			toLine.color = math::Vector3(toColor.x(), toColor.y(), toColor.z());
 
-
-
-			UINT stride = sizeof(LineVertex);
-			UINT offset = 0;
-			utils::D3d::FillDynamicBufferVector(m_vertexBuffer, m_lines);
-			m_material->GetShader()->BindVertexBuffer(m_vertexBuffer, stride, offset);
-
-			m_material->SetMatrix("viewProjection", m_viewProjection);
+			m_lines.push_back(fromLine);
+			m_lines.push_back(toLine);
 			
-			m_material->Draw(2, 0);
 
 		}
 
@@ -96,6 +87,31 @@ namespace thomas
 		void BulletDebugDraw::setDebugMode(int debugMode)
 		{
 			m_debugMode = debugMode;
+		}
+
+		void BulletDebugDraw::drawLineFinal()
+		{
+			if (m_lines.empty())
+				return;
+			DirectX::CommonStates states(ThomasCore::GetDevice());
+			ThomasCore::GetDeviceContext()->OMSetBlendState(states.Opaque(), nullptr, 0xFFFFFFFF);
+			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(states.DepthNone(), 0);
+			ThomasCore::GetDeviceContext()->RSSetState(states.CullNone());
+
+			m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+
+			UINT stride = sizeof(LineVertex);
+			UINT offset = 0;
+			//utils::D3d::FillDynamicBufferVector(m_vertexBuffer, m_lines);
+			SAFE_RELEASE(m_vertexBuffer);
+			m_vertexBuffer = utils::D3d::CreateDynamicBufferFromVector(m_lines, D3D11_BIND_VERTEX_BUFFER);
+			m_material->GetShader()->BindVertexBuffer(m_vertexBuffer, stride, offset);
+
+			m_material->SetMatrix("viewProjection", m_viewProjection);
+
+			m_material->Bind();
+			m_material->Draw(m_lines.size(), 0);
+			m_lines.clear();
 		}
 
 	}

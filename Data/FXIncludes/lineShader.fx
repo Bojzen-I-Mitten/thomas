@@ -1,11 +1,7 @@
 
-
-#include "ThomasCG.fx"
-
 cbuffer camera : register(b0)
 {
 	matrix viewProjection;
-    matrix worldMatrix;
 };
 
 struct VS_IN
@@ -24,8 +20,7 @@ struct VS_OUT
 VS_OUT VSMain(VS_IN input)
 {
 	VS_OUT output = (VS_OUT) 0;
-    output.Pos = mul(float4(input.Pos, 1), worldMatrix);
-    output.Pos = mul(float4(input.Pos, 1), viewProjection);
+    output.Pos = mul(viewProjection, float4(input.Pos, 1));
 	output.Color = input.Color;
 
 	return output;
@@ -33,14 +28,14 @@ VS_OUT VSMain(VS_IN input)
 
 float4 PSMain(VS_OUT input) : SV_Target
 {
-	return float4(1, 0, 0, 1);
+	return float4(input.Color, 1);
 }
 
 
 technique11 Standard {
 	pass P0 {
-		VERT(VSMain());
+		SetVertexShader(CompileShader(vs_5_0, VSMain()));
 		SetGeometryShader(NULL);
-		FRAG(PSMain());
+		SetPixelShader(CompileShader(ps_5_0, PSMain()));
 	}
 }

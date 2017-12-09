@@ -241,7 +241,7 @@ namespace thomas
 			// Z-buffer view desc
 			depthViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 			#if THOMAS_AA_COUNT > 1
-				depthViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+				depthViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 			#else
 				depthViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 			#endif
@@ -270,7 +270,11 @@ namespace thomas
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 			ZeroMemory(&srvDesc, sizeof(srvDesc));
 			srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			#if THOMAS_AA_COUNT > 1
+				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMS;
+			#else
+				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			#endif
 			srvDesc.Texture2D.MostDetailedMip = 0;
 			srvDesc.Texture2D.MipLevels = -1;
 

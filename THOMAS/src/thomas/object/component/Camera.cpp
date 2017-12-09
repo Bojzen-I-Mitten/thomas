@@ -21,7 +21,7 @@ namespace thomas
 			Camera::Camera(bool dontAddTolist)
 			{
 				m_fov = 70;
-				m_near = 0.5;
+				m_near = 0.1;
 				m_far = 10000;
 				m_viewport = math::Viewport(0, 0, 1, 1);
 				m_targetDisplay = 0;

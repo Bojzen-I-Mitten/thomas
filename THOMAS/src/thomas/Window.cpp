@@ -122,7 +122,6 @@ namespace thomas
 
 	bool Window::InitDxBuffers()
 	{
-		LOG("Real size: (" << m_width << "," << m_height << ")");
 		bool hr = utils::D3d::CreateBackBuffer(ThomasCore::GetDevice(), m_swapChain, m_dxBuffers.backBuffer, m_dxBuffers.backBufferSRV);
 		if (hr)
 		{
@@ -236,7 +235,7 @@ namespace thomas
 
 	void Window::Clear()
 	{
-		float color[4] = { 0.0f, 0.5f, 0.75f, 1.0f };
+		float color[4] = { 0.34375f, 0.34375f, 0.34375f, 1.0f };
 		ThomasCore::GetDeviceContext()->ClearRenderTargetView(m_dxBuffers.backBuffer, color);
 		ThomasCore::GetDeviceContext()->ClearDepthStencilView(m_dxBuffers.depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 	}

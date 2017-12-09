@@ -36,7 +36,7 @@ namespace thomas
 		s_world->setDebugDrawer(s_debugDraw);
 		
 
-		return true;
+		return s_debugDraw->m_initialized;
 
 	}
 	void Physics::Update()
@@ -78,6 +78,7 @@ namespace thomas
 	{
 		s_debugDraw->Update(camera);
 		s_world->debugDrawWorld();
+		s_debugDraw->drawLineFinal();
 	}
 	void Physics::Destroy()
 	{

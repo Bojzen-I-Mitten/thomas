@@ -37,7 +37,6 @@ namespace thomas
 			{
 				return;
 			}
-			LOG(m_name);
 
 			for (int i = 0; i < effectDesc.GlobalVariables; i++)
 			{
@@ -46,7 +45,6 @@ namespace thomas
 				{
 					MaterialProperty* prop = new MaterialProperty(i, variable);
 					m_properties.push_back(prop);
-					LOG(prop->GetName());
 				}
 				
 
