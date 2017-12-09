@@ -39,9 +39,9 @@ float4 frag(v2f i) : SV_TARGET
 
 technique11 Standard {
 	pass OutlinePass {
-		VERT(outlineVert());
+		VERT(vert());
 		SetGeometryShader(NULL);
-		FRAG(outlineFrag());
+		FRAG(frag());
 		SetDepthStencilState(DisableDepth, 0);
 		SetRasterizerState(TestRasterizerOutline);
 	}
