@@ -28,10 +28,11 @@ namespace thomas
 			static std::vector<GameObject*> FindGameObjectsWithComponent();
 			static std::vector<GameObject*> GetGameObjects();
 
+			template<typename T>
+			T* GetComponent();
+
 			static bool Destroy(GameObject *object);
 			static void Destroy();
-			template<typename T>
-			static T* Instantiate(Scene* scene);
 			template<typename T>
 			static T* Instantiate(component::Transform* parent, Scene* scene);
 			template<typename T>
@@ -58,6 +59,19 @@ namespace thomas
 					gameObjectsWithComponent.push_back(s_gameObjects[i]);
 			}
 			return gameObjectsWithComponent;
+		}
+
+		template<typename T>
+		T* GameObject::GetComponent()
+		{
+
+			for (UINT i = 0; i < m_components.size(); i++)
+			{
+				T* comp = dynamic_cast<T*>(m_components[i]);
+				if (comp)
+					return comp;
+			}
+			return NULL;
 		}
 
 		template<typename T>

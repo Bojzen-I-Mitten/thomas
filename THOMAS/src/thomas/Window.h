@@ -11,7 +11,7 @@ namespace thomas
 		bool UpdateWindow();
 		bool InitDxBuffers();
 
-		Window(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPWSTR title);
+		Window(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPCSTR title);
 		Window(HWND hWnd);
 	public:
 		enum class Ratio
@@ -83,7 +83,7 @@ namespace thomas
 		WNDCLASSEX m_windowClassInfo;
 		HWND m_windowHandler;
 		RECT m_windowRectangle;
-		LPWSTR m_title;
+		std::string m_title;
 		bool m_showCursor;
 		Ratio m_ratio;
 		bool m_fullScreen;

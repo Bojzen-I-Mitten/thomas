@@ -134,8 +134,8 @@ namespace thomas
 
 			void Camera::Render()
 			{
-				
-				graphics::Renderer::RenderCamera(this);
+				graphics::Renderer::BindCamera(this);
+				graphics::Renderer::Render();
 			}
 
 			void Camera::SetTargetDisplay(int index)

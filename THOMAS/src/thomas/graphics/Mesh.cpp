@@ -12,6 +12,7 @@ namespace thomas {
 			m_data.indices = indices;
 			m_name = name;
 			SetupMesh();
+			m_bounds = GenerateBounds();
 		}
 
 		Mesh::~Mesh()
@@ -20,6 +21,7 @@ namespace thomas {
 			SAFE_RELEASE(m_data.indexBuffer);
 			m_data.vertices.clear();
 			m_data.indices.clear();
+			delete m_bounds;
 		}
 
 
@@ -91,6 +93,35 @@ namespace thomas {
 
 			
 
+		}
+		utils::Bounds* Mesh::GenerateBounds()
+		{
+			if (m_data.vertices.empty())
+				return nullptr;
+			math::Vector3 triangle = m_data.vertices[0].position;
+			float minX = triangle.x; float minY = triangle.y;float minZ = triangle.z;
+			float maxX = triangle.x; float maxY = triangle.y; float maxZ = triangle.z;
+
+			for (int i = 1; i < m_data.vertices.size(); i++)
+			{
+				triangle = m_data.vertices[i].position;
+				if (minX > triangle.x)
+					minX = triangle.x;
+				if (minY > triangle.y)
+					minY = triangle.y;
+				if (minZ > triangle.z)
+					minZ = triangle.z;
+
+				if (maxX < triangle.x)
+					maxX = triangle.x;
+				if (maxY < triangle.y)
+					maxY = triangle.y;
+				if (maxZ < triangle.z)
+					maxZ = triangle.z;
+			}
+			
+			math::Vector3 size(abs(minX - maxX), abs(minY - maxY), abs(minZ - maxZ));
+			return new utils::Bounds(math::Vector3(), size);
 		}
 	}
 }

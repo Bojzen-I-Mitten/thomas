@@ -67,7 +67,7 @@ namespace ThomasEditor
 			Quaternion get() { return Quaternion(((thomas::object::component::Transform*)nativePtr)->GetRotation()); }
 		}
 
-		
+				
 		[DisplayNameAttribute("rotation")]
 		property Vector3 eulerAngles
 		{
@@ -75,6 +75,19 @@ namespace ThomasEditor
 			void set(Vector3 value) { ((thomas::object::component::Transform*)nativePtr)->SetRotation(value.y, value.x, value.z); }
 		}
 		
+		
+
+		property Vector3 scale
+		{
+			Vector3 get() { return Vector3(((thomas::object::component::Transform*)nativePtr)->GetScale()); }
+			void set(Vector3 value) { ((thomas::object::component::Transform*)nativePtr)->SetScale(thomas::math::Vector3(value.x, value.y, value.z)); }
+		}
+		[BrowsableAttribute(false)]
+		property Vector3 localScale
+		{
+			Vector3 get() { return Vector3(((thomas::object::component::Transform*)nativePtr)->m_localScale); }
+			void set(Vector3 value) { ((thomas::object::component::Transform*)nativePtr)->m_localScale = thomas::math::Vector3(value.x, value.y, value.z); }
+		}
 
 		
 		

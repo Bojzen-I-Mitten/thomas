@@ -40,6 +40,15 @@ namespace thomas
 			m_isInstance = false;
 			m_id = s_idCounter;
 			s_idCounter++;
+
+			for (Shader::ShaderPass p : *shader->GetPasses())
+			{
+				Pass pass;
+				pass.name = p.name;
+				pass.enabled = true;
+				pass.index = m_passes.size();
+				m_passes.push_back(pass);
+			}
 		}
 
 		Material::Material(std::string name, Shader * shader) : Material(shader)
@@ -55,7 +64,7 @@ namespace thomas
 			m_renderQueue = original->m_renderQueue;
 			m_name = original->m_name;
 			m_topology = original->m_topology;
-
+			m_passes = original->m_passes;
 			for (MaterialProperty* prop : original->m_properties)
 			{
 				m_properties.push_back(new MaterialProperty(prop));
@@ -309,6 +318,26 @@ namespace thomas
 				LOG("Property " << name << " does not exist for material:" << m_name);
 			}
 		}
+
+
+		void Material::SetShaderPassEnabled(int index, bool enabled)
+		{
+			if (m_passes.size() > index)
+				m_passes[index].enabled = enabled;
+		}
+		void Material::SetShaderPassEnabled(std::string name, bool enabled)
+		{
+			for (int i = 0; i < m_passes.size(); i++)
+			{
+				if (m_passes[i].name == name)
+				{
+					m_passes[i].enabled = enabled;
+					break;
+				}
+
+			}
+		}
+
 		void Material::Bind()
 		{
 			m_shader->Bind();
@@ -320,13 +349,26 @@ namespace thomas
 		}
 		void Material::Draw(Mesh * mesh)
 		{
-			m_shader->ApplyShader();
-			mesh->Draw(m_shader);
+			for (Pass p : m_passes)
+			{
+				if (p.enabled)
+				{
+					m_shader->SetPass(p.index);
+					mesh->Draw(m_shader);
+				}
+			}
+			
 		}
 		void Material::Draw(UINT vertexCount, UINT startVertexLocation)
 		{
-			m_shader->ApplyShader();
-			ThomasCore::GetDeviceContext()->Draw(vertexCount, startVertexLocation);
+			for (Pass p : m_passes)
+			{
+				if (p.enabled)
+				{
+					m_shader->SetPass(p.index);
+					ThomasCore::GetDeviceContext()->Draw(vertexCount, startVertexLocation);
+				}
+			}
 		}
 		Material * Material::GetBaseMaterial()
 		{

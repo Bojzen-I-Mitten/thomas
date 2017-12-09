@@ -17,7 +17,6 @@ namespace thomas
 			
 			
 		public:
-
 			static void Init();
 			static Material* GetStandardMaterial();
 
@@ -58,6 +57,9 @@ namespace thomas
 
 			void SetRaw(const std::string& name, void* value, size_t size, UINT count);
 
+			void SetShaderPassEnabled(int index, bool enabled);
+			void SetShaderPassEnabled(std::string name, bool enabled);
+
 			void Draw(Mesh* mesh);
 			void Draw(UINT vertexCount, UINT startVertexLocation);
 
@@ -73,11 +75,18 @@ namespace thomas
 			std::string m_name;
 			D3D11_PRIMITIVE_TOPOLOGY m_topology;
 		private:
+			struct Pass
+			{
+				std::string name;
+				bool enabled;
+				int index;
+			};
 			bool m_isInstance;
 			Material* m_baseMaterial;
 			UINT m_id;
 			Shader* m_shader;
 			std::vector<MaterialProperty*> m_properties;
+			std::vector<Pass> m_passes;
 
 			static std::vector<Material*> s_materials;
 			static std::vector<Material*> s_materialInstances;

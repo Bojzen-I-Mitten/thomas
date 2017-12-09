@@ -1,6 +1,7 @@
 #pragma once
 #pragma unmanaged
 #include <thomas\object\GameObject.h>
+#include <thomas\editor\EditorCamera.h>
 #pragma managed
 #include <string>
 #include <msclr\marshal_cppstd.h>
@@ -143,6 +144,11 @@ namespace ThomasEditor {
 		void OnPropertyChanged(String^ info)
 		{
 			PropertyChanged(this, gcnew PropertyChangedEventArgs(info));
+		}
+
+		void OnSelection()
+		{
+			thomas::editor::EditorCamera::SelectObject((thomas::object::GameObject*)nativePtr);
 		}
 
 	};

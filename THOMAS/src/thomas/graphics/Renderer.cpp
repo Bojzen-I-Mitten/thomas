@@ -24,7 +24,7 @@ namespace thomas
 	namespace graphics
 	{
 		
-		void Renderer::BindPerFrame()
+		void Renderer::BindFrame()
 		{
 			//ThomasPerFrame
 			float realDeltaTime = ThomasTime::GetActualDeltaTime();
@@ -34,9 +34,12 @@ namespace thomas
 			Shader::SetGlobalVector("thomas_DeltaTime", thomas_DeltaTime);
 		}
 
-		void Renderer::BindPerCamera(thomas::object::component::Camera * camera)
+		void Renderer::BindCamera(thomas::object::component::Camera * camera)
 		{
+			int displayIndex = camera->GetTargetDisplayIndex();
+			Window::GetWindow(displayIndex)->Bind();
 			ThomasCore::GetDeviceContext()->RSSetViewports(1, camera->GetViewport().Get11());
+
 			//ThomasPerCamera
 			Shader::SetGlobalMatrix("thomas_MatrixP", camera->GetProjMatrix().Transpose());
 			Shader::SetGlobalMatrix("thomas_MatrixV", camera->GetViewMatrix().Transpose());
@@ -46,7 +49,7 @@ namespace thomas
 			Shader::SetGlobalVector("_WorldSpaceCameraPos", (math::Vector4)camera->GetPosition());
 		}
 
-		void Renderer::BindPerObject(thomas::graphics::Material * material, thomas::object::component::Transform * transform)
+		void Renderer::BindObject(thomas::graphics::Material * material, thomas::object::component::Transform * transform)
 		{
 			thomas::graphics::MaterialProperty* prop;
 
@@ -62,17 +65,12 @@ namespace thomas
 
 		void Renderer::Begin()
 		{
-			BindPerFrame();
+			BindFrame();
 		}
 
-		void Renderer::RenderCamera(thomas::object::component::Camera * camera)
+		void Renderer::Render()
 		{
-			int displayIndex = camera->GetTargetDisplayIndex();
-			Window::GetWindow(displayIndex)->Bind();
-			BindPerCamera(camera);
 			RenderQueue(Scene::GetCurrentScene()->GetRenderQueue());
-
-			Physics::DrawDebug(camera);
 		}
 
 		void Renderer::RenderQueue(std::vector<RenderPair*> renderQueue)
@@ -87,7 +85,7 @@ namespace thomas
 					lastMaterial = renderPair->material;
 					lastMaterial->Bind();
 				}
-				BindPerObject(lastMaterial, renderPair->transform);
+				BindObject(lastMaterial, renderPair->transform);
 
 				lastMaterial->Draw(renderPair->mesh);
 			}
