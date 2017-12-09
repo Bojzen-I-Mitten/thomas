@@ -4,6 +4,8 @@
 #include "../ThomasTime.h"
 #include <algorithm>
 #include "../Window.h"
+#include "../graphics/BulletDebugDraw.h"
+#include "EditorGrid.h"
 namespace thomas
 {
 	namespace editor
@@ -18,6 +20,8 @@ namespace thomas
 			m_cameraComponent = new object::component::Camera(true);
 			m_cameraComponent->SetTargetDisplay(-1);
 			m_cameraComponent->m_gameObject = this;
+			m_grid = new EditorGrid(30, 1,  10);
+			m_sensitivity = 30.0f;
 		}
 
 		void EditorCamera::Init()
@@ -41,8 +45,11 @@ namespace thomas
 				s_editorCamera->updateCamera();
 		}
 		void EditorCamera::renderCamera()
-		{
+		{		
+			
 			m_cameraComponent->Render();
+			m_grid->Draw(m_cameraComponent->GetPosition());
+			
 		}
 		void EditorCamera::updateCamera()
 		{
@@ -76,23 +83,19 @@ namespace thomas
 				m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime());
 
 			if (Input::GetKey(Input::Keys::Q))
-				m_transform->Translate(m_transform->Up()*ThomasTime::GetActualDeltaTime());
+				m_transform->Translate(-m_transform->Up()*ThomasTime::GetActualDeltaTime());
 
 			if (Input::GetKey(Input::Keys::E))
-				m_transform->Translate(-m_transform->Up()*ThomasTime::GetActualDeltaTime());
+				m_transform->Translate(m_transform->Up()*ThomasTime::GetActualDeltaTime());
 
 			
 
-			if (Input::GetMouseButton(Input::MouseButtons::RIGHT))
+			if	(Input::GetMouseButton(Input::MouseButtons::RIGHT))
 			{
-				rotationX += Input::GetMouseX() * ThomasTime::GetActualDeltaTime();
-				rotationY += Input::GetMouseY() * ThomasTime::GetActualDeltaTime();
-				rotationY = max(-90.0f, min(rotationY, 90.0f));
+				rotationX += Input::GetMouseX() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
+				rotationY += Input::GetMouseY() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
 				
-
-				math::Quaternion rotation = math::Quaternion::CreateFromAxisAngle(-math::Vector3::Up, math::DegreesToRadians(rotationX));
-				rotation *= math::Quaternion::CreateFromAxisAngle(math::Vector3::Left, math::DegreesToRadians(rotationY));
-				m_transform->SetRotation(rotation);
+				m_transform->SetRotation(-rotationX, -rotationY, 0);
 			}
 		}
 	}

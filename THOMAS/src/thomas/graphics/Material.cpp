@@ -325,7 +325,7 @@ namespace thomas
 		}
 		void Material::Draw(UINT vertexCount, UINT startVertexLocation)
 		{
-			Bind();
+			m_shader->ApplyShader();
 			ThomasCore::GetDeviceContext()->Draw(vertexCount, startVertexLocation);
 		}
 		Material * Material::GetBaseMaterial()

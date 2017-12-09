@@ -63,17 +63,14 @@ namespace thomas {
 
 		if (init)
 			init = graphics::Sprite::Initialize();
-		if (init)
-			init = Physics::Init();
-
-
-		
 
 		//graphics::ParticleSystem::Init();
 		if(init)
 			init = graphics::Shader::Init();
 		if(init)
 			graphics::Material::Init();
+		if (init)
+			init = Physics::Init();
 		if(init)
 			editor::EditorCamera::Init();
 

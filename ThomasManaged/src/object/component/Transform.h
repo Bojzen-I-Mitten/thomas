@@ -71,8 +71,8 @@ namespace ThomasEditor
 		[DisplayNameAttribute("rotation")]
 		property Vector3 eulerAngles
 		{
-			Vector3 get() { return rotation.eulerAngles; }
-			void set(Vector3 value) { ((thomas::object::component::Transform*)nativePtr)->SetRotation(value.x, value.y, value.z); }
+			Vector3 get() { return Vector3(((thomas::object::component::Transform*)nativePtr)->GetEulerAngles()); }
+			void set(Vector3 value) { ((thomas::object::component::Transform*)nativePtr)->SetRotation(value.y, value.x, value.z); }
 		}
 		
 

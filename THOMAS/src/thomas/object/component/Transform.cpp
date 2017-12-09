@@ -115,6 +115,13 @@ namespace thomas
 				else
 					return m_localRotation;
 			}
+			math::Vector3 Transform::GetEulerAngles()
+			{
+				if (m_parent)
+					return m_eulerAngles * m_parent->GetEulerAngles();
+				else
+					return m_eulerAngles;
+			}
 			math::Vector3 Transform::GetScale()
 			{
 				if (m_parent)
@@ -139,10 +146,12 @@ namespace thomas
 
 				m_localWorldMatrix = math::Matrix::CreateScale(m_localScale) * math::Matrix::CreateWorld(m_localPosition, rotMatrix.Forward(), rotMatrix.Up());
 				Decompose();
+				m_eulerAngles = math::ToEuler(GetRotation());
 			}
 			void Transform::SetRotation(float yaw, float pitch, float roll)
 			{
-				SetRotation(math::Quaternion::CreateFromYawPitchRoll(math::DegreesToRadians(pitch), math::DegreesToRadians(yaw), math::DegreesToRadians(roll)));
+				SetRotation(math::Quaternion::CreateFromYawPitchRoll(math::DegreesToRadians(yaw), math::DegreesToRadians(pitch), math::DegreesToRadians(roll)));
+				m_eulerAngles = math::Vector3(pitch, yaw, roll);
 			}
 			void Transform::SetScale(math::Vector3 scale)
 			{

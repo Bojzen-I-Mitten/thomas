@@ -42,6 +42,7 @@ namespace thomas
 
 				math::Vector3 GetPosition();
 				math::Quaternion GetRotation();
+				math::Vector3 GetEulerAngles();
 				math::Vector3 GetScale();
 				
 				void SetPosition(math::Vector3 position);
@@ -60,7 +61,7 @@ namespace thomas
 
 			private:
 				Transform* m_parent;
-				
+				math::Vector3 m_eulerAngles;
 			};
 		}
 	}

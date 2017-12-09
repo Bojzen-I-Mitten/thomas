@@ -40,6 +40,10 @@ namespace thomas
 
 			virtual int getDebugMode() const { return m_debugMode; }
 
+			void drawLineFinal();
+
+			bool m_initialized;
+
 		private:
 			struct LineVertex
 			{
