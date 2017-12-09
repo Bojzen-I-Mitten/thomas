@@ -2,22 +2,20 @@
 
 #include "ThomasCG.fx"
 
-
-DepthStencilState EnableDepth
+DepthStencilState DisableDepth
 {
-	DepthEnable = TRUE;
-	DepthWriteMask = ALL;
+	DepthEnable = FALSE;
+	DepthWriteMask = ZERO;
 	DepthFunc = LESS_EQUAL;
 };
 
-RasterizerState TestRasterizer
+RasterizerState TestRasterizerOutline
 {
 	FillMode = SOLID;
-	CullMode = BACK;
+	CullMode = FRONT;
 	FrontCounterClockWise = TRUE;
 	DepthClipEnable = FALSE;
 };
-
 
 
 struct v2f {
@@ -28,21 +26,23 @@ v2f vert(appdata_thomas v)
 {
 	v2f o;
 	o.vertex = ThomasObjectToClipPos(v.vertex);
+	float4 normal = ThomasObjectToClipPos(v.normal);
+	o.vertex += normal * 0.03f;
 	return o;
 }
 
 float4 frag(v2f i) : SV_TARGET
 {
-	return float4(1,0,0, 1.0f);
+	return float4(1,1,0, 1.0f);
 }
 
 
 technique11 Standard {
-	pass P0 {
-		VERT(vert());
+	pass OutlinePass {
+		VERT(outlineVert());
 		SetGeometryShader(NULL);
-		FRAG(frag());
-		SetDepthStencilState(EnableDepth, 0);
-		SetRasterizerState(TestRasterizer);
+		FRAG(outlineFrag());
+		SetDepthStencilState(DisableDepth, 0);
+		SetRasterizerState(TestRasterizerOutline);
 	}
 }

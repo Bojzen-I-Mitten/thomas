@@ -16,7 +16,6 @@ namespace thomas
 			m_name = name;
 			m_effect = effect;
 			SetupReflection();
-			m_currentPass = 0;
 		}
 
 		Shader::~Shader()
@@ -178,6 +177,7 @@ namespace thomas
 					LOG("Error compiling shader: " << filePath << " error:");
 					LOG_HR(result);
 				}
+				
 				return false;
 			}
 			else if(errorBlob)
@@ -242,33 +242,20 @@ namespace thomas
 		{
 			for (auto prop : m_properties)
 				prop->ApplyProperty(this);
-
-			ThomasCore::GetDeviceContext()->IASetInputLayout(m_passes[m_currentPass].inputLayout);
 		}
 		std::string Shader::GetName()
 		{
 			return m_name;
 		}
-		void Shader::SetPass(int index)
+		std::vector<Shader::ShaderPass>* Shader::GetPasses()
 		{
-			if (m_passes.size() > index)
-				m_currentPass = index;
+			return &m_passes;
 		}
-		void Shader::SetPass(const std::string & name)
+		
+		void Shader::SetPass(int passIndex)
 		{
-			for (int i = 0; i < m_passes.size(); i++)
-			{
-				if (m_passes[i].name == name)
-				{
-					m_currentPass = i;
-					break;
-				}
-					
-			}
-		}
-		void Shader::ApplyShader()
-		{
-			ID3DX11EffectPass* pass = m_effect->GetTechniqueByIndex(0)->GetPassByIndex(m_currentPass);
+			ThomasCore::GetDeviceContext()->IASetInputLayout(m_passes[passIndex].inputLayout);
+			ID3DX11EffectPass* pass = m_effect->GetTechniqueByIndex(0)->GetPassByIndex(passIndex);
 			pass->Apply(0, ThomasCore::GetDeviceContext());
 		}
 		void Shader::DestroyAllShaders()

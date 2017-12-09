@@ -137,6 +137,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Utility.h" />
+    <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\math\Math.h" />
     <ClInclude Include="src\object\Component.h" />
     <ClInclude Include="src\object\component\RenderComponent.h" />
@@ -151,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\math\Math.cpp" />
     <ClCompile Include="src\object\Component.cpp" />
     <ClCompile Include="src\object\component\RenderComponent.cpp" />
@@ -158,6 +162,7 @@
     <ClCompile Include="src\object\component\Transform.cpp" />
     <ClCompile Include="src\object\GameObject.cpp" />
     <ClCompile Include="src\object\Object.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="Stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -140,11 +140,11 @@ namespace thomas
 		
 	}
 
-	Window::Window(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPWSTR title)
+	Window::Window(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPCSTR title)
 	{
 		m_height = height;
 		m_width = width;
-		m_title = title;
+		m_title = std::string(title);
 		m_showCursor = true;
 		m_fullScreen = false;
 
@@ -155,7 +155,7 @@ namespace thomas
 		m_windowClassInfo.style = CS_HREDRAW | CS_VREDRAW;
 		m_windowClassInfo.lpfnWndProc = EventHandler; //Callback for EVENTS
 		m_windowClassInfo.hInstance = hInstance;
-		m_windowClassInfo.lpszClassName = L"ThomasWindow";
+		m_windowClassInfo.lpszClassName = "ThomasWindow";
 		m_windowClassInfo.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(101));
 
 		if (!RegisterClassEx(&m_windowClassInfo))
@@ -168,7 +168,7 @@ namespace thomas
 		AdjustWindowRect(&m_windowRectangle, WS_OVERLAPPEDWINDOW, FALSE);
 
 		m_windowHandler = CreateWindow(
-			L"ThomasEngine",			// CLASS, if does not exists fails!
+			"ThomasEngine",			// CLASS, if does not exists fails!
 			title,		// Window name (title)
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,

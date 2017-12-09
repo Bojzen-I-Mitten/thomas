@@ -159,6 +159,9 @@ inline float3 ThomasWorldToObjectDir( in float3 dir )
     return normalize(mul((float3x3)thomas_WorldToObject, dir));
 }
 
+inline float2 TransformViewToProjection(float2 v) { return float2(v.x*THOMAS_MATRIX_P[0][0], v.y*THOMAS_MATRIX_P[1][1]); }
+
+
 // Transforms normal from object to world space
 inline float3 ThomasObjectToWorldNormal( in float3 norm )
 {

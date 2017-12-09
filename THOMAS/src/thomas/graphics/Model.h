@@ -1,5 +1,6 @@
 #pragma once
 #include "../Common.h"
+#include "../utils/Utility.h"
 #include <vector>
 namespace thomas {
 	namespace graphics {
@@ -9,6 +10,7 @@ namespace thomas {
 		class THOMAS_API Model {
 		private:
 			Model(std::string name, std::vector<Mesh*> meshes);
+			utils::Bounds* GenerateBounds();
 		public:
 			static Model* CreateModel(std::string name, std::vector<Mesh*> meshes);
 			static Model* GetModelByName(std::string name);
@@ -20,6 +22,8 @@ namespace thomas {
 
 			~Model();
 			
+		public:
+			utils::Bounds* m_bounds;
 		private:
 			static std::vector<Model*> s_loadedModels;
 			std::vector<Mesh*> m_meshes;

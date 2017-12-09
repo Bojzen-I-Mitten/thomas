@@ -60,6 +60,7 @@ namespace thomas
 		//static void SetStatPointer(PlayerStats* stats);
 	private:
 		std::vector<graphics::RenderPair*> m_renderQueue;
+		std::vector<graphics::RenderPair*> m_lastFramesRenederQueue;
 		static Scene* s_currentScene;
 		static bool s_drawDebugPhysics;
 		//static PlayerStats* s_stats;

@@ -153,6 +153,7 @@
     <ClInclude Include="src\thomas\utils\noise\noisegen.h" />
     <ClInclude Include="src\thomas\utils\noise\vectortable.h" />
     <ClInclude Include="src\thomas\utils\Plane.h" />
+    <ClInclude Include="src\thomas\utils\Utility.h" />
     <ClInclude Include="src\thomas\Window.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -166,7 +167,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">

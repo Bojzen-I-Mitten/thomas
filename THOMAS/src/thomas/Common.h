@@ -13,13 +13,13 @@
 #endif
 
 #ifdef _DEBUG
-#define LOG_HR(hr){	_com_error err(hr); LPCTSTR  errMsg = err.ErrorMessage(); std::stringstream __buff__;  __buff__ << errMsg; thomas::ThomasCore::LogOutput(__buff__.str());}
+#define LOG_HR(hr){_com_error err(hr); std::string error = std::string(err.ErrorMessage()); LOG(error);}
 #else
 #define LOG_HR(hr) 
 #endif
 
 #define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p)=NULL; } }
-
+#define SAFE_DELETE(p)		 { if (p) { delete (p); (p)=nullptr; } }
 
 #define THOMAS_AA_COUNT 4
 #define THOMAS_AA_QUALITY 0

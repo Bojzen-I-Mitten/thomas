@@ -6,13 +6,17 @@
 #include "../Window.h"
 #include "../graphics/BulletDebugDraw.h"
 #include "EditorGrid.h"
+#include "../graphics/Shader.h"
+#include "../graphics/Material.h"
+#include "../graphics/Renderer.h"
+#include "../graphics/Model.h"
 namespace thomas
 {
 	namespace editor
 	{
 		EditorCamera* EditorCamera::s_editorCamera = nullptr;
-
-
+		std::vector<object::GameObject*> EditorCamera::s_selectedObjects;
+		
 		EditorCamera::EditorCamera() : GameObject("editorCamera")
 		{
 			m_transform = new object::component::Transform();
@@ -22,6 +26,11 @@ namespace thomas
 			m_cameraComponent->m_gameObject = this;
 			m_grid = new EditorGrid(30, 1,  10);
 			m_sensitivity = 30.0f;
+
+			m_objectHighlighter = nullptr;
+			graphics::Shader* outliner = graphics::Shader::CreateShader("ediotrOutliner", "../Data/FXIncludes/EditorOutlineShader.fx");
+			if (outliner)
+				m_objectHighlighter = new graphics::Material(outliner);
 		}
 
 		void EditorCamera::Init()
@@ -44,12 +53,17 @@ namespace thomas
 			if (s_editorCamera)
 				s_editorCamera->updateCamera();
 		}
+		void EditorCamera::SelectObject(GameObject * gameObject)
+		{
+			s_selectedObjects.clear();
+			s_selectedObjects.push_back(gameObject);
+		}
 		void EditorCamera::renderCamera()
 		{		
-			
-			m_cameraComponent->Render();
+			thomas::graphics::Renderer::BindCamera(m_cameraComponent);
 			m_grid->Draw(m_cameraComponent->GetPosition());
-			
+			renderSelectedObjects();
+			thomas::graphics::Renderer::Render();			
 		}
 		void EditorCamera::updateCamera()
 		{
@@ -97,6 +111,27 @@ namespace thomas
 				
 				m_transform->SetRotation(-rotationX, -rotationY, 0);
 			}
+		}
+		void EditorCamera::renderSelectedObjects()
+		{
+			if (!m_objectHighlighter)
+				return;
+			for(GameObject* gameObject : s_selectedObjects)
+			{
+				graphics::Renderer::BindObject(m_objectHighlighter, gameObject->m_transform);
+				m_objectHighlighter->Bind();
+				object::component::RenderComponent* renderComponent = gameObject->GetComponent<object::component::RenderComponent>();
+				if (renderComponent)
+				{
+					graphics::Model* model = gameObject->GetComponent<object::component::RenderComponent>()->GetModel();
+					if (model)
+					{
+						for (graphics::Mesh* mesh : model->GetMeshes())
+							m_objectHighlighter->Draw(mesh);
+					}
+				}				
+			}
+				
 		}
 	}
 }

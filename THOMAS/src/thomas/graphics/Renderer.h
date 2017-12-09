@@ -31,13 +31,13 @@ namespace thomas {
 
 			static bool SortPairs(RenderPair* a, RenderPair* b);
 			
-			static void BindPerFrame();
-			static void BindPerCamera(thomas::object::component::Camera* camera);
-			static void BindPerObject(thomas::graphics::Material* material, thomas::object::component::Transform* transform);
+			static void BindFrame();
+			
 		public:
 			static void Begin();
-			static void RenderCamera(thomas::object::component::Camera* camera);
-						
+			static void Render();
+			static void BindObject(thomas::graphics::Material* material, thomas::object::component::Transform* transform);
+			static void BindCamera(thomas::object::component::Camera* camera);
 		};
 	}
 }

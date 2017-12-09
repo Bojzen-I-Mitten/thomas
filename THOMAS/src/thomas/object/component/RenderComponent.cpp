@@ -12,6 +12,7 @@ namespace thomas {
 			RenderComponent::RenderComponent()
 			{
 				m_model = nullptr;
+				m_bounds = nullptr;
 			}
 
 			void RenderComponent::SetModel(graphics::Model* model)
@@ -22,6 +23,8 @@ namespace thomas {
 				}
 				else
 				{
+					for (graphics::RenderPair* pair : m_renderPairs)
+						delete pair;
 					m_renderPairs.clear();
 					std::vector<graphics::Mesh*> meshes = model->GetMeshes();
 					for (graphics::Mesh* mesh : meshes)
@@ -30,17 +33,20 @@ namespace thomas {
 						renderPair->mesh = mesh;
 						renderPair->material = graphics::Material::GetStandardMaterial();
 						renderPair->transform = m_gameObject->m_transform;
-
+						
 						m_renderPairs.push_back(renderPair);
 					}
 					m_model = model;
+					SAFE_DELETE(m_bounds);
+					m_bounds = new utils::Bounds(m_gameObject->m_transform->GetPosition(), m_model->m_bounds->GetSize());
 				}
 					
 			}
 
 			void RenderComponent::Update()
 			{
-				
+				if(m_bounds)
+					m_bounds->center = m_gameObject->m_transform->GetPosition();
 				std::vector<graphics::RenderPair*> setPairs;
 				for (auto pair : m_renderPairs)
 					if (pair->material)

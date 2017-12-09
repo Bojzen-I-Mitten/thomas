@@ -14,6 +14,7 @@ namespace thomas
 		class THOMAS_API Shader
 		{
 		public:
+
 		private:
 			static bool Compile(std::string filePath, ID3DX11Effect** effect);
 
@@ -24,6 +25,11 @@ namespace thomas
 			
 			
 		public:
+			struct ShaderPass
+			{
+				std::string name;
+				ID3D11InputLayout* inputLayout;
+			};
 
 			static bool Init();
 			static Shader* GetStandardShader();
@@ -35,9 +41,8 @@ namespace thomas
 			void Bind();
 			std::string GetName();
 
-			void SetPass(int index);
-			void SetPass(const std::string& name);
-			void ApplyShader();
+			std::vector<ShaderPass>* GetPasses();
+			void SetPass(int passIndex);
 
 			static void DestroyAllShaders();
 
@@ -60,13 +65,6 @@ namespace thomas
 			MaterialProperty* GetProperty(const std::string& name);
 
 		private:
-			struct ShaderPass
-			{
-				std::string name;
-				ID3D11InputLayout* inputLayout;
-			};
-
-			UINT m_currentPass;
 			std::string m_name;
 			ID3DX11Effect* m_effect;
 			std::vector<MaterialProperty*> m_properties;

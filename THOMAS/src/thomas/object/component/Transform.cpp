@@ -155,9 +155,10 @@ namespace thomas
 			}
 			void Transform::SetScale(math::Vector3 scale)
 			{
-
+				//Bug here
 				m_localWorldMatrix = math::Matrix::CreateScale(scale) * math::Matrix::CreateWorld(m_localPosition, m_localWorldMatrix.Forward(), m_localWorldMatrix.Up());
 				Decompose();
+				m_localScale = scale;
 			}
 			void Transform::SetScale(float x, float y, float z)
 			{

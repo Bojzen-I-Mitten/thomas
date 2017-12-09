@@ -64,7 +64,7 @@ namespace thomas
 			);
 			if (FAILED(hr))
 			{
-				LOG_HR(hr);
+				LOG(hr);
 				return false;
 			}
 			return true;
@@ -123,8 +123,7 @@ namespace thomas
 				}
 				dxgiDevice->Release();
 			}
-			LOG("Failed to create swapchain");
-			LOG_HR(hr);
+			LOG("Failed to create swapchain" << hr);
 			return false;
 		}
 
@@ -310,10 +309,10 @@ namespace thomas
 				return nullptr;
 			}
 			for (int i = 0; i < infoQueue->GetNumStoredMessages(); i++) {
-				SIZE_T messageLength;		
-				infoQueue->GetMessageW(i, NULL, &messageLength);
+				SIZE_T messageLength;	
+				infoQueue->GetMessageA(i, NULL, &messageLength);
 				D3D11_MESSAGE * message = (D3D11_MESSAGE*)malloc(messageLength);
-				infoQueue->GetMessageW(i, message, &messageLength);
+				infoQueue->GetMessageA(i, message, &messageLength);
 				LOG(message->pDescription);
 			}
 			infoQueue->ClearStoredMessages();
@@ -351,7 +350,7 @@ namespace thomas
 			
 			if (FAILED(hr))
 			{
-				LOG("Failed to load texture: " << fileName);
+				LOG("Failed to load texture: " << fileName << " error: ");
 				LOG_HR(hr);
 				return false;
 			}
