@@ -16,6 +16,8 @@
 #define VERT(vertex_shader) SetVertexShader( CompileShader( vs_5_0, vertex_shader) )
 #define FRAG(fragment_shader) SetPixelShader( CompileShader( ps_5_0, fragment_shader) )
 
+#define PROPERTIES(props) cbuffer MATERIAL_PROPERTIES : register(b0) {props};
+
 
 #include "ThomasShaderVariables.fx"
 #include "ThomasShaderUtilities.fx"

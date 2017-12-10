@@ -35,6 +35,9 @@ namespace ThomasEditor {
 			LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
 		}
 	public:
+
+		static ObservableCollection<String^>^ OutputLog = gcnew ObservableCollection<String^>();
+
 		static void CreateThomasWindow(IntPtr hWnd, bool isEditor)
 		{
 			if (thomas::ThomasCore::InitDirectX()) {
@@ -49,6 +52,10 @@ namespace ThomasEditor {
 				
 		}
 
+		static property float FrameRate
+		{
+			float get() { return thomas::ThomasTime::GetFPS(); }
+		}
 		
 
 		static void eventHandler(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam) {
@@ -62,31 +69,42 @@ namespace ThomasEditor {
 				window->Resize();
 		}
 
+		static float timeSinceLastUpdate = 100000;
 		static void Update() 
 		{
-
 			if (thomas::ThomasCore::Initialized() && thomas::Scene::GetCurrentScene() != NULL)
 			{
-				thomas::ThomasCore::Update();
-				thomas::Scene::UpdateCurrentScene();
-				for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
+				timeSinceLastUpdate += thomas::ThomasTime::GetActualDeltaTime();
+				if (timeSinceLastUpdate > 1.0f / 120.0f)
 				{
-					gameObject->UpdateComponents();
+					thomas::Scene::ClearRenderQueue();
+					thomas::ThomasCore::Update();
+					thomas::Scene::UpdateCurrentScene();
+					for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
+					{
+						gameObject->UpdateComponents();
+					}
+					thomas::Physics::Update();
+					
+					UpdateLog();
+					timeSinceLastUpdate = 0.0f;
+					
 				}
-				thomas::Physics::Update();
 				thomas::ThomasCore::Render();
+
+				
+				
 			}
+
 			
 		}
 
-		static List<String^>^ GetLogOutput() {
-			List<String^>^ outputs = gcnew List<String^>();
+		static void UpdateLog() {
 			std::vector<std::string>* nativeOutputs = thomas::ThomasCore::GetLogOutput();
 			for (int i = 0; i < nativeOutputs->size(); i++) {
-				outputs->Add(gcnew String(nativeOutputs->at(i).c_str()));
+				OutputLog->Add(gcnew String(nativeOutputs->at(i).c_str()));
 			}
 			thomas::ThomasCore::ClearLogOutput();
-			return outputs;
 		}
 	};
 }

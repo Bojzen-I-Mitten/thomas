@@ -119,6 +119,8 @@ namespace thomas
 			for(GameObject* gameObject : s_selectedObjects)
 			{
 				graphics::Renderer::BindObject(m_objectHighlighter, gameObject->m_transform);
+				math::Matrix test = math::Matrix::CreateScale(1.03f) * gameObject->m_transform->GetWorldMatrix();
+				m_objectHighlighter->SetMatrix("thomas_ObjectToWorld", test.Transpose());
 				m_objectHighlighter->Bind();
 				object::component::RenderComponent* renderComponent = gameObject->GetComponent<object::component::RenderComponent>();
 				if (renderComponent)

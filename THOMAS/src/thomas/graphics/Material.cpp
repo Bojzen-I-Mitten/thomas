@@ -370,6 +370,15 @@ namespace thomas
 				}
 			}
 		}
+		std::vector<MaterialProperty*> Material::GetEditorProperties()
+		{
+			//optimize maybe?
+			std::vector<MaterialProperty*> editorProperties;
+			for (MaterialProperty* matProp : m_properties)
+				if (matProp->GetBufferName() == "MATERIAL_PROPERTIES")
+					editorProperties.push_back(matProp);
+			return editorProperties;
+		}
 		Material * Material::GetBaseMaterial()
 		{
 			if (m_isInstance)

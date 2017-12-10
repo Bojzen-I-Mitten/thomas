@@ -119,7 +119,7 @@ namespace thomas
 			m_index = index;
 			variable->GetType()->GetDesc(&m_typeDesc);
 			variable->GetDesc(&m_variableDesc);
-
+			variable->GetParentConstantBuffer()->GetDesc(&m_bufferDesc);
 			m_class = GetPropClass(m_typeDesc.Class, m_typeDesc.Type);
 
 			switch (m_class)
@@ -258,6 +258,11 @@ namespace thomas
 		std::string MaterialProperty::GetName()
 		{
 			return m_variableDesc.Name;
+		}
+
+		std::string MaterialProperty::GetBufferName()
+		{
+			return m_bufferDesc.Name;
 		}
 
 		void MaterialProperty::SetBool(bool & value)

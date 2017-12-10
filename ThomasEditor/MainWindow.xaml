@@ -50,6 +50,9 @@
                 <MenuItem Header="_GameObject">
                     <MenuItem Header="_Create Empty" Click="AddEmptyGameObject"/>
                 </MenuItem>
+                <MenuItem Header="_Temp">
+                    <MenuItem Header="_Recompile Shader" Click="Recompile_Shader_Click"/>
+                </MenuItem>
             </Menu>
         </DockPanel>
 
@@ -67,7 +70,7 @@
                     <xcad:LayoutDocumentPaneGroup>
                         <xcad:LayoutDocumentPaneGroup Orientation="Vertical" DockWidth="3*">
                             <xcad:LayoutDocumentPane>
-                                <xcad:LayoutAnchorable ContentId="EditorView" Title="Editor View" CanHide="False" CanClose="False">
+                                <xcad:LayoutAnchorable x:Name="editorWindow" ContentId="EditorView" Title="Editor View" CanHide="False" CanClose="False">
                                     <local:ThomasWindow x:Name="editor" IsEditor="True" />
                                 </xcad:LayoutAnchorable>
                             </xcad:LayoutDocumentPane>

@@ -65,9 +65,6 @@ namespace thomas
 				return;
 		}
 
-
-
-
 		Window::ClearAllWindows();
 
 		graphics::Renderer::Begin();
@@ -80,8 +77,6 @@ namespace thomas
 			camera->Render();
 		}
 		Window::PresentAllWindows();
-
-		s_currentScene->ClearRenderQueue();
 	}
 	void Scene::AddToRenderQueue(graphics::RenderPair * renderPair)
 	{
@@ -89,7 +84,7 @@ namespace thomas
 	}
 	void Scene::ClearRenderQueue()
 	{
-		m_renderQueue.clear();
+		s_currentScene->m_renderQueue.clear();
 	}
 	std::vector<graphics::RenderPair*> Scene::GetRenderQueue()
 	{

@@ -53,6 +53,7 @@ namespace thomas
 			void ApplyProperty(Shader* shader);
 
 			std::string GetName();
+			std::string GetBufferName();
 
 			void SetBool(bool& value);
 			void SetFloat(float& value);
@@ -90,6 +91,7 @@ namespace thomas
 			UINT m_rawCount;
 			D3DX11_EFFECT_TYPE_DESC m_typeDesc;
 			D3DX11_EFFECT_VARIABLE_DESC m_variableDesc;
+			D3DX11_EFFECT_VARIABLE_DESC m_bufferDesc;
 		};
 
 

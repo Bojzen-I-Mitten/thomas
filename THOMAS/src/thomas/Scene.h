@@ -33,8 +33,9 @@ namespace thomas
 		void static UpdateCurrentScene();
 		static void Render();
 
+		static void ClearRenderQueue();
+
 		void AddToRenderQueue(graphics::RenderPair* renderPair);
-		void ClearRenderQueue();
 		std::vector<graphics::RenderPair*> GetRenderQueue();
 
 		void Render3D(object::component::Camera* camera);
