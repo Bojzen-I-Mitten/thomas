@@ -4,16 +4,15 @@
 
 DepthStencilState DisableDepth
 {
-	DepthEnable = FALSE;
+	DepthEnable = TRUE;
 	DepthWriteMask = ZERO;
-	DepthFunc = LESS_EQUAL;
 };
 
 RasterizerState TestRasterizerOutline
 {
 	FillMode = SOLID;
-	CullMode = FRONT;
-	FrontCounterClockWise = TRUE;
+	CullMode = BACK;
+	FrontCounterClockWise = FALSE;
 	DepthClipEnable = FALSE;
 };
 
@@ -26,8 +25,7 @@ v2f vert(appdata_thomas v)
 {
 	v2f o;
 	o.vertex = ThomasObjectToClipPos(v.vertex);
-	float4 normal = ThomasObjectToClipPos(v.normal);
-	o.vertex += normal * 0.03f;
+
 	return o;
 }
 

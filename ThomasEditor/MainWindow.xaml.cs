@@ -16,7 +16,7 @@ using System.Windows.Interop;
 
 using System.Reflection;
 using System.ComponentModel;
-
+using System.Windows.Threading;
 
 namespace ThomasEditor
 {
@@ -32,12 +32,35 @@ namespace ThomasEditor
         public MainWindow()
         {
 
+
             InitializeComponent();
+
+
             CompositionTarget.Rendering += DoUpdates;
+
             thomasObjects.SelectedItemChanged += ThomasObjects_SelectedItemChanged;
 
             GameObject.GameObjects.CollectionChanged += GameObjects_CollectionChanged;
+            ThomasWrapper.OutputLog.CollectionChanged += OutputLog_CollectionChanged;
+        }
 
+        private void OutputLog_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (String output in e.NewItems)
+                {
+                    TextBlock block = new TextBlock
+                    {
+                        Text = output,
+                        TextWrapping = TextWrapping.Wrap
+                    };
+                    console.Items.Add(block);
+                    console.Items.Add(new Separator());
+                    if (console.Items.Count > 150)
+                        console.Items.RemoveAt(0);
+                }
+            }
         }
 
         private void GameObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -118,31 +141,9 @@ namespace ThomasEditor
             if(this.lastRender != args.RenderingTime)
             {
                 ThomasWrapper.Update();
-
-                List<String> outputs = ThomasWrapper.GetLogOutput();
-                if(outputs.Count > 0)
-                {
-                  
-
-                    
-                    foreach (String output in outputs)
-                    {
-                        TextBlock block = new TextBlock
-                        {
-                            Text = output,
-                            TextWrapping = TextWrapping.Wrap
-                        };
-                        console.Items.Add(block);
-                        console.Items.Add(new Separator());
-                        if (console.Items.Count > 150)
-                            console.Items.RemoveAt(0);
-                    }
-                    
-                }
-                
-
-                lastRender = args.RenderingTime;
-            }
+                //editorWindow.Title = ThomasWrapper.FrameRate.ToString();
+               lastRender = args.RenderingTime;
+             }
             
         }
 
@@ -184,6 +185,11 @@ namespace ThomasEditor
             }
 
 
+        }
+
+        private void Recompile_Shader_Click(object sender, RoutedEventArgs e)
+        {
+            Shader.RecompileShaders();
         }
     }
 

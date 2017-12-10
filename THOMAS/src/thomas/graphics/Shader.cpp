@@ -11,20 +11,17 @@ namespace thomas
 		std::vector<Shader*> Shader::s_loadedShaders;
 		Shader* Shader::s_standardShader;
 
-		Shader::Shader(std::string name, ID3DX11Effect* effect)
+		Shader::Shader(std::string name, ID3DX11Effect* effect, std::string filePath)
 		{
 			m_name = name;
 			m_effect = effect;
+			m_filePath = filePath;
 			SetupReflection();
 		}
 
 		Shader::~Shader()
 		{
-			SAFE_RELEASE(m_effect);
-			for (auto pass : m_passes)
-				SAFE_RELEASE(pass.inputLayout);
-			m_passes.clear();
-			m_properties.clear();
+			Destroy();
 		}
 
 		void Shader::SetupReflection()
@@ -147,6 +144,17 @@ namespace thomas
 			return format;
 		}
 
+		void Shader::Destroy()
+		{
+			SAFE_RELEASE(m_effect);
+			for (auto pass : m_passes)
+				SAFE_RELEASE(pass.inputLayout);
+			m_passes.clear();
+			for (MaterialProperty* mProp : m_properties)
+				delete mProp;
+			m_properties.clear();
+		}
+
 		bool Shader::Compile(std::string filePath, ID3DX11Effect** effect)
 		{
 			ID3DX11Effect* tempEffect = nullptr;
@@ -187,6 +195,7 @@ namespace thomas
 					//LOG("Shader Compiler : " << (char*)errorBlob->GetBufferPointer());
 					errorBlob->Release();
 				}
+				
 			}
 			*effect = tempEffect;
 			return true;
@@ -210,7 +219,7 @@ namespace thomas
 			ID3DX11Effect* effect = NULL;
 			if (Compile(filePath, &effect))
 			{
-				Shader* shader = new Shader(name, effect);
+				Shader* shader = new Shader(name, effect, filePath);
 				if (!shader->m_passes.empty())
 				{
 					s_loadedShaders.push_back(shader);
@@ -220,9 +229,7 @@ namespace thomas
 				{
 					return nullptr;
 					LOG("Can't create shader: " << name << " because it contains no techniques or passes");
-				}
-					
-				
+				}	
 			}
 			return nullptr;
 		}
@@ -360,6 +367,32 @@ namespace thomas
 					return prop;
 			}
 			return nullptr;
+		}
+
+		void Shader::Recompile()
+		{
+			ID3DX11Effect* tempEffect;
+			
+			if (Compile(m_filePath, &tempEffect))
+			{
+				Destroy();
+				m_effect = tempEffect;
+				SetupReflection();
+			}
+			else
+			{
+				LOG("Could not recompile shader " << m_name);
+			}
+
+		}
+
+		void Shader::RecompileShaders()
+		{
+			s_standardShader->Recompile();
+			for (Shader* shader : s_loadedShaders)
+			{
+				shader->Recompile();
+			}
 		}
 	}
 }

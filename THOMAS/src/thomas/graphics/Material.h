@@ -63,6 +63,8 @@ namespace thomas
 			void Draw(Mesh* mesh);
 			void Draw(UINT vertexCount, UINT startVertexLocation);
 
+			std::vector<MaterialProperty*> GetEditorProperties();
+
 			Material* GetBaseMaterial();
 			static Material* Find(std::string name);
 

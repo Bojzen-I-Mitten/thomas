@@ -18,11 +18,12 @@ namespace thomas
 		private:
 			static bool Compile(std::string filePath, ID3DX11Effect** effect);
 
-			Shader(std::string name, ID3DX11Effect* effect);
+			Shader(std::string name, ID3DX11Effect* effect, std::string filePath);
 			~Shader();
 			void SetupReflection();
 			DXGI_FORMAT GetDXGIFormat(BYTE mask, D3D_REGISTER_COMPONENT_TYPE componentType);
 			
+			void Destroy();
 			
 		public:
 			struct ShaderPass
@@ -64,7 +65,11 @@ namespace thomas
 			bool HasProperty(const std::string& name);
 			MaterialProperty* GetProperty(const std::string& name);
 
+			void Recompile();
+			static void RecompileShaders();
+
 		private:
+			std::string m_filePath;
 			std::string m_name;
 			ID3DX11Effect* m_effect;
 			std::vector<MaterialProperty*> m_properties;

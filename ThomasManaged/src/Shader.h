@@ -6,6 +6,7 @@
 #include "math/Math.h"
 #include "Utility.h"
 using namespace System;
+using namespace System::IO;
 namespace ThomasEditor
 {
 	public ref class Shader
@@ -13,7 +14,8 @@ namespace ThomasEditor
 	internal:
 		thomas::graphics::Shader* nativePtr;
 		Shader(thomas::graphics::Shader* ptr) { nativePtr = ptr; }
-	private:
+	public:
+		
 		static Shader^ Find(String^ name) { 
 			thomas::graphics::Shader* s = thomas::graphics::Shader::Find(Utility::ConvertString(name));
 			if (s)
@@ -30,7 +32,7 @@ namespace ThomasEditor
 
 		//static void SetGlobalTexture(String^ name, Texture& value);
 
-		
+		static void RecompileShaders() { thomas::graphics::Shader::RecompileShaders(); }
 
 		property String^ Name
 		{
