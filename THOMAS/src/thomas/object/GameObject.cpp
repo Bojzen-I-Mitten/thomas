@@ -10,6 +10,7 @@ namespace thomas
 		{
 			m_activeSelf = true;
 			m_name = name;
+			m_selected = false;
 		}
 		GameObject::~GameObject()
 		{
@@ -108,6 +109,16 @@ namespace thomas
 			{
 				return m_transform->GetParent()->m_gameObject->SetActive(active);
 			}
+		}
+
+		void GameObject::SetSelection(bool selected)
+		{
+			m_selected = selected;
+		}
+
+		bool GameObject::GetSelection()
+		{
+			return m_selected;
 		}
 
 	}

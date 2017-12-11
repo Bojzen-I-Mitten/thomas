@@ -29,11 +29,11 @@
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="X"/>
-                <xctk:PropertyGridEditorDoubleUpDown TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="1" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='x'}"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}"  TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="1" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='x'}"/>
                 <Label Grid.Column="2" Content="Y"/>
-                <xctk:PropertyGridEditorDoubleUpDown TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="3" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='y'}"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="3" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='y'}"/>
                 <Label Grid.Column="4" Content="Z"/>
-                <xctk:PropertyGridEditorDoubleUpDown TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="5" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='z'}"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="5" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='z'}"/>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>

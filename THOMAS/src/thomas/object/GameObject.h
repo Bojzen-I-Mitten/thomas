@@ -42,8 +42,11 @@ namespace thomas
 			void UpdateComponents();
 			bool GetActive();
 			void SetActive(bool active);
+			void SetSelection(bool selected);
+			bool GetSelection();
 
 		private:
+			bool m_selected;
 			static std::vector<GameObject*> s_gameObjects;
 		};
 		

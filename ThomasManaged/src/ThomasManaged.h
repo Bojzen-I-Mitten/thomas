@@ -36,6 +36,7 @@ namespace ThomasEditor {
 		}
 	public:
 
+		static ObservableCollection<GameObject^>^ SelectedGameObjects = gcnew ObservableCollection<GameObject^>();
 		static ObservableCollection<String^>^ OutputLog = gcnew ObservableCollection<String^>();
 
 		static void CreateThomasWindow(IntPtr hWnd, bool isEditor)
@@ -62,7 +63,7 @@ namespace ThomasEditor {
 			thomas::Window::EventHandler((HWND)hWnd.ToPointer(), msg, (WPARAM)wParam.ToPointer(), (LPARAM)lParam.ToPointer());
 		}
 
-		static void Resize(IntPtr hWnd)
+		static void Resize(IntPtr hWnd, double width, double height)
 		{
 			Window* window = thomas::Window::GetWindow((HWND)hWnd.ToPointer());
 			if (window)
@@ -88,15 +89,43 @@ namespace ThomasEditor {
 					
 					UpdateLog();
 					timeSinceLastUpdate = 0.0f;
-					
 				}
 				thomas::ThomasCore::Render();
-
-				
-				
+				if(thomas::editor::EditorCamera::HasSelectionChanged())
+					UpdateSelectedObjects();
 			}
+	
+		}
 
-			
+		static void SelectGameObject(GameObject^ gObj)
+		{
+			SelectedGameObjects->Add(gObj);
+			thomas::editor::EditorCamera::SelectObject((thomas::object::GameObject*)gObj->nativePtr);
+		}
+		static void UpdateSelectedObjects() {
+			List<GameObject^> tempSelectedGameObjects;
+			for (thomas::object::GameObject* gameObject : thomas::editor::EditorCamera::GetSelectedObjects())
+			{
+				GameObject^ gObj = (GameObject^)ThomasEditor::Object::GetObject(gameObject);
+				if (gObj)
+					tempSelectedGameObjects.Add(gObj);
+			}
+			if (tempSelectedGameObjects.Count == SelectedGameObjects->Count)
+			{
+				if(tempSelectedGameObjects.Count > 0)
+					if (tempSelectedGameObjects[0] != SelectedGameObjects[0])
+					{
+						SelectedGameObjects->Clear();
+						for each(GameObject^ gObj in tempSelectedGameObjects)
+							SelectedGameObjects->Add(gObj);
+					}
+			}
+			else
+			{
+				SelectedGameObjects->Clear();
+				for each(GameObject^ gObj in tempSelectedGameObjects)
+					SelectedGameObjects->Add(gObj);
+			}
 		}
 
 		static void UpdateLog() {

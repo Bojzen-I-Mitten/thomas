@@ -6,6 +6,7 @@
 */
 namespace thomas
 {
+	namespace utils { struct Ray; }
 	namespace graphics { class Skybox; }
 	namespace object
 	{
@@ -26,6 +27,8 @@ namespace thomas
 				math::Matrix GetProjMatrix();
 				math::Matrix GetViewProjMatrix();
 				math::Vector3 GetPosition();
+				
+				utils::Ray ScreenPointToRay(math::Vector2 point);
 
 				float GetFov();
 				void SetFov(float fov);

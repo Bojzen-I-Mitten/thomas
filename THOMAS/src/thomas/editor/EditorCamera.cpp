@@ -17,16 +17,17 @@ namespace thomas
 		EditorCamera* EditorCamera::s_editorCamera = nullptr;
 		std::vector<object::GameObject*> EditorCamera::s_selectedObjects;
 		
-		EditorCamera::EditorCamera() : GameObject("editorCamera")
+		EditorCamera::EditorCamera() : object::GameObject("editorCamera")
 		{
 			m_transform = new object::component::Transform();
 			m_transform->m_gameObject = this;
 			m_cameraComponent = new object::component::Camera(true);
 			m_cameraComponent->SetTargetDisplay(-1);
 			m_cameraComponent->m_gameObject = this;
-			m_grid = new EditorGrid(30, 1,  10);
+			m_grid = new EditorGrid(100, 1,  10);
 			m_sensitivity = 30.0f;
-
+			m_speed = 2.0f;
+			m_hasSelectionChanged = false;
 			m_objectHighlighter = nullptr;
 			graphics::Shader* outliner = graphics::Shader::CreateShader("ediotrOutliner", "../Data/FXIncludes/EditorOutlineShader.fx");
 			if (outliner)
@@ -53,10 +54,20 @@ namespace thomas
 			if (s_editorCamera)
 				s_editorCamera->updateCamera();
 		}
-		void EditorCamera::SelectObject(GameObject * gameObject)
+		void EditorCamera::SelectObject(object::GameObject * gameObject)
 		{
 			s_selectedObjects.clear();
-			s_selectedObjects.push_back(gameObject);
+			if(gameObject)
+				s_selectedObjects.push_back(gameObject);
+			GetEditorCamera()->m_hasSelectionChanged = true;
+		}
+		std::vector<object::GameObject*> EditorCamera::GetSelectedObjects()
+		{
+			return s_selectedObjects;
+		}
+		bool EditorCamera::HasSelectionChanged()
+		{
+			return GetEditorCamera()->m_hasSelectionChanged;
 		}
 		void EditorCamera::renderCamera()
 		{		
@@ -67,6 +78,7 @@ namespace thomas
 		}
 		void EditorCamera::updateCamera()
 		{
+			m_hasSelectionChanged = false;
 			if (!Window::GetEditorWindow() || Window::GetEditorWindow()->GetWindowHandler() != GetFocus())
 				return;
 
@@ -77,46 +89,50 @@ namespace thomas
 			
 			if (Input::GetMouseButtonUP(Input::MouseButtons::RIGHT))
 				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
-
-			if (Input::GetKeyDown(Input::Keys::C))
-			{
-				m_transform->SetRotation(math::Quaternion::Identity);
-				rotationX = 0;
-				rotationY = 0;
-			}
-
-			if (Input::GetKey(Input::Keys::A))
-				m_transform->Translate(-m_transform->Right()*ThomasTime::GetActualDeltaTime());
-			if (Input::GetKey(Input::Keys::D))
-				m_transform->Translate(m_transform->Right()*ThomasTime::GetActualDeltaTime());
-				
-			if (Input::GetKey(Input::Keys::W))
-				m_transform->Translate(m_transform->Forward()*ThomasTime::GetActualDeltaTime());
-
-			if (Input::GetKey(Input::Keys::S))
-				m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime());
-
-			if (Input::GetKey(Input::Keys::Q))
-				m_transform->Translate(-m_transform->Up()*ThomasTime::GetActualDeltaTime());
-
-			if (Input::GetKey(Input::Keys::E))
-				m_transform->Translate(m_transform->Up()*ThomasTime::GetActualDeltaTime());
-
 			
 
 			if	(Input::GetMouseButton(Input::MouseButtons::RIGHT))
 			{
+				float speed = m_speed;
+
+				if (Input::GetKey(Input::Keys::LeftShift))
+					speed *= 4.0f;
+
+				if (Input::GetKey(Input::Keys::A))
+					m_transform->Translate(-m_transform->Right()*ThomasTime::GetActualDeltaTime()*speed);
+				if (Input::GetKey(Input::Keys::D))
+					m_transform->Translate(m_transform->Right()*ThomasTime::GetActualDeltaTime()*speed);
+
+				if (Input::GetKey(Input::Keys::W))
+					m_transform->Translate(m_transform->Forward()*ThomasTime::GetActualDeltaTime()*speed);
+
+				if (Input::GetKey(Input::Keys::S))
+					m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime()*speed);
+
+				if (Input::GetKey(Input::Keys::Q))
+					m_transform->Translate(-m_transform->Up()*ThomasTime::GetActualDeltaTime()*speed);
+
+				if (Input::GetKey(Input::Keys::E))
+					m_transform->Translate(m_transform->Up()*ThomasTime::GetActualDeltaTime()*speed);
+
+
+
 				rotationX += Input::GetMouseX() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
 				rotationY += Input::GetMouseY() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
 				
 				m_transform->SetRotation(-rotationX, -rotationY, 0);
+			}
+			else if (Input::GetMouseButtonDown(Input::MouseButtons::LEFT))
+			{
+				object::GameObject* gObj = findClickedGameObject();
+				SelectObject(gObj);
 			}
 		}
 		void EditorCamera::renderSelectedObjects()
 		{
 			if (!m_objectHighlighter)
 				return;
-			for(GameObject* gameObject : s_selectedObjects)
+			for(object::GameObject* gameObject : s_selectedObjects)
 			{
 				graphics::Renderer::BindObject(m_objectHighlighter, gameObject->m_transform);
 				math::Matrix test = math::Matrix::CreateScale(1.03f) * gameObject->m_transform->GetWorldMatrix();
@@ -134,6 +150,26 @@ namespace thomas
 				}				
 			}
 				
+		}
+		object::GameObject* EditorCamera::findClickedGameObject()
+		{
+			utils::Ray ray = m_cameraComponent->ScreenPointToRay(Input::GetMousePosition());
+
+			std::vector<object::component::RenderComponent*> renderComponents = object::Object::FindObjectsOfType<object::component::RenderComponent>();
+
+			for (float i = m_cameraComponent->GetNear(); i < m_cameraComponent->GetFar(); i += 0.1f)
+			{
+				for (object::component::RenderComponent* renderComponent : renderComponents)
+				{
+					if (renderComponent->m_bounds->Contains(ray.GetPoint(i)))
+					{
+						return renderComponent->m_gameObject;
+					}
+					
+				}
+			}
+			return nullptr;
+			
 		}
 	}
 }

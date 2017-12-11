@@ -14,20 +14,16 @@ namespace ThomasEditor
 	
 	public ref class Transform : public Component
 	{
-	internal:
-		Transform(thomas::object::component::Transform* ptr) {
-			nativePtr = ptr;
-		}
+
 	public:
-		Transform() {
-			nativePtr = new thomas::object::component::Transform();
+		Transform() : Component(new thomas::object::component::Transform()) {
 		}
 
 		[BrowsableAttribute(false)]
 		property Transform^ parent {
 			Transform^ get() {
 				if (((thomas::object::component::Transform*)nativePtr)->GetParent())
-					return gcnew Transform(((thomas::object::component::Transform*)nativePtr)->GetParent());
+					return (Transform^)GetObject(((thomas::object::component::Transform*)nativePtr)->GetParent());
 				else
 					return nullptr;
 			}
@@ -44,7 +40,8 @@ namespace ThomasEditor
 
 				for (thomas::object::component::Transform* nativeChild : nativeChildren)
 				{
-					managedChildren->Add(gcnew Transform(nativeChild));
+					
+					managedChildren->Add((Transform^)GetObject(nativeChild));
 				}
 				return managedChildren;
 			}

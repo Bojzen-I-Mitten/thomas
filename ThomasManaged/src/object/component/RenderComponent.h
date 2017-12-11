@@ -12,13 +12,8 @@ namespace ThomasEditor
 {
 	public ref class RenderComponent : public Component
 	{
-	internal:
-		RenderComponent(thomas::object::component::RenderComponent* ptr) {
-			nativePtr = ptr;
-		}
 	public:
-		RenderComponent() {
-			nativePtr = new thomas::object::component::RenderComponent();
+		RenderComponent() : Component(new thomas::object::component::RenderComponent()) {
 		}
 
 		property String^ Model {

@@ -3,6 +3,8 @@ cbuffer buffer : register(b0)
 {
 	float4x4 thomas_MatrixVP;
 	float4x4 thomas_ObjectToWorld;
+	float4 cameraPos;
+	int gridScale;
 };
 
 struct VS_IN
@@ -24,6 +26,13 @@ DepthStencilState EnableDepth
 	DepthFunc = LESS_EQUAL;
 };
 
+BlendState AlphaBlendingOn
+{
+	BlendEnable[0] = TRUE;
+	DestBlend = INV_SRC_ALPHA;
+	SrcBlend = SRC_ALPHA;
+};
+
 RasterizerState TestRasterizer
 {
 	FillMode = SOLID;
@@ -36,10 +45,14 @@ RasterizerState TestRasterizer
 
 VS_OUT VSMain(VS_IN input)
 {
-	VS_OUT output = (VS_OUT) 0;
-    output.Pos = mul(thomas_MatrixVP, mul(thomas_ObjectToWorld, float4(input.Pos, 1.0)));
+	VS_OUT output = (VS_OUT)0;
+	output.Pos = mul(thomas_MatrixVP, mul(thomas_ObjectToWorld, float4(input.Pos, 1.0)));
+	float4 positionW = mul(thomas_ObjectToWorld, float4(input.Pos, 1.0));
+	float2 dist = distance(positionW.xz, cameraPos.xz);
+	dist -= pow(cameraPos.y + 1, 1.5f);
+	dist /= gridScale;
 	output.Color = input.Color;
-
+	output.Color.w = 1.0f - (dist / 10.0f);
 	return output;
 }
 
@@ -56,5 +69,6 @@ technique11 Standard {
 		SetPixelShader(CompileShader(ps_5_0, PSMain()));
 		SetDepthStencilState(EnableDepth, 0);
 		SetRasterizerState(TestRasterizer);
+		SetBlendState(AlphaBlendingOn, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }

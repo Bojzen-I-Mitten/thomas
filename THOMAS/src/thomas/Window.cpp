@@ -280,10 +280,13 @@ namespace thomas
 		bool result = GetWindowRect(m_windowHandler, &m_windowRectangle);
 		if (result)
 		{
-			if (m_height == m_windowRectangle.bottom && m_width == m_windowRectangle.right)
+			LONG newWidth = m_windowRectangle.right - m_windowRectangle.left;
+			LONG newHeight = m_windowRectangle.bottom - m_windowRectangle.top;
+
+			if (m_height == newHeight && m_width == newWidth)
 				return false;
-			m_height = m_windowRectangle.bottom;
-			m_width = m_windowRectangle.right;
+			m_height = newHeight;
+			m_width = newWidth;
 			SetAspectRatio();
 
 			ThomasCore::GetDeviceContext()->OMSetRenderTargets(0, 0, 0);

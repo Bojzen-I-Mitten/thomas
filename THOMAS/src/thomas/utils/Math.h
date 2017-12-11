@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include "DirectXTK/SimpleMath.h"
 #include <cmath>
+#include <string>
 namespace DirectX {
 	namespace SimpleMath {
 		static float DegreesToRadians(float degree)
@@ -35,6 +36,11 @@ namespace DirectX {
 		static Quaternion FromEuler(Vector3 rotation)
 		{
 			return Quaternion::CreateFromYawPitchRoll(rotation.y, rotation.x, rotation.z);
+		}
+
+		static std::string ToString(Vector3& V)
+		{
+			return "(" + std::to_string(V.x) + "," + std::to_string(V.y) + "," + std::to_string(V.z) + ")";
 		}
 	}
 }

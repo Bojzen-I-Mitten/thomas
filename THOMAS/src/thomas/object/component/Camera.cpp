@@ -6,6 +6,8 @@
 #include "Transform.h"
 #include "../../graphics/Renderer.h"
 #include <algorithm>
+#include "../../Input.h"
+#include "../../utils/Utility.h"
 namespace thomas
 {
 	namespace object
@@ -74,6 +76,30 @@ namespace thomas
 			math::Vector3 Camera::GetPosition()
 			{
 				return m_gameObject->m_transform->GetPosition();
+			}
+
+			utils::Ray Camera::ScreenPointToRay(math::Vector2 point)
+			{
+				// Move the mouse cursor coordinates into the -1 to +1 range.
+				Window* window = Window::GetWindow(m_targetDisplay);
+				float pointX = ((2.0f * (float)point.x) / (float)window->GetWidth()) - 1.0f;
+				float pointY = (((2.0f * (float)point.y) / (float)window->GetHeight()) - 1.0f) * -1.0f;
+				// Adjust the points using the projection matrix to account for the aspect ratio of the viewport.
+				pointX /= m_projMatrix._11;
+				pointY /= m_projMatrix.Transpose()._22;
+
+
+				// Get the inverse of the view matrix.
+				math::Matrix inverseViewMatrix = GetViewMatrix().Invert();
+
+				math::Vector3 direction(pointX, pointY, -1.0f);
+
+				// Calculate the direction of the picking ray in view space.
+				direction = math::Vector3::TransformNormal(direction, inverseViewMatrix);
+
+				// Get the origin of the picking ray which is the position of the camera
+				math::Vector3 origin = GetPosition();
+				return utils::Ray(origin, direction);
 			}
 
 			float Camera::GetFov()
