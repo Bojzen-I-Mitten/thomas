@@ -2,20 +2,30 @@
 
 #include "ThomasCG.fx"
 
+PROPERTIES_START
+float4 color;
+PROPERTIES_END
+
 DepthStencilState DisableDepth
 {
-	DepthEnable = TRUE;
+	DepthEnable = FALSE;
 	DepthWriteMask = ZERO;
+	DepthFunc = NEVER;
+	StencilEnable = FALSE;
 };
 
 RasterizerState TestRasterizerOutline
 {
 	FillMode = SOLID;
 	CullMode = BACK;
-	FrontCounterClockWise = FALSE;
+	FrontCounterClockWise = TRUE;
 	DepthClipEnable = FALSE;
 };
 
+
+struct appdata {
+	float3 vertex: POSITION;
+};
 
 struct v2f {
 	float4 vertex : SV_POSITION;
@@ -31,7 +41,7 @@ v2f vert(appdata_thomas v)
 
 float4 frag(v2f i) : SV_TARGET
 {
-	return float4(1,1,0, 1.0f);
+	return color;
 }
 
 

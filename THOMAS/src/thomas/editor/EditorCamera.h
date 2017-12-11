@@ -1,6 +1,7 @@
 #pragma once
 #include "../Common.h"
 #include "../object/GameObject.h"
+#include <vector>
 namespace thomas
 {
 	namespace graphics
@@ -16,6 +17,7 @@ namespace thomas
 			void renderCamera();
 			void updateCamera();
 			void renderSelectedObjects();
+			void renderGizmos();
 			object::GameObject* findClickedGameObject();
 			EditorCamera();
 		public:
@@ -27,6 +29,7 @@ namespace thomas
 			static void SelectObject(GameObject* gameObject);
 			static std::vector<object::GameObject*> GetSelectedObjects();
 			static bool HasSelectionChanged();
+			object::component::Camera* GetCamera();
 		private:
 			float m_sensitivity = 1.0f;
 			float rotationX = 0.0f;

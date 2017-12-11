@@ -84,15 +84,6 @@ namespace thomas
 			}
 			s_gameObjects.clear();
 		}
-		void GameObject::UpdateComponents()
-		{
-			if (GetActive())
-			{
-				for (component::Component* component : m_components)
-					component->Update();
-			}
-			
-		}
 		bool GameObject::GetActive()
 		{
 			if (m_transform && m_transform->GetParent())

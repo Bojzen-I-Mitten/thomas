@@ -156,7 +156,7 @@ namespace thomas
 				return nullptr;
 			}
 		}
-		void Material::SetColor(const std::string& name, math::Color& value)
+		void Material::SetColor(const std::string& name, const math::Color& value)
 		{
 			if (m_shader->HasProperty(name))
 			{

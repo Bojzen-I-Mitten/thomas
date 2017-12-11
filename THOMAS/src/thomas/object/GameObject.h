@@ -39,7 +39,6 @@ namespace thomas
 			static T* Instantiate(math::Vector3 position, math::Quaternion rotation, Scene* scene);
 			template<typename T>
 			static T* Instantiate(math::Vector3 position, math::Quaternion rotation, component::Transform* parent, Scene* scene);
-			void UpdateComponents();
 			bool GetActive();
 			void SetActive(bool active);
 			void SetSelection(bool selected);

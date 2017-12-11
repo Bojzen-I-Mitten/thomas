@@ -92,7 +92,6 @@ namespace thomas
 			void Transform::Translate(math::Vector3 translation)
 			{
 				math::Matrix pos = math::Matrix::CreateTranslation(translation);
-
 				m_localWorldMatrix *= pos;
 				Decompose();
 			}
@@ -207,6 +206,14 @@ namespace thomas
 					m_children.erase(m_children.begin() + i);
 					i -= 1;
 				}
+			}
+			void Transform::SetDirty(bool dirty)
+			{
+				m_dirty = dirty;
+			}
+			bool Transform::IsDirty()
+			{
+				return m_dirty;
 			}
 		}
 	}

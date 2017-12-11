@@ -33,7 +33,7 @@ v2f vert(appdata_thomas v)
 
 float4 frag(v2f i) : SV_TARGET
 {
-	return float4(1,0,0, 1.0f);
+	return float4(0.5,0.5,0.5, 1.0f);
 }
 
 

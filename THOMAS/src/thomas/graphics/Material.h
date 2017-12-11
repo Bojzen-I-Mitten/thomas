@@ -35,7 +35,7 @@ namespace thomas
 			bool HasProperty(const std::string& name);
 
 			math::Color* GetColor(const std::string& name);
-			void SetColor(const std::string& name, math::Color& value);
+			void SetColor(const std::string& name, const math::Color& value);
 
 			float* GetFloat(const std::string& name);
 			void SetFloat(const std::string& name, float& value);
