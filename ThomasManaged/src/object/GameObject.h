@@ -11,11 +11,10 @@
 #include "component\Transform.h"
 using namespace System;
 using namespace System::Collections::Generic;
-using namespace System::ComponentModel;
 using namespace System::Collections::ObjectModel;
 namespace ThomasEditor {
 
-	public ref class GameObject : public Object, public INotifyPropertyChanged
+	public ref class GameObject : public Object
 	{
 		
 		ObservableCollection<Component^> m_components;
@@ -26,7 +25,8 @@ namespace ThomasEditor {
 	internal:
 		void UpdateComponents()
 		{
-			((thomas::object::GameObject*)nativePtr)->UpdateComponents();
+			for each(Component^ component in m_components)
+				component->Update();
 		}
 	public:
 		GameObject(String^ name) : Object(new thomas::object::GameObject(msclr::interop::marshal_as<std::string>(name))) {
@@ -46,7 +46,7 @@ namespace ThomasEditor {
 			m_components.Clear();
 		}
 
-		virtual event PropertyChangedEventHandler^ PropertyChanged;
+		
 
 		property String^ Name
 		{
@@ -138,12 +138,5 @@ namespace ThomasEditor {
 		{
 			((thomas::object::GameObject*)nativePtr)->SetActive(active);
 		}
-
-		
-		void OnPropertyChanged(String^ info)
-		{
-			PropertyChanged(this, gcnew PropertyChangedEventArgs(info));
-		}
-
 	};
 }

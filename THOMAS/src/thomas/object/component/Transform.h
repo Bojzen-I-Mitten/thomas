@@ -58,8 +58,10 @@ namespace thomas
 				Transform* GetParent();
 				void RemoveParent();
 				void OnDestroy();
-
+				void SetDirty(bool dirty);
+				bool IsDirty();
 			private:
+				bool m_dirty;
 				Transform* m_parent;
 				math::Vector3 m_eulerAngles;
 			};

@@ -10,15 +10,19 @@
 #include "../graphics/Material.h"
 #include "../graphics/Renderer.h"
 #include "../graphics/Model.h"
+#include "gizmos/GizmoRender.h"
+#include "gizmos/GizmoTransform.h"
 namespace thomas
 {
 	namespace editor
 	{
+		
 		EditorCamera* EditorCamera::s_editorCamera = nullptr;
 		std::vector<object::GameObject*> EditorCamera::s_selectedObjects;
 		
 		EditorCamera::EditorCamera() : object::GameObject("editorCamera")
 		{
+			GizmoRender::Init();
 			m_transform = new object::component::Transform();
 			m_transform->m_gameObject = this;
 			m_cameraComponent = new object::component::Camera(true);
@@ -69,12 +73,17 @@ namespace thomas
 		{
 			return GetEditorCamera()->m_hasSelectionChanged;
 		}
+		object::component::Camera * EditorCamera::GetCamera()
+		{
+			return m_cameraComponent;
+		}
 		void EditorCamera::renderCamera()
 		{		
 			thomas::graphics::Renderer::BindCamera(m_cameraComponent);
 			m_grid->Draw(m_cameraComponent->GetPosition());
 			renderSelectedObjects();
-			thomas::graphics::Renderer::Render();			
+			thomas::graphics::Renderer::Render();
+			renderGizmos();
 		}
 		void EditorCamera::updateCamera()
 		{
@@ -124,9 +133,26 @@ namespace thomas
 			}
 			else if (Input::GetMouseButtonDown(Input::MouseButtons::LEFT))
 			{
-				object::GameObject* gObj = findClickedGameObject();
-				SelectObject(gObj);
+				if (s_selectedObjects.size() > 0 && GizmoTransform::CollisionTest(s_selectedObjects[0]))
+				{
+					// ?? :)
+				}
+				else
+				{
+					object::GameObject* gObj = findClickedGameObject();
+					SelectObject(gObj);
+				}
+				
 			}
+			else if (Input::GetMouseButton(Input::MouseButtons::LEFT) && GizmoTransform::m_hasCollided)
+			{
+				if (s_selectedObjects.size() > 0)
+				{
+					GizmoTransform::Move(s_selectedObjects[0]);
+				}
+					
+			}else
+				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
 		}
 		void EditorCamera::renderSelectedObjects()
 		{
@@ -147,9 +173,20 @@ namespace thomas
 						for (graphics::Mesh* mesh : model->GetMeshes())
 							m_objectHighlighter->Draw(mesh);
 					}
-				}				
+				}	
+				
 			}
 				
+		}
+		void EditorCamera::renderGizmos()
+		{
+			for (object::GameObject* gameObject : s_selectedObjects)
+			{
+				GizmoRender::DrawAxis(gameObject->m_transform->GetPosition(), gameObject->m_transform->Right(), gameObject->m_transform->Up(), math::Color(1, 0, 0));
+				GizmoRender::DrawAxis(gameObject->m_transform->GetPosition(), gameObject->m_transform->Up(), gameObject->m_transform->Right(), math::Color(0, 1, 0));
+				GizmoRender::DrawAxis(gameObject->m_transform->GetPosition(), gameObject->m_transform->Forward(), gameObject->m_transform->Up(), math::Color(0, 0, 1));
+			}
+
 		}
 		object::GameObject* EditorCamera::findClickedGameObject()
 		{
@@ -157,7 +194,7 @@ namespace thomas
 
 			std::vector<object::component::RenderComponent*> renderComponents = object::Object::FindObjectsOfType<object::component::RenderComponent>();
 
-			for (float i = m_cameraComponent->GetNear(); i < m_cameraComponent->GetFar(); i += 0.1f)
+			/*for (float i = m_cameraComponent->GetNear(); i < m_cameraComponent->GetFar(); i += 0.1f)
 			{
 				for (object::component::RenderComponent* renderComponent : renderComponents)
 				{
@@ -167,8 +204,20 @@ namespace thomas
 					}
 					
 				}
+			}*/
+
+			object::GameObject* closestGameObject = nullptr;
+			float closestValue = m_cameraComponent->GetFar();
+			for (object::component::RenderComponent* renderComponent : renderComponents)
+			{
+				float value = renderComponent->m_bounds->Intersection(ray);
+				if (value > 0 && value < closestValue)
+				{
+					closestValue = value;
+					closestGameObject = renderComponent->m_gameObject;
+				}
 			}
-			return nullptr;
+			return closestGameObject;
 			
 		}
 	}
