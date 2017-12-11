@@ -11,6 +11,9 @@ namespace thomas
 		{
 		private:
 		public:
+
+			
+
 			virtual ~Object();
 			virtual void OnDestroy() {}
 			std::string GetName();
@@ -20,7 +23,8 @@ namespace thomas
 			static void Destroy();
 
 			static std::vector<Object*> GetObjects();
-			
+			static void Add(Object* object);
+
 			template<typename T>
 			static std::vector<T*> FindObjectsOfType();
 
@@ -34,7 +38,6 @@ namespace thomas
 		inline std::vector<T*> Object::FindObjectsOfType()
 		{
 			std::vector<T*> objects;
-			std::vector<GameObject*> gameObjectsWithComponent;
 			for (UINT i = 0; i < s_objects.size(); i++)
 			{
 				T* object = dynamic_cast<T*>(s_objects[i]);

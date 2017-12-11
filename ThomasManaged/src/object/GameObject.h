@@ -29,9 +29,8 @@ namespace ThomasEditor {
 			((thomas::object::GameObject*)nativePtr)->UpdateComponents();
 		}
 	public:
-		GameObject(String^ name) {
+		GameObject(String^ name) : Object(new thomas::object::GameObject(msclr::interop::marshal_as<std::string>(name))) {
 			m_name = name;
-			nativePtr = new thomas::object::GameObject(msclr::interop::marshal_as<std::string>(name));
 			m_transform = AddComponent<Transform^>();
 			((thomas::object::GameObject*)nativePtr)->m_transform = (thomas::object::component::Transform*)m_transform->nativePtr;
 			s_gameObjects.Add(this);
@@ -144,11 +143,6 @@ namespace ThomasEditor {
 		void OnPropertyChanged(String^ info)
 		{
 			PropertyChanged(this, gcnew PropertyChangedEventArgs(info));
-		}
-
-		void OnSelection()
-		{
-			thomas::editor::EditorCamera::SelectObject((thomas::object::GameObject*)nativePtr);
 		}
 
 	};

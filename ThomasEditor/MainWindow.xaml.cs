@@ -35,6 +35,12 @@ namespace ThomasEditor
 
             InitializeComponent();
 
+            //Changeds decimals to . instead of ,
+            System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+            customCulture.NumberFormat.NumberDecimalSeparator = ".";
+
+            System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+
 
             CompositionTarget.Rendering += DoUpdates;
 
@@ -42,8 +48,46 @@ namespace ThomasEditor
 
             GameObject.GameObjects.CollectionChanged += GameObjects_CollectionChanged;
             ThomasWrapper.OutputLog.CollectionChanged += OutputLog_CollectionChanged;
+            ThomasWrapper.SelectedGameObjects.CollectionChanged += SelectedGameObjects_CollectionChanged;
         }
 
+        private void SelectedGameObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (TreeViewItem node in thomasObjects.Items)
+                {
+                    if (node.DataContext == (GameObject)e.NewItems[0])
+                    {
+                        node.IsSelected = true;
+                        break;
+                    }
+                }
+                __inspector.SelectedGameObject = (GameObject)e.NewItems[0];
+            }
+            if(e.OldItems != null)
+            {
+                foreach(GameObject gObj in e.OldItems)
+                {
+                    foreach (TreeViewItem node in thomasObjects.Items)
+                    {
+                        if (node.DataContext == gObj)
+                        {
+                            node.IsSelected = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+            {
+                foreach (TreeViewItem node in thomasObjects.Items)
+                {
+                    node.IsSelected = false;
+                }
+            }
+        }
         private void OutputLog_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -113,9 +157,9 @@ namespace ThomasEditor
             TreeViewItem item = gen.ContainerFromItem(thomasObjects.SelectedItem) as TreeViewItem;
             __inspector.SelectedGameObject = null;
             if (item != null)
-            {                
-                __inspector.SelectedGameObject = ((GameObject)item.DataContext);
-                ((GameObject)item.DataContext).OnSelection();
+            {
+
+                ThomasWrapper.SelectGameObject((GameObject)item.DataContext);
             }
             
         }
@@ -141,7 +185,7 @@ namespace ThomasEditor
             if(this.lastRender != args.RenderingTime)
             {
                 ThomasWrapper.Update();
-                //editorWindow.Title = ThomasWrapper.FrameRate.ToString();
+                editorWindow.Title = ThomasWrapper.FrameRate.ToString();
                lastRender = args.RenderingTime;
              }
             

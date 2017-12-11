@@ -185,11 +185,8 @@ namespace ThomasEditor
                     BeginPaint(handle, out paint);
                     EndPaint(handle, ref paint);
                     handled = true;
-                }else if (message == WM_SIZE)
-                {
-                    ThomasWrapper.Resize(handle);
-                    handled = true;
-                }else
+                }
+                else
                 {
                     ThomasWrapper.eventHandler(handle, message, wparam, lparam);
                 }

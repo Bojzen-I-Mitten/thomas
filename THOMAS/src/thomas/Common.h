@@ -21,7 +21,7 @@
 #define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p)=NULL; } }
 #define SAFE_DELETE(p)		 { if (p) { delete (p); (p)=nullptr; } }
 
-#define THOMAS_AA_COUNT 4
+#define THOMAS_AA_COUNT 8
 #define THOMAS_AA_QUALITY 0
 
 #define _XM_NO_INTRINSICS_ 1; //Bullet fix

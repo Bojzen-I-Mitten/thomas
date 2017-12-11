@@ -8,6 +8,11 @@ namespace thomas
 	{
 		std::vector<Object*> Object::s_objects;
 
+		void Object::Add(Object* object)
+		{
+			s_objects.push_back(object);
+		}
+
 		Object::~Object()
 		{
 		}

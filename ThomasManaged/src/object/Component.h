@@ -16,6 +16,7 @@ namespace ThomasEditor {
 	public ref class Component : public Object
 	{
 	internal:
+		Component(thomas::object::component::Component* ptr) : Object(ptr) {};
 		GameObject^ m_gameObject;
 		void setGameObject(GameObject^ gObj);
 		virtual void Update() {};

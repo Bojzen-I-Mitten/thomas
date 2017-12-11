@@ -78,13 +78,18 @@ namespace thomas
 			UINT offset = 0;
 			if (m_material)
 			{
-				math::Matrix worldMatrix = math::Matrix::CreateScale(m_cellSize) * math::Matrix::CreateTranslation(
-					(int)(cameraPos.x / m_cellSize)*m_cellSize,
+				int scale = (int)log10(((abs(cameraPos.y)+1) / m_cellSize)*m_cellSize);
+				scale = pow(10.0f,scale);
+				math::Matrix worldMatrix = math::Matrix::CreateScale((scale)*m_cellSize) * math::Matrix::CreateTranslation(
+					(int)(cameraPos.x / scale)*scale,
 					0.0f,
-					(int)(cameraPos.z / m_cellSize)*m_cellSize
+					(int)(cameraPos.z / scale)*scale
 				);
-
+				scale *= m_cellSize;
+				math::Vector4 cameraScaleMatrix(cameraPos.x, cameraPos.y, cameraPos.z, 0);
 				m_material->SetMatrix("thomas_ObjectToWorld", worldMatrix.Transpose());
+				m_material->SetVector("cameraPos", math::Vector4(cameraScaleMatrix));
+				m_material->SetInt("gridScale", scale);
 				m_material->GetShader()->BindVertexBuffer(m_vertexBuffer, stride, offset);
 				m_material->Bind();
 				m_material->Draw(m_lines.size(), 0);

@@ -12,7 +12,7 @@ namespace thomas {
 			RenderComponent::RenderComponent()
 			{
 				m_model = nullptr;
-				m_bounds = nullptr;
+				m_bounds = new utils::Bounds(math::Vector3(), math::Vector3());
 			}
 
 			void RenderComponent::SetModel(graphics::Model* model)
@@ -45,8 +45,7 @@ namespace thomas {
 
 			void RenderComponent::Update()
 			{
-				if(m_bounds)
-					m_bounds->center = m_gameObject->m_transform->GetPosition();
+				m_bounds->center = m_gameObject->m_transform->GetPosition();
 				std::vector<graphics::RenderPair*> setPairs;
 				for (auto pair : m_renderPairs)
 					if (pair->material)

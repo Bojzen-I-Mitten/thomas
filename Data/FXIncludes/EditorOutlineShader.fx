@@ -12,7 +12,7 @@ RasterizerState TestRasterizerOutline
 {
 	FillMode = SOLID;
 	CullMode = BACK;
-	FrontCounterClockWise = FALSE;
+	FrontCounterClockWise = TRUE;
 	DepthClipEnable = FALSE;
 };
 

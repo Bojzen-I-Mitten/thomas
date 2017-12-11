@@ -13,9 +13,8 @@ namespace ThomasEditor
 	private:
 
 	public:
-		ScriptComponent()
+		ScriptComponent() : Component(new thomas::object::component::ScriptComponent())
 		{
-			nativePtr = new thomas::object::component::ScriptComponent();
 		}
 	};
 }
