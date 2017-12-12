@@ -242,13 +242,12 @@ namespace thomas
 	void Window::Clear()
 	{
 		float color[4] = { 0.34375f, 0.34375f, 0.34375f, 1.0f };
-		if (!m_dxBuffers.backBuffer || !m_dxBuffers.depthStencilView)
-		{
-			LOG("wtf")
-		}
-			
+
+	
 		ThomasCore::GetDeviceContext()->ClearRenderTargetView(m_dxBuffers.backBuffer, color);
 		ThomasCore::GetDeviceContext()->ClearDepthStencilView(m_dxBuffers.depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
+		
+		
 	}
 
 

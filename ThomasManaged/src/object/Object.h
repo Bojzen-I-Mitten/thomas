@@ -36,7 +36,7 @@ namespace ThomasEditor {
 
 		virtual void Destroy()
 		{
-			nativePtr->Destroy(nativePtr);
+			thomas::object::Object::Destroy(nativePtr);
 			s_objects.Remove(this);
 		}
 

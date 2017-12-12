@@ -48,7 +48,6 @@ namespace ThomasEditor {
 				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
 				testThread = gcnew Thread(gcnew ThreadStart(Test));
 				testThread->Name = "Thomas Engine";
-				testThread->ApartmentState = ApartmentState::STA;
 				testThread->Start();
 				
 			}
@@ -59,12 +58,15 @@ namespace ThomasEditor {
 		{
 			while (ThomasCore::Initialized())
 			{
-				ThomasCore::Update();
-				for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
 				{
-					gameObject->UpdateComponents();
+					
+					ThomasCore::Update();
+					for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
+					{
+						gameObject->UpdateComponents();
+					}
+					ThomasCore::Render();
 				}
-				ThomasCore::Render();
 			}
 				
 		}

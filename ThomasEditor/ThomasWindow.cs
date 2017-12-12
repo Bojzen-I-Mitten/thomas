@@ -188,10 +188,10 @@ namespace ThomasEditor
                 }
                 else
                 {
-                    ThomasWrapper.eventHandler(handle, message, wparam, lparam);
+                   
                 }
-                
-                
+                ThomasWrapper.eventHandler(handle, message, wparam, lparam);
+
             }
             catch (Exception e)
             {

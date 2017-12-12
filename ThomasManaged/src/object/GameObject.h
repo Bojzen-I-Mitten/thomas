@@ -43,6 +43,7 @@ namespace ThomasEditor {
 			{
 				component->Destroy();
 			}
+			thomas::object::Object::Destroy(nativePtr);
 			m_components.Clear();
 		}
 
