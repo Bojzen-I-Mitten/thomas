@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "../editor/EditorCamera.h"
 namespace thomas
 {
 	namespace object
@@ -31,7 +32,7 @@ namespace thomas
 					s_gameObjects.erase(s_gameObjects.begin() + i);
 				}
 			}
-
+			editor::EditorCamera::UnselectObject(this);
 			Object::Destroy(this);
 		}
 		GameObject * GameObject::Find(std::string type)

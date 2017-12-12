@@ -58,6 +58,8 @@ namespace thomas
 			if (s_editorCamera)
 				s_editorCamera->updateCamera();
 		}
+
+		
 		void EditorCamera::SelectObject(object::GameObject * gameObject)
 		{
 			s_selectedObjects.clear();
@@ -65,10 +67,27 @@ namespace thomas
 				s_selectedObjects.push_back(gameObject);
 			GetEditorCamera()->m_hasSelectionChanged = true;
 		}
+		void EditorCamera::UnselectObject(GameObject * gameObject)
+		{
+			for (int i = 0; i < s_selectedObjects.size(); i++)
+			{
+				if (s_selectedObjects[i] == gameObject)
+				{
+					s_selectedObjects.erase(s_selectedObjects.begin() + i);
+					--i;
+				}
+			}
+		}
 		std::vector<object::GameObject*> EditorCamera::GetSelectedObjects()
 		{
 			return s_selectedObjects;
 		}
+
+		void EditorCamera::SetHasSelectionChanged(bool selectionChanged)
+		{
+			GetEditorCamera()->m_hasSelectionChanged = selectionChanged;
+		}
+
 		bool EditorCamera::HasSelectionChanged()
 		{
 			return GetEditorCamera()->m_hasSelectionChanged;
@@ -87,7 +106,6 @@ namespace thomas
 		}
 		void EditorCamera::updateCamera()
 		{
-			m_hasSelectionChanged = false;
 			HWND focus = GetForegroundWindow();
 
 			if (!Window::GetEditorWindow())
@@ -182,11 +200,14 @@ namespace thomas
 		}
 		void EditorCamera::renderGizmos()
 		{
-			for (object::GameObject* gameObject : s_selectedObjects)
+			for (int i=0; i < s_selectedObjects.size(); i++)
 			{
+				object::GameObject* gameObject = s_selectedObjects[i];
+
 				GizmoRender::DrawAxis(gameObject->m_transform->GetPosition(), gameObject->m_transform->Right(), gameObject->m_transform->Up(), math::Color(1, 0, 0));
 				GizmoRender::DrawAxis(gameObject->m_transform->GetPosition(), gameObject->m_transform->Up(), gameObject->m_transform->Right(), math::Color(0, 1, 0));
 				GizmoRender::DrawAxis(gameObject->m_transform->GetPosition(), gameObject->m_transform->Forward(), gameObject->m_transform->Up(), math::Color(0, 0, 1));
+				
 			}
 
 		}

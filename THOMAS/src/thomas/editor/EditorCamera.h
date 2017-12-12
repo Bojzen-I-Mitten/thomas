@@ -27,8 +27,10 @@ namespace thomas
 			static void Render();
 			static void Update();
 			static void SelectObject(GameObject* gameObject);
+			static void UnselectObject(GameObject* gameObject);
 			static std::vector<object::GameObject*> GetSelectedObjects();
 			static bool HasSelectionChanged();
+			static void SetHasSelectionChanged(bool selectionChanged);
 			object::component::Camera* GetCamera();
 		private:
 			float m_sensitivity = 1.0f;
