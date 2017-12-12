@@ -1,24 +1,30 @@
 // ThomasManaged.h
 #pragma once
 
-#include <thomas\Window.h>
+
+
+
+#pragma unmanaged
 #include <thomas\ThomasCore.h>
+#include <thomas\Scene.h>
+#include <thomas\Window.h>
 #include <thomas\ThomasTime.h>
 #include <thomas\Input.h>
+#include <thomas\utils\DebugTools.h>
+#include <thomas\graphics\Shader.h>
 
-
-#include <thomas\Scene.h>
-#pragma unmanaged
-#include "Tests\TestScene.h"
 #pragma managed
 //#include <Sound.h>
-#include <thomas\utils\DebugTools.h>
 
-#include <thomas\graphics\Shader.h>
+
+#include "Tests\TestScene.h"
 #include "object\GameObject.h"
 #include "object\component\Transform.h"
+
+
 using namespace System;
 using namespace System::Collections::Generic;
+using namespace System::Threading;
 using namespace thomas;
 
 
@@ -27,28 +33,56 @@ namespace ThomasEditor {
 	public ref class ThomasWrapper
 	{
 	private:
-		static void Start() {
-			thomas::ThomasCore::Init();
-			thomas::Scene::LoadScene<TestScene>();
-			if(thomas::Window::GetEditorWindow())
-				SetFocus(thomas::Window::GetEditorWindow()->GetWindowHandler());
-			LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
-		}
+
+		static Thread^ testThread;
+
+
 	public:
 
+		static void Start() {
+			thomas::ThomasCore::Init();
+			if (ThomasCore::Initialized())
+			{
+				thomas::Scene::LoadScene<TestScene>();
+
+				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
+				testThread = gcnew Thread(gcnew ThreadStart(Test));
+				testThread->Name = "Thomas Engine";
+				testThread->ApartmentState = ApartmentState::STA;
+				testThread->Start();
+				
+			}
+
+		}
+
+		static void Test()
+		{
+			while (ThomasCore::Initialized())
+			{
+				ThomasCore::Update();
+				for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
+				{
+					gameObject->UpdateComponents();
+				}
+				ThomasCore::Render();
+			}
+				
+		}
+
+		static void Stop() {
+			thomas::ThomasCore::Exit();
+		}
 		static ObservableCollection<GameObject^>^ SelectedGameObjects = gcnew ObservableCollection<GameObject^>();
 		static ObservableCollection<String^>^ OutputLog = gcnew ObservableCollection<String^>();
 
 		static void CreateThomasWindow(IntPtr hWnd, bool isEditor)
 		{
-			if (thomas::ThomasCore::InitDirectX()) {
+			if (thomas::ThomasCore::Initialized()) {
 				if (isEditor)
 					thomas::Window::InitEditor((HWND)hWnd.ToPointer());
 				else
 					thomas::Window::Create((HWND)hWnd.ToPointer());
 
-				if (!ThomasCore::Initialized())
-					Start();
 			}
 				
 		}
@@ -67,13 +101,13 @@ namespace ThomasEditor {
 		{
 			Window* window = thomas::Window::GetWindow((HWND)hWnd.ToPointer());
 			if (window)
-				window->Resize();
+				window->QueueResize();
 		}
 
 		static float timeSinceLastUpdate = 100000;
 		static void Update() 
 		{
-			if (thomas::ThomasCore::Initialized() && thomas::Scene::GetCurrentScene() != NULL)
+			/*if (thomas::ThomasCore::Initialized() && thomas::Scene::GetCurrentScene() != NULL)
 			{
 				timeSinceLastUpdate += thomas::ThomasTime::GetActualDeltaTime();
 				if (timeSinceLastUpdate > 1.0f / 120.0f)
@@ -86,15 +120,17 @@ namespace ThomasEditor {
 						gameObject->UpdateComponents();
 					}
 					thomas::Physics::Update();
-					
+
 					UpdateLog();
 					timeSinceLastUpdate = 0.0f;
 				}
 				thomas::ThomasCore::Render();
-				if(thomas::editor::EditorCamera::HasSelectionChanged())
+				if (thomas::editor::EditorCamera::HasSelectionChanged())
 					UpdateSelectedObjects();
-			}
-	
+				
+			}*/
+			Window::UpdateFocus();
+			UpdateLog();
 		}
 
 		static void SelectGameObject(GameObject^ gObj)
@@ -129,10 +165,16 @@ namespace ThomasEditor {
 		}
 
 		static void UpdateLog() {
-			std::vector<std::string>* nativeOutputs = thomas::ThomasCore::GetLogOutput();
-			for (int i = 0; i < nativeOutputs->size(); i++) {
-				OutputLog->Add(gcnew String(nativeOutputs->at(i).c_str()));
+			std::vector<std::string> nativeOutputs = thomas::ThomasCore::GetLogOutput();
+			
+			for (int i = 0; i < nativeOutputs.size(); i++) {
+				OutputLog->Add(gcnew String(nativeOutputs.at(i).c_str()));
+				if (OutputLog->Count > 10)
+					OutputLog->RemoveAt(0);
 			}
+
+			
+
 			thomas::ThomasCore::ClearLogOutput();
 		}
 	};

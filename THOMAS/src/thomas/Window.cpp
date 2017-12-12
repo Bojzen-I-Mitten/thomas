@@ -21,7 +21,7 @@ namespace thomas
 			{
 				Window* window = GetWindow(hWnd);
 				if (window)
-					window->Resize();
+					window->QueueResize();
 			}
 			break;
 		case WM_SETFOCUS:
@@ -64,9 +64,9 @@ namespace thomas
 	void Window::InitEditor(HWND hWnd)
 	{
 		Window* window = new Window(hWnd);
-		if (window->Initialized())
+		if (window->m_created)
 		{
-			s_editorWindow = Create(hWnd);
+			s_editorWindow = window;
 		}
 		
 	}
@@ -74,7 +74,7 @@ namespace thomas
 	Window* Window::Create(HWND hWnd)
 	{
 		Window* window = new Window(hWnd);
-		if (window->Initialized())
+		if (window->m_created)
 		{
 			s_windows.push_back(window);
 			return window;
@@ -142,6 +142,9 @@ namespace thomas
 
 	Window::Window(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPCSTR title)
 	{
+		m_focused = false;
+		m_created = false;
+		m_shouldResize = false;
 		m_height = height;
 		m_width = width;
 		m_title = std::string(title);
@@ -184,16 +187,20 @@ namespace thomas
 		if (m_windowHandler)
 		{
 			bool hr = utils::D3d::CreateSwapChain(m_width, m_height, m_windowHandler, m_swapChain, ThomasCore::GetDevice());
-			if (hr && InitDxBuffers())
+			if (hr)
 			{
+				m_created = true;
 				ChangeWindowShowState(nCmdShow);
-				m_initialized = true;
 			}
+			
 		}
 	}
 
 	Window::Window(HWND hWnd)
 	{
+		m_focused = false;
+		m_created = false;
+		m_shouldResize = false;
 		m_initialized = false;
 		bool result = GetWindowRect(hWnd, &m_windowRectangle);
 		if (result)
@@ -206,8 +213,7 @@ namespace thomas
 			SetAspectRatio();
 			m_windowHandler = hWnd;
 			bool hr = utils::D3d::CreateSwapChain(m_width, m_height, m_windowHandler, m_swapChain, ThomasCore::GetDevice());
-			if (hr && InitDxBuffers())
-				m_initialized = true;
+			m_created = true;
 		}
 		else
 			LOG("Failed to create window");
@@ -236,6 +242,11 @@ namespace thomas
 	void Window::Clear()
 	{
 		float color[4] = { 0.34375f, 0.34375f, 0.34375f, 1.0f };
+		if (!m_dxBuffers.backBuffer || !m_dxBuffers.depthStencilView)
+		{
+			LOG("wtf")
+		}
+			
 		ThomasCore::GetDeviceContext()->ClearRenderTargetView(m_dxBuffers.backBuffer, color);
 		ThomasCore::GetDeviceContext()->ClearDepthStencilView(m_dxBuffers.depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 	}
@@ -274,9 +285,13 @@ namespace thomas
 		return false;
 	}
 
+	bool Window::IsFocused()
+	{
+		return m_focused;
+	}
+
 	bool Window::Resize()
 	{
-		
 		bool result = GetWindowRect(m_windowHandler, &m_windowRectangle);
 		if (result)
 		{
@@ -393,22 +408,74 @@ namespace thomas
 	}
 	void Window::ClearAllWindows()
 	{
-		if (s_editorWindow)
+		if (s_editorWindow && s_editorWindow->Initialized())
 			s_editorWindow->Clear();
 		for (Window* window : s_windows)
 		{
-			window->Clear();
+			if(window->Initialized())
+				window->Clear();
 		}
 	}
 	void Window::PresentAllWindows()
 	{
-		if (s_editorWindow)
+		if (s_editorWindow && s_editorWindow->Initialized()) 
 			s_editorWindow->Present();
 		for (Window* window : s_windows)
 		{
-			window->Present();
+			if(window->Initialized())
+				window->Present();
 		}
 		s_current = nullptr;
+	}
+
+	void Window::QueueResize()
+	{
+		m_shouldResize = true;
+	}
+
+	void Window::Update()
+	{
+		if (s_editorWindow)
+		{
+			if (!s_editorWindow->m_initialized)
+			{
+				s_editorWindow->InitDxBuffers();
+				s_editorWindow->m_initialized = true;
+			}
+			if (s_editorWindow->m_shouldResize)
+			{
+				s_editorWindow->m_initialized = false;
+				s_editorWindow->Resize();
+				s_editorWindow->m_initialized = true;
+				s_editorWindow->m_shouldResize = false;
+			}
+		}
+
+		for (Window* window : s_windows)
+		{
+			if (!window->m_initialized)
+			{
+				window->InitDxBuffers();
+				window->m_initialized = true;
+			}
+			if (window->m_shouldResize)
+			{
+				window->Resize();
+				window->m_shouldResize = false;
+			}
+		}
+	
+				
+	}
+
+	void Window::UpdateFocus()
+	{
+		if (s_editorWindow)
+		{
+			s_editorWindow->m_focused = s_editorWindow->GetWindowHandler() == GetFocus();
+		}
+		for(Window* window : s_windows)
+			window->m_focused = window->GetWindowHandler() == GetFocus();
 	}
 
 	void Window::Bind()

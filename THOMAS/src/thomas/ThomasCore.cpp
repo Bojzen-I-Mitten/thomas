@@ -25,25 +25,24 @@
 #include <time.h>
 #include "../thomas/editor/EditorCamera.h"
 
+#include <thread>
 namespace thomas {
 	ID3D11Debug* ThomasCore::s_debug = nullptr;
 	ID3D11Device* ThomasCore::s_device = nullptr;
 	ID3D11DeviceContext* ThomasCore::s_context = nullptr;
 	std::vector<std::string> ThomasCore::s_logOutput;
+	bool ThomasCore::s_clearLog;
 	bool ThomasCore::s_initialized;
 
 	bool ThomasCore::Init()
 	{
-		if (!s_device)
-		{
-			LOG("DirectX Not initialized. Run initDirectX first");
-			s_initialized = false;
-			return false;
-		}
 		srand(time(NULL));
+		
+		s_logOutput.reserve(10);
+		bool init = InitDirectX();
 
-
-		bool init = Input::Init();
+		if(init)
+		init = Input::Init();
 
 		if (init)
 			init = graphics::Texture::Init();
@@ -74,6 +73,7 @@ namespace thomas {
 		if(init)
 			editor::EditorCamera::Init();
 
+		
 		s_initialized = init;
 		return s_initialized;
 	}
@@ -93,47 +93,58 @@ namespace thomas {
 		return true;
 	}
 
+
+
+
 	void ThomasCore::Update()
 	{
+		if (s_clearLog)
+		{
+			s_logOutput.clear();
+			s_clearLog = false;
+		}
+		Window::Update();
+		Scene::ClearRenderQueue();
+		thomas::ThomasTime::Update();
 		Input::Update();
-		ThomasTime::Update();
-
-		std::string title = "FPS: " + std::to_string(ThomasTime::GetFPS()) + " FrameTime: " + std::to_string(ThomasTime::GetFrameTime());
-
-		if (Input::GetKeyDown(Input::Keys::F1))
-			utils::DebugTools::ToggleVisibility();
+		Scene::UpdateCurrentScene();
+		thomas::Physics::Update();
 		
+		/*if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
+			Render();
+*/
+
+		//std::string title = "FPS: " + std::to_string(ThomasTime::GetFPS()) + " FrameTime: " + std::to_string(ThomasTime::GetFrameTime());
+
+		//if (Input::GetKeyDown(Input::Keys::F1))
+		//	utils::DebugTools::ToggleVisibility();
+
 		//Sound::Update();
 	}
+		
+
+
+
 
 	void ThomasCore::Render()
 	{
 		Scene::Render();
 	}
 
+	void ThomasCore::Stop()
+	{
+		s_initialized = false;
+	}
+
 	void ThomasCore::Start()
 	{
 
-
 		if (s_initialized)
 		{
-			LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
-			MSG msg = { 0 };
 			ThomasTime::Update();
-
-			while (WM_QUIT != msg.message)
+			while (s_initialized)
 			{
-				// read messages
-				if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-				{
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
-				}
-				else
-				{
-					
-					Update();
-				}
+				Update();
 			}
 			Destroy();
 
@@ -186,7 +197,9 @@ namespace thomas {
 	}
 	void ThomasCore::Exit()
 	{
+		s_initialized = false;
 	}
+
 	ID3D11Device * ThomasCore::GetDevice()
 	{
 		return s_device;
@@ -197,17 +210,18 @@ namespace thomas {
 	}
 	void ThomasCore::LogOutput(std::string message)
 	{
-
 		s_logOutput.push_back(message);
+		if (s_logOutput.size() > 10)
+			s_logOutput.erase(s_logOutput.begin());
 	}
 
-	std::vector<std::string>* ThomasCore::GetLogOutput()
+	std::vector<std::string> ThomasCore::GetLogOutput()
 	{
-		return &s_logOutput;
+		return s_logOutput;
 	}
 	void ThomasCore::ClearLogOutput()
 	{
-		s_logOutput.clear();
+		s_clearLog = true;
 	}
 }
 

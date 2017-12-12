@@ -101,7 +101,7 @@ namespace ThomasEditor
                     };
                     console.Items.Add(block);
                     console.Items.Add(new Separator());
-                    if (console.Items.Count > 150)
+                    if (console.Items.Count > 10)
                         console.Items.RemoveAt(0);
                 }
             }
@@ -176,7 +176,8 @@ namespace ThomasEditor
                 parentTree.Items.Add(node);
             }
         }
-        
+
+                
         private void DoUpdates(object sender, EventArgs e)
         {
                         
