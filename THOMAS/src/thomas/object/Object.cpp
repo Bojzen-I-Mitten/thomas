@@ -13,6 +13,19 @@ namespace thomas
 			s_objects.push_back(object);
 		}
 
+		void Object::Clean()
+		{
+			for (int i = 0; i < s_objects.size(); i++)
+			{
+				if (s_objects[i]->m_destroyed)
+				{
+					delete s_objects[i];
+					s_objects.erase(s_objects.begin() + i);
+					--i;
+				}
+			}
+		}
+
 		Object::~Object()
 		{
 		}
@@ -28,16 +41,8 @@ namespace thomas
 		bool Object::Destroy(Object *object)
 		{
 			object->OnDestroy();
-			for (int i = 0; i < s_objects.size(); i++)
-			{
-				if (s_objects[i])
-				{
-					delete s_objects[i];
-					s_objects.erase(s_objects.begin() + i);
-					return true;
-				}
-			}
-			return false;
+			object->m_destroyed = true;
+			return true;
 		}
 
 

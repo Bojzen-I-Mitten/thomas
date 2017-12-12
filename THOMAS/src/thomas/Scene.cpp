@@ -57,6 +57,7 @@ namespace thomas
 	{
 		if (s_currentScene)
 		{
+			object::Object::Clean();
 			editor::EditorCamera::Update();
 			/*for (object::GameObject* gameObject : object::GameObject::GetGameObjects())
 			{

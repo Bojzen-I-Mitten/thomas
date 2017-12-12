@@ -28,8 +28,10 @@ namespace thomas
 			template<typename T>
 			static std::vector<T*> FindObjectsOfType();
 
+			static void Clean();
 
 		private:
+			bool m_destroyed = false;
 			static std::vector<Object*> s_objects;
 		protected:
 			std::string m_name;
