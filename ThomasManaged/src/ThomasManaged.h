@@ -133,6 +133,8 @@ namespace ThomasEditor {
 			}*/
 			Window::UpdateFocus();
 			UpdateLog();
+			if (thomas::editor::EditorCamera::HasSelectionChanged())
+				UpdateSelectedObjects();
 		}
 
 		static void SelectGameObject(GameObject^ gObj)
@@ -164,6 +166,8 @@ namespace ThomasEditor {
 				for each(GameObject^ gObj in tempSelectedGameObjects)
 					SelectedGameObjects->Add(gObj);
 			}
+
+			thomas::editor::EditorCamera::SetHasSelectionChanged(false);
 		}
 
 		static void UpdateLog() {
