@@ -29,7 +29,7 @@ namespace thomas
 			m_cameraComponent->SetTargetDisplay(-1);
 			m_cameraComponent->m_gameObject = this;
 			m_grid = new EditorGrid(100, 1,  10);
-			m_sensitivity = 30.0f;
+			m_sensitivity = 50.0f;
 			m_speed = 2.0f;
 			m_hasSelectionChanged = false;
 			m_objectHighlighter = nullptr;
@@ -88,7 +88,9 @@ namespace thomas
 		void EditorCamera::updateCamera()
 		{
 			m_hasSelectionChanged = false;
-			if (!Window::GetEditorWindow() || Window::GetEditorWindow()->GetWindowHandler() != GetFocus())
+			HWND focus = GetForegroundWindow();
+
+			if (!Window::GetEditorWindow())
 				return;
 
 			if (Input::GetMouseButtonDown(Input::MouseButtons::RIGHT))

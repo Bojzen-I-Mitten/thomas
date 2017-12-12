@@ -55,7 +55,16 @@ namespace thomas
 	}
 	void Scene::UpdateCurrentScene()
 	{
-		editor::EditorCamera::Update();
+		if (s_currentScene)
+		{
+			editor::EditorCamera::Update();
+			/*for (object::GameObject* gameObject : object::GameObject::GetGameObjects())
+			{
+				for (object::component::Component* component : gameObject->m_components)
+					component->Update();
+			}*/
+		}
+			
 	}
 	void Scene::Render()
 	{
@@ -65,18 +74,22 @@ namespace thomas
 				return;
 		}
 
-		Window::ClearAllWindows();
-
-		graphics::Renderer::Begin();
-		//Editor rendering
-		editor::EditorCamera::Render();
-		//end editor rendering
-
-		for (object::component::Camera* camera : object::component::Camera::s_allCameras)
+		if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
 		{
-			camera->Render();
+			Window::ClearAllWindows();
+
+			graphics::Renderer::Begin();
+			//Editor rendering
+			editor::EditorCamera::Render();
+			//end editor rendering
+
+			for (object::component::Camera* camera : object::component::Camera::s_allCameras)
+			{
+				camera->Render();
+			}
+			Window::PresentAllWindows();
 		}
-		Window::PresentAllWindows();
+
 	}
 	void Scene::AddToRenderQueue(graphics::RenderPair * renderPair)
 	{
@@ -84,7 +97,8 @@ namespace thomas
 	}
 	void Scene::ClearRenderQueue()
 	{
-		s_currentScene->m_renderQueue.clear();
+		if(s_currentScene)
+			s_currentScene->m_renderQueue.clear();
 	}
 	std::vector<graphics::RenderPair*> Scene::GetRenderQueue()
 	{
@@ -137,6 +151,6 @@ namespace thomas
 	{
 		m_name = name;
 		s_drawDebugPhysics = false;
-		utils::DebugTools::AddBool(s_drawDebugPhysics, "Draw Debug Physics");
+		//utils::DebugTools::AddBool(s_drawDebugPhysics, "Draw Debug Physics");
 	}
 }

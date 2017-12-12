@@ -10,6 +10,7 @@ namespace thomas
 		
 		bool UpdateWindow();
 		bool InitDxBuffers();
+		bool Resize();
 
 		Window(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPCSTR title);
 		Window(HWND hWnd);
@@ -23,12 +24,12 @@ namespace thomas
 
 		struct DXBuffers
 		{
-			ID3D11RenderTargetView* backBuffer;
-			ID3D11ShaderResourceView* backBufferSRV;
-			ID3D11DepthStencilState* depthStencilState;
-			ID3D11DepthStencilView* depthStencilView;
-			ID3D11DepthStencilView* depthStencilViewReadOnly;
-			ID3D11ShaderResourceView* depthBufferSRV;
+			ID3D11RenderTargetView* backBuffer = nullptr;
+			ID3D11ShaderResourceView* backBufferSRV = nullptr;
+			ID3D11DepthStencilState* depthStencilState = nullptr;
+			ID3D11DepthStencilView* depthStencilView = nullptr;
+			ID3D11DepthStencilView* depthStencilViewReadOnly = nullptr;
+			ID3D11ShaderResourceView* depthBufferSRV = nullptr;
 		}m_dxBuffers;
 
 	public:
@@ -46,6 +47,11 @@ namespace thomas
 		static void ClearAllWindows();
 		static void PresentAllWindows();
 
+		void QueueResize();
+
+		static void Update();
+		static void UpdateFocus();
+
 		void Bind();
 		void Present();
 
@@ -58,8 +64,7 @@ namespace thomas
 		bool SetWidth(LONG width);
 		bool SetAspectRatio();
 		bool SetSize(LONG height, LONG width);
-		bool Resize();
-
+		bool IsFocused();
 		LONG GetHeight();
 		LONG GetWidth();
 		Ratio GetAspectRatio();
@@ -88,6 +93,10 @@ namespace thomas
 		Ratio m_ratio;
 		bool m_fullScreen;
 		bool m_initialized;
+
+		bool m_shouldResize;
+		bool m_created;
+		bool m_focused;
 
 		IDXGISwapChain* m_swapChain;
 

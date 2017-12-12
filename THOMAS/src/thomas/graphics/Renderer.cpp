@@ -37,7 +37,11 @@ namespace thomas
 		void Renderer::BindCamera(thomas::object::component::Camera * camera)
 		{
 			int displayIndex = camera->GetTargetDisplayIndex();
-			Window::GetWindow(displayIndex)->Bind();
+			Window* window = Window::GetWindow(displayIndex);
+			if (!window || !window->Initialized())
+				return;
+
+			window->Bind();
 			ThomasCore::GetDeviceContext()->RSSetViewports(1, camera->GetViewport().Get11());
 
 			//ThomasPerCamera

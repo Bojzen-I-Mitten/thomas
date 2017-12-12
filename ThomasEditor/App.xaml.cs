@@ -13,5 +13,14 @@ namespace ThomasEditor
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            ThomasWrapper.Start();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            ThomasWrapper.Stop();
+        }
     }
 }
