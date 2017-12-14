@@ -20,8 +20,6 @@ namespace thomas
 			if (shader != nullptr)
 			{
 				m_material = new Material(shader);
-				
-
 				LineVertex a;
 				a.pos = math::Vector3(1, 0, 0);
 				m_lines.push_back(a); //Line start

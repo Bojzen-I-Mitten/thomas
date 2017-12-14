@@ -20,8 +20,7 @@ namespace ThomasEditor {
 		ObservableCollection<Component^> m_components;
 		Transform^ m_transform;
 		static ObservableCollection<GameObject^> s_gameObjects;
-		String^ m_name;
-
+		
 	internal:
 		void UpdateComponents()
 		{
@@ -47,18 +46,7 @@ namespace ThomasEditor {
 			m_components.Clear();
 		}
 
-		
-
-		property String^ Name
-		{
-			String^ get() { return m_name; }
-
-			void set(String^ value)
-			{
-				m_name = value;
-				OnPropertyChanged("Name");
-			}
-		}
+	
 
 		property bool activeSelf
 		{

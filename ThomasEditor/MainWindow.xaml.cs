@@ -158,7 +158,7 @@ namespace ThomasEditor
             __inspector.SelectedGameObject = null;
             if (item != null)
             {
-
+                __inspector.SelectedGameObject = (GameObject)item.DataContext;
                 ThomasWrapper.SelectGameObject((GameObject)item.DataContext);
             }
             

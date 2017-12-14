@@ -12,7 +12,8 @@ namespace ThomasEditor {
 	public ref class Object: public INotifyPropertyChanged
 	{
 		static List<Object^> s_objects;
-		
+	protected:
+		String^ m_name;
 	internal:
 		
 		thomas::object::Object* nativePtr;
@@ -25,6 +26,18 @@ namespace ThomasEditor {
 		void OnPropertyChanged(String^ info)
 		{
 			PropertyChanged(this, gcnew PropertyChangedEventArgs(info));
+		}
+
+		[BrowsableAttribute(false)]
+		property String^ Name
+		{
+			String^ get() { return m_name; }
+
+			void set(String^ value)
+			{
+				m_name = value;
+				OnPropertyChanged("Name");
+			}
 		}
 
 		Object(thomas::object::Object* ptr)
