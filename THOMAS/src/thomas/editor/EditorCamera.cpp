@@ -36,6 +36,26 @@ namespace thomas
 			graphics::Shader* outliner = graphics::Shader::CreateShader("ediotrOutliner", "../Data/FXIncludes/EditorOutlineShader.fx");
 			if (outliner)
 				m_objectHighlighter = new graphics::Material(outliner);
+
+			m_transform->SetPosition(math::Vector3(5, 5, 5));
+			m_transform->LookAt(math::Vector3(0, 0, 0));
+			math::Vector3 eulerAngles = math::ToEuler(m_transform->GetRotation());
+			rotationX = -eulerAngles.y;
+			rotationY = -eulerAngles.x;
+			m_transform->SetRotation(-rotationX, -rotationY, 0);
+		}
+
+		EditorCamera::~EditorCamera()
+		{
+			SAFE_DELETE(m_transform);
+			delete m_cameraComponent;
+			delete m_grid;
+		}
+
+		void EditorCamera::Destroy()
+		{
+			if (s_editorCamera)
+				delete s_editorCamera;
 		}
 
 		void EditorCamera::Init()
@@ -103,6 +123,7 @@ namespace thomas
 			renderSelectedObjects();
 			thomas::graphics::Renderer::Render();
 			renderGizmos();
+			Physics::DrawDebug(m_cameraComponent);
 		}
 		void EditorCamera::updateCamera()
 		{

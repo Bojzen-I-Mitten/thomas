@@ -399,6 +399,8 @@ namespace thomas
 
 	void Window::Destroy()
 	{
+		if (s_editorWindow)
+			delete s_editorWindow;
 		for (Window* window : s_windows)
 		{
 			delete window;

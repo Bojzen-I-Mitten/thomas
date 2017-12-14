@@ -62,11 +62,25 @@ namespace thomas
 				NULL,
 				&context
 			);
+
 			if (FAILED(hr))
 			{
 				LOG(hr);
 				return false;
 			}
+
+			ID3D10Multithread *multi;
+			hr = device->QueryInterface(__uuidof(ID3D10Multithread), (void**)&multi);
+			if (SUCCEEDED(hr) && multi != NULL)
+			{
+				multi->SetMultithreadProtected(TRUE);
+				multi->Release();
+			}
+			else
+			{
+				LOG_HR(hr);
+			}
+
 			return true;
 		}
 

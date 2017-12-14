@@ -3,7 +3,8 @@
 #include "../EditorCamera.h"
 #include "../../Input.h"
 #include "../../ThomasTime.h"
-
+#include "../../Physics.h"
+#include "../../graphics/BulletDebugDraw.h"
 namespace thomas
 {
 	namespace editor
@@ -18,7 +19,11 @@ namespace thomas
 			utils::BoundingSphere yAxisBounds(scale*gameObject->m_transform->Up() + gameObject->m_transform->GetPosition(), scale*0.5f);
 			utils::BoundingSphere zAxisBounds(scale*gameObject->m_transform->Forward() + gameObject->m_transform->GetPosition(), scale*0.5f);
 			utils::Ray ray = EditorCamera::GetEditorCamera()->GetCamera()->ScreenPointToRay(Input::GetMousePosition());
-
+			Physics::getDebugDraw()->drawLine
+			(
+				btVector3(ray.origin.x, ray.origin.y, ray.origin.z),
+				btVector3(ray.origin.x + ray.direction.x*1000, ray.origin.y + ray.direction.y*1000, ray.origin.z + ray.direction.z * 1000), btVector3(1, 0, 0)
+			);
 			if (xAxisBounds.intersection(ray))
 			{
 				m_hasCollided = true;

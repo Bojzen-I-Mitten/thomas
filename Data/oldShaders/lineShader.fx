@@ -24,8 +24,7 @@ struct VS_OUT
 VS_OUT VSMain(VS_IN input)
 {
 	VS_OUT output = (VS_OUT) 0;
-    output.Pos = mul(float4(input.Pos, 1), worldMatrix);
-    output.Pos = mul(float4(input.Pos, 1), viewProjection);
+    output.Pos = mul(viewProjection, float4(input.Pos, 1));
 	output.Color = input.Color;
 
 	return output;

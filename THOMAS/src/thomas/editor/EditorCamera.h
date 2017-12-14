@@ -20,8 +20,10 @@ namespace thomas
 			void renderGizmos();
 			object::GameObject* findClickedGameObject();
 			EditorCamera();
+			~EditorCamera();
 		public:
 			
+			static void Destroy();
 			static void Init();
 			static EditorCamera* GetEditorCamera();
 			static void Render();
@@ -34,8 +36,8 @@ namespace thomas
 			object::component::Camera* GetCamera();
 		private:
 			float m_sensitivity = 1.0f;
-			float rotationX = 0.0f;
-			float rotationY = 0.0f;
+			float rotationX;
+			float rotationY;
 			float m_speed;
 
 			object::component::Camera* m_cameraComponent;

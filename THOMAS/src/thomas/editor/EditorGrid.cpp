@@ -78,7 +78,7 @@ namespace thomas
 			UINT offset = 0;
 			if (m_material)
 			{
-				int scale = (int)log10(((abs(cameraPos.y)+1) / m_cellSize)*m_cellSize);
+				int scale = (int)log10(((abs(cameraPos.y/2)+1) / m_cellSize)*m_cellSize);
 				scale = pow(10.0f,scale);
 				math::Matrix worldMatrix = math::Matrix::CreateScale((scale)*m_cellSize) * math::Matrix::CreateTranslation(
 					(int)(cameraPos.x / scale)*scale,
