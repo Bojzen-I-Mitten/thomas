@@ -24,7 +24,7 @@ namespace thomas
 			DXGI_FORMAT GetDXGIFormat(BYTE mask, D3D_REGISTER_COMPONENT_TYPE componentType);
 			
 			void Destroy();
-			
+			static void RecompileShaders();
 		public:
 			struct ShaderPass
 			{
@@ -65,9 +65,9 @@ namespace thomas
 			bool HasProperty(const std::string& name);
 			MaterialProperty* GetProperty(const std::string& name);
 
+			static void Update();
 			void Recompile();
-			static void RecompileShaders();
-
+			static void QueueRecompile();
 		private:
 			std::string m_filePath;
 			std::string m_name;
@@ -77,6 +77,7 @@ namespace thomas
 			
 			static std::vector<Shader*> s_loadedShaders;
 			static Shader* s_standardShader;
+			static bool s_shouldRecompile;
 
 		};
 	}

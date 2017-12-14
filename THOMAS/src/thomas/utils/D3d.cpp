@@ -125,15 +125,14 @@ namespace thomas
 
 						if (SUCCEEDED(hr))
 						{
+							dxgiFactory->Release();
+							dxgiAdapter->Release();
+							dxgiDevice->Release();
 							return true;
 						}
-							
-							
-
 						dxgiFactory->Release();
 					}
-					dxgiAdapter->Release();
-					
+					dxgiAdapter->Release();	
 				}
 				dxgiDevice->Release();
 			}

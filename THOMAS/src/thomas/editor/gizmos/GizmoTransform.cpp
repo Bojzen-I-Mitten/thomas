@@ -21,7 +21,7 @@ namespace thomas
 			utils::Ray ray = EditorCamera::GetEditorCamera()->GetCamera()->ScreenPointToRay(Input::GetMousePosition());
 			Physics::getDebugDraw()->drawLine
 			(
-				btVector3(ray.origin.x, ray.origin.y, ray.origin.z),
+				btVector3(ray.origin.x+0.01f, ray.origin.y + 0.01f, ray.origin.z + 0.01f),
 				btVector3(ray.origin.x + ray.direction.x*1000, ray.origin.y + ray.direction.y*1000, ray.origin.z + ray.direction.z * 1000), btVector3(1, 0, 0)
 			);
 			if (xAxisBounds.intersection(ray))

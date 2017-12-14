@@ -10,7 +10,7 @@ namespace thomas
 	{
 		std::vector<Shader*> Shader::s_loadedShaders;
 		Shader* Shader::s_standardShader;
-
+		bool Shader::s_shouldRecompile = false;
 		Shader::Shader(std::string name, ID3DX11Effect* effect, std::string filePath)
 		{
 			m_name = name;
@@ -369,6 +369,17 @@ namespace thomas
 			return nullptr;
 		}
 
+		void Shader::Update()
+		{
+			if (s_shouldRecompile)
+			{
+				LOG("Recompiling Shaders...");
+				RecompileShaders();
+				s_shouldRecompile = false;
+			}
+				
+		}
+
 		void Shader::Recompile()
 		{
 			ID3DX11Effect* tempEffect;
@@ -392,6 +403,10 @@ namespace thomas
 			{
 				shader->Recompile();
 			}
+		}
+		void Shader::QueueRecompile()
+		{
+			s_shouldRecompile = true;
 		}
 	}
 }

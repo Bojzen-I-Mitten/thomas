@@ -32,7 +32,7 @@ namespace ThomasEditor
 
 		//static void SetGlobalTexture(String^ name, Texture& value);
 
-		static void RecompileShaders() { thomas::graphics::Shader::RecompileShaders(); }
+		static void RecompileShaders() { thomas::graphics::Shader::QueueRecompile(); }
 
 		property String^ Name
 		{

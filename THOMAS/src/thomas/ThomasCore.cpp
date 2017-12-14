@@ -105,6 +105,7 @@ namespace thomas {
 		}
 		Window::Update();
 		Scene::ClearRenderQueue();
+		graphics::Shader::Update();
 		thomas::ThomasTime::Update();
 		Input::Update();
 		Scene::UpdateCurrentScene();
@@ -136,30 +137,6 @@ namespace thomas {
 		s_initialized = false;
 	}
 
-	void ThomasCore::Start()
-	{
-
-		if (s_initialized)
-		{
-			ThomasTime::Update();
-			while (s_initialized)
-			{
-				Update();
-			}
-			Destroy();
-
-		}
-		else
-		{
-			LOG("Thomas failed to initiate :(");
-			#ifdef _DEBUG
-			system("pause");
-			#endif // DEBUG
-
-			
-		}
-			
-	}
 	bool ThomasCore::Initialized()
 	{
 		return s_initialized;
@@ -168,6 +145,7 @@ namespace thomas {
 	bool ThomasCore::Destroy()
 	{
 		s_context->ClearState();
+		s_context->Flush();
 		Scene::UnloadScene();
 		Window::Destroy();
 		graphics::LightManager::Destroy();
@@ -184,6 +162,15 @@ namespace thomas {
 		editor::EditorCamera::Destroy();
 		Physics::Destroy();
 
+		s_context->ClearState();
+		s_context->Flush();
+
+		s_context->Release();
+		s_device->Release();
+
+		s_context = nullptr;
+		s_device = nullptr;
+
 		#ifdef _DEBUG_DX
 
 			//s_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
@@ -191,11 +178,7 @@ namespace thomas {
 			s_debug = nullptr;
 		#endif // _DEBUG
 
-		s_context->Release();
-		s_device->Release();
-
-		s_context = nullptr;
-		s_device = nullptr;
+		
 
 		//Sound::Destroy();
 

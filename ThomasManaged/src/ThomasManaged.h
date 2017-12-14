@@ -175,13 +175,14 @@ namespace ThomasEditor {
 			std::vector<std::string> nativeOutputs = thomas::ThomasCore::GetLogOutput();
 			
 			for (int i = 0; i < nativeOutputs.size(); i++) {
-				OutputLog->Add(gcnew String(nativeOutputs.at(i).c_str()));
-				if (OutputLog->Count > 10)
-					OutputLog->RemoveAt(0);
+				String^ output = gcnew String(nativeOutputs.at(i).c_str());
+				if (OutputLog->Count == 0 || OutputLog[OutputLog->Count - 1] != output)
+				{
+					OutputLog->Add(output);
+					if (OutputLog->Count > 10)
+						OutputLog->RemoveAt(0);
+				}
 			}
-
-			
-
 			thomas::ThomasCore::ClearLogOutput();
 		}
 	};
