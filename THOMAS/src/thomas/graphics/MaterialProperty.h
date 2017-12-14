@@ -50,6 +50,7 @@ namespace thomas
 		public:
 			MaterialProperty(UINT index, ID3DX11EffectVariable* variable);
 			MaterialProperty(const MaterialProperty* otherProperty);
+			~MaterialProperty();
 			void ApplyProperty(Shader* shader);
 
 			std::string GetName();

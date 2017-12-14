@@ -15,6 +15,7 @@ namespace thomas
 		{
 			m_initialized = false;
 			//Create VS shader
+			m_vertexBuffer = nullptr;
 			Shader* shader = Shader::CreateShader("debugDraw", "../Data/FXIncludes/lineShader.fx");
 			if (shader != nullptr)
 			{
@@ -31,6 +32,11 @@ namespace thomas
 			}
 			
 
+		}
+
+		BulletDebugDraw::~BulletDebugDraw()
+		{
+			SAFE_RELEASE(m_vertexBuffer);
 		}
 
 		void BulletDebugDraw::drawLine(const btVector3 & from, const btVector3 & to, const btVector3 & fromColor, const btVector3 & toColor)
@@ -111,7 +117,7 @@ namespace thomas
 
 			m_material->Bind();
 			m_material->Draw(m_lines.size(), 0);
-			m_lines.clear();
+			//m_lines.clear();
 		}
 
 	}

@@ -18,6 +18,7 @@ namespace thomas
 			
 		public:
 			static void Init();
+			static void Destroy();
 			static Material* GetStandardMaterial();
 
 			Material(Shader* shader);

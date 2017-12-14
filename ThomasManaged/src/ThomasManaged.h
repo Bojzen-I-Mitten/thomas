@@ -46,7 +46,7 @@ namespace ThomasEditor {
 				thomas::Scene::LoadScene<TestScene>();
 
 				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
-				testThread = gcnew Thread(gcnew ThreadStart(Test));
+				testThread = gcnew Thread(gcnew ThreadStart(StartEngine));
 				testThread->Name = "Thomas Engine";
 				testThread->Start();
 				
@@ -54,7 +54,7 @@ namespace ThomasEditor {
 
 		}
 
-		static void Test()
+		static void StartEngine()
 		{
 			while (ThomasCore::Initialized())
 			{
@@ -68,6 +68,7 @@ namespace ThomasEditor {
 					ThomasCore::Render();
 				}
 			}
+			ThomasCore::Destroy();
 				
 		}
 

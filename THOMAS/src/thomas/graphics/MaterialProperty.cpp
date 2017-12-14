@@ -115,6 +115,7 @@ namespace thomas
 
 		MaterialProperty::MaterialProperty(UINT index, ID3DX11EffectVariable* variable)
 		{
+			m_value = nullptr;
 			m_isSet = false;
 			m_index = index;
 			variable->GetType()->GetDesc(&m_typeDesc);
@@ -151,6 +152,19 @@ namespace thomas
 				m_rawCount = otherProperty->m_rawCount;
 				m_rawSize = otherProperty->m_rawSize;
 				
+			}
+
+			MaterialProperty::~MaterialProperty()
+			{
+				switch (m_class)
+				{
+				case PropClass::Scalar:
+				case PropClass::Vector:
+				case PropClass::Matrix:
+					SAFE_DELETE(m_value);
+				default:
+					break;
+				}
 			}
 
 			void MaterialProperty::ApplyProperty(Shader * shader)
@@ -269,6 +283,7 @@ namespace thomas
 		{
 			if (m_class == PropClass::Scalar && m_type == PropType::Bool)
 			{
+				SAFE_DELETE(m_value);
 				m_value = new bool(value);
 				m_isSet = true;
 			}
@@ -282,6 +297,7 @@ namespace thomas
 		{
 			if (m_class == PropClass::Scalar && m_type == PropType::Float)
 			{
+				SAFE_DELETE(m_value);
 				m_value = new float(value);
 				m_isSet = true;
 			}
@@ -295,6 +311,7 @@ namespace thomas
 		{
 			if (m_class == PropClass::Scalar && m_type == PropType::Int)
 			{
+				SAFE_DELETE(m_value);
 				m_value = new int(value);
 				m_isSet = true;
 			}
@@ -308,6 +325,7 @@ namespace thomas
 		{
 			if (m_class == PropClass::Vector)
 			{
+				SAFE_DELETE(m_value);
 				m_value = new math::Vector4(value);
 				m_isSet = true;
 			}
@@ -321,6 +339,7 @@ namespace thomas
 		{
 			if (m_class == PropClass::Matrix)
 			{
+				SAFE_DELETE(m_value);
 				m_value = new math::Matrix(value);
 				m_isSet = true;
 			}

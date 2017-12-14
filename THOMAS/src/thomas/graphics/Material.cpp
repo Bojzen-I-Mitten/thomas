@@ -25,6 +25,16 @@ namespace thomas
 			s_standardMaterial = new Material(Shader::GetStandardShader());
 		}
 
+		void Material::Destroy()
+		{
+			for (Material* material : s_materialInstances)
+			{
+				delete material;
+			}
+			s_materialInstances.clear();
+			s_materials.clear();
+		}
+
 		Material * Material::GetStandardMaterial()
 		{
 			return s_standardMaterial;
@@ -77,19 +87,11 @@ namespace thomas
 
 		Material::~Material()
 		{
-			for (UINT i = 0; i < s_materialInstances.size(); i++)
+			for (MaterialProperty* mProp : m_properties)
 			{
-				if (s_materialInstances[i]->m_id == m_id)
-					s_materialInstances.erase(s_materialInstances.begin() + i);
+				delete mProp;
 			}
-			if (!m_isInstance)
-			{
-				for (UINT i = 0; i < s_materials.size(); i++)
-				{
-					if (s_materials[i]->m_id == m_id)
-						s_materials.erase(s_materials.begin() + i);
-				}
-			}
+			m_properties.clear();
 		}
 
 		void Material::SetShader(Shader * shader)

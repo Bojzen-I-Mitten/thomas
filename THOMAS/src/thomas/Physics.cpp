@@ -84,8 +84,8 @@ namespace thomas
 	{
 		//Destroy everything????
 		btCollisionObjectArray arr = s_world->getCollisionObjectArray();
-		
-			arr.clear();
+		arr.clear();
+		SAFE_DELETE(s_debugDraw);
 		
 	}
 

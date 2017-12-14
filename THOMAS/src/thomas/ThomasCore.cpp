@@ -48,7 +48,7 @@ namespace thomas {
 			init = graphics::Texture::Init();
 
 
-		utils::DebugTools::Init();
+		//utils::DebugTools::Init();
 
 		if (init)
 			init = ThomasTime::Init();
@@ -57,11 +57,11 @@ namespace thomas {
 			init = Sound::Init();*/
 
 
-		if(init)
-			init = graphics::TextRender::Initialize();
+		//if(init)
+		//	init = graphics::TextRender::Initialize();
 
-		if (init)
-			init = graphics::Sprite::Initialize();
+		//if (init)
+		//	init = graphics::Sprite::Initialize();
 
 		//graphics::ParticleSystem::Init();
 		if(init)
@@ -167,29 +167,35 @@ namespace thomas {
 
 	bool ThomasCore::Destroy()
 	{
+		s_context->ClearState();
 		Scene::UnloadScene();
 		Window::Destroy();
 		graphics::LightManager::Destroy();
 		graphics::ParticleSystem::Destroy();
-		graphics::Sprite::Destroy();
-		graphics::TextRender::Destroy();
+		//graphics::Sprite::Destroy();
+		//graphics::TextRender::Destroy();
 		graphics::Texture::ReleaseSamplers();
 		graphics::Texture::Destroy();
 		graphics::Model::Destroy();
-		utils::DebugTools::Destroy();
+		graphics::Shader::DestroyAllShaders();
+		graphics::Material::Destroy();
+		//utils::DebugTools::Destroy();
 		object::Object::Destroy();
+		editor::EditorCamera::Destroy();
+		Physics::Destroy();
+
+		#ifdef _DEBUG_DX
+
+			//s_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+			s_debug->Release();
+			s_debug = nullptr;
+		#endif // _DEBUG
+
 		s_context->Release();
 		s_device->Release();
 
 		s_context = nullptr;
 		s_device = nullptr;
-		
-
-		#ifdef _DEBUG
-		s_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
-		s_debug->Release();
-		s_debug = nullptr;
-		#endif // _DEBUG
 
 		//Sound::Destroy();
 

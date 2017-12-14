@@ -75,6 +75,7 @@ namespace thomas
 		void Renderer::Render()
 		{
 			RenderQueue(Scene::GetCurrentScene()->GetRenderQueue());
+			
 		}
 
 		void Renderer::RenderQueue(std::vector<RenderPair*> renderQueue)

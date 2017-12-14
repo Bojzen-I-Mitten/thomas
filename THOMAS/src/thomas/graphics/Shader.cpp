@@ -388,7 +388,6 @@ namespace thomas
 
 		void Shader::RecompileShaders()
 		{
-			s_standardShader->Recompile();
 			for (Shader* shader : s_loadedShaders)
 			{
 				shader->Recompile();

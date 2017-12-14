@@ -34,6 +34,7 @@ namespace thomas
 			lines.push_back(LineVertex{ math::Vector3::Up }); //axis out from start
 			
 			s_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP;
+			
 			ID3D11Buffer* lineBuffer = utils::D3d::CreateDynamicBufferFromVector(lines, D3D11_BIND_VERTEX_BUFFER);
 
 			float scale = math::Vector3::Distance(EditorCamera::GetEditorCamera()->m_transform->GetPosition(), origin)/5.0f;
@@ -53,6 +54,7 @@ namespace thomas
 			
 			s_material->Bind();
 			s_material->Draw(s_cone->GetMeshes()[0]);
+			SAFE_RELEASE(lineBuffer);
 			/*for (int i = 0; i <= 30; i++)
 			{
 				tvector3 pt;

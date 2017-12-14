@@ -20,6 +20,7 @@ namespace thomas
 		private:
 		public:
 			BulletDebugDraw();
+			~BulletDebugDraw();
 			virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& fromColor, const btVector3& toColor);
 
 			virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& color);
