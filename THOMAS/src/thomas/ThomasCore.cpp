@@ -23,8 +23,8 @@
 #include "Window.h"
 #include "ThomasTime.h"
 #include <time.h>
-#include "../thomas/editor/EditorCamera.h"
-
+#include "editor\EditorCamera.h"
+#include "editor\gizmos\Gizmos.h"
 #include <thread>
 namespace thomas {
 	ID3D11Debug* ThomasCore::s_debug = nullptr;
@@ -73,6 +73,7 @@ namespace thomas {
 		if(init)
 			editor::EditorCamera::Init();
 
+		editor::Gizmos::Init();
 		
 		s_initialized = init;
 		return s_initialized;

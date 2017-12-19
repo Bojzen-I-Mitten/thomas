@@ -61,6 +61,10 @@ namespace thomas
 			void SetShaderPassEnabled(int index, bool enabled);
 			void SetShaderPassEnabled(std::string name, bool enabled);
 
+			//Only enable the specified shader pass
+			void SetShaderPass(int index);
+			void SetShaderPass(std::string name);
+
 			void Draw(Mesh* mesh);
 			void Draw(UINT vertexCount, UINT startVertexLocation);
 

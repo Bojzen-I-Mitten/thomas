@@ -28,7 +28,7 @@ namespace thomas
 				math::Matrix GetViewProjMatrix();
 				math::Vector3 GetPosition();
 				
-				utils::Ray ScreenPointToRay(math::Vector2 point);
+				math::Ray ScreenPointToRay(math::Vector2 point);
 
 				float GetFov();
 				void SetFov(float fov);
@@ -46,9 +46,13 @@ namespace thomas
 				float GetAspectRatio();
 
 				void Render();
+				void OnDrawGizmos();
+				void OnDrawGizmosSelected();
 
 				void SetTargetDisplay(int index);
 				int GetTargetDisplayIndex();
+
+				math::BoundingFrustum GetFrustrum();
 				
 			private:
 				math::Matrix m_projMatrix;
@@ -57,6 +61,7 @@ namespace thomas
 				float m_far;
 				int m_targetDisplay;
 				math::Viewport m_viewport;
+				math::BoundingFrustum m_frustrum;
 
 			};
 		}

@@ -3,7 +3,6 @@
 
 #include "../utils/Math.h"
 #include <vector>
-#include "../utils/Utility.h"
 
 namespace thomas 
 {
@@ -31,7 +30,7 @@ namespace thomas
 		{
 		private:
 			void SetupMesh();
-			utils::Bounds* GenerateBounds();
+			math::BoundingBox GenerateBounds();
 		public:
 			Mesh(std::vector<Vertex> vertices, std::vector<int> indices, std::string name);
 			~Mesh();
@@ -49,7 +48,7 @@ namespace thomas
 			std::vector<Vertex>* GetVertices();
 			std::vector<int>* GetIndices();
 
-			utils::Bounds* m_bounds;
+			math::BoundingBox m_bounds;
 		private:
 			std::string m_name;
 			MeshData m_data;

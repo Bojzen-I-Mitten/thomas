@@ -5,6 +5,7 @@
 #include "../../utils/d3d.h"
 #include "../../utils/AssimpLoader.h"
 #include "../../graphics/Model.h"
+#include "Gizmos.h"
 namespace thomas
 {
 	namespace editor
@@ -55,6 +56,18 @@ namespace thomas
 			s_material->Bind();
 			s_material->Draw(s_cone->GetMeshes()[0]);
 			SAFE_RELEASE(lineBuffer);
+
+			Gizmos::SetColor(color);
+			Gizmos::SetMatrix(math::Matrix::Identity);
+		/*	math::Vector3 extends = (axis + math::Vector3(0.1,0.1,0.1))*scale / 2.0f;
+			math::Vector3 center = origin + axis*scale*0.6f;
+			
+			math::BoundingOrientedBox box(center, extends,math::Quaternion::Identity);*/
+			//Gizmos::DrawBoundingOrientedBox(box);
+			math::BoundingSphere AxisBounds(1.1f*scale*axis + origin, scale*0.2f);
+			Gizmos::DrawBoundingSphere(AxisBounds);
+		
+
 			/*for (int i = 0; i <= 30; i++)
 			{
 				tvector3 pt;

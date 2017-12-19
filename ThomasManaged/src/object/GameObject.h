@@ -25,8 +25,28 @@ namespace ThomasEditor {
 		void UpdateComponents()
 		{
 			for each(Component^ component in m_components)
+			{
 				component->Update();
+			}
+				
 		}
+
+		void RenderGizmos()
+		{
+			for each(Component^ component in m_components)
+			{
+				component->OnDrawGizmos();
+			}
+		}
+
+		void RenderSelectedGizmos()
+		{
+			for each(Component^ component in m_components)
+			{
+				component->OnDrawGizmosSelected();
+			}
+		}
+
 	public:
 		GameObject(String^ name) : Object(new thomas::object::GameObject(msclr::interop::marshal_as<std::string>(name))) {
 			m_name = name;

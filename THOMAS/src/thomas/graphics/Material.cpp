@@ -340,6 +340,29 @@ namespace thomas
 			}
 		}
 
+		void Material::SetShaderPass(int index)
+		{
+			for (int i = 0; i < m_passes.size(); i++)
+			{
+				if (i == index)
+					m_passes[i].enabled = true;
+				else
+					m_passes[i].enabled = false;
+			}
+		}
+
+		void Material::SetShaderPass(std::string name)
+		{
+			for (int i = 0; i < m_passes.size(); i++)
+			{
+				if (m_passes[i].name == name)
+					m_passes[i].enabled = true;
+				else
+					m_passes[i].enabled = false;
+
+			}
+		}
+
 		void Material::Bind()
 		{
 			m_shader->Bind();

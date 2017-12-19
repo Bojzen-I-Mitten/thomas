@@ -12,6 +12,7 @@
 #include "../graphics/Model.h"
 #include "gizmos/GizmoRender.h"
 #include "gizmos/GizmoTransform.h"
+
 namespace thomas
 {
 	namespace editor
@@ -122,6 +123,9 @@ namespace thomas
 			m_grid->Draw(m_cameraComponent->GetPosition());
 			renderSelectedObjects();
 			thomas::graphics::Renderer::Render();
+
+			
+
 			renderGizmos();
 			Physics::DrawDebug(m_cameraComponent);
 		}
@@ -234,30 +238,18 @@ namespace thomas
 		}
 		object::GameObject* EditorCamera::findClickedGameObject()
 		{
-			utils::Ray ray = m_cameraComponent->ScreenPointToRay(Input::GetMousePosition());
+			math::Ray ray = m_cameraComponent->ScreenPointToRay(Input::GetMousePosition());
 
 			std::vector<object::component::RenderComponent*> renderComponents = object::Object::FindObjectsOfType<object::component::RenderComponent>();
 
-			/*for (float i = m_cameraComponent->GetNear(); i < m_cameraComponent->GetFar(); i += 0.1f)
-			{
-				for (object::component::RenderComponent* renderComponent : renderComponents)
-				{
-					if (renderComponent->m_bounds->Contains(ray.GetPoint(i)))
-					{
-						return renderComponent->m_gameObject;
-					}
-					
-				}
-			}*/
-
 			object::GameObject* closestGameObject = nullptr;
-			float closestValue = m_cameraComponent->GetFar();
+			float closestDistance = m_cameraComponent->GetFar();
 			for (object::component::RenderComponent* renderComponent : renderComponents)
 			{
-				float value = renderComponent->m_bounds->Intersection(ray);
-				if (value > 0 && value < closestValue)
+				float distance;
+				if (renderComponent->m_bounds.Intersects(ray.position, ray.direction, distance) && distance < closestDistance)
 				{
-					closestValue = value;
+					closestDistance = distance;
 					closestGameObject = renderComponent->m_gameObject;
 				}
 			}

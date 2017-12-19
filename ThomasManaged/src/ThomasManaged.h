@@ -12,7 +12,7 @@
 #include <thomas\Input.h>
 #include <thomas\utils\DebugTools.h>
 #include <thomas\graphics\Shader.h>
-
+#include <thomas\graphics\Renderer.h>
 #pragma managed
 //#include <Sound.h>
 
@@ -65,7 +65,33 @@ namespace ThomasEditor {
 					{
 						gameObject->UpdateComponents();
 					}
-					ThomasCore::Render();
+
+					if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
+					{
+						Window::ClearAllWindows();
+
+						graphics::Renderer::Begin();
+						//Editor rendering
+						editor::EditorCamera::Render();
+						for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
+						{
+							gameObject->RenderGizmos();
+						}
+						for each(ThomasEditor::GameObject^ gameObject in SelectedGameObjects)
+						{
+
+							gameObject->RenderSelectedGizmos();
+						}
+						//end editor rendering
+
+						for (object::component::Camera* camera : object::component::Camera::s_allCameras)
+						{
+							camera->Render();
+						}
+						Window::PresentAllWindows();
+					}
+
+					//ThomasCore::Render();
 				}
 			}
 			ThomasCore::Destroy();
@@ -140,8 +166,11 @@ namespace ThomasEditor {
 
 		static void SelectGameObject(GameObject^ gObj)
 		{
+			Monitor::Enter(SelectedGameObjects);
 			SelectedGameObjects->Add(gObj);
 			thomas::editor::EditorCamera::SelectObject((thomas::object::GameObject*)gObj->nativePtr);
+			Monitor::Exit(SelectedGameObjects);
+
 		}
 		static void UpdateSelectedObjects() {
 			List<GameObject^> tempSelectedGameObjects;

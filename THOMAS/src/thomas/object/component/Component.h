@@ -14,6 +14,8 @@ namespace thomas
 			public:
 				GameObject* m_gameObject;
 				virtual void Update() {};
+				virtual void OnDrawGizmos() {};
+				virtual void OnDrawGizmosSelected() {};
 			private:
 			protected:
 				
