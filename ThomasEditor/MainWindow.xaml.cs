@@ -195,7 +195,6 @@ namespace ThomasEditor
         private void AddEmptyGameObject(object sender, RoutedEventArgs e)
         {
             var x = new GameObject("gameObject");
-            x.AddComponent<RenderComponent>();
         }
 
         private void Menu_RemoveGameObject(object sender, RoutedEventArgs e)

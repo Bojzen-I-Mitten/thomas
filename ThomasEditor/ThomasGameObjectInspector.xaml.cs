@@ -132,6 +132,24 @@ namespace ThomasEditor
         {
             CollectionViewSource.GetDefaultView(addComponentList.ItemsSource).Refresh();
         }
+
+
+
+        private void addComponentList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(addComponentList.SelectedItem != null)
+            {
+                lock(SelectedGameObject)
+                {
+                    Type component = addComponentList.SelectedItem as Type;
+                    var method = typeof(GameObject).GetMethod("AddComponent").MakeGenericMethod(component);
+                    method.Invoke(SelectedGameObject, null);
+                }
+
+            }
+               
+
+        }
     }
 
 }

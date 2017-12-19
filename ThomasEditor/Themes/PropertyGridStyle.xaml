@@ -557,6 +557,21 @@
         <Setter Property="Background" Value="#595959"/>
     </Style>
 
+    <Style TargetType="{x:Type xceed:PropertyGridEditorDecimalUpDown}">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="Background" Value="#595959"/>
+    </Style>
+
+    <Style TargetType="{x:Type xceed:PropertyGridEditorSingleUpDown}">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="Background" Value="#595959"/>
+    </Style>
+
+    <Style TargetType="{x:Type xceed:PropertyGridEditorIntegerUpDown}">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="Background" Value="#595959"/>
+    </Style>
+
     <Style TargetType="xceed:WatermarkTextBox">
         <Setter Property="CaretBrush" Value="{DynamicResource ForegroundBrush}"/>
     </Style>

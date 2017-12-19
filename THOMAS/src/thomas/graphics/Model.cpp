@@ -5,6 +5,7 @@ namespace thomas {
 	namespace graphics {
 
 		std::vector<Model*> Model::s_loadedModels;
+		Model::Primitives Model::s_primitives;
 		Model::Model(std::string name, std::vector<Mesh*> meshes)
 		{
 			m_name = name;
@@ -12,37 +13,15 @@ namespace thomas {
 			m_bounds = GenerateBounds();
 		}
 
-		utils::Bounds * Model::GenerateBounds()
+		math::BoundingBox Model::GenerateBounds()
 		{
-			if (m_meshes.empty())
-				return new utils::Bounds(math::Vector3(), math::Vector3());
-			utils::Bounds* meshBound = m_meshes[0]->m_bounds;
-			math::Vector3 minVector = meshBound->GetMin();
-			math::Vector3 maxVector = meshBound->GetMax();
-
+			math::BoundingBox bounds = m_meshes[0]->m_bounds;
+			
 			for (int i = 1; i < m_meshes.size(); i++)
 			{
-				meshBound = m_meshes[i]->m_bounds;
-				math::Vector3 meshMin = meshBound->GetMin();
-				math::Vector3 meshMax = meshBound->GetMax();
-
-				if (minVector.x > meshMin.x)
-					minVector.x = meshMin.x;
-				if (minVector.y > meshMin.y)
-					minVector.y = meshMin.y;
-				if (minVector.z > meshMin.z)
-					minVector.z = meshMin.z;
-
-				if (maxVector.x > meshMax.x)
-					maxVector.x = meshMax.x;
-				if (maxVector.y > meshMax.y)
-					maxVector.y = meshMax.y;
-				if (maxVector.z > meshMax.z)
-					maxVector.z = meshMax.z;
+				math::BoundingBox::CreateMerged(bounds, bounds, m_meshes[i]->m_bounds);
 			}
-
-			math::Vector3 size = math::Vector3(abs(minVector.x - maxVector.x), abs(minVector.y - maxVector.y), abs(minVector.z - maxVector.z));
-			return new utils::Bounds(math::Vector3(), size);
+			return bounds;
 		}
 
 		Model * Model::CreateModel(std::string name, std::vector<Mesh*> meshes)
@@ -100,7 +79,6 @@ namespace thomas {
 				delete m_meshes[i];
 			}
 			m_meshes.clear();
-			delete m_bounds;
 		}
 
 	}

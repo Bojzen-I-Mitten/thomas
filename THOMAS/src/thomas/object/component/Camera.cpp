@@ -7,7 +7,7 @@
 #include "../../graphics/Renderer.h"
 #include <algorithm>
 #include "../../Input.h"
-#include "../../utils/Utility.h"
+#include "../../editor/gizmos/Gizmos.h"
 namespace thomas
 {
 	namespace object
@@ -18,6 +18,7 @@ namespace thomas
 			void Camera::UpdateProjMatrix()
 			{
 				m_projMatrix = math::Matrix::CreatePerspectiveFieldOfView(math::DegreesToRadians(m_fov), GetViewport().AspectRatio(), m_near, m_far);
+				m_frustrum = math::BoundingFrustum(m_projMatrix);
 			}
 
 			Camera::Camera(bool dontAddTolist)
@@ -78,7 +79,7 @@ namespace thomas
 				return m_gameObject->m_transform->GetPosition();
 			}
 
-			utils::Ray Camera::ScreenPointToRay(math::Vector2 point)
+			math::Ray Camera::ScreenPointToRay(math::Vector2 point)
 			{
 				// Move the mouse cursor coordinates into the -1 to +1 range.
 				Window* window = Window::GetWindow(m_targetDisplay);
@@ -99,7 +100,8 @@ namespace thomas
 
 				// Get the origin of the picking ray which is the position of the camera
 				math::Vector3 origin = GetPosition();
-				return utils::Ray(origin, direction);
+				direction.Normalize();
+				return math::Ray(origin, direction);
 			}
 
 			float Camera::GetFov()
@@ -125,13 +127,15 @@ namespace thomas
 
 			void Camera::SetNear(float viewNear)
 			{
-				m_near = viewNear;
+				if (viewNear > 0)
+					m_near = viewNear;
 				UpdateProjMatrix();
 			}
 
 			void Camera::SetFar(float viewFar)
 			{
-				m_far = viewFar;
+				if (viewFar > 0)
+					m_far = viewFar;
 				UpdateProjMatrix();
 			}
 
@@ -166,6 +170,18 @@ namespace thomas
 				graphics::Renderer::Render();
 			}
 
+			void Camera::OnDrawGizmos()
+			{
+				
+			}
+
+			void Camera::OnDrawGizmosSelected()
+			{
+				//editor::Gizmos::SetMatrix(m_gameObject->m_transform->GetWorldMatrix().Transpose());
+				editor::Gizmos::SetColor(math::Color(0.6, 0.6, 0.6));
+				editor::Gizmos::DrawFrustum(GetFrustrum());
+			}
+
 			void Camera::SetTargetDisplay(int index)
 			{
 				if (Window::GetWindows().size() < index)
@@ -180,6 +196,13 @@ namespace thomas
 			int Camera::GetTargetDisplayIndex()
 			{
 				return m_targetDisplay;
+			}
+
+			math::BoundingFrustum Camera::GetFrustrum()
+			{
+				math::BoundingFrustum frustrum;
+				m_frustrum.Transform(frustrum, m_gameObject->m_transform->GetWorldMatrix());
+				return frustrum;
 			}
 
 		}

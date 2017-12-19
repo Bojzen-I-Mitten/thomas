@@ -1,7 +1,7 @@
 #pragma once
 #define _XM_NO_INTRINSICS_ 1;
 #include "Component.h"
-#include "../../utils/Utility.h"
+#include "../../utils/Math.h"
 namespace thomas
 {
 	namespace graphics { class Model; class Material; struct RenderPair; }
@@ -21,9 +21,11 @@ namespace thomas
 
 				void SetMaterial(int meshIndex, graphics::Material* material);
 
+				void OnDrawGizmos();
+
 			public:
 				graphics::Model* m_model;
-				utils::Bounds* m_bounds;
+				math::BoundingOrientedBox m_bounds;
 			private:
 				std::vector<graphics::RenderPair*> m_renderPairs;
 				//graphics::Geometry* m_geometry;

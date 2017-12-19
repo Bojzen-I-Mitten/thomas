@@ -75,12 +75,11 @@
                                 </xcad:LayoutAnchorable>
                             </xcad:LayoutDocumentPane>
 
-                            <!--<xcad:LayoutDocumentPane>
-                                <xcad:LayoutAnchorable ContentId="Game View" Title="Game View" CanHide="False" CanClose="False"
-                                            AutoHideWidth="240">
+                            <xcad:LayoutDocumentPane>
+                                <xcad:LayoutAnchorable ContentId="Game View" Title="Game View" CanHide="False" CanClose="False">
                                     <local:ThomasWindow x:Name="game" IsEditor="False"/>
                                 </xcad:LayoutAnchorable>
-                            </xcad:LayoutDocumentPane>-->
+                            </xcad:LayoutDocumentPane>
                         </xcad:LayoutDocumentPaneGroup>
 
                         <xcad:LayoutDocumentPaneGroup Orientation="Vertical" DockWidth="1*">

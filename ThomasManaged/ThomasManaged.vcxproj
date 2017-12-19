@@ -137,6 +137,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\object\component\Camera.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Utility.h" />
     <ClInclude Include="src\Material.h" />
@@ -157,6 +158,7 @@
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\math\Math.cpp" />
     <ClCompile Include="src\object\Component.cpp" />
+    <ClCompile Include="src\object\component\Camera.cpp" />
     <ClCompile Include="src\object\component\RenderComponent.cpp" />
     <ClCompile Include="src\object\component\ScriptComponent.cpp" />
     <ClCompile Include="src\object\component\Transform.cpp" />

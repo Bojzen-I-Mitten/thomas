@@ -65,7 +65,7 @@ namespace thomas
 				lookAt = lookAt.Invert();
 
 				m_localWorldMatrix = math::Matrix::CreateScale(m_localScale) * math::Matrix::CreateWorld(m_localPosition, lookAt.Forward(), lookAt.Up());
-
+				
 				Decompose();
 
 			}

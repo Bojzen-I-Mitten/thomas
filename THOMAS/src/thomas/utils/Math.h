@@ -5,8 +5,15 @@
 #include <string>
 namespace DirectX {
 	namespace SimpleMath {
+
+		using DirectX::BoundingBox;
+		using DirectX::BoundingSphere;
+		using DirectX::BoundingFrustum;
+		using DirectX::BoundingOrientedBox;
+
 		static float DegreesToRadians(float degree)
 		{
+			
 			return std::fmodf(degree, 360.0f) * (PI / 180.0f);
 		}
 
@@ -41,6 +48,12 @@ namespace DirectX {
 		static std::string ToString(Vector3& V)
 		{
 			return "(" + std::to_string(V.x) + "," + std::to_string(V.y) + "," + std::to_string(V.z) + ")";
+		}
+
+		static Matrix CreateMatrix(Vector3& position, Quaternion& rotation, Vector3& scale)
+		{
+			Matrix rot = Matrix::CreateFromQuaternion(rotation);
+			return Matrix::CreateScale(scale) * Matrix::CreateWorld(position, rot.Forward(), rot.Up());
 		}
 	}
 }

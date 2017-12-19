@@ -1,7 +1,6 @@
 #pragma once
 #include "../../Common.h"
 #include "../../utils/Math.h"
-#include "../../utils/Utility.h"
 namespace thomas
 {
 	namespace object { class GameObject; }

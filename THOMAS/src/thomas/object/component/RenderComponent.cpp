@@ -5,6 +5,7 @@
 #include "../GameObject.h"
 #include "../../graphics/Renderer.h"
 #include "../../Scene.h"
+#include "../../editor/gizmos/Gizmos.h"
 namespace thomas {
 	namespace object {
 		namespace component {
@@ -12,7 +13,7 @@ namespace thomas {
 			RenderComponent::RenderComponent()
 			{
 				m_model = nullptr;
-				m_bounds = new utils::Bounds(math::Vector3(), math::Vector3());
+				m_bounds = math::BoundingOrientedBox();
 			}
 
 			void RenderComponent::SetModel(graphics::Model* model)
@@ -37,15 +38,19 @@ namespace thomas {
 						m_renderPairs.push_back(renderPair);
 					}
 					m_model = model;
-					SAFE_DELETE(m_bounds);
-					m_bounds = new utils::Bounds(m_gameObject->m_transform->GetPosition(), m_model->m_bounds->GetSize());
+					
 				}
 					
 			}
 
 			void RenderComponent::Update()
 			{
-				m_bounds->center = m_gameObject->m_transform->GetPosition();
+				if (m_model)
+				{
+					math::BoundingOrientedBox::CreateFromBoundingBox(m_bounds, m_model->m_bounds);
+					m_bounds.Transform(m_bounds, m_gameObject->m_transform->GetWorldMatrix());
+				}
+				
 				std::vector<graphics::RenderPair*> setPairs;
 				for (auto pair : m_renderPairs)
 					if (pair->material)
@@ -61,6 +66,13 @@ namespace thomas {
 				}
 				if (meshIndex < m_renderPairs.size())
 					m_renderPairs[meshIndex]->material = material;
+			}
+
+			void RenderComponent::OnDrawGizmos()
+			{
+				editor::Gizmos::SetMatrix(math::Matrix::Identity);
+				editor::Gizmos::SetColor(math::Color(0, 0, 1));
+				editor::Gizmos::DrawBoundingOrientedBox(m_bounds);
 			}
 
 			graphics::Model * RenderComponent::GetModel()

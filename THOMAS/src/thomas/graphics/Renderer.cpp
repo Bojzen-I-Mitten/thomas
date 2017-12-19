@@ -74,6 +74,7 @@ namespace thomas
 
 		void Renderer::Render()
 		{
+			
 			RenderQueue(Scene::GetCurrentScene()->GetRenderQueue());
 			
 		}

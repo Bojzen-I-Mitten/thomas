@@ -20,6 +20,8 @@ namespace ThomasEditor {
 		GameObject^ m_gameObject;
 		void setGameObject(GameObject^ gObj);
 		virtual void Update() {};
+		virtual void OnDrawGizmosSelected() { ((thomas::object::component::Component*)nativePtr)->OnDrawGizmosSelected(); }
+		virtual void OnDrawGizmos() { ((thomas::object::component::Component*)nativePtr)->OnDrawGizmos(); }
 	public:
 
 		[BrowsableAttribute(false)]
