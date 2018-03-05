@@ -92,9 +92,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CallingConvention>
       </CallingConvention>
+      <PrecompiledHeaderFile />
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
@@ -137,6 +138,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\attributes\CustomAttributes.h" />
     <ClInclude Include="src\object\component\Camera.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Utility.h" />
@@ -150,7 +152,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\object\Object.h" />
     <ClInclude Include="src\Tests\TestScene.h" />
-    <ClInclude Include="Stdafx.h" />
     <ClInclude Include="src\ThomasManaged.h" />
   </ItemGroup>
   <ItemGroup>
@@ -165,12 +166,6 @@
     <ClCompile Include="src\object\GameObject.cpp" />
     <ClCompile Include="src\object\Object.cpp" />
     <ClCompile Include="src\Shader.cpp" />
-    <ClCompile Include="Stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="src\ThomasManaged.cpp" />
   </ItemGroup>
   <ItemGroup>

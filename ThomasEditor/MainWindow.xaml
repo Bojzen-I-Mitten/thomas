@@ -23,7 +23,7 @@
         
     </Window.Resources>
 
-    <Grid>
+    <Grid Background="Gray">
         
         <!--<TabControl  HorizontalAlignment="Left" Height="533" VerticalAlignment="Top" Width="800">
             <TabItem Header="Editor Window">
@@ -35,17 +35,18 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             
         </Grid.RowDefinitions>
 
         <DockPanel>
-            <Menu DockPanel.Dock="Top">
+            <Menu DockPanel.Dock="Top" Grid.Row="0">
                 <MenuItem Header="_File">
                     <MenuItem Header="_New"/>
                 </MenuItem>
                 <MenuItem Header="_Edit">
-                    
+
                 </MenuItem>
                 <MenuItem Header="_GameObject">
                     <MenuItem Header="_Create Empty" Click="AddEmptyGameObject"/>
@@ -54,16 +55,26 @@
                     <MenuItem Header="_Recompile Shader" Click="Recompile_Shader_Click"/>
                 </MenuItem>
             </Menu>
+            <WrapPanel Grid.Row="1" Width="100">
+                <Button  Width="50" Height="50" Click="PlayButton_Click">
+                    <Button.Content>
+                        <Image Source="icons/play.png"/>
+                    </Button.Content>
+                </Button>
+                <!--<Button  Width="50" Height="50">
+                    <Button.Content>
+                        <Image Source="icons/pause.png"/>
+                    </Button.Content>
+                </Button>-->
+            </WrapPanel>
         </DockPanel>
-
-        <xcad:DockingManager Grid.Row="1"
+        <xcad:DockingManager Grid.Row="2"
                            AllowMixedOrientation="True"
                            BorderBrush="Black"
                            BorderThickness="1" x:Name="dockManager">
 
-            <xcad:DockingManager.Theme>
-                <xcad:Office2007BlackTheme/>
-            </xcad:DockingManager.Theme>
+            <!--<xcad:DockingManager.Theme>
+            </xcad:DockingManager.Theme>-->
             <xcad:LayoutRoot x:Name="__layoutRoot">
                 <xcad:LayoutPanel>
 

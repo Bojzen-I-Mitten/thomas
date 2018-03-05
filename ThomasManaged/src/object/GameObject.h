@@ -9,6 +9,7 @@
 #include "Object.h"
 #include "Component.h"
 #include "component\Transform.h"
+#include "../attributes/CustomAttributes.h"
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::Collections::ObjectModel;
@@ -22,11 +23,29 @@ namespace ThomasEditor {
 		static ObservableCollection<GameObject^> s_gameObjects;
 		
 	internal:
+		static bool s_playing;
+		static void Play()
+		{
+			s_playing = true;
+			for each(GameObject^ gObj in s_gameObjects)
+			{
+				gObj->Awake();
+			}
+		}
+		void Awake()
+		{
+			for each(Component^ component in m_components)
+			{
+				if (!component->IsAwake())
+					component->Awake();
+			}
+		}
 		void UpdateComponents()
 		{
 			for each(Component^ component in m_components)
 			{
-				component->Update();
+				if(component->IsAwake())
+					component->Update();
 			}
 				
 		}
@@ -112,6 +131,11 @@ namespace ThomasEditor {
 			T component = (T)Activator::CreateInstance(T::typeid);
 			((Component^)component)->setGameObject(this);
 			m_components.Add((Component^)component);
+			Type^ typ = T::typeid;
+			if (typ->IsDefined(ExecuteInEditor::typeid, false) || s_playing)
+			{
+				component->Awake();
+			}
 			return component;
 		}
 
