@@ -2,14 +2,17 @@
 #pragma unmanaged
 #include <thomas\object\component\RenderComponent.h>
 #include <thomas\graphics\Model.h>
-#pragma managed
 
+#pragma managed
+#include "../../attributes/CustomAttributes.h"
 #include "../Component.h"
 #include <string>
 #include <msclr\marshal_cppstd.h>
 
+
 namespace ThomasEditor
 {
+	[ExecuteInEditor]
 	public ref class RenderComponent : public Component
 	{
 	public:

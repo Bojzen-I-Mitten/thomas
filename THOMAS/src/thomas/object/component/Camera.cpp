@@ -180,6 +180,7 @@ namespace thomas
 				//editor::Gizmos::SetMatrix(m_gameObject->m_transform->GetWorldMatrix().Transpose());
 				editor::Gizmos::SetColor(math::Color(0.6, 0.6, 0.6));
 				editor::Gizmos::DrawFrustum(GetFrustrum());
+			
 			}
 
 			void Camera::SetTargetDisplay(int index)

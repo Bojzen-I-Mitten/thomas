@@ -22,7 +22,12 @@ namespace ThomasEditor {
 		virtual void Update() {};
 		virtual void OnDrawGizmosSelected() { ((thomas::object::component::Component*)nativePtr)->OnDrawGizmosSelected(); }
 		virtual void OnDrawGizmos() { ((thomas::object::component::Component*)nativePtr)->OnDrawGizmos(); }
+
+	private:
+		bool m_awake = false;
 	public:
+		bool IsAwake() { return m_awake; }
+		void Awake() { m_awake = true; }
 
 		[BrowsableAttribute(false)]
 		property GameObject^ gameObject

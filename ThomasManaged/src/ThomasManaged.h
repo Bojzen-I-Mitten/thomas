@@ -35,7 +35,7 @@ namespace ThomasEditor {
 	private:
 
 		static Thread^ testThread;
-
+		static bool playing = false;
 
 	public:
 
@@ -162,6 +162,12 @@ namespace ThomasEditor {
 			UpdateLog();
 			if (thomas::editor::EditorCamera::HasSelectionChanged())
 				UpdateSelectedObjects();
+		}
+
+		static void Play()
+		{
+			playing = true;
+			GameObject::Play();
 		}
 
 		static void SelectGameObject(GameObject^ gObj)

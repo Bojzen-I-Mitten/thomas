@@ -45,4 +45,5 @@ technique11 Standard {
 		SetDepthStencilState(EnableDepth, 0);
 		SetRasterizerState(TestRasterizer);
 	}
+
 }

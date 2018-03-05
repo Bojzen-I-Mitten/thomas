@@ -235,6 +235,11 @@ namespace ThomasEditor
         {
             Shader.RecompileShaders();
         }
+
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            ThomasWrapper.Play();
+        }
     }
 
     public static class Extensions

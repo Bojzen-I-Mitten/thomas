@@ -8,8 +8,8 @@ using System.Windows.Data;
 using System.Globalization;
 using System.Windows.Threading;
 using System.Collections.ObjectModel;
-using Xceed.Wpf.Toolkit.PropertyGrid;
 using System.Windows.Input;
+using Xceed.Wpf.Toolkit.PropertyGrid;
 
 namespace ThomasEditor
 {
@@ -66,7 +66,7 @@ namespace ThomasEditor
     public partial class ThomasGameObjectInspector : UserControl
     {
         private GameObject _gameObject;
-        public Collection<EditorDefinitionBase> customEditors;
+        //public Collection<EditorDefinitionBase> customEditors;
         public ThomasGameObjectInspector()
         {
 
