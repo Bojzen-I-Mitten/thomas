@@ -43,6 +43,13 @@ namespace thomas
 					return m_localWorldMatrix;
 			}
 
+			void Transform::SetLocalMatrix(math::Matrix matrix)
+			{
+				m_localWorldMatrix = matrix;
+				Decompose();
+				m_eulerAngles = math::ToEuler(GetRotation());
+			}
+
 			void Transform::LookAt(Transform * target)
 			{
 				if (target->GetPosition() == GetPosition())
@@ -74,8 +81,8 @@ namespace thomas
 				math::Quaternion rot = math::Quaternion::CreateFromYawPitchRoll(angles.x, angles.y, angles.z);
 				math::Matrix newRot = math::Matrix::Transform(math::Matrix::CreateFromQuaternion(rot), m_localRotation);
 				m_localWorldMatrix = math::Matrix::CreateScale(m_localScale) * math::Matrix::CreateWorld(m_localPosition, newRot.Forward(), newRot.Up());
-
 				Decompose();
+				m_eulerAngles = math::ToEuler(GetRotation());
 			}
 			void Transform::Rotate(float x, float y, float z)
 			{
@@ -87,7 +94,7 @@ namespace thomas
 				math::Matrix newRot = math::Matrix::CreateFromQuaternion(m_localRotation * rot);
 				m_localWorldMatrix = math::Matrix::CreateScale(m_localScale) * math::Matrix::CreateWorld(m_localPosition, newRot.Forward(), newRot.Up());
 				Decompose();
-
+				m_eulerAngles = math::ToEuler(GetRotation());
 			}
 			void Transform::Translate(math::Vector3 translation)
 			{

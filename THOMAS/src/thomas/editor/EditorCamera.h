@@ -2,6 +2,7 @@
 #include "../Common.h"
 #include "../object/GameObject.h"
 #include <vector>
+#include <imgui\ImGuizmo.h>
 namespace thomas
 {
 	namespace graphics
@@ -14,6 +15,7 @@ namespace thomas
 		class THOMAS_API EditorCamera : public object::GameObject
 		{
 		private:
+			
 			void renderCamera();
 			void updateCamera();
 			void renderSelectedObjects();
@@ -35,6 +37,9 @@ namespace thomas
 			static void SetHasSelectionChanged(bool selectionChanged);
 			object::component::Camera* GetCamera();
 		private:
+			ImGuizmo::OPERATION m_manipulatorOperation;
+			ImGuizmo::MODE m_manipulatorMode;
+
 			float m_sensitivity = 1.0f;
 			float rotationX;
 			float rotationY;

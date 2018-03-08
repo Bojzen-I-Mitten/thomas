@@ -30,6 +30,7 @@ namespace thomas
 
 				math::Matrix GetLocalWorldMatrix();
 				math::Matrix GetWorldMatrix();
+				void SetLocalMatrix(math::Matrix matrix);
 
 				void LookAt(Transform* target);
 				void LookAt(math::Vector3 target);

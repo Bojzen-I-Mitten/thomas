@@ -10,9 +10,6 @@
 #include "../graphics/Material.h"
 #include "../graphics/Renderer.h"
 #include "../graphics/Model.h"
-#include "gizmos/GizmoRender.h"
-#include "gizmos/GizmoTransform.h"
-
 namespace thomas
 {
 	namespace editor
@@ -23,7 +20,6 @@ namespace thomas
 		
 		EditorCamera::EditorCamera() : object::GameObject("editorCamera")
 		{
-			GizmoRender::Init();
 			m_transform = new object::component::Transform();
 			m_transform->m_gameObject = this;
 			m_cameraComponent = new object::component::Camera(true);
@@ -44,6 +40,9 @@ namespace thomas
 			rotationX = -eulerAngles.y;
 			rotationY = -eulerAngles.x;
 			m_transform->SetRotation(-rotationX, -rotationY, 0);
+
+			m_manipulatorMode = ImGuizmo::MODE::LOCAL;
+			m_manipulatorOperation = ImGuizmo::OPERATION::TRANSLATE;
 		}
 
 		EditorCamera::~EditorCamera()
@@ -136,6 +135,8 @@ namespace thomas
 			if (!Window::GetEditorWindow())
 				return;
 
+				
+
 			if (Input::GetMouseButtonDown(Input::MouseButtons::RIGHT))
 			{
 				Input::SetMouseMode(Input::MouseMode::POSITION_RELATIVE);
@@ -178,26 +179,27 @@ namespace thomas
 			}
 			else if (Input::GetMouseButtonDown(Input::MouseButtons::LEFT))
 			{
-				if (s_selectedObjects.size() > 0 && GizmoTransform::CollisionTest(s_selectedObjects[0]))
-				{
-					// ?? :)
-				}
-				else
+				if (!ImGuizmo::IsOver())
 				{
 					object::GameObject* gObj = findClickedGameObject();
 					SelectObject(gObj);
 				}
 				
 			}
-			else if (Input::GetMouseButton(Input::MouseButtons::LEFT) && GizmoTransform::m_hasCollided)
+			else
 			{
-				if (s_selectedObjects.size() > 0)
-				{
-					GizmoTransform::Move(s_selectedObjects[0]);
-				}
-					
-			}else
 				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
+				
+				if (Input::GetKey(Input::Keys::Q))
+					m_manipulatorOperation = ImGuizmo::OPERATION::TRANSLATE;
+
+				if (Input::GetKey(Input::Keys::W))
+					m_manipulatorOperation = ImGuizmo::OPERATION::ROTATE;
+
+				if (Input::GetKey(Input::Keys::E))
+					m_manipulatorOperation = ImGuizmo::OPERATION::SCALE;
+			}
+				
 		}
 		void EditorCamera::renderSelectedObjects()
 		{
@@ -229,10 +231,23 @@ namespace thomas
 			{
 				object::GameObject* gameObject = s_selectedObjects[i];
 
-				GizmoRender::DrawAxis(gameObject->m_transform->GetPosition(), gameObject->m_transform->Right(), gameObject->m_transform->Up(), math::Color(1, 0, 0));
-				GizmoRender::DrawAxis(gameObject->m_transform->GetPosition(), gameObject->m_transform->Up(), gameObject->m_transform->Right(), math::Color(0, 1, 0));
-				GizmoRender::DrawAxis(gameObject->m_transform->GetPosition(), gameObject->m_transform->Forward(), gameObject->m_transform->Up(), math::Color(0, 0, 1));
-				
+				ImGuiIO& io = ImGui::GetIO();
+				ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+				math::Matrix worldMatrix = gameObject->m_transform->GetLocalWorldMatrix();
+
+				float bounds[] = { 5,5,5 };
+
+				ImGuizmo::Manipulate(
+					*m_cameraComponent->GetViewMatrix().m, *m_cameraComponent->GetProjMatrix().m,
+					m_manipulatorOperation, m_manipulatorMode, *worldMatrix.m, 0, 0);
+
+				if (worldMatrix != gameObject->m_transform->GetLocalWorldMatrix())
+				{
+					gameObject->m_transform->SetLocalMatrix(worldMatrix);
+					gameObject->m_transform->SetDirty(true);
+				}
+			
 			}
 
 		}
