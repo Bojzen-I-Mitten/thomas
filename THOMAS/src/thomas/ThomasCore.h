@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <imgui\imgui.h>
 namespace thomas
 {
 	class ThomasCore
@@ -33,6 +34,7 @@ namespace thomas
 		static bool s_initialized;
 		static ID3D11Device* s_device;
 		static ID3D11DeviceContext* s_context;
+		static ImGuiContext* s_imGuiContext;
 		static ID3D11Debug* s_debug;
 		static std::vector<std::string> s_logOutput;
 		static bool s_clearLog;

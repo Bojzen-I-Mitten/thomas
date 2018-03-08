@@ -33,6 +33,7 @@ namespace thomas {
 	std::vector<std::string> ThomasCore::s_logOutput;
 	bool ThomasCore::s_clearLog;
 	bool ThomasCore::s_initialized;
+	ImGuiContext* ThomasCore::s_imGuiContext;
 
 	bool ThomasCore::Init()
 	{
@@ -40,6 +41,8 @@ namespace thomas {
 		
 		s_logOutput.reserve(10);
 		bool init = InitDirectX();
+
+		s_imGuiContext = ImGui::CreateContext();
 
 		if(init)
 		init = Input::Init();
@@ -145,6 +148,8 @@ namespace thomas {
 
 	bool ThomasCore::Destroy()
 	{
+
+		
 		s_context->ClearState();
 		s_context->Flush();
 		Scene::UnloadScene();
@@ -162,6 +167,8 @@ namespace thomas {
 		object::Object::Destroy();
 		editor::EditorCamera::Destroy();
 		Physics::Destroy();
+		ImGui::DestroyContext(s_imGuiContext);
+
 
 		s_context->ClearState();
 		s_context->Flush();

@@ -12,7 +12,7 @@ namespace thomas
 		class THOMAS_API EditorGrid
 		{
 		private:
-			void AddLine(math::Vector3 from, math::Vector3 to, math::Vector4 color);
+			void AddLine(math::Vector3 from, math::Vector3 to, math::Vector4 color, float viewDistance=1.0f);
 		public:
 			EditorGrid(int gridSize, float cellSize, int internalGridSize);
 			EditorGrid(int gridSize, float cellSize) : EditorGrid(gridSize, cellSize, 0) {};
@@ -23,7 +23,9 @@ namespace thomas
 			struct LineVertex
 			{
 				math::Vector3 pos;
+				float viewDistance;
 				math::Vector4 color;
+				
 			};
 			std::vector<LineVertex> m_lines;
 			graphics::Material* m_material = nullptr;

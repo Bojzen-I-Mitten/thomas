@@ -3,6 +3,9 @@
 #include "utils\DebugTools.h"
 #include "ThomasCore.h"
 #include "utils\d3d.h"
+#include <imgui\imgui.h>
+#include <imgui\imgui_impl_dx11.h>
+
 namespace thomas 
 {
 
@@ -13,13 +16,12 @@ namespace thomas
 	LRESULT CALLBACK Window::EventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		utils::DebugTools::ProcessMessages(hWnd, message, wParam, lParam);
-
+		Window* window = GetWindow(hWnd);
 		//If one case is hit the code will execute everything down until a break;
 		switch (message)
 		{
 		case WM_SIZE:
 			{
-				Window* window = GetWindow(hWnd);
 				if (window)
 					window->QueueResize();
 			}
@@ -67,6 +69,7 @@ namespace thomas
 		if (window->m_created)
 		{
 			s_editorWindow = window;
+			ImGui_ImplDX11_Init(hWnd, ThomasCore::GetDevice(), ThomasCore::GetDeviceContext());
 		}
 		
 	}
@@ -231,7 +234,15 @@ namespace thomas
 		SAFE_RELEASE(m_dxBuffers.depthStencilViewReadOnly);
 		SAFE_RELEASE(m_dxBuffers.depthBufferSRV);
 		SAFE_RELEASE(m_swapChain);
+
+		if (s_editorWindow = this)
+		{
+			ImGui_ImplDX11_Shutdown();
+		}
+
 		DestroyWindow(m_windowHandler);
+
+
 	}
 
 	IDXGISwapChain * Window::GetSwapChain()
@@ -450,6 +461,7 @@ namespace thomas
 				s_editorWindow->m_initialized = true;
 				s_editorWindow->m_shouldResize = false;
 			}
+			ImGui_ImplDX11_NewFrame();
 		}
 
 		for (Window* window : s_windows)
@@ -486,6 +498,10 @@ namespace thomas
 			ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &m_dxBuffers.backBuffer, m_dxBuffers.depthStencilView);
 			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(m_dxBuffers.depthStencilState, 1);
 			s_current = this;
+			if (s_editorWindow == this)
+			{
+				ImGui::Render();
+			}
 		}
 	}
 	void Window::Present()
