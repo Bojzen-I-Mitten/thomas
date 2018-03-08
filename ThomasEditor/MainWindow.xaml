@@ -7,7 +7,7 @@
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:local="clr-namespace:ThomasEditor"
         mc:Ignorable="d"
-        Title="Thomas Editor" Height="720" Width="1366">
+        Title="Thomas Editor">
 
 
     <Window.Resources>

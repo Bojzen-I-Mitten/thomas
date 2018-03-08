@@ -2,7 +2,7 @@
 #pragma unmanaged
 #include <thomas\object\component\Transform.h>
 #pragma managed
-
+#include "../../attributes/CustomAttributes.h"
 #include "../../math/Math.h"
 #include "../Component.h"
 #include <string>
@@ -11,7 +11,7 @@
 using namespace System::ComponentModel;
 namespace ThomasEditor
 {
-	
+	[ExecuteInEditor]
 	public ref class Transform : public Component
 	{
 
@@ -90,6 +90,8 @@ namespace ThomasEditor
 			{
 				((thomas::object::component::Transform*)nativePtr)->SetDirty(false);
 				OnPropertyChanged("position");
+				OnPropertyChanged("eulerAngles");
+				OnPropertyChanged("scale");
 			}
 		}
 		

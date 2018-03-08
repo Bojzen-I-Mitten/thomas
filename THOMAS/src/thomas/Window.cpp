@@ -5,7 +5,10 @@
 #include "utils\d3d.h"
 #include <imgui\imgui.h>
 #include <imgui\imgui_impl_dx11.h>
+#include <imgui\ImGuizmo.h>
 
+
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 namespace thomas 
 {
 
@@ -15,15 +18,24 @@ namespace thomas
 
 	LRESULT CALLBACK Window::EventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
+		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+			return true;
+		
 		utils::DebugTools::ProcessMessages(hWnd, message, wParam, lParam);
 		Window* window = GetWindow(hWnd);
+
+	
+
 		//If one case is hit the code will execute everything down until a break;
 		switch (message)
 		{
 		case WM_SIZE:
 			{
 				if (window)
+				{
 					window->QueueResize();
+				}
+					
 			}
 			break;
 		case WM_SETFOCUS:
@@ -257,8 +269,6 @@ namespace thomas
 	
 		ThomasCore::GetDeviceContext()->ClearRenderTargetView(m_dxBuffers.backBuffer, color);
 		ThomasCore::GetDeviceContext()->ClearDepthStencilView(m_dxBuffers.depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
-		
-		
 	}
 
 
@@ -456,12 +466,15 @@ namespace thomas
 			}
 			if (s_editorWindow->m_shouldResize)
 			{
+				ImGui_ImplDX11_InvalidateDeviceObjects();
 				s_editorWindow->m_initialized = false;
 				s_editorWindow->Resize();
 				s_editorWindow->m_initialized = true;
 				s_editorWindow->m_shouldResize = false;
+				ImGui_ImplDX11_CreateDeviceObjects();
 			}
 			ImGui_ImplDX11_NewFrame();
+			ImGuizmo::BeginFrame();
 		}
 
 		for (Window* window : s_windows)
@@ -498,15 +511,15 @@ namespace thomas
 			ThomasCore::GetDeviceContext()->OMSetRenderTargets(1, &m_dxBuffers.backBuffer, m_dxBuffers.depthStencilView);
 			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(m_dxBuffers.depthStencilState, 1);
 			s_current = this;
-			if (s_editorWindow == this)
-			{
-				ImGui::Render();
-			}
 		}
 	}
 	void Window::Present()
 	{
 		//utils::DebugTools::Draw();
+		if (s_editorWindow == this)
+		{
+			ImGui::Render();
+		}
 		m_swapChain->Present(0, 0);
 	}
 	bool Window::ChangeWindowShowState(int nCmdShow)

@@ -42,13 +42,12 @@
     <ClCompile Include="src\thomas\Window.cpp" />
     <ClCompile Include="src\thomas\editor\EditorCamera.cpp" />
     <ClCompile Include="src\thomas\editor\EditorGrid.cpp" />
-    <ClCompile Include="src\thomas\editor\gizmos\GizmoRender.cpp" />
-    <ClCompile Include="src\thomas\editor\gizmos\GizmoTransform.cpp" />
     <ClCompile Include="src\thomas\editor\gizmos\Gizmos.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="include\imgui\ImGuizmo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />
@@ -142,8 +141,6 @@
     <ClInclude Include="src\thomas\object\component\ScriptComponent.h" />
     <ClInclude Include="src\thomas\editor\EditorCamera.h" />
     <ClInclude Include="src\thomas\editor\EditorGrid.h" />
-    <ClInclude Include="src\thomas\editor\gizmos\GizmoTransform.h" />
-    <ClInclude Include="src\thomas\editor\gizmos\GizmoRender.h" />
     <ClInclude Include="src\thomas\editor\gizmos\Gizmos.h" />
     <ClInclude Include="include\imgui\imconfig.h" />
     <ClInclude Include="include\imgui\imgui.h" />
@@ -152,5 +149,6 @@
     <ClInclude Include="include\imgui\stb_rect_pack.h" />
     <ClInclude Include="include\imgui\stb_textedit.h" />
     <ClInclude Include="include\imgui\stb_truetype.h" />
+    <ClInclude Include="include\imgui\ImGuizmo.h" />
   </ItemGroup>
 </Project>

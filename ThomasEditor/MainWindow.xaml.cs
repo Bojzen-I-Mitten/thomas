@@ -32,7 +32,6 @@ namespace ThomasEditor
         public MainWindow()
         {
 
-
             InitializeComponent();
 
             //Changeds decimals to . instead of ,
