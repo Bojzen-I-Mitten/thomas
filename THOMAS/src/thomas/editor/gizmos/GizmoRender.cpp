@@ -6,14 +6,19 @@
 #include "../../utils/AssimpLoader.h"
 #include "../../graphics/Model.h"
 #include "Gizmos.h"
+
 namespace thomas
 {
 	namespace editor
 	{
+
+		
 		graphics::Material* GizmoRender::s_material = nullptr;
 		graphics::Model* GizmoRender::s_cone;
 		void GizmoRender::Init()
 		{
+
+			
 			s_cone = utils::AssimpLoader::LoadModel("primitiveCone", "../Data/cone.obj", "blö");
 			graphics::Shader* shader = graphics::Shader::CreateShader("editorGrid", "../Data/FXIncludes/EditorGizmoShader.fx");
 			if (shader)
@@ -25,6 +30,8 @@ namespace thomas
 
 		void GizmoRender::DrawAxis(const math::Vector3 & origin, const math::Vector3 & axis , const math::Vector3& perp, const math::Color& color)
 		{
+			math::Vector3 tempAxis = axis;
+			tempAxis.Normalize();
 			if (!s_material)
 				return;
 			//Draw line
@@ -41,7 +48,7 @@ namespace thomas
 			float scale = math::Vector3::Distance(EditorCamera::GetEditorCamera()->m_transform->GetPosition(), origin)/5.0f;
 				
 
-			math::Matrix world = math::Matrix::CreateScale(scale) * math::Matrix::CreateWorld(origin, perp, axis);
+			math::Matrix world = math::Matrix::CreateScale(scale) * math::Matrix::CreateWorld(origin, perp, tempAxis);
 			s_material->GetShader()->BindVertexBuffer(lineBuffer, stride, offset);
 			s_material->SetMatrix("thomas_ObjectToWorld", world.Transpose());
 			s_material->SetColor("color", color);
@@ -50,7 +57,7 @@ namespace thomas
 			
 
 			s_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			world = math::Matrix::CreateScale(scale * 0.1f) * math::Matrix::CreateWorld(origin + axis*scale, perp, axis);
+			world = math::Matrix::CreateScale(scale * 0.1f) * math::Matrix::CreateWorld(origin + tempAxis *scale, perp, tempAxis);
 			s_material->SetMatrix("thomas_ObjectToWorld", world.Transpose());
 			
 			s_material->Bind();
@@ -64,8 +71,8 @@ namespace thomas
 			
 			math::BoundingOrientedBox box(center, extends,math::Quaternion::Identity);*/
 			//Gizmos::DrawBoundingOrientedBox(box);
-			math::BoundingSphere AxisBounds(1.1f*scale*axis + origin, scale*0.2f);
-			Gizmos::DrawBoundingSphere(AxisBounds);
+			//math::BoundingSphere AxisBounds(1.1f*scale*axis + origin, scale*0.2f);
+			//Gizmos::DrawBoundingSphere(AxisBounds);
 		
 
 			/*for (int i = 0; i <= 30; i++)

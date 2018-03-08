@@ -6,7 +6,7 @@ namespace thomas
 {
 	namespace editor
 	{
-		void EditorGrid::AddLine(math::Vector3 from, math::Vector3 to, math::Vector4 color)
+		void EditorGrid::AddLine(math::Vector3 from, math::Vector3 to, math::Vector4 color, float viewDistance)
 		{
 			LineVertex fromLine;
 			LineVertex toLine;
@@ -14,8 +14,10 @@ namespace thomas
 	
 			fromLine.pos = from;
 			fromLine.color = color;
+			fromLine.viewDistance = viewDistance;
 			toLine.pos = to;
 			toLine.color = color;
+			toLine.viewDistance = viewDistance;
 			m_lines.push_back(fromLine);
 			m_lines.push_back(toLine);
 		}
@@ -54,9 +56,9 @@ namespace thomas
 							internalTo2 *= internalCellSize;
 							internalTo2 += from;
 							if (xInternal != 0)
-								AddLine(internalFrom, internalTo, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 0.2f));
+								AddLine(internalFrom, internalTo, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 0.2f), 0.3f);
 							if(zInternal != 0)
-								AddLine(internalFrom, internalTo2, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 0.2f));
+								AddLine(internalFrom, internalTo2, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 0.2f), 0.3f);
 						}
 					}
 				}

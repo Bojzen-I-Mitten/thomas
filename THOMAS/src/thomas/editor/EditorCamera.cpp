@@ -34,7 +34,7 @@ namespace thomas
 			m_speed = 2.0f;
 			m_hasSelectionChanged = false;
 			m_objectHighlighter = nullptr;
-			graphics::Shader* outliner = graphics::Shader::CreateShader("ediotrOutliner", "../Data/FXIncludes/EditorOutlineShader.fx");
+			graphics::Shader* outliner = graphics::Shader::CreateShader("editorOutliner", "../Data/FXIncludes/EditorOutlineShader.fx");
 			if (outliner)
 				m_objectHighlighter = new graphics::Material(outliner);
 
