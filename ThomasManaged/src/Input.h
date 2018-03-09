@@ -1,23 +1,16 @@
 #pragma once
-#include <Windows.h>
-#include "Common.h"
-#include <DirectXTK\GamePad.h>
-#include <DirectXTK\Keyboard.h>
-#include <DirectXTK\Mouse.h>
-#include "utils\Math.h"
+#pragma unmanaged
+#include <thomas\Input.h>
 
-/*
-This class is a wrapper for handling all the inputs from the different DirectXTK input methods.
+#pragma managed
+#include <string>
+#include <msclr\marshal_cppstd.h>
+#include "math\Math.h"
 
-GetDown/Up only returns true the frame the button/key was pressed/released.
 
-The other Get function returns true while the button/key is pressed.
-*/
-
-namespace thomas
+namespace ThomasEditor
 {
-
-	class Input
+	public ref class Input
 	{
 	public:
 		enum class MouseButtons
@@ -239,66 +232,39 @@ namespace thomas
 			BACK
 		};
 
-
-
-		static bool Init();
-		static void Update();
-		static void ProcessKeyboard(UINT message, WPARAM wParam, LPARAM lParam);
-		static void ProcessMouse(UINT message, WPARAM wParam, LPARAM lParam, HWND handle);
-		static void ProcessGamePad(UINT message, WPARAM wParam, LPARAM lParam);
-
-		//Mouse
-		static LONG GetMouseY();
-		static LONG GetMouseX();
-		static float GetMouseScroll();
-		static bool GetMouseButtonDown(MouseButtons button);
-		static bool GetMouseButtonUp(MouseButtons button);
-		static bool GetMouseButton(MouseButtons button);
+		static LONG GetMouseY() { return thomas::Input::GetMouseY(); }
+		static LONG GetMouseX() { return thomas::Input::GetMouseX(); }
+		static float GetMouseScroll() { return thomas::Input::GetMouseScroll(); };
+		static bool GetMouseButtonDown(MouseButtons button) { return thomas::Input::GetMouseButtonDown((thomas::Input::MouseButtons)button); }
+		static bool GetMouseButtonUp(MouseButtons button) { return thomas::Input::GetMouseButtonUp((thomas::Input::MouseButtons)button); }
+		static bool GetMouseButton(MouseButtons button) { return thomas::Input::GetMouseButton((thomas::Input::MouseButtons)button); }
 
 		//Keyboard
-		static bool GetKeyDown(Keys key);
-		static std::string GetKeyDown(); // Don't open, dead inside
-		static bool GetKeyUp(Keys key);
-		static bool GetKey(Keys key);
-	
+		static bool GetKeyDown(Keys key) { return thomas::Input::GetKeyDown((thomas::Input::Keys)key); }
+		static bool GetKeyUp(Keys key) { return thomas::Input::GetKeyUp((thomas::Input::Keys)key); }
+		static bool GetKey(Keys key) { return thomas::Input::GetKey((thomas::Input::Keys)key); }
 
 		//Gamepad
-		static bool GetButtonDown(Buttons button);
-		static bool GetButtonUp(Buttons button);
-		static bool GetButton(Buttons button);
-		static void Vibrate(float left, float right, float time=0);
+		static bool GetButtonDown(Buttons button) { return thomas::Input::GetButtonDown((thomas::Input::Buttons)button); }
+		static bool GetButtonUp(Buttons button) { return thomas::Input::GetButtonUp((thomas::Input::Buttons)button); }
+		static bool GetButton(Buttons button) {	return thomas::Input::GetButton((thomas::Input::Buttons)button); }
 
-		static float GetLeftStickY();
-		static float GetLeftStickX();
-		static float GetRightStickY();
-		static float GetRightStickX();
-		static float GetLeftTriggerDelta();
-		static float GetRightTriggerDelta();
+		static void Vibrate(float left, float right) { return thomas::Input::Vibrate(left, right); }
+		static void Vibrate(float left, float right, float time) { return thomas::Input::Vibrate(left, right, time); }
 
-		static math::Vector2 GetMousePosition();
+		static float GetLeftStickY() { return thomas::Input::GetLeftStickY(); }
+		static float GetLeftStickX() { return thomas::Input::GetLeftStickX(); }
+		static float GetRightStickY() { return thomas::Input::GetRightStickY(); }
+		static float GetRightStickX() { return thomas::Input::GetRightStickX(); }
+		static float GetLeftTriggerDelta() { return thomas::Input::GetLeftTriggerDelta(); }
+		static float GetRightTriggerDelta() { return thomas::Input::GetRightTriggerDelta(); }
 
-		static void SetMouseMode(MouseMode mode);
-		
+		static Vector2 GetMousePosition() { return Vector2(thomas::Input::GetMousePosition()); }
+
+		static void SetMouseMode(MouseMode mode) { return thomas::Input::SetMouseMode((thomas::Input::MouseMode)mode); }
 
 	private:
-		static std::unique_ptr<DirectX::Keyboard> s_keyboard;
-		static std::unique_ptr<DirectX::Mouse> s_mouse;
-		static std::unique_ptr<DirectX::GamePad> s_gamePad;
 
-		static DirectX::Mouse::State s_mouseState;
-		static DirectX::Keyboard::State s_keyboardState;
-		static DirectX::GamePad::State s_gamePadState;
-
-		static DirectX::Keyboard::KeyboardStateTracker s_keyboardTracker;
-		static DirectX::Mouse::ButtonStateTracker s_mouseTracker;
-		static DirectX::GamePad::ButtonStateTracker s_gamePadTracker;
-
-		static bool s_initialized;
-
-		static MouseMode s_mouseMode;
-		static bool s_recordPosition;
-		static math::Vector2 s_mousePosition;
-
-		static float s_vibrateTimeLeft;
 	};
+
 }

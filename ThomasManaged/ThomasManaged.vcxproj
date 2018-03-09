@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\attributes\CustomAttributes.h" />
+    <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\object\component\Camera.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Utility.h" />
@@ -157,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\math\Math.cpp" />
     <ClCompile Include="src\object\Component.cpp" />

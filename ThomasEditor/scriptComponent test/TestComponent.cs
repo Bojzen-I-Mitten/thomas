@@ -9,6 +9,15 @@ namespace ThomasEditor
     class TestComponent : ScriptComponent
     {
         public int testVar { get; set; }
+        
+        
+        public override void Update()
+        {
+            if (Input.GetKeyDown(Input.Keys.Space))
+            {
+                testVar = 10;
+            }
+        }
     }
 }
 
