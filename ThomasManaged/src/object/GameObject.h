@@ -23,6 +23,7 @@ namespace ThomasEditor {
 		static ObservableCollection<GameObject^> s_gameObjects;
 		
 	internal:
+		
 		static bool s_playing;
 		static void Play()
 		{

@@ -60,7 +60,13 @@
         <ItemsControl ItemsSource="{Binding Components}" Grid.Row="1" Background="#333333">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Expander Header="{Binding Converter={StaticResource converter}}" IsExpanded="True">
+                    <Expander IsExpanded="True">
+                        <Expander.Header>
+                            <DockPanel HorizontalAlignment="Stretch" LastChildFill="False">
+                                <Label DockPanel.Dock="Left" Content="{Binding Converter={StaticResource converter}}"/>
+                                <Button DockPanel.Dock="Right" Content="X" Click="RemoveComponentButton_Click"/>
+                            </DockPanel>
+                        </Expander.Header>
                         <xctk:PropertyGrid NameColumnWidth="75" IsCategorized="False" UpdateTextBoxSourceOnEnterKey="True"  Background="Aqua" AutoGenerateProperties="True" SelectedObject="{Binding}" ShowAdvancedOptions="False" ShowSummary="False" ShowSortOptions="False" ShowTitle="False" ShowSearchBox="False" Loaded="PropertyGrid_Loaded">
                             <xctk:PropertyGrid.EditorDefinitions>
                                 <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource Vector3Editor}">
