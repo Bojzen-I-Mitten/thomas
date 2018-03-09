@@ -64,7 +64,6 @@
     <ClCompile Include="src\thomas\utils\D3d.cpp" />
     <ClCompile Include="src\thomas\utils\DebugTools.cpp" />
     <ClCompile Include="src\thomas\utils\FrustumCulling.cpp" />
-    <ClCompile Include="src\thomas\utils\HeightMap.cpp" />
     <ClCompile Include="src\thomas\utils\Plane.cpp" />
     <ClCompile Include="src\thomas\Window.cpp" />
   </ItemGroup>
@@ -121,52 +120,7 @@
     <ClInclude Include="src\thomas\utils\d3d.h" />
     <ClInclude Include="src\thomas\utils\DebugTools.h" />
     <ClInclude Include="src\thomas\utils\FrustumCulling.h" />
-    <ClInclude Include="src\thomas\utils\HeightMap.h" />
     <ClInclude Include="src\thomas\utils\Math.h" />
-    <ClInclude Include="src\thomas\utils\noise\basictypes.h" />
-    <ClInclude Include="src\thomas\utils\noise\exception.h" />
-    <ClInclude Include="src\thomas\utils\noise\interp.h" />
-    <ClInclude Include="src\thomas\utils\noise\latlon.h" />
-    <ClInclude Include="src\thomas\utils\noise\mathconsts.h" />
-    <ClInclude Include="src\thomas\utils\noise\misc.h" />
-    <ClInclude Include="src\thomas\utils\noise\model\cylinder.h" />
-    <ClInclude Include="src\thomas\utils\noise\model\line.h" />
-    <ClInclude Include="src\thomas\utils\noise\model\model.h" />
-    <ClInclude Include="src\thomas\utils\noise\model\plane.h" />
-    <ClInclude Include="src\thomas\utils\noise\model\sphere.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\abs.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\add.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\billow.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\blend.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\cache.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\checkerboard.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\clamp.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\const.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\curve.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\cylinders.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\displace.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\exponent.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\invert.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\max.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\min.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\module.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\modulebase.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\multiply.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\perlin.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\power.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\ridgedmulti.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\rotatepoint.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\scalebias.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\scalepoint.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\select.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\spheres.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\terrace.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\translatepoint.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\turbulence.h" />
-    <ClInclude Include="src\thomas\utils\noise\module\voronoi.h" />
-    <ClInclude Include="src\thomas\utils\noise\noise.h" />
-    <ClInclude Include="src\thomas\utils\noise\noisegen.h" />
-    <ClInclude Include="src\thomas\utils\noise\vectortable.h" />
     <ClInclude Include="src\thomas\utils\Plane.h" />
     <ClInclude Include="src\thomas\Window.h" />
   </ItemGroup>
@@ -249,7 +203,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;THOMAS_EXPORT;_DEBUG_DX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
+      <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

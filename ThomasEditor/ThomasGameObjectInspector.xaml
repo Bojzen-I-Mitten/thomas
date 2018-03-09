@@ -83,7 +83,7 @@
         <Button Grid.Row="2" Panel.ZIndex="0" ClickMode="Release" Content="Add Component" HorizontalAlignment="Center" HorizontalContentAlignment="Center" x:Name="addComponentButton" Click="AddComponentButton_Click"/>
         <DockPanel Grid.Row="3" Panel.ZIndex="1" x:Name="addComponentsListContainer" LostFocus="AddComponentsListContainer_LostFocus" Visibility="Hidden" Width="200" Height="300" Margin="10">
             <TextBox x:Name="AddComponentsFilter" DockPanel.Dock="Top" TextChanged="AddComponentsFilter_TextChanged"/>
-            <ListView x:Name="addComponentList" Background="#333333" SelectionChanged="addComponentList_SelectionChanged">
+            <ListView x:Name="addComponentList" Background="#333333" SelectionChanged="AddComponentList_SelectionChanged">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ListViewItem Content="{Binding Name}"/>

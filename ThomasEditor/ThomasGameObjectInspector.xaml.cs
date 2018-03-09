@@ -125,7 +125,7 @@ namespace ThomasEditor
         private void AddComponentsListContainer_LostFocus(object sender, RoutedEventArgs e)
         {
             DockPanel panel = sender as DockPanel;
-            panel.Visibility = Visibility.Hidden;
+            panel.Visibility = Visibility.Visible;
         }
 
         private void AddComponentsFilter_TextChanged(object sender, TextChangedEventArgs e)
@@ -135,7 +135,7 @@ namespace ThomasEditor
 
 
 
-        private void addComponentList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void AddComponentList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if(addComponentList.SelectedItem != null)
             {
