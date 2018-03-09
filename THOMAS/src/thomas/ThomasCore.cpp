@@ -1,5 +1,5 @@
 #include "ThomasCore.h"
-
+#include "Sound.h"
 #include "Input.h"
 #include "object\Object.h"
 #include "graphics\Texture.h"
@@ -56,8 +56,8 @@ namespace thomas {
 		if (init)
 			init = ThomasTime::Init();
 
-		/*if (init)
-			init = Sound::Init();*/
+		if (init)
+			init = Sound::Init();
 
 
 		//if(init)
@@ -124,7 +124,7 @@ namespace thomas {
 		//if (Input::GetKeyDown(Input::Keys::F1))
 		//	utils::DebugTools::ToggleVisibility();
 
-		//Sound::Update();
+		Sound::Update();
 	}
 		
 

@@ -10,6 +10,7 @@ namespace thomas
 	float Sound::s_musicVolume;
 	std::unique_ptr<DirectX::WaveBank> Sound::s_bank;
 	std::unique_ptr<DirectX::AudioEngine> Sound::s_audioEngine;
+	std::map < std::string, std::unique_ptr<DirectX::SoundEffect>> Sound::s_waves;
 
 	bool Sound::Init()
 	{
@@ -28,18 +29,41 @@ namespace thomas
 		return true;
 	}
 
-	bool Sound::Play(std::string name, float volume)
+	bool Sound::Play(std::string name, float volume = 1.f)
 	{
-		if(s_bank)
+		if (s_bank)
+		{
 			s_bank->Play(name.c_str(), s_masterVolume * s_fxVolume * volume, 0.0f, 0.0f);
+		}
+		else if (!s_waves.empty())
+		{
+			s_waves.find(name)->second->Play(s_masterVolume * s_fxVolume * volume, 0.f, 0.f);
+		}
+		else
+		{
+			return false;
+		}
 		return true;
 	}
 
-	std::unique_ptr<DirectX::SoundEffectInstance> Sound::CreateInstance(std::string clipName)
+	std::unique_ptr<DirectX::SoundEffectInstance> Sound::CreateInstance(std::string clipName, DirectX::SOUND_EFFECT_INSTANCE_FLAGS flags = DirectX::SoundEffectInstance_Default)
 	{
-		if (!s_bank)
+		std::unique_ptr<DirectX::SoundEffectInstance> instance = NULL;
+
+		if (s_bank)
+		{
+			instance = s_bank->CreateInstance(clipName.c_str(), flags);
+		}
+		else if (!s_waves.empty())
+		{
+			instance = s_waves.find(clipName)->second->CreateInstance(flags);
+		}
+		else
+		{
+			LOG("No waves or wavebank loaded");
 			return NULL;
-		std::unique_ptr<DirectX::SoundEffectInstance> instance = s_bank->CreateInstance(clipName.c_str());
+		}
+		
 		if (instance)
 		{
 			return instance;
@@ -51,8 +75,6 @@ namespace thomas
 		}
 		
 	}
-
-
 
 	void Sound::SetMasterVolume(float volume)
 	{
@@ -78,12 +100,27 @@ namespace thomas
 		}
 		catch (std::exception ex)
 		{
-			LOG("Unable to load wavebank: " << name << " .Probably invalid path and/or name");
+			LOG("Unable to load wavebank: " << name << ". Probably invalid path and/or name");
 			s_bank = NULL;
 			return false;
 		}
 		return true;
 	}
+
+	bool Sound::LoadWave(std::string name)
+	{
+		try
+		{
+			s_waves.emplace(name, std::unique_ptr<DirectX::SoundEffect>(new DirectX::SoundEffect(s_audioEngine.get(), CA2W(name.c_str()))));
+		}
+		catch (std::exception ex)
+		{
+			LOG("Unable to load wave: " << name << ". Probably invalid path and/or name");
+			return false;
+		}
+		return true;
+	}
+
 	void Sound::Destroy()
 	{
 		s_audioEngine->Suspend();
