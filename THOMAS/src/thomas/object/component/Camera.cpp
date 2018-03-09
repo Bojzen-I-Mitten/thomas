@@ -60,6 +60,7 @@ namespace thomas
 
 			math::Matrix Camera::GetProjMatrix()
 			{
+				UpdateProjMatrix();
 				return m_projMatrix;
 			}
 
