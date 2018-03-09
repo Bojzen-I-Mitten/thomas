@@ -428,6 +428,10 @@ namespace thomas
 		}
 		s_windows.clear();
 	}
+	Window * Window::GetCurrentBound()
+	{
+		return s_current;
+	}
 	void Window::ClearAllWindows()
 	{
 		if (s_editorWindow && s_editorWindow->Initialized())
@@ -440,8 +444,13 @@ namespace thomas
 	}
 	void Window::PresentAllWindows()
 	{
-		if (s_editorWindow && s_editorWindow->Initialized()) 
+		if (s_editorWindow && s_editorWindow->Initialized())
+		{
+			s_editorWindow->Bind();
+			ImGui::Render();
 			s_editorWindow->Present();
+		}
+
 		for (Window* window : s_windows)
 		{
 			if(window->Initialized())
@@ -516,10 +525,8 @@ namespace thomas
 	void Window::Present()
 	{
 		//utils::DebugTools::Draw();
-		if (s_editorWindow == this)
-		{
-			ImGui::Render();
-		}
+		//if (this == s_editorWindow)
+		//	ImGui::EndFrame();
 		m_swapChain->Present(0, 0);
 	}
 	bool Window::ChangeWindowShowState(int nCmdShow)

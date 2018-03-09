@@ -45,6 +45,7 @@ namespace thomas
 		static Window* GetWindow(HWND hWnd);
 		static std::vector<Window*> GetWindows();
 		static void Destroy();
+		static Window* GetCurrentBound();
 
 		static void ClearAllWindows();
 		static void PresentAllWindows();
