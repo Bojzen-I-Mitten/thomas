@@ -12,3 +12,8 @@ void ThomasEditor::Component::setGameObject(GameObject ^ gObj)
 	((thomas::object::component::Component*)nativePtr)->m_gameObject = (thomas::object::GameObject*)gObj->nativePtr;
 	((thomas::object::GameObject*)m_gameObject->nativePtr)->m_components.push_back(((thomas::object::component::Component*)nativePtr));
 }
+
+void ThomasEditor::Component::Destroy()
+{
+	gameObject->Components->Remove(this);
+}

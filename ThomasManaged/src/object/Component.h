@@ -35,6 +35,6 @@ namespace ThomasEditor {
 			GameObject^ get() { return m_gameObject; }
 		}
 
-
+		virtual void Destroy() override;
 	};
 }

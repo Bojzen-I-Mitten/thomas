@@ -150,6 +150,13 @@ namespace ThomasEditor
                
 
         }
+
+        private void RemoveComponentButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            Component component = (Component)button.DataContext;
+            component.Destroy();
+        }
     }
 
 }
