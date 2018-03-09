@@ -324,7 +324,7 @@ namespace thomas
 		return false;
 	}
 
-	bool Input::GetMouseButtonUP(MouseButtons button)
+	bool Input::GetMouseButtonUp(MouseButtons button)
 	{
 		switch (button)
 		{

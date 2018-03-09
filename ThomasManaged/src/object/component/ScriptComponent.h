@@ -13,6 +13,10 @@ namespace ThomasEditor
 	private:
 
 	public:
+		virtual void Update()override {};
+		virtual void OnDrawGizmosSelected() override {};
+		virtual void OnDrawGizmos() override {};
+
 		ScriptComponent() : Component(new thomas::object::component::ScriptComponent())
 		{
 		}

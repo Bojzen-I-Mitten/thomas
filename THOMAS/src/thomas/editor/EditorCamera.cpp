@@ -142,7 +142,7 @@ namespace thomas
 				Input::SetMouseMode(Input::MouseMode::POSITION_RELATIVE);
 			}
 			
-			if (Input::GetMouseButtonUP(Input::MouseButtons::RIGHT))
+			if (Input::GetMouseButtonUp(Input::MouseButtons::RIGHT))
 				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
 			
 
