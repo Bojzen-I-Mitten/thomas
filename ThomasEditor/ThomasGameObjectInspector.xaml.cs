@@ -97,8 +97,6 @@ namespace ThomasEditor
             }
         }
 
-
-
         private void PropertyGrid_Loaded(object sender, RoutedEventArgs e)
         {
             PropertyGrid grid = sender as PropertyGrid;

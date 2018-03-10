@@ -11,12 +11,10 @@
              d:DesignHeight="300" d:DesignWidth="300"
              x:Name="_this">
 
-
     <UserControl.Resources>
 
         <local:Vector3Converter x:Key="convertVector3" x:Shared="False"/>
         <local:ComponentToNameConverter x:Key="converter"/>
-        
 
         <DataTemplate x:Key="Vector3Editor" x:Name="vector3Test">
             <Grid>
@@ -80,7 +78,10 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Button Grid.Row="2" Panel.ZIndex="0" ClickMode="Release" Content="Add Component" HorizontalAlignment="Center" HorizontalContentAlignment="Center" x:Name="addComponentButton" Click="AddComponentButton_Click"/>
+        <Button Grid.Row="2" Panel.ZIndex="0" ClickMode="Release" Content="Add Component" 
+                HorizontalAlignment="Center" HorizontalContentAlignment="Center" 
+                x:Name="addComponentButton" Click="AddComponentButton_Click"
+                />
         <DockPanel Grid.Row="3" Panel.ZIndex="1" x:Name="addComponentsListContainer" LostFocus="AddComponentsListContainer_LostFocus" Visibility="Hidden" Width="200" Height="300" Margin="10">
             <TextBox x:Name="AddComponentsFilter" DockPanel.Dock="Top" TextChanged="AddComponentsFilter_TextChanged"/>
             <ListView x:Name="addComponentList" Background="#333333" SelectionChanged="AddComponentList_SelectionChanged">

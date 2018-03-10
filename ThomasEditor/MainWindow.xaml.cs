@@ -192,9 +192,27 @@ namespace ThomasEditor
             
         }
 
+        private void NewEmptyObject_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
         private void AddEmptyGameObject(object sender, RoutedEventArgs e)
         {
             var x = new GameObject("gameObject");
+        }
+
+        private void OpenOptionsWindow_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void OpenOptionsWindow(object sender, RoutedEventArgs e)
+        {
+            OptionsWindow oW = new OptionsWindow();
+            //oW.Show();
+            oW.ShowDialog();
+            oW.Focus();
         }
 
         private void Menu_RemoveGameObject(object sender, RoutedEventArgs e)
