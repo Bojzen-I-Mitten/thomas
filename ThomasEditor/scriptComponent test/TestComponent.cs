@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ThomasEditor
 {
-    class TestComponent : ScriptComponent
+    public class TestComponent : ScriptComponent
     {
         public int testVar { get; set; }
         

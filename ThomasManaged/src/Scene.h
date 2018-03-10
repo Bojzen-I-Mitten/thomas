@@ -8,6 +8,8 @@
 
 namespace ThomasEditor {
 	ref class GameObject;
+
+	[System::SerializableAttribute]
 	public ref class Scene
 	{
 		bool m_playing;
@@ -16,7 +18,12 @@ namespace ThomasEditor {
 		System::Collections::ObjectModel::ObservableCollection<GameObject^> m_gameObjects;
 		System::String^ m_name;
 
+		Scene() {
+			m_name = "New Scene";
+			System::Windows::Data::BindingOperations::EnableCollectionSynchronization(%m_gameObjects, m_gameObjectsLock);
+		}
 	public:
+
 		Scene(System::String^ name) {
 			m_name = name;
 			System::Windows::Data::BindingOperations::EnableCollectionSynchronization(%m_gameObjects, m_gameObjectsLock);
@@ -30,6 +37,9 @@ namespace ThomasEditor {
 				return %m_gameObjects;
 			}
 		}
+
+		void UnLoad();
+		void PostLoad();
 
 		static property Scene^ CurrentScene {
 			Scene^ get() {

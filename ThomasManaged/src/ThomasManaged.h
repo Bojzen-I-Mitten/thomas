@@ -228,5 +228,13 @@ namespace ThomasEditor {
 			}
 			thomas::ThomasCore::ClearLogOutput();
 		}
+
+		static void TestSerialize() {
+
+			
+		}
 	};
+
+
+
 }

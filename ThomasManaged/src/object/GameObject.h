@@ -24,8 +24,30 @@ namespace ThomasEditor {
 		ObservableCollection<Component^> m_components;
 		Transform^ m_transform;
 		Scene^ scene;
-	internal:
+
 		
+
+		GameObject() : Object(new thomas::object::GameObject("gameobject")) {
+			s_lastObject = this;
+			m_name = "gameobject";
+			System::Windows::Data::BindingOperations::EnableCollectionSynchronization(%m_components, m_componentsLock);
+		}
+
+	internal:
+		void PostLoad()
+		{
+
+			for (int i = 0; i < m_components.Count; i++)
+			{
+				Component^ component = m_components[i];
+
+				Type^ typ = component->GetType();
+				if (typ->IsDefined(ExecuteInEditor::typeid, false)) {
+					component->Awake();
+				}
+			}
+			
+		}
 		
 		void Awake()
 		{
@@ -48,9 +70,9 @@ namespace ThomasEditor {
 
 		void RenderGizmos()
 		{
-			for each(Component^ component in m_components)
+			for (int i = 0; i < m_components.Count; i++)
 			{
-				component->OnDrawGizmos();
+				m_components[i]->OnDrawGizmos();
 			}
 		}
 
@@ -64,6 +86,8 @@ namespace ThomasEditor {
 		}
 
 	public:
+		static GameObject^ s_lastObject;
+
 		GameObject(String^ name) : Object(new thomas::object::GameObject(msclr::interop::marshal_as<std::string>(name))) {
 			m_name = name;
 			m_transform = AddComponent<Transform^>();
@@ -76,9 +100,9 @@ namespace ThomasEditor {
 
 		virtual void Destroy() override
 		{
-			for each(Component^ component in m_components)
-			{
-				component->Destroy();
+			for (int i = 0; i < m_components.Count; i++) {
+				m_components[i]->Destroy();
+				i--;
 			}
 			thomas::object::Object::Destroy(nativePtr);
 			m_components.Clear();
@@ -108,6 +132,14 @@ namespace ThomasEditor {
 		property Transform^ transform {
 			Transform^ get() {
 				return m_transform;
+			}
+			void set(Transform^ value) {
+				if (value)
+				{
+					m_transform = value;
+					((thomas::object::GameObject*)nativePtr)->m_transform = (thomas::object::component::Transform*)m_transform->nativePtr;
+				}
+				
 			}
 		}
 

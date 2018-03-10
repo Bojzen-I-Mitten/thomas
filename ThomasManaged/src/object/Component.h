@@ -9,19 +9,23 @@ using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::ComponentModel;
 
-
 namespace ThomasEditor {
+
+
 
 	ref class GameObject;
 	public ref class Component : public Object
 	{
+		Component();
 	internal:
-		Component(thomas::object::component::Component* ptr) : Object(ptr) {};
-		GameObject^ m_gameObject;
+		Component(thomas::object::component::Component* ptr);
+		
 		void setGameObject(GameObject^ gObj);
 		virtual void Update() {};
 		virtual void OnDrawGizmosSelected() { ((thomas::object::component::Component*)nativePtr)->OnDrawGizmosSelected(); }
 		virtual void OnDrawGizmos() { ((thomas::object::component::Component*)nativePtr)->OnDrawGizmos(); }
+
+		GameObject^ m_gameObject;
 
 	private:
 		bool m_awake = false;
