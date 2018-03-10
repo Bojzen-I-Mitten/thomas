@@ -202,6 +202,7 @@ namespace ThomasEditor
         private void AddEmptyGameObject(object sender, RoutedEventArgs e)
         {
             var x = new GameObject("gameObject");
+            ThomasWrapper.SelectGameObject(x);
         }
 
         private void OpenOptionsWindow_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -212,7 +213,6 @@ namespace ThomasEditor
         private void OpenOptionsWindow(object sender, RoutedEventArgs e)
         {
             OptionsWindow oW = new OptionsWindow();
-            //oW.Show();
             oW.ShowDialog();
             oW.Focus();
         }

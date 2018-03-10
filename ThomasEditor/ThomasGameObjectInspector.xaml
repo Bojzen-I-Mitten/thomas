@@ -13,8 +13,8 @@
 
     <UserControl.Resources>
 
-        <local:Vector3Converter x:Key="convertVector3" x:Shared="False"/>
         <local:ComponentToNameConverter x:Key="converter"/>
+        <local:Vector3Converter x:Key="convertVector3" x:Shared="False"/>
 
         <DataTemplate x:Key="Vector3Editor" x:Name="vector3Test">
             <Grid>
@@ -69,7 +69,7 @@
                             <xctk:PropertyGrid.EditorDefinitions>
                                 <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource Vector3Editor}">
                                     <xctk:EditorTemplateDefinition.TargetProperties>
-                                        <xctk:TargetPropertyType Type="{x:Type managed:Vector3}"/>
+                                        <xctk:TargetPropertyType Type="managed:Vector3"/>
                                     </xctk:EditorTemplateDefinition.TargetProperties>
                                 </xctk:EditorTemplateDefinition>
                             </xctk:PropertyGrid.EditorDefinitions>
