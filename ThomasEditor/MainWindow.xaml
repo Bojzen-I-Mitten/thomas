@@ -54,8 +54,8 @@
             <Menu DockPanel.Dock="Top" Grid.Row="0">
                 <MenuItem Header="_File">
                     <MenuItem Header="_New"/>
-                    <MenuItem Header="_Save(test)" Click="SaveScene_Click"/>
-                    <MenuItem Header="_Load(test)" Click="LoadScene_Click"/>
+                    <MenuItem Header="_Save Scene As" Click="SaveScene_Click"/>
+                    <MenuItem Header="_Load Scene" Click="LoadScene_Click"/>
                 </MenuItem>
                 <MenuItem Header="_Edit">
 

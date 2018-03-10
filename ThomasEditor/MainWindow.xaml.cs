@@ -19,6 +19,7 @@ using System.ComponentModel;
 using System.Windows.Threading;
 
 using System.Runtime.Serialization;
+using System.IO;
 
 namespace ThomasEditor
 {
@@ -296,11 +297,25 @@ namespace ThomasEditor
 
             XmlSerializer writer = new XmlSerializer(typeof(Scene), allComponentTypes.ToArray());
 
-            System.IO.TextWriter file = new System.IO.StreamWriter("test.xml");
+           
 
-            writer.Serialize(file, Scene.CurrentScene);
 
-            file.Close();
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+            saveFileDialog.Filter = "Thomas Dank Scene (*.tds) |*.tds";
+
+            string CombinedPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "..\\Data");
+
+            saveFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.FileName = Scene.CurrentScene.Name;
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                System.IO.TextWriter file = new System.IO.StreamWriter(saveFileDialog.FileName);
+                writer.Serialize(file, Scene.CurrentScene);
+                file.Close();
+                string filename = System.IO.Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
+                Scene.CurrentScene.Name = filename;
+            }
 
         }
 
@@ -325,34 +340,48 @@ namespace ThomasEditor
 
             XmlSerializer serializer = new XmlSerializer(typeof(Scene), allComponentTypes.ToArray());
 
-            System.IO.TextReader file = new System.IO.StreamReader("test.xml");
-
-
-            Scene.CurrentScene.GameObjects.CollectionChanged -= GameObjects_CollectionChanged;
-
-            Scene.CurrentScene.UnLoad();
-            Scene scene = (Scene)serializer.Deserialize(file);
             
-            Scene.CurrentScene = scene;
-            //scene.PostLoad();
-            file.Close();
 
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            openFileDialog.Filter = "Thomas Dank Scene (*.tds) |*.tds";
 
-            thomasObjects.Items.Clear();
+            string CombinedPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "..\\Data");
 
-            foreach (GameObject newItem in Scene.CurrentScene.GameObjects)
+            openFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
+            openFileDialog.RestoreDirectory = true;
+            if (openFileDialog.ShowDialog() == true)
             {
-                if (newItem.transform.parent == null)
+                System.IO.TextReader file = new System.IO.StreamReader(openFileDialog.FileName);
+                Scene.CurrentScene.GameObjects.CollectionChanged -= GameObjects_CollectionChanged;
+
+                Scene.CurrentScene.UnLoad();
+                Scene scene = (Scene)serializer.Deserialize(file);
+
+                Scene.CurrentScene = scene;
+                file.Close();
+
+
+                thomasObjects.Items.Clear();
+
+                foreach (GameObject newItem in Scene.CurrentScene.GameObjects)
                 {
-                    TreeViewItem node = new TreeViewItem { DataContext = newItem };
-                    node.MouseRightButtonUp += Node_MouseRightButtonUp;
-                    node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
-                    BuildTree(newItem.transform, node);
-                    thomasObjects.Items.Add(node);
+                    if (newItem.transform.parent == null)
+                    {
+                        TreeViewItem node = new TreeViewItem { DataContext = newItem };
+                        node.MouseRightButtonUp += Node_MouseRightButtonUp;
+                        node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
+                        BuildTree(newItem.transform, node);
+                        thomasObjects.Items.Add(node);
+                    }
                 }
+                Scene.CurrentScene.PostLoad();
+                Scene.CurrentScene.GameObjects.CollectionChanged += GameObjects_CollectionChanged;
+
             }
-            Scene.CurrentScene.PostLoad();
-            Scene.CurrentScene.GameObjects.CollectionChanged += GameObjects_CollectionChanged;
+
+
+
+           
         }
     }
 
