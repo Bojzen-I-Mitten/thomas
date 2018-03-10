@@ -1,5 +1,5 @@
 #include "SoundComponent.h"
-//#include "../../Sound.h"
+#include "../../Sound.h"
 
 namespace thomas
 {
@@ -21,7 +21,6 @@ namespace thomas
 
 			bool SoundComponent::SetClip(std::string name)
 			{
-				return true;/*
 				m_instance = Sound::CreateInstance(name);
 				if (m_instance)
 				{
@@ -31,7 +30,6 @@ namespace thomas
 				}
 				else
 					return false;
-					*/
 			}
 
 			std::string SoundComponent::GetName()
@@ -46,7 +44,7 @@ namespace thomas
 				m_volume = volume;
 				if (m_instance)
 				{
-					//m_instance->SetVolume(volume*Sound::GetMusicVolume());
+					m_instance->SetVolume(volume*Sound::GetMusicVolume());
 					
 				}
 				return true;
@@ -61,7 +59,7 @@ namespace thomas
 			{
 				if (m_instance)
 				{
-					//m_instance->Play(m_looping);
+					m_instance->Play(m_looping);
 					return true;
 				}
 				else
@@ -72,14 +70,14 @@ namespace thomas
 			bool SoundComponent::PlayOneShot(std::string name, float volume)
 			{
 				return true;
-				//return Sound::Play(name, volume);
+				return Sound::Play(name, volume);
 			}
 
 			void SoundComponent::Pause()
 			{
 				if (m_instance)
 				{
-					//m_instance->Pause();
+					m_instance->Pause();
 				}
 			}
 
@@ -87,7 +85,7 @@ namespace thomas
 			{
 				if (m_instance)
 				{
-					//m_instance->Resume();
+					m_instance->Resume();
 				}
 			}
 
@@ -100,8 +98,6 @@ namespace thomas
 			{
 				return m_looping;
 			}
-
 		}
 	}
 }
-
