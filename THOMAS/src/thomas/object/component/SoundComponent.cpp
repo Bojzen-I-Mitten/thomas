@@ -29,7 +29,16 @@ namespace thomas
 					return true;
 				}
 				else
-					return false;
+				{
+					Sound::LoadWaveBank(name);
+					Sound::LoadWave(name);
+
+					m_instance = Sound::CreateInstance(name);
+					m_instance->SetVolume(m_volume);
+					m_name = name;
+					return true;
+					//return false;
+				}
 			}
 
 			std::string SoundComponent::GetName()
