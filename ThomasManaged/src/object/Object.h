@@ -9,6 +9,8 @@ using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::ComponentModel;
 namespace ThomasEditor {
+
+	[SerializableAttribute]
 	public ref class Object: public INotifyPropertyChanged
 	{
 		static List<Object^> s_objects;

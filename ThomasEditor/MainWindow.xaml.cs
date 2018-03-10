@@ -13,10 +13,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Interop;
-
+using System.Xml.Serialization;
 using System.Reflection;
 using System.ComponentModel;
 using System.Windows.Threading;
+
+using System.Runtime.Serialization;
 
 namespace ThomasEditor
 {
@@ -266,6 +268,86 @@ namespace ThomasEditor
 
             }
             ThomasWrapper.Play();
+        }
+
+        private void SaveScene_Click(object sender, RoutedEventArgs e)
+        {
+            Type componenType = typeof(Component);
+            List<Type> componenTypesFromEngine = Assembly.GetAssembly(componenType).GetTypes()
+                .Where(t =>
+                t != componenType &&
+                componenType.IsAssignableFrom(t)
+                ).ToList();
+
+            List<Type> componentTypesFromEditor = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t =>
+                t != componenType &&
+                componenType.IsAssignableFrom(t)
+                ).ToList();
+
+            List<Type> allComponentTypes = new List<Type>();
+            allComponentTypes.AddRange(componenTypesFromEngine);
+            allComponentTypes.AddRange(componentTypesFromEditor);
+
+            XmlSerializer writer = new XmlSerializer(typeof(Scene), allComponentTypes.ToArray());
+
+            System.IO.TextWriter file = new System.IO.StreamWriter("test.xml");
+
+            writer.Serialize(file, Scene.CurrentScene);
+
+            file.Close();
+
+        }
+
+        private void LoadScene_Click(object sender, RoutedEventArgs e)
+        {
+            Type componenType = typeof(Component);
+            List<Type> componenTypesFromEngine = Assembly.GetAssembly(componenType).GetTypes()
+                .Where(t =>
+                t != componenType &&
+                componenType.IsAssignableFrom(t)
+                ).ToList();
+
+            List<Type> componentTypesFromEditor = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t =>
+                t != componenType &&
+                componenType.IsAssignableFrom(t)
+                ).ToList();
+
+            List<Type> allComponentTypes = new List<Type>();
+            allComponentTypes.AddRange(componenTypesFromEngine);
+            allComponentTypes.AddRange(componentTypesFromEditor);
+
+            XmlSerializer serializer = new XmlSerializer(typeof(Scene), allComponentTypes.ToArray());
+
+            System.IO.TextReader file = new System.IO.StreamReader("test.xml");
+
+
+            Scene.CurrentScene.GameObjects.CollectionChanged -= GameObjects_CollectionChanged;
+
+            Scene.CurrentScene.UnLoad();
+            Scene scene = (Scene)serializer.Deserialize(file);
+            
+            Scene.CurrentScene = scene;
+            //scene.PostLoad();
+            file.Close();
+
+
+            thomasObjects.Items.Clear();
+
+            foreach (GameObject newItem in Scene.CurrentScene.GameObjects)
+            {
+                if (newItem.transform.parent == null)
+                {
+                    TreeViewItem node = new TreeViewItem { DataContext = newItem };
+                    node.MouseRightButtonUp += Node_MouseRightButtonUp;
+                    node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
+                    BuildTree(newItem.transform, node);
+                    thomasObjects.Items.Add(node);
+                }
+            }
+            Scene.CurrentScene.PostLoad();
+            Scene.CurrentScene.GameObjects.CollectionChanged += GameObjects_CollectionChanged;
         }
     }
 

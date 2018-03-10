@@ -154,7 +154,8 @@ namespace ThomasEditor
         {
             Button button = (Button)sender;
             Component component = (Component)button.DataContext;
-            component.Destroy();
+            if(component.GetType() != typeof(Transform))
+                component.Destroy();
         }
     }
 

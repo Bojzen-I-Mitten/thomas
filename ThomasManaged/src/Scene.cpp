@@ -8,3 +8,20 @@ void ThomasEditor::Scene::Play()
 			gObj->Awake();
 		}
 }
+
+void ThomasEditor::Scene::UnLoad()
+{
+	for each(GameObject^ gObj in m_gameObjects)
+	{
+		gObj->Destroy();
+	}
+	m_gameObjects.Clear();
+}
+
+void ThomasEditor::Scene::PostLoad()
+{
+	for each(GameObject^ gObj in m_gameObjects)
+	{
+		gObj->PostLoad();
+	}
+}

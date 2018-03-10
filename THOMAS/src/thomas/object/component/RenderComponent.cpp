@@ -53,8 +53,11 @@ namespace thomas {
 				
 				std::vector<graphics::RenderPair*> setPairs;
 				for (auto pair : m_renderPairs)
-					if (pair->material)
+					if (pair->material) {
+						pair->transform = m_gameObject->m_transform;
 						thomas::graphics::Renderer::AddToRenderQueue(pair);
+					}
+						
 			}
 			void RenderComponent::SetMaterial(int meshIndex, graphics::Material * material)
 			{
