@@ -10,16 +10,16 @@
 #include "Component.h"
 #include "component\Transform.h"
 #include "../attributes/CustomAttributes.h"
-
+#using "PresentationFramework.dll"
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::Collections::ObjectModel;
-
+using namespace System::Threading;
 namespace ThomasEditor {
 
 	public ref class GameObject : public Object
 	{
-		
+		System::Object^ m_componentsLock = gcnew System::Object();
 		ObservableCollection<Component^> m_components;
 		Transform^ m_transform;
 		static ObservableCollection<GameObject^> s_gameObjects;
@@ -41,16 +41,17 @@ namespace ThomasEditor {
 			{
 				if (!component->IsAwake())
 					component->Awake();
+
 			}
 		}
 		void UpdateComponents()
 		{
-			for each(Component^ component in m_components)
+			for (int i = 0; i < m_components.Count; i++)
 			{
-				if(component->IsAwake())
+				Component^ component = m_components[i];
+				if (component->IsAwake())
 					component->Update();
 			}
-				
 		}
 
 		void RenderGizmos()
@@ -63,6 +64,7 @@ namespace ThomasEditor {
 
 		void RenderSelectedGizmos()
 		{
+			
 			for each(Component^ component in m_components)
 			{
 				component->OnDrawGizmosSelected();
@@ -75,6 +77,7 @@ namespace ThomasEditor {
 			m_transform = AddComponent<Transform^>();
 			((thomas::object::GameObject*)nativePtr)->m_transform = (thomas::object::component::Transform*)m_transform->nativePtr;
 			s_gameObjects.Add(this);
+			System::Windows::Data::BindingOperations::EnableCollectionSynchronization(%m_components, m_componentsLock);
 			
 		}
 
@@ -119,9 +122,6 @@ namespace ThomasEditor {
 			ObservableCollection<Component^>^ get() {
 				return %m_components;
 			}
-			/*void set(ObservableCollection<Component^>^ value){
-				m_components = value;
-			}*/
 		}
 
 		static property ObservableCollection<GameObject^>^ GameObjects {

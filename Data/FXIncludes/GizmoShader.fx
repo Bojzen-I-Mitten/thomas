@@ -24,6 +24,19 @@ RasterizerState SolidRasterizer
 	DepthClipEnable = FALSE;
 };
 
+BlendState AlphaBlendingOn
+{
+	BlendEnable[0] = TRUE;
+	SrcBlend = SRC_ALPHA;
+	DestBlend = INV_SRC_ALPHA;
+	BlendOp = ADD;
+	SrcBlendAlpha = ZERO;
+	DestBlendAlpha = ZERO;
+	BlendOpAlpha = ADD;
+	RenderTargetWriteMask[0] = 0x0F;
+
+};
+
 RasterizerState WireframeRasterizer
 {
 	FillMode = WIREFRAME;
@@ -58,6 +71,7 @@ technique11 Standard {
 		FRAG(frag());
 		SetDepthStencilState(EnableDepth, 0);
 		SetRasterizerState(SolidRasterizer);
+		SetBlendState(AlphaBlendingOn, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 
 	pass WIREFRAME {
@@ -66,6 +80,7 @@ technique11 Standard {
 		FRAG(frag());
 		SetDepthStencilState(EnableDepth, 0);
 		SetRasterizerState(WireframeRasterizer);
+		SetBlendState(AlphaBlendingOn, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 
 
