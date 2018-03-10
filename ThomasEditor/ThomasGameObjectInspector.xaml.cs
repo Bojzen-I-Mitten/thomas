@@ -120,6 +120,10 @@ namespace ThomasEditor
             CollectionViewSource.GetDefaultView(addComponentList.ItemsSource).Filter = ComponentsFilter;
         }
 
+        private void AddComponent_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
 
         private void AddComponentsListContainer_LostFocus(object sender, RoutedEventArgs e)
         {
