@@ -22,7 +22,7 @@ namespace ThomasEditor
             if (Input.GetKeyDown(Input.Keys.Space))
             {
                 testVar = 10;
-                gameObject.GetComponent<SoundComponent>().Play();
+                //gameObject.GetComponent<SoundComponent>().Play();
                 
                 
             }

@@ -265,9 +265,14 @@ namespace ThomasEditor
         {
             if(ThomasWrapper.IsPlaying())
             {
-
+                
             }
             ThomasWrapper.Play();
+        }
+
+        private void Play_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
         }
 
         private void SaveScene_Click(object sender, RoutedEventArgs e)

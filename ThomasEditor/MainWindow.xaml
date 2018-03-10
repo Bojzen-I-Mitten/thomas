@@ -18,7 +18,8 @@
     -->
     <Window.CommandBindings>
         <CommandBinding Command="commands:CustomCommands.GetNewEmptyObject" CanExecute="NewEmptyObject_CanExecute" Executed="AddEmptyGameObject"/>
-        <CommandBinding Command="{x:Static commands:CustomCommands.GetOpenOptionsWindow}" CanExecute="OpenOptionsWindow_CanExecute" Executed="OpenOptionsWindow"/>
+        <CommandBinding Command="commands:CustomCommands.GetOpenOptionsWindow" CanExecute="OpenOptionsWindow_CanExecute" Executed="OpenOptionsWindow"/>
+        <CommandBinding Command="commands:CustomCommands.GetPlay" CanExecute="Play_CanExecute" Executed="PlayPauseButton_Click" />
     </Window.CommandBindings>
     
     <Window.Resources>
@@ -76,7 +77,7 @@
                 </MenuItem>
             </Menu>
             <WrapPanel Grid.Row="1" Width="100">
-                <Button  Width="50" Height="50" x:Name="playPauseButton" Click="PlayPauseButton_Click">
+                <Button  Width="50" Height="50" x:Name="playPauseButton" Command="commands:CustomCommands.GetPlay" >
                     <Button.Content>
                         <Image Source="icons/play.png"/>
                     </Button.Content>
