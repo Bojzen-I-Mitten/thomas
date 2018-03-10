@@ -6,10 +6,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:local="clr-namespace:ThomasEditor"
+        xmlns:commands="clr-namespace:ThomasEditor.Commands"
         mc:Ignorable="d"
         Title="Thomas Editor">
 
-
+    <!--
+    This is for custom commands
+    Command is fetched from CustomeCommands.cs
+    CanExecute and Executed are fuctions implemented in .cs file where they are wanted. NewEmptyObject_CanExecute is needed so that the item can be clicked.
+    AddEmptyGameObject is executed when the item is clicked.
+    -->
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static commands:CustomCommands.GetNewEmptyObject}" CanExecute="NewEmptyObject_CanExecute" Executed="AddEmptyGameObject"/>
+        <CommandBinding Command="{x:Static commands:CustomCommands.GetOpenOptionsWindow}" CanExecute="OpenOptionsWindow_CanExecute" Executed="OpenOptionsWindow"/>
+    </Window.CommandBindings>
+    
     <Window.Resources>
         <ResourceDictionary>
             <ContextMenu x:Key="gameObjectContext">
@@ -19,8 +30,6 @@
                 <xcad:AvalonDockMetroDarkThemeResourceDictionary AccentBrush="DarkBlue"/>
             </ResourceDictionary.MergedDictionaries>-->
         </ResourceDictionary>
-        
-        
     </Window.Resources>
 
     <Grid Background="Gray">
@@ -49,7 +58,8 @@
 
                 </MenuItem>
                 <MenuItem Header="_GameObject">
-                    <MenuItem Header="_Create Empty" Click="AddEmptyGameObject"/>
+                    <!--Using custom command. Only need to set the command.-->
+                    <MenuItem Command="{x:Static commands:CustomCommands.GetNewEmptyObject}"/>
                 </MenuItem>
 
                 <MenuItem Header="_Resource">
@@ -58,6 +68,9 @@
 
                 <MenuItem Header="_Temp">
                     <MenuItem Header="_Recompile Shader" Click="Recompile_Shader_Click"/>
+                </MenuItem>
+                <MenuItem Header="_Tools">
+                    <MenuItem Command="{x:Static commands:CustomCommands.GetOpenOptionsWindow}"/>
                 </MenuItem>
             </Menu>
             <WrapPanel Grid.Row="1" Width="100">
