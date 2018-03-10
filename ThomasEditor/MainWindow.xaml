@@ -17,7 +17,7 @@
     AddEmptyGameObject is executed when the item is clicked.
     -->
     <Window.CommandBindings>
-        <CommandBinding Command="{x:Static commands:CustomCommands.GetNewEmptyObject}" CanExecute="NewEmptyObject_CanExecute" Executed="AddEmptyGameObject"/>
+        <CommandBinding Command="commands:CustomCommands.GetNewEmptyObject" CanExecute="NewEmptyObject_CanExecute" Executed="AddEmptyGameObject"/>
         <CommandBinding Command="{x:Static commands:CustomCommands.GetOpenOptionsWindow}" CanExecute="OpenOptionsWindow_CanExecute" Executed="OpenOptionsWindow"/>
     </Window.CommandBindings>
     
