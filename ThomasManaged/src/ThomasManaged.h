@@ -13,6 +13,7 @@
 #include <thomas\graphics\Shader.h>
 #include <thomas\graphics\Renderer.h>
 #include <thomas\utils\AssimpLoader.h>
+
 #pragma managed
 //#include <Sound.h>
 
@@ -55,6 +56,7 @@ namespace ThomasEditor {
 
 		static void StartEngine()
 		{
+
 			while (ThomasCore::Initialized())
 			{
 				{

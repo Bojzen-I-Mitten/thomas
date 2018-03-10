@@ -32,6 +32,12 @@ namespace ThomasEditor {
 
 		bool IsPlaying() { return m_playing; }
 
+
+		property System::String^ Name {
+			System::String^ get() { return m_name; }
+			void set(System::String^ value) { m_name = value; }
+		}
+
 		property System::Collections::ObjectModel::ObservableCollection<GameObject^>^ GameObjects {
 			System::Collections::ObjectModel::ObservableCollection<GameObject^>^ get() {
 				return %m_gameObjects;
