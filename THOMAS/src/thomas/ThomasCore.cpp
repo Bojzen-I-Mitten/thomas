@@ -54,7 +54,7 @@ namespace thomas {
 		if (init)
 			init = ThomasTime::Init();
 
-		if (init)
+		//if (init)
 			init = Sound::Init();
 
 

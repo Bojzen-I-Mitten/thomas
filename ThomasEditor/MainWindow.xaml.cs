@@ -48,7 +48,7 @@ namespace ThomasEditor
             thomasObjects.SelectedItemChanged += ThomasObjects_SelectedItemChanged;
 
 
-            Scene.CurrentScene.GameObjects.CollectionChanged += GameObjects_CollectionChanged;
+            //Scene.CurrentScene.GameObjects.CollectionChanged += GameObjects_CollectionChanged;
             ThomasWrapper.OutputLog.CollectionChanged += OutputLog_CollectionChanged;
             ThomasWrapper.SelectedGameObjects.CollectionChanged += SelectedGameObjects_CollectionChanged;
         }
@@ -225,7 +225,7 @@ namespace ThomasEditor
 
         private void LoadWaveFile(object sender, RoutedEventArgs e)
         {
-           // var x = new 
+            var x = ThomasEditor.Resources.Load<AudioClip>("..\\Data\\test.wav");
         }
 
         private void Console_ScrollChanged(object sender, ScrollChangedEventArgs e)
