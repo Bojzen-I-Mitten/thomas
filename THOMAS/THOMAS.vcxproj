@@ -56,6 +56,8 @@
     <ClCompile Include="src\thomas\object\GameObject.cpp" />
     <ClCompile Include="src\thomas\object\Object.cpp" />
     <ClCompile Include="src\thomas\Physics.cpp" />
+    <ClCompile Include="src\thomas\resource\AudioClip.cpp" />
+    <ClCompile Include="src\thomas\resource\Resource.cpp" />
     <ClCompile Include="src\thomas\Sound.cpp" />
     <ClCompile Include="src\thomas\ThomasCore.cpp" />
     <ClCompile Include="src\thomas\ThomasTime.cpp" />
@@ -110,6 +112,9 @@
     <ClInclude Include="src\thomas\object\GameObject.h" />
     <ClInclude Include="src\thomas\object\Object.h" />
     <ClInclude Include="src\thomas\Physics.h" />
+    <ClInclude Include="src\thomas\resource\AudioClip.h" />
+    <ClInclude Include="src\thomas\resource\Resource.h" />
+    <ClInclude Include="src\thomas\resource\Resources.h" />
     <ClInclude Include="src\thomas\Sound.h" />
     <ClInclude Include="src\thomas\Thomas.h" />
     <ClInclude Include="src\thomas\ThomasCore.h" />
