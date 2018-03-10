@@ -31,8 +31,14 @@ DepthStencilState EnableDepth
 BlendState AlphaBlendingOn
 {
 	BlendEnable[0] = TRUE;
-	DestBlend = INV_SRC_ALPHA;
 	SrcBlend = SRC_ALPHA;
+	DestBlend = INV_SRC_ALPHA;
+	BlendOp = ADD;
+	SrcBlendAlpha = ZERO;
+	DestBlendAlpha = ZERO;
+	BlendOpAlpha = ADD;
+	RenderTargetWriteMask[0] = 0x0F;
+
 };
 
 RasterizerState TestRasterizer
@@ -53,7 +59,6 @@ VS_OUT VSMain(VS_IN input)
 	float4 positionW = mul(thomas_ObjectToWorld, float4(input.Pos, 1.0));
 	float2 dist = distance(positionW.xz, cameraPos.xz) * 1 / input.viewDistance;
 	dist -= pow(cameraPos.y + 1, 1.5f);
-	dist += cameraPos.y*(1 - input.viewDistance)*50000;
 	dist /= gridScale;
 	output.Color = input.Color;
 	output.Color.w = 1.0f - (dist / 10.0f);

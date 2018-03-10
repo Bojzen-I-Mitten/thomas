@@ -119,14 +119,14 @@ namespace thomas
 		void EditorCamera::renderCamera()
 		{		
 			thomas::graphics::Renderer::BindCamera(m_cameraComponent);
-			m_grid->Draw(m_cameraComponent->GetPosition());
+			
 			renderSelectedObjects();
 			thomas::graphics::Renderer::Render();
-
-			
-
 			renderGizmos();
 			Physics::DrawDebug(m_cameraComponent);
+			m_grid->Draw(m_cameraComponent->GetPosition());
+
+			
 		}
 		void EditorCamera::updateCamera()
 		{
