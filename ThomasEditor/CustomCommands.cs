@@ -10,13 +10,16 @@ namespace ThomasEditor.Commands
     public static class CustomCommands
     {
         //Please do this if you add new bindings
-        private static Key openOptionsMenu = Key.O;
         private static Key addNewEmptyObject = Key.N;
+        private static Key openOptionsMenu = Key.O;
+        private static Key play = Key.F5;
 
         public static Key GetOpenOptionsMenuKey() { return openOptionsMenu; }
         public static void SetOpenOptionsMenuKey(Key set) { openOptionsMenu = set; }
         public static Key GetaddNewEmptyObjectKey() { return addNewEmptyObject; }
         public static void SetaddNewEmptyObjectKey(Key set) { addNewEmptyObject = set; }
+        public static Key GetPlayKey() { return play; }
+        public static void SetPlayKey(Key set) { play = set; }
 
 
 
@@ -32,7 +35,7 @@ namespace ThomasEditor.Commands
                 typeof(CustomCommands), //Owner of command
                 new InputGestureCollection()
                 {
-                    new KeyGesture(Key.N, ModifierKeys.Control)
+                    new KeyGesture(addNewEmptyObject, ModifierKeys.Control)
                 }
             );
 
@@ -43,11 +46,23 @@ namespace ThomasEditor.Commands
                 typeof(CustomCommands),
                 new InputGestureCollection()
                 {
-                    new KeyGesture(Key.O, ModifierKeys.Control)
+                    new KeyGesture(openOptionsMenu, ModifierKeys.Control)
+                }
+            );
+
+        public static readonly RoutedUICommand Play = new RoutedUICommand
+            (
+                "Play",
+                "Play",
+                typeof(CustomCommands),
+                new InputGestureCollection()
+                {
+                    new KeyGesture(play, ModifierKeys.None)
                 }
             );
 
         public static RoutedUICommand GetNewEmptyObject { get { return NewEmptyObject; } }
         public static RoutedUICommand GetOpenOptionsWindow { get { return OpenOptionsWindow; } }
+        public static RoutedUICommand GetPlay { get { return Play; } }
     }
 }
