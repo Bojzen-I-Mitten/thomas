@@ -20,7 +20,7 @@
 #define PROPERTIES_END };
 
 #include "ThomasShaderVariables.fx"
-#include "ThomasShaderUtilities.fx"
+//#include "ThomasShaderUtilities.fx"
 
 #ifdef THOMAS_COLORSPACE_GAMMA
 #define thomas_ColorSpaceGrey float4(0.5, 0.5, 0.5, 0.5)
@@ -127,6 +127,26 @@ inline float4 ThomasWorldToClipPos( in float3 pos )
     return mul(THOMAS_MATRIX_VP, float4(pos, 1.0));
 }
 
+// Tranforms position from object to homogenous space
+inline float4 ThomasObjectToClipPos(in float3 pos)
+{
+	// More efficient than computing M*VP matrix product
+	return mul(THOMAS_MATRIX_VP, mul(thomas_ObjectToWorld, float4(pos, 1.0)));
+}
+inline float4 ThomasObjectToClipPos(float4 pos) // overload for float4; avoids "implicit truncation" warning
+{
+	return ThomasObjectToClipPos(pos.xyz);
+}
+
+inline float4 ThomasObjectToWorldPos(float4 pos) 
+{
+	return mul(thomas_ObjectToWorld, pos);
+}
+inline float4 ThomasObjectToWorldPos(float3 pos) // overload for float3; 
+{
+	return ThomasObjectToWorldPos(float4(pos, 1.0f));
+}
+
 // Tranforms position from view to homogenous space
 inline float4 ThomasViewToClipPos( in float3 pos )
 {
@@ -167,14 +187,13 @@ inline float2 TransformViewToProjection(float2 v) { return float2(v.x*THOMAS_MAT
 // Transforms normal from object to world space
 inline float3 ThomasObjectToWorldNormal( in float3 norm )
 {
-#ifdef THOMAS_ASSUME_UNIFORM_SCALING
     return ThomasObjectToWorldDir(norm);
-#else
-    // mul(IT_M, norm) => mul(norm, I_M) => {dot(norm, I_M.col0), dot(norm, I_M.col1), dot(norm, I_M.col2)}
-    return normalize(mul(norm, (float3x3)thomas_WorldToObject));
-#endif
 }
 
+inline float4 ThomasObjectToWorldNormal(in float4 norm)
+{
+	return float4(ThomasObjectToWorldDir(norm.xyz), 0);
+}
 /*
 
 // Computes world space light direction, from world space position
