@@ -31,7 +31,7 @@ namespace thomas
 				std::string m_name;
 				float m_volume;
 				bool m_looping;
-				std::unique_ptr<int> m_instance;
+				std::unique_ptr<DirectX::SoundEffectInstance> m_instance;
 			};
 		}
 	}

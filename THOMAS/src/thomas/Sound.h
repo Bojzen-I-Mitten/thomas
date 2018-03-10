@@ -14,7 +14,7 @@ namespace thomas
 	public:
 		static bool Init();
 		static bool Play(std::string name, float volume);
-		static std::unique_ptr<DirectX::SoundEffectInstance> CreateInstance(std::string clipName, DirectX::SOUND_EFFECT_INSTANCE_FLAGS flags);
+		static std::unique_ptr<DirectX::SoundEffectInstance> CreateInstance(std::string clipName, DirectX::SOUND_EFFECT_INSTANCE_FLAGS flags = DirectX::SoundEffectInstance_Default);
 		static void SetMasterVolume(float volume);
 		static void SetFxVolume(float volume);
 		static void SetMusicVolume(float volume);

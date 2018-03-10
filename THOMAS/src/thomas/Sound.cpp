@@ -46,7 +46,7 @@ namespace thomas
 		return true;
 	}
 
-	std::unique_ptr<DirectX::SoundEffectInstance> Sound::CreateInstance(std::string clipName, DirectX::SOUND_EFFECT_INSTANCE_FLAGS flags = DirectX::SoundEffectInstance_Default)
+	std::unique_ptr<DirectX::SoundEffectInstance> Sound::CreateInstance(std::string clipName, DirectX::SOUND_EFFECT_INSTANCE_FLAGS flags)
 	{
 		std::unique_ptr<DirectX::SoundEffectInstance> instance = NULL;
 
