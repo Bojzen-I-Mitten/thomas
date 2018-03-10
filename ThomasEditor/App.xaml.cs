@@ -20,7 +20,7 @@ namespace ThomasEditor
 
         protected override void OnExit(ExitEventArgs e)
         {
-            ThomasWrapper.Stop();
+            ThomasWrapper.Exit();
         }
     }
 }

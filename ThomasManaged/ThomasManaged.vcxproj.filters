@@ -39,9 +39,6 @@
     <ClInclude Include="src\math\Math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Tests\TestScene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\object\component\ScriptComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -56,7 +56,7 @@
                 </MenuItem>
             </Menu>
             <WrapPanel Grid.Row="1" Width="100">
-                <Button  Width="50" Height="50" Click="PlayButton_Click">
+                <Button  Width="50" Height="50" x:Name="playPauseButton" Click="PlayPauseButton_Click">
                     <Button.Content>
                         <Image Source="icons/play.png"/>
                     </Button.Content>

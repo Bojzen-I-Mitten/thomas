@@ -38,6 +38,15 @@ namespace thomas {
 			static void Render();
 			static void BindObject(thomas::graphics::Material* material, thomas::object::component::Transform* transform);
 			static void BindCamera(thomas::object::component::Camera* camera);
+			static void ClearRenderQueue();
+
+			static void AddToRenderQueue(graphics::RenderPair* renderPair);
+			static std::vector<graphics::RenderPair*> GetRenderQueue();
+		private:
+			
+			
+			static std::vector<graphics::RenderPair*> s_renderQueue;
+			static std::vector<graphics::RenderPair*> s_lastFramesRenederQueue;
 		};
 	}
 }
