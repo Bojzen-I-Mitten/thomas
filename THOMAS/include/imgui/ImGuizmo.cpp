@@ -715,7 +715,7 @@ namespace ImGuizmo
       gContext.mMode = mode;
       gContext.mViewMat = *(matrix_t*)view;
       gContext.mProjectionMat = *(matrix_t*)projection;
-      
+     
       if (mode == LOCAL)
       {
          gContext.mModel = *(matrix_t*)matrix;
@@ -725,6 +725,8 @@ namespace ImGuizmo
       {
          gContext.mModel.Translation(((matrix_t*)matrix)->v.position);
       }
+
+
       gContext.mModelSource = *(matrix_t*)matrix;
       gContext.mModelScaleOrigin.Set(gContext.mModelSource.v.right.Length(), gContext.mModelSource.v.up.Length(), gContext.mModelSource.v.dir.Length());
 
@@ -745,6 +747,8 @@ namespace ImGuizmo
       gContext.mScreenSquareCenter = centerSSpace;
       gContext.mScreenSquareMin = ImVec2(centerSSpace.x - 10.f, centerSSpace.y - 10.f);
       gContext.mScreenSquareMax = ImVec2(centerSSpace.x + 10.f, centerSSpace.y + 10.f);
+
+
 
       ComputeCameraRay(gContext.mRayOrigin, gContext.mRayVector);
    }

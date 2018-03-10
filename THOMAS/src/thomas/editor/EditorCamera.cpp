@@ -130,13 +130,14 @@ namespace thomas
 		}
 		void EditorCamera::updateCamera()
 		{
+			m_manipulatorSnapping = false;
 			HWND focus = GetForegroundWindow();
 
 			if (!Window::GetEditorWindow())
 				return;
 
 				
-
+			
 			if (Input::GetMouseButtonDown(Input::MouseButtons::RIGHT))
 			{
 				Input::SetMouseMode(Input::MouseMode::POSITION_RELATIVE);
@@ -190,14 +191,17 @@ namespace thomas
 			{
 				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
 				
-				if (Input::GetKey(Input::Keys::Q))
+				if (Input::GetKeyDown(Input::Keys::W))
 					m_manipulatorOperation = ImGuizmo::OPERATION::TRANSLATE;
 
-				if (Input::GetKey(Input::Keys::W))
+				if (Input::GetKeyDown(Input::Keys::R))
 					m_manipulatorOperation = ImGuizmo::OPERATION::ROTATE;
 
-				if (Input::GetKey(Input::Keys::E))
+				if (Input::GetKeyDown(Input::Keys::E))
 					m_manipulatorOperation = ImGuizmo::OPERATION::SCALE;
+
+				if (Input::GetKey(Input::Keys::LeftShift))
+					m_manipulatorSnapping = true;
 			}
 				
 		}
@@ -232,15 +236,20 @@ namespace thomas
 				object::GameObject* gameObject = s_selectedObjects[i];
 
 				ImGuiIO& io = ImGui::GetIO();
+				
 				ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
 				math::Matrix worldMatrix = gameObject->m_transform->GetLocalWorldMatrix();
 
 				float bounds[] = { 5,5,5 };
+				float snap[] = { 1,1,1 };
+
+				if (m_manipulatorOperation == ImGuizmo::OPERATION::ROTATE)
+					snap[0] = 15;
 
 				ImGuizmo::Manipulate(
-					*m_cameraComponent->GetViewMatrix().m, *m_cameraComponent->GetProjMatrix().m,
-					m_manipulatorOperation, m_manipulatorMode, *worldMatrix.m, 0, 0);
+					*(m_cameraComponent->GetViewMatrix() * math::Matrix::CreateScale(m_manipulatorScale)).m, *m_cameraComponent->GetProjMatrix().m,
+					m_manipulatorOperation, m_manipulatorMode, *worldMatrix.m, 0, m_manipulatorSnapping ? snap : 0);
 
 				if (worldMatrix != gameObject->m_transform->GetLocalWorldMatrix())
 				{

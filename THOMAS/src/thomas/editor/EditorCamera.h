@@ -44,6 +44,8 @@ namespace thomas
 			float rotationX;
 			float rotationY;
 			float m_speed;
+			float m_manipulatorScale = 2.0f;
+			bool m_manipulatorSnapping = false;
 
 			object::component::Camera* m_cameraComponent;
 			graphics::Material* m_objectHighlighter;
