@@ -42,6 +42,7 @@ namespace ThomasEditor {
 			if (ThomasCore::Initialized())
 			{
 				thomas::utils::AssimpLoader::LoadModel("testModel", "../Data/box.obj", "poop");
+				thomas::utils::AssimpLoader::LoadModel("o", "../Data/sphere.obj", "poops");
 				Scene::CurrentScene = gcnew Scene("test");
 				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
 				testThread = gcnew Thread(gcnew ThreadStart(StartEngine));
