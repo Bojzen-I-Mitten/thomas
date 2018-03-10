@@ -6,18 +6,16 @@
 
 #pragma unmanaged
 #include <thomas\ThomasCore.h>
-#include <thomas\Scene.h>
 #include <thomas\Window.h>
 #include <thomas\ThomasTime.h>
 #include <thomas\Input.h>
 #include <thomas\utils\DebugTools.h>
 #include <thomas\graphics\Shader.h>
 #include <thomas\graphics\Renderer.h>
+#include <thomas\utils\AssimpLoader.h>
 #pragma managed
 //#include <Sound.h>
 
-
-#include "Tests\TestScene.h"
 #include "object\GameObject.h"
 #include "object\component\Transform.h"
 
@@ -43,8 +41,7 @@ namespace ThomasEditor {
 			thomas::ThomasCore::Init();
 			if (ThomasCore::Initialized())
 			{
-				thomas::Scene::LoadScene<TestScene>();
-
+				thomas::utils::AssimpLoader::LoadModel("testModel", "../Data/box.obj", "poop");
 				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
 				testThread = gcnew Thread(gcnew ThreadStart(StartEngine));
 				testThread->Name = "Thomas Engine";
@@ -59,7 +56,6 @@ namespace ThomasEditor {
 			while (ThomasCore::Initialized())
 			{
 				{
-					
 					ThomasCore::Update();
 					for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
 					{
@@ -98,7 +94,7 @@ namespace ThomasEditor {
 				
 		}
 
-		static void Stop() {
+		static void Exit() {
 			thomas::ThomasCore::Exit();
 		}
 		static ObservableCollection<GameObject^>^ SelectedGameObjects = gcnew ObservableCollection<GameObject^>();
@@ -168,6 +164,16 @@ namespace ThomasEditor {
 		{
 			playing = true;
 			GameObject::Play();
+		}
+
+		static bool Playing()
+		{
+			return playing;
+		}
+
+		static void Stop()
+		{
+			playing = false;
 		}
 
 		static void SelectGameObject(GameObject^ gObj)

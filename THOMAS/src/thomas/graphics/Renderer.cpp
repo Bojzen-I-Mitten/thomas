@@ -1,7 +1,6 @@
 #include "Renderer.h"
 #include "Model.h"
 #include "../object/component/Light.h"
-#include "../Scene.h"
 #include "LightManager.h"
 #include "TextRender.h"
 #include "Sprite.h"
@@ -24,6 +23,8 @@ namespace thomas
 	namespace graphics
 	{
 		
+		std::vector<graphics::RenderPair*> Renderer::s_renderQueue;
+		std::vector<graphics::RenderPair*> Renderer::s_lastFramesRenederQueue;
 		void Renderer::BindFrame()
 		{
 			//ThomasPerFrame
@@ -53,6 +54,21 @@ namespace thomas
 			Shader::SetGlobalVector("_WorldSpaceCameraPos", (math::Vector4)camera->GetPosition());
 		}
 
+		void Renderer::ClearRenderQueue()
+		{
+			s_renderQueue.clear();
+		}
+
+		void Renderer::AddToRenderQueue(graphics::RenderPair * renderPair)
+		{
+			s_renderQueue.push_back(renderPair);
+		}
+
+		std::vector<graphics::RenderPair*> Renderer::GetRenderQueue()
+		{
+			return s_renderQueue;
+		}
+
 		void Renderer::BindObject(thomas::graphics::Material * material, thomas::object::component::Transform * transform)
 		{
 			thomas::graphics::MaterialProperty* prop;
@@ -75,7 +91,7 @@ namespace thomas
 		void Renderer::Render()
 		{
 			
-			RenderQueue(Scene::GetCurrentScene()->GetRenderQueue());
+			RenderQueue(s_renderQueue);
 		}
 
 		void Renderer::RenderQueue(std::vector<RenderPair*> renderQueue)

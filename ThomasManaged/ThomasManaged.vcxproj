@@ -154,7 +154,6 @@
     <ClInclude Include="src\object\GameObject.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\object\Object.h" />
-    <ClInclude Include="src\Tests\TestScene.h" />
     <ClInclude Include="src\ThomasManaged.h" />
   </ItemGroup>
   <ItemGroup>

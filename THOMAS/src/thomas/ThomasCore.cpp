@@ -11,14 +11,12 @@
 #include "graphics\TextRender.h"
 #include <assimp\Importer.hpp>
 #include "graphics\Sprite.h"
-#include "Scene.h"
 #include "Physics.h"
 #include "utils\DebugTools.h"
 #include <AtlBase.h>
 #include <atlconv.h>
 #include "utils/d3d.h"
 #include "graphics\ParticleSystem.h"
-#include "Scene.h"
 #include "Input.h"
 #include "Window.h"
 #include "ThomasTime.h"
@@ -107,12 +105,15 @@ namespace thomas {
 			s_logOutput.clear();
 			s_clearLog = false;
 		}
+
+		object::Object::Clean();
+		editor::EditorCamera::Update();
+
 		Window::Update();
-		Scene::ClearRenderQueue();
+		graphics::Renderer::ClearRenderQueue();
 		graphics::Shader::Update();
 		thomas::ThomasTime::Update();
 		Input::Update();
-		Scene::UpdateCurrentScene();
 		thomas::Physics::Update();
 		
 		/*if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
@@ -133,7 +134,7 @@ namespace thomas {
 
 	void ThomasCore::Render()
 	{
-		Scene::Render();
+		graphics::Renderer::Render();
 	}
 
 	void ThomasCore::Stop()
@@ -152,7 +153,6 @@ namespace thomas {
 		
 		s_context->ClearState();
 		s_context->Flush();
-		Scene::UnloadScene();
 		Window::Destroy();
 		graphics::LightManager::Destroy();
 		graphics::ParticleSystem::Destroy();

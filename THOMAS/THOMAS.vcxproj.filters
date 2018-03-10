@@ -34,7 +34,6 @@
     <ClCompile Include="src\thomas\utils\Plane.cpp" />
     <ClCompile Include="src\thomas\Input.cpp" />
     <ClCompile Include="src\thomas\Physics.cpp" />
-    <ClCompile Include="src\thomas\Scene.cpp" />
     <ClCompile Include="src\thomas\Sound.cpp" />
     <ClCompile Include="src\thomas\ThomasCore.cpp" />
     <ClCompile Include="src\thomas\ThomasTime.cpp" />
@@ -86,7 +85,6 @@
     <ClInclude Include="src\thomas\Common.h" />
     <ClInclude Include="src\thomas\Input.h" />
     <ClInclude Include="src\thomas\Physics.h" />
-    <ClInclude Include="src\thomas\Scene.h" />
     <ClInclude Include="src\thomas\Sound.h" />
     <ClInclude Include="src\thomas\Thomas.h" />
     <ClInclude Include="src\thomas\ThomasCore.h" />

@@ -4,8 +4,8 @@
 #include "../../graphics/Model.h"
 #include "../GameObject.h"
 #include "../../graphics/Renderer.h"
-#include "../../Scene.h"
 #include "../../editor/gizmos/Gizmos.h"
+
 namespace thomas {
 	namespace object {
 		namespace component {
@@ -54,9 +54,8 @@ namespace thomas {
 				std::vector<graphics::RenderPair*> setPairs;
 				for (auto pair : m_renderPairs)
 					if (pair->material)
-						thomas::Scene::GetCurrentScene()->AddToRenderQueue(pair);
+						thomas::graphics::Renderer::AddToRenderQueue(pair);
 			}
-
 			void RenderComponent::SetMaterial(int meshIndex, graphics::Material * material)
 			{
 				if (!material)

@@ -235,8 +235,12 @@ namespace ThomasEditor
             Shader.RecompileShaders();
         }
 
-        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
+            if(ThomasWrapper.Playing())
+            {
+
+            }
             ThomasWrapper.Play();
         }
     }
