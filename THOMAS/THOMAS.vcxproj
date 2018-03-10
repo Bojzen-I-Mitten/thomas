@@ -30,6 +30,7 @@
     <ClCompile Include="src\thomas\editor\gizmos\Gizmos.cpp" />
     <ClCompile Include="src\thomas\graphics\BulletDebugDraw.cpp" />
     <ClCompile Include="src\thomas\graphics\ComputeShader.cpp" />
+    <ClCompile Include="src\thomas\graphics\Light.cpp" />
     <ClCompile Include="src\thomas\graphics\LightManager.cpp" />
     <ClCompile Include="src\thomas\graphics\Material.cpp" />
     <ClCompile Include="src\thomas\graphics\MaterialProperty.cpp" />
@@ -83,6 +84,7 @@
     <ClInclude Include="src\thomas\editor\gizmos\Gizmos.h" />
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />
     <ClInclude Include="src\thomas\graphics\ComputeShader.h" />
+    <ClInclude Include="src\thomas\graphics\Light.h" />
     <ClInclude Include="src\thomas\graphics\LightManager.h" />
     <ClInclude Include="src\thomas\graphics\Material.h" />
     <ClInclude Include="src\thomas\graphics\MaterialProperty.h" />
