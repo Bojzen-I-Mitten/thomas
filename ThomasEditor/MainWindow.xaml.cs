@@ -45,7 +45,8 @@ namespace ThomasEditor
 
             thomasObjects.SelectedItemChanged += ThomasObjects_SelectedItemChanged;
 
-            GameObject.GameObjects.CollectionChanged += GameObjects_CollectionChanged;
+
+            Scene.CurrentScene.GameObjects.CollectionChanged += GameObjects_CollectionChanged;
             ThomasWrapper.OutputLog.CollectionChanged += OutputLog_CollectionChanged;
             ThomasWrapper.SelectedGameObjects.CollectionChanged += SelectedGameObjects_CollectionChanged;
         }
@@ -199,7 +200,7 @@ namespace ThomasEditor
         private void Menu_RemoveGameObject(object sender, RoutedEventArgs e)
         {
             var x = sender as MenuItem;
-            GameObject.GameObjects.Remove(x.DataContext as GameObject);
+            Scene.CurrentScene.GameObjects.Remove(x.DataContext as GameObject);
         }
 
         private void Console_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -237,7 +238,7 @@ namespace ThomasEditor
 
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            if(ThomasWrapper.Playing())
+            if(ThomasWrapper.IsPlaying())
             {
 
             }

@@ -6,6 +6,7 @@
 #include <string>
 #include <msclr\marshal_cppstd.h>
 
+#include "../Scene.h"
 #include "Object.h"
 #include "Component.h"
 #include "component\Transform.h"
@@ -22,19 +23,10 @@ namespace ThomasEditor {
 		System::Object^ m_componentsLock = gcnew System::Object();
 		ObservableCollection<Component^> m_components;
 		Transform^ m_transform;
-		static ObservableCollection<GameObject^> s_gameObjects;
-		
+		Scene^ scene;
 	internal:
 		
-		static bool s_playing;
-		static void Play()
-		{
-			s_playing = true;
-			for each(GameObject^ gObj in s_gameObjects)
-			{
-				gObj->Awake();
-			}
-		}
+		
 		void Awake()
 		{
 			for each(Component^ component in m_components)
@@ -76,7 +68,8 @@ namespace ThomasEditor {
 			m_name = name;
 			m_transform = AddComponent<Transform^>();
 			((thomas::object::GameObject*)nativePtr)->m_transform = (thomas::object::component::Transform*)m_transform->nativePtr;
-			s_gameObjects.Add(this);
+			Scene::CurrentScene->GameObjects->Add(this);
+			scene = Scene::CurrentScene;
 			System::Windows::Data::BindingOperations::EnableCollectionSynchronization(%m_components, m_componentsLock);
 			
 		}
@@ -124,11 +117,7 @@ namespace ThomasEditor {
 			}
 		}
 
-		static property ObservableCollection<GameObject^>^ GameObjects {
-			ObservableCollection<GameObject^>^ get() {
-				return %s_gameObjects;
-			}
-		}
+
 
 		generic<typename T>
 		where T : Component
@@ -138,7 +127,7 @@ namespace ThomasEditor {
 			((Component^)component)->setGameObject(this);
 			m_components.Add((Component^)component);
 			Type^ typ = T::typeid;
-			if (typ->IsDefined(ExecuteInEditor::typeid, false) || s_playing)
+			if (typ->IsDefined(ExecuteInEditor::typeid, false) || scene->IsPlaying())
 			{
 				component->Awake();
 			}
@@ -159,7 +148,7 @@ namespace ThomasEditor {
 		
 
 		static GameObject^ Find(String^ name) {
-			for each(GameObject^ gameObject in s_gameObjects)
+			for each(GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 			{
 				if (gameObject->Name == name)
 					return gameObject;

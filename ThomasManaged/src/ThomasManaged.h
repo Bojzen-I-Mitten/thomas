@@ -1,10 +1,10 @@
 // ThomasManaged.h
+
 #pragma once
-
-
-
+#pragma warning( disable : 4561)
 
 #pragma unmanaged
+
 #include <thomas\ThomasCore.h>
 #include <thomas\Window.h>
 #include <thomas\ThomasTime.h>
@@ -18,7 +18,7 @@
 
 #include "object\GameObject.h"
 #include "object\component\Transform.h"
-
+#include "Scene.h"
 
 using namespace System;
 using namespace System::Collections::Generic;
@@ -42,6 +42,7 @@ namespace ThomasEditor {
 			if (ThomasCore::Initialized())
 			{
 				thomas::utils::AssimpLoader::LoadModel("testModel", "../Data/box.obj", "poop");
+				Scene::CurrentScene = gcnew Scene("test");
 				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
 				testThread = gcnew Thread(gcnew ThreadStart(StartEngine));
 				testThread->Name = "Thomas Engine";
@@ -57,7 +58,7 @@ namespace ThomasEditor {
 			{
 				{
 					ThomasCore::Update();
-					for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
+					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 					{
 						gameObject->UpdateComponents();
 					}
@@ -69,7 +70,7 @@ namespace ThomasEditor {
 						graphics::Renderer::Begin();
 						//Editor rendering
 						editor::EditorCamera::Render();
-						for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
+						for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 						{
 							gameObject->RenderGizmos();
 						}
@@ -163,10 +164,10 @@ namespace ThomasEditor {
 		static void Play()
 		{
 			playing = true;
-			GameObject::Play();
+			Scene::CurrentScene->Play();
 		}
 
-		static bool Playing()
+		static bool IsPlaying()
 		{
 			return playing;
 		}
