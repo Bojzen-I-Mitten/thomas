@@ -51,6 +51,11 @@
                 <MenuItem Header="_GameObject">
                     <MenuItem Header="_Create Empty" Click="AddEmptyGameObject"/>
                 </MenuItem>
+                
+                <MenuItem Header="_Resource">
+                    <MenuItem Header="_Load .wav" Click="LoadWaveFile"/>
+                </MenuItem>
+                
                 <MenuItem Header="_Temp">
                     <MenuItem Header="_Recompile Shader" Click="Recompile_Shader_Click"/>
                 </MenuItem>
