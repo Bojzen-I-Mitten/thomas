@@ -86,7 +86,7 @@
             <ListView x:Name="addComponentList" Background="#333333" SelectionChanged="AddComponentList_SelectionChanged">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <ListViewItem Content="{Binding Name}"/>
+                        <TextBlock Text="{Binding Name}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
