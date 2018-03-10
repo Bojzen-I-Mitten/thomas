@@ -139,6 +139,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\attributes\CustomAttributes.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\object\component\Camera.h" />
@@ -169,6 +170,7 @@
     <ClCompile Include="src\object\component\Transform.cpp" />
     <ClCompile Include="src\object\GameObject.cpp" />
     <ClCompile Include="src\object\Object.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ThomasManaged.cpp" />
   </ItemGroup>
