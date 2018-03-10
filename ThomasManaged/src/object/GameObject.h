@@ -10,9 +10,11 @@
 #include "Component.h"
 #include "component\Transform.h"
 #include "../attributes/CustomAttributes.h"
+
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::Collections::ObjectModel;
+
 namespace ThomasEditor {
 
 	public ref class GameObject : public Object
@@ -117,6 +119,9 @@ namespace ThomasEditor {
 			ObservableCollection<Component^>^ get() {
 				return %m_components;
 			}
+			/*void set(ObservableCollection<Component^>^ value){
+				m_components = value;
+			}*/
 		}
 
 		static property ObservableCollection<GameObject^>^ GameObjects {

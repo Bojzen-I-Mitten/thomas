@@ -13,9 +13,18 @@ namespace ThomasEditor
         
         public override void Update()
         {
+            if (Input.GetKeyDown(Input.Keys.K))
+            {
+
+                gameObject.AddComponent<RenderComponent>();
+                
+            }
             if (Input.GetKeyDown(Input.Keys.Space))
             {
                 testVar = 10;
+                gameObject.GetComponent<SoundComponent>().Play();
+                
+                
             }
         }
     }

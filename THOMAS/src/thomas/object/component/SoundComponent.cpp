@@ -96,7 +96,7 @@ namespace thomas
 				m_looping = loop;
 			}
 
-			bool SoundComponent::Looping()
+			bool SoundComponent::IsLooping()
 			{
 				return m_looping;
 			}

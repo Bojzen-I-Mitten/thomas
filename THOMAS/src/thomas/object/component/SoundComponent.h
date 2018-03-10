@@ -26,7 +26,7 @@ namespace thomas
 				void Pause();
 				void Resume();
 				void SetLooping(bool loop);
-				bool Looping();
+				bool IsLooping();
 			private:
 				std::string m_name;
 				float m_volume;
