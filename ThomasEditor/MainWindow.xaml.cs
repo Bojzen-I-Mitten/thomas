@@ -200,12 +200,12 @@ namespace ThomasEditor
         private void Menu_RemoveGameObject(object sender, RoutedEventArgs e)
         {
             var x = sender as MenuItem;
-            Scene.CurrentScene.GameObjects.Remove(x.DataContext as GameObject);
+           // Scene.CurrentScene.GameObjects.Remove(x.DataContext as GameObject);
         }
 
         private void LoadWaveFile(object sender, RoutedEventArgs e)
         {
-            var x = new 
+           // var x = new 
         }
 
         private void Console_ScrollChanged(object sender, ScrollChangedEventArgs e)
