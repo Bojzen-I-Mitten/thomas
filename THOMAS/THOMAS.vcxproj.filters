@@ -46,6 +46,8 @@
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="include\imgui\ImGuizmo.cpp" />
+    <ClCompile Include="src\thomas\resource\Resource.cpp" />
+    <ClCompile Include="src\thomas\resource\AudioClip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />
@@ -102,5 +104,8 @@
     <ClInclude Include="include\imgui\stb_textedit.h" />
     <ClInclude Include="include\imgui\stb_truetype.h" />
     <ClInclude Include="include\imgui\ImGuizmo.h" />
+    <ClInclude Include="src\thomas\resource\AudioClip.h" />
+    <ClInclude Include="src\thomas\resource\Resources.h" />
+    <ClInclude Include="src\thomas\resource\Resource.h" />
   </ItemGroup>
 </Project>
