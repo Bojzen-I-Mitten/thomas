@@ -203,6 +203,11 @@ namespace ThomasEditor
             Scene.CurrentScene.GameObjects.Remove(x.DataContext as GameObject);
         }
 
+        private void LoadWaveFile(object sender, RoutedEventArgs e)
+        {
+            var x = new 
+        }
+
         private void Console_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
 
