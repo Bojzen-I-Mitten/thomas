@@ -155,10 +155,20 @@ namespace ThomasEditor {
 		where T : Component
 		T AddComponent() {
 			
+			Type^ typ = T::typeid;
+
+			T existingComponent = GetComponent<T>();
+			if (existingComponent && typ->IsDefined(DisallowMultipleComponent::typeid, false))
+			{
+				
+				//LOG("Cannot add multiple instances of " << typ->Name);
+				return T();
+			}
+
 			T component = (T)Activator::CreateInstance(T::typeid);
 			((Component^)component)->setGameObject(this);
 			m_components.Add((Component^)component);
-			Type^ typ = T::typeid;
+			
 			if (typ->IsDefined(ExecuteInEditor::typeid, false) || scene->IsPlaying())
 			{
 				component->Awake();
@@ -167,13 +177,22 @@ namespace ThomasEditor {
 		}
 
 		generic<typename T>
-		where T : Component
+		where T : ref class, Component
 		T GetComponent()
 		{
 			for each(Component^ component in m_components)
 			{
-				if (T::typeid == component::typeid)
-					return (T)component;
+				try
+				{
+					T castedComponent = safe_cast<T>(component);
+					if (castedComponent)
+						return castedComponent;
+				}
+				catch (System::InvalidCastException^ e)
+				{
+
+				}
+				
 			}
 			return T();
 		}

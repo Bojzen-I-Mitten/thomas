@@ -11,6 +11,7 @@
 using namespace System::ComponentModel;
 namespace ThomasEditor
 {
+	[DisallowMultipleComponent]
 	[ExecuteInEditor]
 	public ref class Transform : public Component
 	{
