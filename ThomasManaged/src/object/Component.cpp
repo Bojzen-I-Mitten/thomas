@@ -27,4 +27,5 @@ void ThomasEditor::Component::setGameObject(GameObject ^ gObj)
 void ThomasEditor::Component::Destroy()
 {
 	gameObject->Components->Remove(this);
+	thomas::object::Object::Destroy(nativePtr);
 }

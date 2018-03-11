@@ -45,6 +45,7 @@
     <ClCompile Include="src\thomas\graphics\Texture.cpp" />
     <ClCompile Include="src\thomas\Input.cpp" />
     <ClCompile Include="src\thomas\object\component\Camera.cpp" />
+    <ClCompile Include="src\thomas\object\component\Component.cpp" />
     <ClCompile Include="src\thomas\object\component\FrustumCullingComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\Light.cpp" />
     <ClCompile Include="src\thomas\object\component\ParticleEmitterComponent.cpp" />
