@@ -5,3 +5,8 @@ public ref class ExecuteInEditor : Attribute
 {
 
 };
+
+public ref class DisallowMultipleComponent : Attribute
+{
+
+};

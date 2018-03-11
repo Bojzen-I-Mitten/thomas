@@ -12,6 +12,7 @@
 
 namespace ThomasEditor
 {
+	[DisallowMultipleComponent]
 	[ExecuteInEditor]
 	public ref class RenderComponent : public Component
 	{
