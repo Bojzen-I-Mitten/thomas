@@ -14,6 +14,9 @@ namespace thomas {
 			{
 				m_model = nullptr;
 				m_bounds = math::BoundingOrientedBox();
+				m_bounds.Extents.x = 0;
+				m_bounds.Extents.y = 0;
+				m_bounds.Extents.z = 0;
 			}
 
 			void RenderComponent::SetModel(graphics::Model* model)

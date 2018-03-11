@@ -16,6 +16,7 @@ namespace thomas
 				virtual void Update() {};
 				virtual void OnDrawGizmos() {};
 				virtual void OnDrawGizmosSelected() {};
+				void Destroy();
 			private:
 			protected:
 				
