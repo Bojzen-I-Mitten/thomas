@@ -1,6 +1,8 @@
 #pragma once
 
+#pragma unmanaged
 #include <thomas\utils\Math.h>
+#pragma managed
 #include <math.h>
 using namespace System::ComponentModel;
 

@@ -16,6 +16,8 @@ using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::Collections::ObjectModel;
 using namespace System::Threading;
+
+using namespace System::Linq;
 namespace ThomasEditor {
 
 	public ref class GameObject : public Object
@@ -36,7 +38,7 @@ namespace ThomasEditor {
 	internal:
 		void PostLoad()
 		{
-
+			
 			for (int i = 0; i < m_components.Count; i++)
 			{
 				Component^ component = m_components[i];
@@ -177,26 +179,24 @@ namespace ThomasEditor {
 		}
 
 		generic<typename T>
-		where T : ref class, Component
+		where T : Component
 		T GetComponent()
 		{
-			for each(Component^ component in m_components)
-			{
-				try
-				{
-					T castedComponent = safe_cast<T>(component);
-					if (castedComponent)
-						return castedComponent;
-				}
-				catch (System::InvalidCastException^ e)
-				{
 
-				}
-				
-			}
-			return T();
+			List<T> tComponents = Enumerable::OfType<T>(%m_components);
+			if (tComponents.Count > 0)
+				return tComponents[0];
+			else
+				return T();
 		}
-		
+
+		//generic<typename T>
+		//where T : Component
+		//List<T>^ GetComponents()
+		//{
+		//	return gcnew List<T>(Enumerable::OfType<T>(%m_components));
+		//}
+		//
 
 		static GameObject^ Find(String^ name) {
 			for each(GameObject^ gameObject in Scene::CurrentScene->GameObjects)
@@ -205,7 +205,7 @@ namespace ThomasEditor {
 					return gameObject;
 			}
 			return nullptr;
-		};
+		}
 
 
 		bool GetActive()

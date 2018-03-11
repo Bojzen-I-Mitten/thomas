@@ -1,7 +1,7 @@
 // ThomasManaged.h
 
 #pragma once
-#pragma warning( disable : 4561)
+
 
 #pragma unmanaged
 

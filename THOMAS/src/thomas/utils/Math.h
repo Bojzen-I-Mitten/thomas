@@ -1,4 +1,7 @@
 #pragma once
+
+#pragma warning( disable : 4561)
+
 #include <d3d11.h>
 #include "DirectXTK/SimpleMath.h"
 #include <cmath>

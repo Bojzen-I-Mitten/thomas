@@ -31,6 +31,9 @@ namespace thomas
 			template<typename T>
 			T* GetComponent();
 
+			template<typename T>
+			std::vector<T*> GetComponents();
+
 			static bool Destroy(GameObject *object);
 			static void Destroy();
 			template<typename T>
@@ -74,6 +77,19 @@ namespace thomas
 					return comp;
 			}
 			return NULL;
+		}
+
+		template<typename T>
+		std::vector<T*> GameObject::GetComponents()
+		{
+			std::vector<T*> components;
+			for (UINT i = 0; i < m_components.size(); i++)
+			{
+				T* comp = dynamic_cast<T*>(m_components[i]);
+				if (comp)
+					components.push_back(comp);
+			}
+			return components;
 		}
 
 		template<typename T>
