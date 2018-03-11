@@ -48,8 +48,8 @@
     <ClCompile Include="include\imgui\ImGuizmo.cpp" />
     <ClCompile Include="src\thomas\resource\Resource.cpp" />
     <ClCompile Include="src\thomas\resource\AudioClip.cpp" />
-    <ClCompile Include="src\thomas\object\component\Component.cpp" />
     <ClCompile Include="src\thomas\graphics\Light.cpp" />
+    <ClCompile Include="src\thomas\object\component\Component.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />

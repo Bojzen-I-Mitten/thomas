@@ -1,22 +1,14 @@
 #include "Component.h"
+
 #include "../GameObject.h"
-namespace thomas
+thomas::object::component::Component::~Component()
 {
-	namespace object
+	for (int i = 0; i < m_gameObject->m_components.size(); i++)
 	{
-		namespace component
+		Component* component = m_gameObject->m_components[i];
+		if (component == this)
 		{
-			void Component::Destroy()
-			{
-				for (unsigned int i = 0; i < m_gameObject->m_components.size(); i++)
-				{
-					if (m_gameObject->m_components[i] == this)
-					{
-						m_gameObject->m_components.erase(m_gameObject->m_components.begin() + i);
-					}
-				}
-				Object::Destroy(this);
-			}
+			m_gameObject->m_components.erase(m_gameObject->m_components.begin() + i);
 		}
 	}
 }
