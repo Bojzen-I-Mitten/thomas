@@ -35,7 +35,6 @@ namespace ThomasEditor
         double scrollRatio = 0;
         TimeSpan lastRender;
 
-        FileSystemWatcher fsw = new FileSystemWatcher("../Data/assembly", "*.dll");
 
         public MainWindow()
         {

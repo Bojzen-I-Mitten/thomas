@@ -98,6 +98,11 @@ namespace thomas
 				}
 			}
 		}
+		void EditorCamera::UnselectObjects()
+		{
+			s_selectedObjects.clear();
+			GetEditorCamera()->m_hasSelectionChanged = true;
+		}
 		std::vector<object::GameObject*> EditorCamera::GetSelectedObjects()
 		{
 			return s_selectedObjects;

@@ -32,6 +32,7 @@ namespace thomas
 			static void Update();
 			static void SelectObject(GameObject* gameObject);
 			static void UnselectObject(GameObject* gameObject);
+			static void UnselectObjects();
 			static std::vector<object::GameObject*> GetSelectedObjects();
 			static bool HasSelectionChanged();
 			static void SetHasSelectionChanged(bool selectionChanged);

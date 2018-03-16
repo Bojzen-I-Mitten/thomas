@@ -12,13 +12,22 @@ namespace ThomasEditor
 	{
 	private:
 		static FileSystemWatcher^ fsw;
-		static String^ assemblyPath;
-		static String^ symbolPath;
+		static String^ assemblyFolderPath;
 		static Assembly^ assembly;
 	public:
 		static void Init() {
 			fsw = gcnew FileSystemWatcher();
 
+			assemblyFolderPath = "../Data/assembly";
+
+			fsw->Path = assemblyFolderPath;
+			fsw->Filter = "*.dll";
+
+			fsw->Changed += gcnew FileSystemEventHandler(&ThomasEditor::ScriptingManger::OnChanged);
+
+			fsw->EnableRaisingEvents = true;
+
+			LoadAssembly();
 		}
 
 		static Assembly^ GetAssembly()
@@ -26,24 +35,58 @@ namespace ThomasEditor
 			return assembly;
 		}
 
+		delegate void OnChanged(Object^ sender, FileSystemEventArgs e);
+		
+
+		static bool IsFileLocked(FileInfo^ file)
+		{
+			FileStream^ stream;
+			try {
+				stream = file->Open(FileMode::Open, FileAccess::ReadWrite, FileShare::None);
+			}
+			catch (IOException^) {
+				return true;
+			}
+			finally{
+				if (stream)
+					stream->Close();
+			}
+			return false;
+		}
+
 		static void LoadAssembly() {
 
 			String^ tempFile = Path::Combine(Environment::GetFolderPath(Environment::SpecialFolder::LocalApplicationData), "thomas/scene.tds");
+			if (File::Exists(assemblyFolderPath + "/Assembly.dll"))
+			{
+				if (Scene::CurrentScene)
+				{
+					
+					Scene::SaveScene(Scene::CurrentScene, tempFile);
+				}
+				
 
+				array<Byte>^ bytes = File::ReadAllBytes(assemblyFolderPath + "/Assembly.dll");
+				array<Byte>^ symbolBytes = File::ReadAllBytes(assemblyFolderPath + "/Assembly.pdb");
+				assembly = Assembly::Load(bytes, symbolBytes);
+				
 
-			Scene::SaveScene(Scene::CurrentScene, tempFile);
+				if (Scene::CurrentScene)
+				{
+					Scene^ oldScene = Scene::CurrentScene;
 
-			array<Byte>^ bytes = File::ReadAllBytes(assemblyPath);
-			array<Byte>^ symbolBytes = File::ReadAllBytes(symbolPath);
-			assembly = Assembly::Load(bytes, symbolBytes);
+					Scene::CurrentScene = Scene::LoadScene(tempFile);
+					oldScene->UnLoad();
+					File::Delete(tempFile);
+				}
 
-			Scene::CurrentScene->UnLoad();
+				
+			}
+			fsw->EnableRaisingEvents = true;
 
-			Scene::CurrentScene = Scene::LoadScene(tempFile);
-
-			File::Delete(tempFile);
 			
 		}
+		static void OnChanged(System::Object ^sender, System::IO::FileSystemEventArgs ^e);
 	};
 }
 
