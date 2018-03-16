@@ -40,5 +40,8 @@ namespace ThomasEditor {
 		}
 
 		virtual void Destroy() override;
+
+		static List<Type^>^ GetAllComponentTypes();
+		static List<Type^>^ GetAllAddableComponentTypes();
 	};
 }

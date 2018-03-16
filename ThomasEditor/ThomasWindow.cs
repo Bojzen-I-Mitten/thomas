@@ -13,6 +13,8 @@ namespace ThomasEditor
     public class ThomasWindow : HwndHost
     {
 
+        
+
         public static readonly DependencyProperty IsEditorProperty =
             DependencyProperty.Register(
                 "IsEditor", typeof(Boolean), typeof(ThomasWindow), new PropertyMetadata(false));

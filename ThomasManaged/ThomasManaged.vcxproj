@@ -140,6 +140,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ScriptingManager.h" />
     <ClInclude Include="src\resource\AudioClip.h" />
     <ClInclude Include="src\resource\Resources.h" />
     <ClInclude Include="src\Scene.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="src\resource\Resource.cpp" />
     <ClCompile Include="src\resource\Resources.cpp" />
     <ClCompile Include="src\Scene.cpp" />
+    <ClCompile Include="src\ScriptingManager.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ThomasManaged.cpp" />
   </ItemGroup>

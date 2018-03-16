@@ -3,7 +3,7 @@
 
 #include "GameObject.h"
 #include <thomas\object\GameObject.h>
-
+#include "../ScriptingManager.h"
 
 ThomasEditor::Component::Component() : Object(new thomas::object::component::Component())
 {
@@ -29,4 +29,39 @@ void ThomasEditor::Component::Destroy()
 	m_gameObject->Components->Remove(this);
 	thomas::object::Object::Destroy(nativePtr);
 	
+}
+
+List<Type^>^ ThomasEditor::Component::GetAllComponentTypes()
+{
+	List<System::Type^>^ types = gcnew List<System::Type^>(System::Reflection::Assembly::GetAssembly(Scene::typeid)->GetExportedTypes());
+	
+	Assembly^ scriptAssembly = ScriptingManger::GetAssembly();
+	if (scriptAssembly)
+		types->AddRange(scriptAssembly->GetExportedTypes());
+
+	for (int i = 0; i < types->Count; i++)
+	{
+		if (!Component::typeid->IsAssignableFrom(types[i]))
+		{
+			types->RemoveAt(i);
+			i--;
+		}
+	}
+	return types;
+}
+
+List<Type^>^ ThomasEditor::Component::GetAllAddableComponentTypes()
+{
+	List<System::Type^>^ types = GetAllComponentTypes();
+
+	for (int i = 0; i < types->Count; i++)
+	{
+		Type^ t = types[i]->GetType();
+		if (t == Component::typeid || t == Transform::typeid)
+		{
+			types->RemoveAt(i);
+			i--;
+		}
+	}
+	return types;
 }

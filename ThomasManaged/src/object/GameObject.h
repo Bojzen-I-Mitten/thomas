@@ -190,6 +190,23 @@ namespace ThomasEditor {
 				return T();
 		}
 
+		generic<typename T>
+		where T : Component
+		List<T>^ GetComponents()
+		{
+			return (List<T>^)Enumerable::OfType<T>(%m_components);
+		}
+
+
+		bool HasComponentOfType(Type^ T)
+		{
+			for each(Component^ comp in m_components) {
+				if (comp->GetType() == T)
+					return true;
+			}
+			return false;
+		}
+
 		//generic<typename T>
 		//where T : Component
 		//List<T>^ GetComponents()
