@@ -15,12 +15,14 @@ namespace ThomasEditor {
 	public ref class Scene
 	{
 		bool m_playing;
+		static bool s_loading = false;
 		static Scene^ s_currentScene;
 		System::Object^ m_gameObjectsLock = gcnew System::Object();
 		System::Collections::ObjectModel::ObservableCollection<GameObject^> m_gameObjects;
 		System::String^ m_name;
 
 		Scene() {
+			
 			m_name = "New Scene";
 			System::Windows::Data::BindingOperations::EnableCollectionSynchronization(%m_gameObjects, m_gameObjectsLock);
 		}
@@ -50,6 +52,11 @@ namespace ThomasEditor {
 
 		static Scene^ LoadScene(System::String^ fullPath);
 		
+		static bool IsLoading()
+		{
+			return s_loading;
+		}
+
 
 		void UnLoad();
 		void PostLoad();

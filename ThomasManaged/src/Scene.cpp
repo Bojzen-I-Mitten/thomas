@@ -19,7 +19,8 @@ namespace ThomasEditor
 		using namespace System::Xml::Serialization;
 
 		XmlSerializer^ serializer = gcnew XmlSerializer(Scene::typeid, Component::GetAllComponentTypes()->ToArray());
-
+		System::IO::FileInfo^ fi = gcnew System::IO::FileInfo(fullPath);
+		fi->Directory->Create();
 		System::IO::TextWriter^ file = gcnew System::IO::StreamWriter(fullPath);
 		serializer->Serialize(file, scene);
 
@@ -30,6 +31,8 @@ namespace ThomasEditor
 	{
 		using namespace System::Xml::Serialization;
 
+		s_loading = true;
+
 		XmlSerializer^ serializer = gcnew XmlSerializer(Scene::typeid, Component::GetAllComponentTypes()->ToArray());
 
 		System::IO::TextReader^ file = gcnew System::IO::StreamReader(fullPath);
@@ -37,6 +40,9 @@ namespace ThomasEditor
 		Scene^ scene = (Scene^)serializer->Deserialize(file);
 
 		file->Close();
+
+		scene->PostLoad();
+		s_loading = false;
 
 		return scene;
 	}
