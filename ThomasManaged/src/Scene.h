@@ -6,6 +6,8 @@
 
 #using "PresentationFramework.dll"
 
+
+
 namespace ThomasEditor {
 	ref class GameObject;
 
@@ -43,6 +45,11 @@ namespace ThomasEditor {
 				return %m_gameObjects;
 			}
 		}
+
+		static void SaveScene(Scene^ scene, System::String^ fullPath);
+
+		static Scene^ LoadScene(System::String^ fullPath);
+		
 
 		void UnLoad();
 		void PostLoad();
