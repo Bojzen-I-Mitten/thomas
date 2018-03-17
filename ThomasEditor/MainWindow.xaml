@@ -18,6 +18,7 @@
     -->
     <Window.CommandBindings>
         <CommandBinding Command="commands:CustomCommands.GetNewEmptyObject" CanExecute="NewEmptyObject_CanExecute" Executed="AddEmptyGameObject"/>
+        <CommandBinding Command="commands:CustomCommands.GetDeleteGameObject" CanExecute="RemoveSelectedGameObjects_CanExecute" Executed="RemoveSelectedGameObjects"/>
         <CommandBinding Command="commands:CustomCommands.GetOpenOptionsWindow" CanExecute="OpenOptionsWindow_CanExecute" Executed="OpenOptionsWindow"/>
         <CommandBinding Command="commands:CustomCommands.GetPlay" CanExecute="Play_CanExecute" Executed="PlayPauseButton_Click" />
     </Window.CommandBindings>
