@@ -1,7 +1,6 @@
 #pragma once
 #pragma unmanaged
 #include <thomas\Input.h>
-
 #pragma managed
 #include <string>
 #include <msclr\marshal_cppstd.h>

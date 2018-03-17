@@ -116,7 +116,7 @@ namespace ThomasEditor
             addComponentList.SelectedItem = null;
             addComponentsListContainer.Visibility = Visibility.Visible;
             AddComponentsFilter.Focus();
-            addComponentList.ItemsSource = Extensions.GetAllComponentTypes();
+            addComponentList.ItemsSource = Component.GetAllAddableComponentTypes();
             CollectionViewSource.GetDefaultView(addComponentList.ItemsSource).Filter = ComponentsFilter;
         }
 

@@ -25,6 +25,7 @@
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>ThomasManaged</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <ProjectName>ThomasEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -76,14 +77,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ProjectDir)include;$(SolutionDir)thomas\include;$(SolutionDir)thomas\src;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)include;$(SolutionDir)ThomasCore\include;$(SolutionDir)ThomasCore\src;$(IncludePath)</IncludePath>
+    <OutDir>$(ProjectDir)Build\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)include;$(SolutionDir)thomas\include;$(SolutionDir)thomas\src;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)include;$(SolutionDir)ThomasCore\include;$(SolutionDir)ThomasCore\src;$(IncludePath)</IncludePath>
+    <OutDir>$(ProjectDir)Build\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -138,8 +141,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ScriptingManager.h" />
     <ClInclude Include="src\resource\AudioClip.h" />
     <ClInclude Include="src\resource\Resources.h" />
     <ClInclude Include="src\Scene.h" />
@@ -177,6 +182,7 @@
     <ClCompile Include="src\resource\Resource.cpp" />
     <ClCompile Include="src\resource\Resources.cpp" />
     <ClCompile Include="src\Scene.cpp" />
+    <ClCompile Include="src\ScriptingManager.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ThomasManaged.cpp" />
   </ItemGroup>
@@ -190,7 +196,7 @@
     <Image Include="app.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\THOMAS\THOMAS.vcxproj">
+    <ProjectReference Include="..\ThomasCore\ThomasCore.vcxproj">
       <Project>{ed0d8681-b384-43d1-8f56-b4145588e20c}</Project>
     </ProjectReference>
   </ItemGroup>
