@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\DebugEditorBuild\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
@@ -30,7 +30,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\ReleaseEditorBuild\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -169,14 +169,13 @@
     <Resource Include="icons\pause.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThomasManaged\ThomasManaged.vcxproj">
+    <ProjectReference Include="..\ThomasEngine\ThomasEngine.vcxproj">
       <Project>{64d247ed-db4d-4ea3-b8ae-680bf66a8f2e}</Project>
-      <Name>ThomasManaged</Name>
+      <Name>ThomasEngine</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)Data" "$(ProjectDir)bin\Data" /e /y /i
-copy "$(SolutionDir)thomas\dlls"  "$(TargetDir)" /y</PostBuildEvent>
+    <PostBuildEvent>copy "$(SolutionDir)ThomasCore\dlls"  "$(TargetDir)" /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

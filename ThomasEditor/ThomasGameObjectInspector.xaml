@@ -4,7 +4,7 @@
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                 xmlns:local="clr-namespace:ThomasEditor"
                 xmlns:commands="clr-namespace:ThomasEditor.Commands"
-                xmlns:managed="clr-namespace:ThomasEditor;assembly=ThomasManaged"
+                xmlns:managed="clr-namespace:ThomasEditor;assembly=ThomasEngine"
                 xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
                 x:Class="ThomasEditor.ThomasGameObjectInspector"
                 mc:Ignorable="d" 
