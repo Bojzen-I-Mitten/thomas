@@ -36,6 +36,10 @@ namespace ThomasEditor {
 
 		bool IsPlaying() { return m_playing; }
 
+		System::Object^ GetGameObjectsLock()
+		{
+			return m_gameObjectsLock;
+		}
 
 		property System::String^ Name {
 			System::String^ get() { return m_name; }
@@ -56,7 +60,6 @@ namespace ThomasEditor {
 		{
 			return s_loading;
 		}
-
 
 		void UnLoad();
 		void PostLoad();

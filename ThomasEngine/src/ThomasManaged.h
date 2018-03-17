@@ -35,7 +35,7 @@ namespace ThomasEditor {
 	private:
 
 		static Thread^ testThread;
-		static bool playing = false;
+		static bool playing = false;	
 
 	public:
 
@@ -69,6 +69,7 @@ namespace ThomasEditor {
 
 				{
 					ThomasCore::Update();
+					Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
 					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 					{
 						gameObject->UpdateComponents();
@@ -85,11 +86,14 @@ namespace ThomasEditor {
 						{
 							gameObject->RenderGizmos();
 						}
+
+						Monitor::Enter(SelectedGameObjects);
 						for each(ThomasEditor::GameObject^ gameObject in SelectedGameObjects)
 						{
 
 							gameObject->RenderSelectedGizmos();
 						}
+						Monitor::Exit(SelectedGameObjects);
 						//end editor rendering
 
 						for (object::component::Camera* camera : object::component::Camera::s_allCameras)
@@ -100,6 +104,7 @@ namespace ThomasEditor {
 					}
 
 					//ThomasCore::Render();
+					Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
 				}
 			}
 			ThomasCore::Destroy();
@@ -191,11 +196,13 @@ namespace ThomasEditor {
 		static void SelectGameObject(GameObject^ gObj)
 		{
 			Monitor::Enter(SelectedGameObjects);
+			SelectedGameObjects->Clear();
 			SelectedGameObjects->Add(gObj);
 			thomas::editor::EditorCamera::SelectObject((thomas::object::GameObject*)gObj->nativePtr);
 			Monitor::Exit(SelectedGameObjects);
 
 		}
+
 		static void UpdateSelectedObjects() {
 			List<GameObject^> tempSelectedGameObjects;
 			for (thomas::object::GameObject* gameObject : thomas::editor::EditorCamera::GetSelectedObjects())
@@ -239,10 +246,6 @@ namespace ThomasEditor {
 			thomas::ThomasCore::ClearLogOutput();
 		}
 
-		static void TestSerialize() {
-
-			
-		}
 	};
 
 

@@ -98,20 +98,29 @@ namespace ThomasEditor {
 			m_name = name;
 			m_transform = AddComponent<Transform^>();
 			((thomas::object::GameObject*)nativePtr)->m_transform = (thomas::object::component::Transform*)m_transform->nativePtr;
+
+			Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
+
 			Scene::CurrentScene->GameObjects->Add(this);
 			scene = Scene::CurrentScene;
 			System::Windows::Data::BindingOperations::EnableCollectionSynchronization(%m_components, m_componentsLock);
 			
+			Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
 		}
 
 		virtual void Destroy() override
 		{
+			Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
 			for (int i = 0; i < m_components.Count; i++) {
 				m_components[i]->Destroy();
 				i--;
 			}
 			thomas::object::Object::Destroy(nativePtr);
 			m_components.Clear();
+
+			
+			Scene::CurrentScene->GameObjects->Remove(this);
+			Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
 		}
 
 	
