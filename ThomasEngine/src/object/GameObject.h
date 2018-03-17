@@ -22,6 +22,7 @@ namespace ThomasEditor {
 
 	public ref class GameObject : public Object
 	{
+
 		System::Object^ m_componentsLock = gcnew System::Object();
 		ObservableCollection<Component^> m_components;
 		Transform^ m_transform;
@@ -32,13 +33,14 @@ namespace ThomasEditor {
 		GameObject() : Object(new thomas::object::GameObject("gameobject")) {
 			s_lastObject = this;
 			m_name = "gameobject";
+
 			System::Windows::Data::BindingOperations::EnableCollectionSynchronization(%m_components, m_componentsLock);
 		}
 
 	internal:
 		void PostLoad()
 		{
-			
+			scene = Scene::CurrentScene;
 			for (int i = 0; i < m_components.Count; i++)
 			{
 				Component^ component = m_components[i];
@@ -47,7 +49,9 @@ namespace ThomasEditor {
 				if (typ->IsDefined(ExecuteInEditor::typeid, false)) {
 					component->Awake();
 				}
+
 			}
+			m_transform = GetComponent<Transform^>();
 			
 		}
 		
@@ -131,6 +135,7 @@ namespace ThomasEditor {
 		}
 
 		[BrowsableAttribute(false)]
+		[Xml::Serialization::XmlIgnoreAttribute]
 		property Transform^ transform {
 			Transform^ get() {
 				return m_transform;
@@ -188,6 +193,23 @@ namespace ThomasEditor {
 				return tComponents[0];
 			else
 				return T();
+		}
+
+		generic<typename T>
+		where T : Component
+		List<T>^ GetComponents()
+		{
+			return (List<T>^)Enumerable::OfType<T>(%m_components);
+		}
+
+
+		bool HasComponentOfType(Type^ T)
+		{
+			for each(Component^ comp in m_components) {
+				if (comp->GetType() == T)
+					return true;
+			}
+			return false;
 		}
 
 		//generic<typename T>

@@ -20,6 +20,7 @@ using System.Windows.Threading;
 
 using System.Runtime.Serialization;
 using System.IO;
+using System.Security.Policy;
 
 namespace ThomasEditor
 {
@@ -30,8 +31,11 @@ namespace ThomasEditor
 
     public partial class MainWindow : Window
     {
+
         double scrollRatio = 0;
         TimeSpan lastRender;
+
+
         public MainWindow()
         {
 
@@ -278,27 +282,6 @@ namespace ThomasEditor
 
         private void SaveScene_Click(object sender, RoutedEventArgs e)
         {
-            Type componenType = typeof(Component);
-            List<Type> componenTypesFromEngine = Assembly.GetAssembly(componenType).GetTypes()
-                .Where(t =>
-                t != componenType &&
-                componenType.IsAssignableFrom(t)
-                ).ToList();
-
-            List<Type> componentTypesFromEditor = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t =>
-                t != componenType &&
-                componenType.IsAssignableFrom(t)
-                ).ToList();
-
-            List<Type> allComponentTypes = new List<Type>();
-            allComponentTypes.AddRange(componenTypesFromEngine);
-            allComponentTypes.AddRange(componentTypesFromEditor);
-
-            XmlSerializer writer = new XmlSerializer(typeof(Scene), allComponentTypes.ToArray());
-
-           
-
 
             Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
             saveFileDialog.Filter = "Thomas Dank Scene (*.tds) |*.tds";
@@ -310,38 +293,16 @@ namespace ThomasEditor
             saveFileDialog.FileName = Scene.CurrentScene.Name;
             if (saveFileDialog.ShowDialog() == true)
             {
-                System.IO.TextWriter file = new System.IO.StreamWriter(saveFileDialog.FileName);
-                writer.Serialize(file, Scene.CurrentScene);
-                file.Close();
-                string filename = System.IO.Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
-                Scene.CurrentScene.Name = filename;
+                Scene sceneToSave = Scene.CurrentScene;
+                Scene.SaveScene(sceneToSave, saveFileDialog.FileName);
+                sceneToSave.Name = System.IO.Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
             }
 
         }
 
         private void LoadScene_Click(object sender, RoutedEventArgs e)
         {
-            Type componenType = typeof(Component);
-            List<Type> componenTypesFromEngine = Assembly.GetAssembly(componenType).GetTypes()
-                .Where(t =>
-                t != componenType &&
-                componenType.IsAssignableFrom(t)
-                ).ToList();
-
-            List<Type> componentTypesFromEditor = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t =>
-                t != componenType &&
-                componenType.IsAssignableFrom(t)
-                ).ToList();
-
-            List<Type> allComponentTypes = new List<Type>();
-            allComponentTypes.AddRange(componenTypesFromEngine);
-            allComponentTypes.AddRange(componentTypesFromEditor);
-
-            XmlSerializer serializer = new XmlSerializer(typeof(Scene), allComponentTypes.ToArray());
-
-            
-
+         
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.Filter = "Thomas Dank Scene (*.tds) |*.tds";
 
@@ -351,16 +312,16 @@ namespace ThomasEditor
             openFileDialog.RestoreDirectory = true;
             if (openFileDialog.ShowDialog() == true)
             {
-                System.IO.TextReader file = new System.IO.StreamReader(openFileDialog.FileName);
+
+                Scene newScene = Scene.LoadScene(openFileDialog.FileName);
+                
                 Scene.CurrentScene.GameObjects.CollectionChanged -= GameObjects_CollectionChanged;
-
                 Scene.CurrentScene.UnLoad();
-                Scene scene = (Scene)serializer.Deserialize(file);
 
-                Scene.CurrentScene = scene;
-                file.Close();
+                Scene.CurrentScene = newScene;
+                                         
 
-
+                //Refresh tree
                 thomasObjects.Items.Clear();
 
                 foreach (GameObject newItem in Scene.CurrentScene.GameObjects)
@@ -387,31 +348,6 @@ namespace ThomasEditor
 
     public static class Extensions
     {
-
-        public static List<Type> GetAllComponentTypes()
-        {
-
-            Type componenType = typeof(Component);
-            List<Type> componenTypesFromEngine = Assembly.GetAssembly(componenType).GetTypes()
-                .Where(t =>
-                t != componenType &&
-                t != typeof(ScriptComponent) &&
-                t != typeof(Transform) &&
-                componenType.IsAssignableFrom(t)
-                ).ToList();
-
-            List<Type> componentTypesFromEditor = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t =>
-                t != componenType &&
-                componenType.IsAssignableFrom(t)
-                ).ToList();
-
-            List<Type> allComponentTypes = new List<Type>();
-            allComponentTypes.AddRange(componenTypesFromEngine);
-            allComponentTypes.AddRange(componentTypesFromEditor);
-
-            return allComponentTypes;
-        }
 
         public static T GetDescendantByType<T>(this Visual element) where T : class
         {

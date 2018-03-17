@@ -20,6 +20,7 @@
 #include "object\GameObject.h"
 #include "object\component\Transform.h"
 #include "Scene.h"
+#include "ScriptingManager.h"
 
 using namespace System;
 using namespace System::Collections::Generic;
@@ -42,6 +43,7 @@ namespace ThomasEditor {
 			thomas::ThomasCore::Init();
 			if (ThomasCore::Initialized())
 			{
+				ScriptingManger::Init();
 				thomas::utils::AssimpLoader::LoadModel("testModel", "../Data/box.obj", "poop");
 				thomas::utils::AssimpLoader::LoadModel("o", "../Data/sphere.obj", "poops");
 				Scene::CurrentScene = gcnew Scene("test");
@@ -49,7 +51,6 @@ namespace ThomasEditor {
 				testThread = gcnew Thread(gcnew ThreadStart(StartEngine));
 				testThread->Name = "Thomas Engine";
 				testThread->Start();
-				
 			}
 
 		}
@@ -59,6 +60,13 @@ namespace ThomasEditor {
 
 			while (ThomasCore::Initialized())
 			{
+				if (Scene::IsLoading())
+				{
+					Thread::Sleep(1000);
+					continue;
+				}
+
+
 				{
 					ThomasCore::Update();
 					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
