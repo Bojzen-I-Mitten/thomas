@@ -17,9 +17,10 @@ namespace ThomasEditor {
 	protected:
 		String^ m_name;
 	internal:
-		
+		[NonSerializedAttribute]
 		thomas::object::Object* nativePtr;
 	public:
+		[field:NonSerializedAttribute]
 		virtual event PropertyChangedEventHandler^ PropertyChanged;
 		virtual void OnDestroy() { nativePtr->OnDestroy(); }
 

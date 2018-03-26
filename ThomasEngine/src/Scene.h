@@ -11,7 +11,7 @@
 namespace ThomasEditor {
 	ref class GameObject;
 
-	[System::SerializableAttribute]
+	
 	public ref class Scene
 	{
 		bool m_playing;
@@ -46,6 +46,7 @@ namespace ThomasEditor {
 			void set(System::String^ value) { m_name = value; }
 		}
 
+		
 		property System::Collections::ObjectModel::ObservableCollection<GameObject^>^ GameObjects {
 			System::Collections::ObjectModel::ObservableCollection<GameObject^>^ get() {
 				return %m_gameObjects;
