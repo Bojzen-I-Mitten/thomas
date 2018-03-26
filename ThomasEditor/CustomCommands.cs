@@ -15,6 +15,7 @@ namespace ThomasEditor.Commands
         private static Key openOptionsMenu = Key.O;
         private static Key play = Key.F5;
         private static Key addComponent = Key.A;
+        private static Key save = Key.S;
 
         public static Key GetOpenOptionsMenuKey() { return openOptionsMenu; }
         public static void SetOpenOptionsMenuKey(Key set) { openOptionsMenu = set; }
@@ -30,6 +31,9 @@ namespace ThomasEditor.Commands
 
         public static Key GetAddComponentKey() { return addComponent; }
         public static void SetAddComponentKey(Key set) { addComponent = set; }
+
+        public static Key GetSaveKey() { return save; }
+        public static void SetSaveKey(Key set) { save = set; }
 
 
 
@@ -96,10 +100,23 @@ namespace ThomasEditor.Commands
                 }
             );
 
+
+        public static readonly RoutedUICommand Save = new RoutedUICommand
+            (
+                "Save Scene",
+                "Save",
+                typeof(CustomCommands),
+                new InputGestureCollection()
+                {
+                    new KeyGesture(save, ModifierKeys.Control)
+                }
+            );
+
         public static RoutedUICommand GetNewEmptyObject { get { return NewGameObjectCmd; } }
         public static RoutedUICommand GetDeleteGameObject { get { return DeleteGameObjectCmd; } }
         public static RoutedUICommand GetOpenOptionsWindow { get { return OpenOptionsWindow; } }
         public static RoutedUICommand GetPlay { get { return Play; } }
         public static RoutedUICommand GetAddCompenent { get { return AddComponent; } }
+        public static RoutedUICommand GetSave { get { return Save; } }
     }
 }
