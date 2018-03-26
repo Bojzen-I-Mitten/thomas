@@ -20,6 +20,7 @@ namespace ThomasEditor {
 		System::Object^ m_gameObjectsLock = gcnew System::Object();
 		System::Collections::ObjectModel::ObservableCollection<GameObject^> m_gameObjects;
 		System::String^ m_name;
+		System::String^ m_savePath;
 
 		Scene() {
 			
@@ -46,6 +47,10 @@ namespace ThomasEditor {
 			void set(System::String^ value) { m_name = value; }
 		}
 
+		property bool HasFile {
+			bool get() { return m_savePath != nullptr; }
+		}
+
 		
 		property System::Collections::ObjectModel::ObservableCollection<GameObject^>^ GameObjects {
 			System::Collections::ObjectModel::ObservableCollection<GameObject^>^ get() {
@@ -53,7 +58,10 @@ namespace ThomasEditor {
 			}
 		}
 
-		static void SaveScene(Scene^ scene, System::String^ fullPath);
+
+
+		static void SaveSceneAs(Scene^ scene, System::String^ fullPath);
+		static void SaveScene(Scene^ scene);
 
 		static Scene^ LoadScene(System::String^ fullPath);
 		
@@ -73,5 +81,6 @@ namespace ThomasEditor {
 				s_currentScene = value;
 			}
 		}
+
 	};
 }

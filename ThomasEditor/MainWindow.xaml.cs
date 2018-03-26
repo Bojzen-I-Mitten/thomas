@@ -305,6 +305,27 @@ namespace ThomasEditor
         private void SaveScene_Click(object sender, RoutedEventArgs e)
         {
 
+            if(Scene.CurrentScene.HasFile)
+            {
+                Scene sceneToSave = Scene.CurrentScene;
+                Scene.SaveScene(sceneToSave);
+            }
+            else
+            {
+                SaveSceneAs_Click(sender, e);
+            }
+        }
+
+
+        private void NewScene_Click(object sender, RoutedEventArgs e)
+        {
+            Scene.CurrentScene.UnLoad();
+            Scene.CurrentScene = new Scene("Scene");
+        }
+
+        private void SaveSceneAs_Click(object sender, RoutedEventArgs e)
+        {
+
             Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
             saveFileDialog.Filter = "Thomas Dank Scene (*.tds) |*.tds";
 
@@ -316,7 +337,7 @@ namespace ThomasEditor
             if (saveFileDialog.ShowDialog() == true)
             {
                 Scene sceneToSave = Scene.CurrentScene;
-                Scene.SaveScene(sceneToSave, saveFileDialog.FileName);
+                Scene.SaveSceneAs(sceneToSave, saveFileDialog.FileName);
                 sceneToSave.Name = System.IO.Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
             }
 

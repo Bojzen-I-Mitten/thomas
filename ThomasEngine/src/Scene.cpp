@@ -14,14 +14,13 @@ namespace ThomasEditor
 		}
 	}
 
-	void Scene::SaveScene(Scene ^ scene, System::String ^ fullPath)
+	void Scene::SaveSceneAs(Scene ^ scene, System::String ^ fullPath)
 	{
 		using namespace System::Runtime::Serialization;
 		DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
 		serializserSettings->KnownTypes = Component::GetAllComponentTypes()->ToArray();
 		serializserSettings->PreserveObjectReferences = true;
 		DataContractSerializer^ serializer = gcnew DataContractSerializer(Scene::typeid, serializserSettings);
-
 		System::IO::FileInfo^ fi = gcnew System::IO::FileInfo(fullPath);
 		fi->Directory->Create();
 		Xml::XmlWriterSettings^ settings = gcnew Xml::XmlWriterSettings();
@@ -29,6 +28,13 @@ namespace ThomasEditor
 		Xml::XmlWriter^ file = Xml::XmlWriter::Create(fullPath, settings);
 		serializer->WriteObject(file, scene);
 		file->Close();
+		scene->m_savePath = fullPath;
+	}
+
+	void Scene::SaveScene(Scene ^ scene)
+	{
+		if(scene->m_savePath)
+			SaveSceneAs(scene, scene->m_savePath);
 	}
 
 	Scene ^ Scene::LoadScene(System::String ^ fullPath)
