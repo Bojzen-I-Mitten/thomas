@@ -2,7 +2,6 @@
 #pragma unmanaged
 #include <thomas\object\component\Transform.h>
 #pragma managed
-#include "../../attributes/CustomAttributes.h"
 #include "../../math/Math.h"
 #include "../Component.h"
 #include <string>

@@ -16,12 +16,13 @@ namespace thomas
 					RigidBodyComponent* otherRigidbody;
 				};
 			private:
-				void UpdateRigidbodyMass(float mass);
+				void UpdateRigidbodyMass();
 			public:
 				RigidBodyComponent();
 				~RigidBodyComponent();
 				void OnEnable();
 				void OnDisable();
+				void OnDestroy();
 				void Update();
 				void SetKinematic(bool kinematic);
 				bool IsKinematic();
