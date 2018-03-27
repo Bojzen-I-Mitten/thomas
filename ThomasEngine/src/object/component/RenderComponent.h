@@ -4,7 +4,6 @@
 #include <thomas\graphics\Model.h>
 
 #pragma managed
-#include "../../attributes/CustomAttributes.h"
 #include "../Component.h"
 #include <string>
 #include <msclr\marshal_cppstd.h>

@@ -69,6 +69,8 @@ namespace ThomasEditor {
 
 				{
 					ThomasCore::Update();
+					if(playing)
+						thomas::Physics::Update();
 					Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
 					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 					{
