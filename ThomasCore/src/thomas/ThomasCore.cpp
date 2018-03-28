@@ -114,7 +114,6 @@ namespace thomas {
 		graphics::Shader::Update();
 		thomas::ThomasTime::Update();
 		Input::Update();
-		thomas::Physics::Update();
 		
 		/*if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
 			Render();

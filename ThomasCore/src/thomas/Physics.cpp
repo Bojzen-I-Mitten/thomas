@@ -41,6 +41,7 @@ namespace thomas
 	}
 	void Physics::Update()
 	{
+		
 		s_world->stepSimulation(ThomasTime::GetDeltaTime(), 7); 
 
 		int numManifolds = s_world->getDispatcher()->getNumManifolds();

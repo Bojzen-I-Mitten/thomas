@@ -41,6 +41,7 @@ namespace ThomasEditor
 
             InitializeComponent();
 
+            
             //Changeds decimals to . instead of ,
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
@@ -91,7 +92,8 @@ namespace ThomasEditor
             {
                 foreach (TreeViewItem node in thomasObjects.Items)
                 {
-                    node.IsSelected = false;
+                    if(node.IsSelected)
+                        node.IsSelected = false;
                 }
             }
         }
@@ -136,7 +138,7 @@ namespace ThomasEditor
             {
                 foreach (GameObject oldItem in e.OldItems)
                 {
-                    oldItem.Destroy();
+                    //oldItem.Destroy();
                     foreach (TreeViewItem node in thomasObjects.Items)
                     {
                         if (node.DataContext == oldItem)
@@ -161,14 +163,18 @@ namespace ThomasEditor
         private void ThomasObjects_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             ItemContainerGenerator gen = thomasObjects.ItemContainerGenerator;
-            TreeViewItem item = gen.ContainerFromItem(thomasObjects.SelectedItem) as TreeViewItem;
+           
             __inspector.SelectedGameObject = null;
-            if (item != null)
+            if (thomasObjects.SelectedItem != null)
             {
-                __inspector.SelectedGameObject = (GameObject)item.DataContext;
-                ThomasWrapper.SelectGameObject((GameObject)item.DataContext);
+                TreeViewItem item = gen.ContainerFromItem(thomasObjects.SelectedItem) as TreeViewItem;
+                if (item != null)
+                {
+                    __inspector.SelectedGameObject = (GameObject)item.DataContext;
+                    if(!ThomasWrapper.SelectedGameObjects.Contains((GameObject)item.DataContext))
+                        ThomasWrapper.SelectGameObject((GameObject)item.DataContext);
+                }
             }
-            
         }
 
         private void BuildTree(Transform parent, TreeViewItem parentTree)
@@ -225,7 +231,23 @@ namespace ThomasEditor
         private void Menu_RemoveGameObject(object sender, RoutedEventArgs e)
         {
             var x = sender as MenuItem;
-           // Scene.CurrentScene.GameObjects.Remove(x.DataContext as GameObject);
+            (x.DataContext as GameObject).Destroy();
+        }
+
+        private void RemoveSelectedGameObjects_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void RemoveSelectedGameObjects(object sender, RoutedEventArgs e)
+        {
+            for(int i=0; i < ThomasWrapper.SelectedGameObjects.Count; i++)
+            {
+                GameObject gObj = ThomasWrapper.SelectedGameObjects[i];
+                gObj.Destroy();
+                ThomasWrapper.SelectedGameObjects.RemoveAt(i);
+               i--;
+            }
         }
 
         private void LoadWaveFile(object sender, RoutedEventArgs e)
@@ -283,6 +305,27 @@ namespace ThomasEditor
         private void SaveScene_Click(object sender, RoutedEventArgs e)
         {
 
+            if(Scene.CurrentScene.HasFile)
+            {
+                Scene sceneToSave = Scene.CurrentScene;
+                Scene.SaveScene(sceneToSave);
+            }
+            else
+            {
+                SaveSceneAs_Click(sender, e);
+            }
+        }
+
+
+        private void NewScene_Click(object sender, RoutedEventArgs e)
+        {
+            Scene.CurrentScene.UnLoad();
+            Scene.CurrentScene = new Scene("Scene");
+        }
+
+        private void SaveSceneAs_Click(object sender, RoutedEventArgs e)
+        {
+
             Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
             saveFileDialog.Filter = "Thomas Dank Scene (*.tds) |*.tds";
 
@@ -294,7 +337,7 @@ namespace ThomasEditor
             if (saveFileDialog.ShowDialog() == true)
             {
                 Scene sceneToSave = Scene.CurrentScene;
-                Scene.SaveScene(sceneToSave, saveFileDialog.FileName);
+                Scene.SaveSceneAs(sceneToSave, saveFileDialog.FileName);
                 sceneToSave.Name = System.IO.Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
             }
 

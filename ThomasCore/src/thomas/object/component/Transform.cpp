@@ -181,7 +181,8 @@ namespace thomas
 				{
 					RemoveParent();
 					m_parent = parent;
-					m_parent->m_children.push_back(this);
+					if(m_parent)
+						m_parent->m_children.push_back(this);
 				}
 			}
 			Transform * Transform::GetParent()
