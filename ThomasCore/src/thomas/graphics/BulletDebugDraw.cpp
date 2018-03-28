@@ -115,7 +115,7 @@ namespace thomas
 
 			m_material->Bind();
 			m_material->Draw(m_lines.size(), 0);
-			//m_lines.clear();
+			m_lines.clear();
 		}
 
 	}

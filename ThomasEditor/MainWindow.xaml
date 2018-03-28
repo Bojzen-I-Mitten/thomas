@@ -18,8 +18,10 @@
     -->
     <Window.CommandBindings>
         <CommandBinding Command="commands:CustomCommands.GetNewEmptyObject" CanExecute="NewEmptyObject_CanExecute" Executed="AddEmptyGameObject"/>
+        <CommandBinding Command="commands:CustomCommands.GetDeleteGameObject" CanExecute="RemoveSelectedGameObjects_CanExecute" Executed="RemoveSelectedGameObjects"/>
         <CommandBinding Command="commands:CustomCommands.GetOpenOptionsWindow" CanExecute="OpenOptionsWindow_CanExecute" Executed="OpenOptionsWindow"/>
         <CommandBinding Command="commands:CustomCommands.GetPlay" CanExecute="Play_CanExecute" Executed="PlayPauseButton_Click" />
+        <CommandBinding Command="commands:CustomCommands.Save" Executed="SaveScene_Click" />
     </Window.CommandBindings>
     
     <Window.Resources>
@@ -53,9 +55,11 @@
         <DockPanel>
             <Menu DockPanel.Dock="Top" Grid.Row="0">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_New"/>
-                    <MenuItem Header="_Save Scene As" Click="SaveScene_Click"/>
-                    <MenuItem Header="_Load Scene" Click="LoadScene_Click"/>
+                    <MenuItem Header="_New Scene" Click="NewScene_Click"/>
+                    <MenuItem Header="_Open Scene" Click="LoadScene_Click"/>
+                    <MenuItem Command="{x:Static commands:CustomCommands.GetSave}"/>
+                    <MenuItem Header="_Save Scene As" Click="SaveSceneAs_Click"/>
+                    
                 </MenuItem>
                 <MenuItem Header="_Edit">
 

@@ -140,10 +140,12 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\object\component\Rigidbody.h" />
     <ClInclude Include="src\ScriptingManager.h" />
     <ClInclude Include="src\resource\AudioClip.h" />
     <ClInclude Include="src\resource\Resources.h" />
@@ -173,6 +175,7 @@
     <ClCompile Include="src\object\Component.cpp" />
     <ClCompile Include="src\object\component\Camera.cpp" />
     <ClCompile Include="src\object\component\RenderComponent.cpp" />
+    <ClCompile Include="src\object\component\Rigidbody.cpp" />
     <ClCompile Include="src\object\component\ScriptComponent.cpp" />
     <ClCompile Include="src\object\component\SoundComponent.cpp" />
     <ClCompile Include="src\object\component\Transform.cpp" />

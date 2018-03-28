@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Scene xmlns:i="http://www.w3.org/2001/XMLSchema-instance" z:Id="1" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/" xmlns="http://schemas.datacontract.org/2004/07/ThomasEditor">
+  <GameObjects z:Size="1">
+    <GameObject z:Id="2">
+      <m_name z:Id="3">gameObject</m_name>
+      <Components z:Size="2">
+        <Component z:Id="4" i:type="Transform">
+          <m_name i:nil="true" />
+          <children z:Size="0" />
+          <eulerAngles>
+            <x>0</x>
+            <y>-0</y>
+            <z>0</z>
+          </eulerAngles>
+          <localPosition>
+            <x>-8.856138</x>
+            <y>0.9046421</y>
+            <z>-31.32562</z>
+          </localPosition>
+          <localScale>
+            <x>1</x>
+            <y>1</y>
+            <z>1</z>
+          </localScale>
+          <parent i:nil="true" />
+          <position>
+            <x>-8.856138</x>
+            <y>0.9046421</y>
+            <z>-31.32562</z>
+          </position>
+          <scale>
+            <x>1</x>
+            <y>1</y>
+            <z>1</z>
+          </scale>
+        </Component>
+        <Component z:Id="5" i:type="RenderComponent">
+          <m_name i:nil="true" />
+          <Model z:Id="6">testModel</Model>
+        </Component>
+      </Components>
+      <activeSelf>true</activeSelf>
+      <transform z:Ref="4" i:nil="true" />
+    </GameObject>
+  </GameObjects>
+  <Name z:Id="7">test</Name>
+</Scene>

@@ -62,7 +62,7 @@ namespace ThomasEditor
 				if (Scene::CurrentScene)
 				{
 					
-					Scene::SaveScene(Scene::CurrentScene, tempFile);
+					Scene::SaveSceneAs(Scene::CurrentScene, tempFile);
 				}
 				
 

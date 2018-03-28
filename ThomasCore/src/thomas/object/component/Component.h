@@ -12,7 +12,11 @@ namespace thomas
 			{
 			private:
 			public:
+				bool initialized = false;
 				GameObject* m_gameObject;
+				virtual void Awake() {};
+				virtual void OnEnable() { };
+				virtual void OnDisable() {};
 				virtual void Update() {};
 				virtual void OnDrawGizmos() {};
 				virtual void OnDrawGizmosSelected() {};

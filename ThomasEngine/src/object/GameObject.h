@@ -10,6 +10,7 @@
 #include "Object.h"
 #include "Component.h"
 #include "component\Transform.h"
+#include "component\ScriptComponent.h"
 #include "../attributes/CustomAttributes.h"
 #using "PresentationFramework.dll"
 using namespace System;
@@ -41,35 +42,63 @@ namespace ThomasEditor {
 		void PostLoad()
 		{
 			scene = Scene::CurrentScene;
+			m_transform = GetComponent<Transform^>();
+			
+			List<Component^>^ editorComponents = gcnew List<Component^>;
 			for (int i = 0; i < m_components.Count; i++)
 			{
 				Component^ component = m_components[i];
 
 				Type^ typ = component->GetType();
-				if (typ->IsDefined(ExecuteInEditor::typeid, false)) {
-					component->Awake();
+				if (typ->IsDefined(ExecuteInEditor::typeid, false) && component->enabled && !component->initialized) {
+					editorComponents->Add(component);
 				}
 
 			}
-			m_transform = GetComponent<Transform^>();
 			
+			initComponents(editorComponents);
+			
+		}
+
+
+		void initComponents(List<Component^>^ components)
+		{
+			for each(Component^ component in components)
+			{
+				component->Awake();
+				component->initialized = true;
+			}
+
+			for each(Component^ component in components)
+			{
+				component->OnEnable();
+			}
+
+			for each(Component^ component in components)
+			{
+				component->Start();
+
+			}
 		}
 		
 		void Awake()
 		{
+			List<Component^>^ uninitializedComponents = gcnew List<Component^>;
 			for each(Component^ component in m_components)
 			{
-				if (!component->IsAwake())
-					component->Awake();
+				if (!component->initialized)
+					uninitializedComponents->Add(component);
 
 			}
+			initComponents(uninitializedComponents);
+			
 		}
 		void UpdateComponents()
 		{
 			for (int i = 0; i < m_components.Count; i++)
 			{
 				Component^ component = m_components[i];
-				if (component->IsAwake())
+				if (component->initialized && component->enabled)
 					component->Update();
 			}
 		}
@@ -98,20 +127,29 @@ namespace ThomasEditor {
 			m_name = name;
 			m_transform = AddComponent<Transform^>();
 			((thomas::object::GameObject*)nativePtr)->m_transform = (thomas::object::component::Transform*)m_transform->nativePtr;
+
+			Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
+
 			Scene::CurrentScene->GameObjects->Add(this);
 			scene = Scene::CurrentScene;
 			System::Windows::Data::BindingOperations::EnableCollectionSynchronization(%m_components, m_componentsLock);
 			
+			Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
 		}
 
 		virtual void Destroy() override
 		{
+			Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
 			for (int i = 0; i < m_components.Count; i++) {
 				m_components[i]->Destroy();
 				i--;
 			}
 			thomas::object::Object::Destroy(nativePtr);
 			m_components.Clear();
+
+			
+			Scene::CurrentScene->GameObjects->Remove(this);
+			Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
 		}
 
 	
@@ -176,9 +214,12 @@ namespace ThomasEditor {
 			((Component^)component)->setGameObject(this);
 			m_components.Add((Component^)component);
 			
-			if (typ->IsDefined(ExecuteInEditor::typeid, false) || scene->IsPlaying())
+			if ((typ->IsDefined(ExecuteInEditor::typeid, false) || scene->IsPlaying()) && !component->initialized && component->enabled)
 			{
 				component->Awake();
+				component->initialized = true;
+				component->OnEnable();
+				component->Start();
 			}
 			return component;
 		}
