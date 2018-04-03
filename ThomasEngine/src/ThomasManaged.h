@@ -207,6 +207,7 @@ namespace ThomasEditor {
 
 		static void UpdateSelectedObjects() {
 			List<GameObject^> tempSelectedGameObjects;
+			Monitor::Enter(SelectedGameObjects);
 			for (thomas::object::GameObject* gameObject : thomas::editor::EditorCamera::GetSelectedObjects())
 			{
 				GameObject^ gObj = (GameObject^)ThomasEditor::Object::GetObject(gameObject);
@@ -229,7 +230,7 @@ namespace ThomasEditor {
 				for each(GameObject^ gObj in tempSelectedGameObjects)
 					SelectedGameObjects->Add(gObj);
 			}
-
+			Monitor::Exit(SelectedGameObjects);
 			thomas::editor::EditorCamera::SetHasSelectionChanged(false);
 		}
 

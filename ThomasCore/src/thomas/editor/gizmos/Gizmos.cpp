@@ -297,7 +297,8 @@ namespace thomas
 			if (shader)
 			{
 				s_gizmoMaterial = new graphics::Material(shader);
-				s_gizmoMaterial->SetColor("gizmoColor", math::Color(1, 1, 1));
+				SetColor(math::Color(1, 1, 1));
+				SetMatrix(math::Matrix::Identity);
 			}
 		}
 
