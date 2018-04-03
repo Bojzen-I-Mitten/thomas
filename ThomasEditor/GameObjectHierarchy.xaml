@@ -7,7 +7,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TreeView x:Name="hierarchy" Focusable="True" Background="#444444" SelectedItemChanged="SelectedGameObjectChanged">
-        </TreeView>
+        <TreeView AllowDrop="True" x:Name="hierarchy" Focusable="True" Background="#444444" SelectedItemChanged="SelectedGameObjectChanged" DragOver="hierarchy_DragOver" Drop="hierarchy_Drop" MouseMove="hierarchy_MouseMove" MouseDown="hierarchy_MouseDown" />
     </Grid>
 </UserControl>

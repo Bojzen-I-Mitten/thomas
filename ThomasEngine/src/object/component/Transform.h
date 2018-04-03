@@ -91,6 +91,17 @@ namespace ThomasEditor
 			Vector3 get() { return Vector3(((thomas::object::component::Transform*)nativePtr)->m_localScale); }
 			void set(Vector3 value) { ((thomas::object::component::Transform*)nativePtr)->m_localScale = thomas::math::Vector3(value.x, value.y, value.z); }
 		}
+
+		bool IsChildOf(Transform^ _parent)
+		{
+			if (this == _parent)
+				return true;
+			else if (parent != nullptr)
+				return parent->IsChildOf(_parent);
+			else
+				return false;
+
+		}
 	
 		void Update() override
 		{
