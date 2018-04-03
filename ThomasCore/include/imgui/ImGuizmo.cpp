@@ -1025,7 +1025,8 @@ namespace ImGuizmo
       {
          vec_t dirPlaneX, dirPlaneY;
          ComputeTripodAxisAndVisibility(i, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit);
-         
+		 dirPlaneX = dirPlaneX.Abs();
+
          // draw axis
          if (belowAxisLimit)
          {
@@ -1046,8 +1047,8 @@ namespace ImGuizmo
             drawList->AddTriangleFilled(worldDirSSpace - dir, a + ortogonalDir, a - ortogonalDir, colors[i + 1]);
             // Arrow head end
 
-            if (gContext.mAxisFactor[i] < 0.f)
-               DrawHatchedAxis(dirPlaneX);
+            //if (gContext.mAxisFactor[i] < 0.f)
+              // DrawHatchedAxis(dirPlaneX);
          }
 
          // draw plane
