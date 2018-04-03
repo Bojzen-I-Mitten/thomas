@@ -23,15 +23,18 @@ namespace ThomasEditor {
 		System::String^ m_savePath;
 
 		Scene() {
-			
 			m_name = "New Scene";
 			System::Windows::Data::BindingOperations::EnableCollectionSynchronization(%m_gameObjects, m_gameObjectsLock);
+			m_gameObjects.CollectionChanged += sceneChanged;
 		}
 	public:
+
+		static System::Collections::Specialized::NotifyCollectionChangedEventHandler^ sceneChanged;
 
 		Scene(System::String^ name) {
 			m_name = name;
 			System::Windows::Data::BindingOperations::EnableCollectionSynchronization(%m_gameObjects, m_gameObjectsLock);
+			m_gameObjects.CollectionChanged += sceneChanged;
 		}
 		void Play();
 

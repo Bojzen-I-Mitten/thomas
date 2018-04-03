@@ -56,7 +56,7 @@ List<Type^>^ ThomasEditor::Component::GetAllAddableComponentTypes()
 
 	for (int i = 0; i < types->Count; i++)
 	{
-		Type^ t = types[i]->GetType();
+		Type^ t = types[i];
 		if (t == Component::typeid || t == Transform::typeid)
 		{
 			types->RemoveAt(i);
