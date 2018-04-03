@@ -42,19 +42,9 @@ float4 GetReflectVec(float4 inVec, float4 normal)
 	return 2 * dot(normal, inVec)*normal - inVec;
 }
 
-
-float Fresnel(float lightAngle, float mediumRefractionIndex)
+float4 GetHalfwayVec(float4 lightDir, float4 viewDir)
 {
-	float mediumTheta = 1.0f / mediumRefractionIndex;
-	float refractAngle = sqrt(1 - mediumTheta * mediumTheta);
-
-	float mediumLightAngleFactor = mediumRefractionIndex * lightAngle;
-	float mediumRefractAngleFactor = mediumRefractionIndex* refractAngle;
-
-	float Rparl = (mediumLightAngleFactor - refractAngle) / (mediumLightAngleFactor + refractAngle);
-	float Rperp = (lightAngle - mediumRefractAngleFactor) / (lightAngle + mediumRefractAngleFactor);
-
-	return (Rparl * Rparl + Rperp * Rperp) / 2;
+	return normalize(lightDir + viewDir);
 }
 
 struct v2f {
@@ -74,22 +64,22 @@ v2f vert(appdata_thomas v)
 
 float4 frag(v2f i) : SV_TARGET
 {
-	float4 testLightDir = normalize(float4(1, -1, -1, 0));
-	float4 tempLightColorWith = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	float4 tempLightDir = normalize(float4(1, -1, -1, 0));
+	float4 tempLightDiffuseColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	float4 tempLightSpecularColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	//float tempDiffuseDistance = 5.0f;//diffuse power used for point lights
 
 	float4 specular = float4(0, 0, 0, 0);
 	float4 color = float4(0.2, 0.2, 0.2, 1.0f);
 	
 	float3 viewDir = i.worldPos - _WorldSpaceCameraPos;
-	float lightIntensity = saturate(dot(-i.normal, testLightDir));
+    float diffuseIntensity = saturate(dot(-i.normal, tempLightDir));
 	
+	float specularIntensity = pow(saturate(dot(-i.normal, GetHalfwayVec(tempLightDir, float4(viewDir, 1.0f)))), 10.0f);
+
+	color += saturate(tempLightDiffuseColor * diffuseIntensity + tempLightSpecularColor * specularIntensity);
 
 	
-	color += saturate(tempLightColorWith * lightIntensity);
-		//float4 reflectVec = dot(GetReflectVec(testLightDir, -i.normal), i.normal);
-		//specular = saturate(dot(reflectVec, viewDir)) * Fresnel(lightIntensity, 1.3f);
-	
-	//color = saturate(color + specular);
 	return color;
 }
 
