@@ -20,6 +20,9 @@ namespace ThomasEditor
     /// </summary>
     public partial class GameObjectHierarchy : UserControl
     {
+
+        bool _isDragging;
+
         public GameObjectHierarchy()
         {
             InitializeComponent();
@@ -31,6 +34,9 @@ namespace ThomasEditor
         private void BuildTree(Transform parent, TreeViewItem parentTree)
         {
             parentTree.IsExpanded = true;
+            if (ThomasWrapper.SelectedGameObjects.Contains(parent.gameObject))
+                parentTree.IsSelected = true;
+
             foreach (Transform child in parent.children)
             {
                 TreeViewItem node = new TreeViewItem { DataContext = child.gameObject };
@@ -38,6 +44,23 @@ namespace ThomasEditor
                 node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
                 BuildTree(child, node);
                 parentTree.Items.Add(node);
+            }
+        }
+
+
+        private void ResetTreeView()
+        {
+            hierarchy.Items.Clear();
+            foreach (GameObject gObj in Scene.CurrentScene.GameObjects)
+            {
+                if (gObj.transform.parent == null)
+                {
+                    TreeViewItem node = new TreeViewItem { DataContext = gObj };
+                    //node.MouseRightButtonUp += Node_MouseRightButtonUp;
+                    node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
+                    BuildTree(gObj.transform, node);
+                    hierarchy.Items.Add(node);
+                }
             }
         }
 
@@ -126,15 +149,100 @@ namespace ThomasEditor
             inspector.SelectedGameObject = null;
             if (hierarchy.SelectedItem != null)
             {
-                TreeViewItem item = gen.ContainerFromItem(hierarchy.SelectedItem) as TreeViewItem;
-                if (item != null)
+                TreeViewItem item = hierarchy.SelectedItem as TreeViewItem;
+                if(item != null)
                 {
                     inspector.SelectedGameObject = (GameObject)item.DataContext;
                     if (!ThomasWrapper.SelectedGameObjects.Contains((GameObject)item.DataContext))
                         ThomasWrapper.SelectGameObject((GameObject)item.DataContext);
                 }
+
             }
         }
 
+        private void hierarchy_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(Task)))
+            {
+                e.Effects = DragDropEffects.Move;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+        }
+
+        private TreeViewItem GetNearestContainer(UIElement element)
+        {
+            // Walk up the element tree to the nearest tree view item.
+            TreeViewItem container = element as TreeViewItem;
+            while ((container == null) && (element != null))
+            {
+                element = VisualTreeHelper.GetParent(element) as UIElement;
+                container = element as TreeViewItem;
+            }
+            return container;
+        }
+
+        TreeViewItem GetItemAtLocation(Point location)
+        {
+            TreeViewItem foundItem = default(TreeViewItem);
+            HitTestResult hitTestResults = VisualTreeHelper.HitTest(hierarchy, location);
+            if (hitTestResults != null && hitTestResults.VisualHit is FrameworkElement)
+            {
+                foundItem = GetNearestContainer(hitTestResults.VisualHit as FrameworkElement);
+            }
+
+            return foundItem;
+        }
+
+        private void hierarchy_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(TreeViewItem)))
+            {
+                
+                TreeViewItem source = (TreeViewItem)e.Data.GetData(typeof(TreeViewItem));
+                TreeViewItem target = GetItemAtLocation(e.GetPosition(hierarchy));
+
+                if(target != null && source != null && target != source)
+                {
+                    GameObject parent = target.DataContext as GameObject;
+                    GameObject child = source.DataContext as GameObject;
+                    if(!parent.transform.IsChildOf(child.transform))
+                    {
+                        child.transform.parent = parent.transform;
+                        ResetTreeView();
+                    }
+                }
+                else if(source != null && target == null)
+                {
+                    GameObject child = source.DataContext as GameObject;
+                    child.transform.parent = null;
+                    ResetTreeView();
+                }
+
+                // Code to move the item in the model is placed here...
+            }
+        }
+
+        private void hierarchy_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!_isDragging && e.LeftButton == MouseButtonState.Pressed)
+            {
+                _isDragging = true;
+                DragDrop.DoDragDrop(hierarchy, hierarchy.SelectedValue,
+                    DragDropEffects.Move);
+            }
+            else if(e.LeftButton != MouseButtonState.Pressed)
+            {
+                _isDragging = false;
+                
+            }
+
+        }
+
+        private void hierarchy_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+        }
     }
 }
