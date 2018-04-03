@@ -1025,7 +1025,8 @@ namespace ImGuizmo
       {
          vec_t dirPlaneX, dirPlaneY;
          ComputeTripodAxisAndVisibility(i, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit);
-         
+		 dirPlaneX = dirPlaneX.Abs();
+
          // draw axis
          if (belowAxisLimit)
          {
