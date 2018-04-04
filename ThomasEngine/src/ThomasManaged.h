@@ -188,8 +188,8 @@ namespace ThomasEditor {
 
 		static void Play()
 		{
-			playing = true;
 			Scene::CurrentScene->Play();
+			playing = true;
 		}
 
 		static bool IsPlaying()
@@ -200,6 +200,7 @@ namespace ThomasEditor {
 		static void Stop()
 		{
 			playing = false;
+			Scene::RestartCurrentScene();
 		}
 
 		static void SelectGameObject(GameObject^ gObj)

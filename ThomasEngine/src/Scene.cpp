@@ -7,12 +7,15 @@ namespace ThomasEditor
 {
 	void Scene::Play()
 	{
+		String^ tempFile = System::IO::Path::Combine(Environment::GetFolderPath(Environment::SpecialFolder::LocalApplicationData), "thomas/scene.tds");
+		SaveSceneAs(this, tempFile);
 		m_playing = true;
 		for each(GameObject^ gObj in m_gameObjects)
 		{
 			gObj->Awake();
 		}
 	}
+
 
 	void Scene::SaveSceneAs(Scene ^ scene, System::String ^ fullPath)
 	{
@@ -57,6 +60,14 @@ namespace ThomasEditor
 
 		return scene;
 
+	}
+
+	void Scene::RestartCurrentScene()
+	{
+		String^ tempFile = System::IO::Path::Combine(Environment::GetFolderPath(Environment::SpecialFolder::LocalApplicationData), "thomas/scene.tds");
+		Scene::CurrentScene->UnLoad();
+		Scene::CurrentScene = Scene::LoadScene(tempFile);
+		System::IO::File::Delete(tempFile);
 	}
 
 	void Scene::UnLoad()

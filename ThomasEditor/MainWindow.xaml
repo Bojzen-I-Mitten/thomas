@@ -167,8 +167,21 @@
                         </ToggleButton.Style>
                     </ToggleButton>
                 </WrapPanel>
-                <Button Margin="250,0,0,0" Height="30" x:Name="playPauseButton" Command="commands:CustomCommands.GetPlay" >
-                    <Image Source="icons/play.png"/>
+                <Button Margin="250,0,0,0" Height="30" x:Name="playPauseButton" Command="commands:CustomCommands.GetPlay">
+                    <Image>
+                        <Image.Style>
+                            <Style TargetType="{x:Type Image}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding}" Value="True">
+                                        <Setter Property="Source" Value="icons/stop.png" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding}" Value="False">
+                                        <Setter Property="Source" Value="icons/play.png" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
                 </Button>
                 <!--<Button  Width="50" Height="50">
                     <Button.Content>
