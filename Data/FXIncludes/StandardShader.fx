@@ -75,26 +75,46 @@ struct Light
 
 float4 frag(v2f input) : SV_TARGET
 {
-    Light tempDirectionalLight;
-    tempDirectionalLight.color = float4(0.5f, 0.5f, 0.5f, 1.0f);
-    tempDirectionalLight.direction = normalize(float4(1, 1, 1, 0));
-    Light tempPointLight;
+
+    Light tempLight;
+    tempLight.color = float4(0.5f, 0.5f, 0.5f, 1.0f);
+    tempLight.position = float4(5, 5, 5, 1);
+    tempLight.range = 7;
+    tempLight.direction = normalize(float4(1, 1, 1, 0));
+    tempLight.type = 1;
+    
+    //colors
     float4 ambient = float4(0.2, 0.2, 0.2, 1.0f);
     float4 diffuse = float4(0.5f, 0.5f, 0.5f, 1.0f);
     float4 specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
     
     float4 viewDir = float4(input.worldPos.xyz - _WorldSpaceCameraPos, 0.0f);
+    float4 lightDir = float4(0, 0, 0, 0);
+    float lightMultiplyer = 1.0f;
 
-    float lambertian = saturate(dot(input.normal, tempDirectionalLight.direction));
+    if (0 == tempLight.type)
+    {
+        lightDir = tempLight.direction;
+        lightMultiplyer = tempLight.color;
+    }
+    else if (1 == tempLight.type)
+    {
+        lightDir = tempLight.position - input.worldPos;
+        float lightDistance = length(lightDir);
+        lightDir = normalize(lightDir);
+        lightDistance *= lightDistance;
+        lightMultiplyer = tempLight.color * tempLight.range / lightDistance;
+    }
+    
+
+    float lambertian = saturate(dot(input.normal, lightDir));
     float specularIntensity = 0.0f;
     if (lambertian > 0.0f)
     {
-        specularIntensity = pow(saturate(dot(input.normal, GetHalfwayVec(viewDir, tempDirectionalLight.direction))), 1.0f);
+        specularIntensity = pow(saturate(dot(input.normal, GetHalfwayVec(viewDir, lightDir))), 16.0f);
     }
-	
-    return saturate(ambient +
-                    diffuse * lambertian * tempDirectionalLight.color +
-                    specular * specularIntensity * tempDirectionalLight.color);
+    
+    return saturate(ambient + (diffuse * lambertian + specular * specularIntensity) * lightMultiplyer);
 
 }
 
