@@ -80,6 +80,11 @@ namespace thomas
 				return m_gameObject->m_transform->GetPosition();
 			}
 
+			math::Vector3 Camera::GetDirection()
+			{
+				return m_gameObject->m_transform->Forward();
+			}
+
 			math::Ray Camera::ScreenPointToRay(math::Vector2 point)
 			{
 				// Move the mouse cursor coordinates into the -1 to +1 range.

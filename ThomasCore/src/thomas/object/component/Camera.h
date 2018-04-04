@@ -27,6 +27,7 @@ namespace thomas
 				math::Matrix GetProjMatrix();
 				math::Matrix GetViewProjMatrix();
 				math::Vector3 GetPosition();
+				math::Vector3 GetDirection();
 				
 				math::Ray ScreenPointToRay(math::Vector2 point);
 
