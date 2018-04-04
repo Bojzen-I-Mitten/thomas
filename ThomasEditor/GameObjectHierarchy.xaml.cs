@@ -152,7 +152,7 @@ namespace ThomasEditor
             if (hierarchy.SelectedItem != null)
             {
                 TreeViewItem item = hierarchy.SelectedItem as TreeViewItem;
-                if(item != null)
+                if (item != null)
                 {
                     inspector.SelectedGameObject = (GameObject)item.DataContext;
                     if (!ThomasWrapper.SelectedGameObjects.Contains((GameObject)item.DataContext))
