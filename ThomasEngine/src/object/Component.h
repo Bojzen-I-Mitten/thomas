@@ -40,6 +40,13 @@ namespace ThomasEditor {
 		}
 
 	public:
+
+		static operator bool(Component^ component)
+		{
+			return component != nullptr;
+		}
+
+		static System::Reflection::Assembly^ editorAssembly;
 		bool enabled = true;
 
 		[BrowsableAttribute(false)]
