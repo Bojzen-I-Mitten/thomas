@@ -62,25 +62,40 @@ v2f vert(appdata_thomas v)
 	return o;
 }
 
-float4 frag(v2f i) : SV_TARGET
+struct Light
 {
-	float4 tempLightDir = normalize(float4(1, -1, -1, 0));
-	float4 tempLightDiffuseColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-	float4 tempLightSpecularColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-	//float tempDiffuseDistance = 5.0f;//diffuse power used for point lights
+    float4 color;
+    float4 position;
+    float4 direction;
+    float intensity;
+    float range;
+    uint type;
+    bool drawHalo;
+};
 
-	float4 specular = float4(0, 0, 0, 0);
-	float4 color = float4(0.2, 0.2, 0.2, 1.0f);
-	
-	float3 viewDir = i.worldPos - _WorldSpaceCameraPos;
-    float diffuseIntensity = saturate(dot(-i.normal, tempLightDir));
-	
-	float specularIntensity = pow(saturate(dot(-i.normal, GetHalfwayVec(tempLightDir, float4(viewDir, 1.0f)))), 10.0f);
+float4 frag(v2f input) : SV_TARGET
+{
+    Light tempDirectionalLight;
+    tempDirectionalLight.color = float4(0.5f, 0.5f, 0.5f, 1.0f);
+    tempDirectionalLight.direction = normalize(float4(1, 1, 1, 0));
+    Light tempPointLight;
+    float4 ambient = float4(0.2, 0.2, 0.2, 1.0f);
+    float4 diffuse = float4(0.5f, 0.5f, 0.5f, 1.0f);
+    float4 specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    
+    float4 viewDir = float4(input.worldPos.xyz - _WorldSpaceCameraPos, 0.0f);
 
-	color += saturate(tempLightDiffuseColor * diffuseIntensity + tempLightSpecularColor * specularIntensity);
-
+    float lambertian = saturate(dot(input.normal, tempDirectionalLight.direction));
+    float specularIntensity = 0.0f;
+    if (lambertian > 0.0f)
+    {
+        specularIntensity = pow(saturate(dot(input.normal, GetHalfwayVec(viewDir, tempDirectionalLight.direction))), 1.0f);
+    }
 	
-	return color;
+    return saturate(ambient +
+                    diffuse * lambertian * tempDirectionalLight.color +
+                    specular * specularIntensity * tempDirectionalLight.color);
+
 }
 
 
