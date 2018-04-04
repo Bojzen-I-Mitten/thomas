@@ -41,7 +41,7 @@ namespace ThomasEditor
 
             InitializeComponent();
 
-
+            playPauseButton.DataContext = false;
             Component.editorAssembly = Assembly.GetAssembly(this.GetType());
 
             //Changeds decimals to . instead of ,
@@ -324,6 +324,16 @@ namespace ThomasEditor
         private void transformModeButton_Click(object sender, RoutedEventArgs e)
         {
             ThomasWrapper.ToggleEditorGizmoManipulatorMode();
+        }
+
+        private void PlayPauseButton_Click(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (ThomasWrapper.IsPlaying())
+                ThomasWrapper.Stop();
+            else
+                ThomasWrapper.Play();
+
+            playPauseButton.DataContext = ThomasWrapper.IsPlaying();
         }
     }
 

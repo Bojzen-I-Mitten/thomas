@@ -37,6 +37,7 @@ namespace ThomasEditor {
 			m_gameObjects.CollectionChanged += sceneChanged;
 		}
 		void Play();
+		void Stop() { m_playing = false; }
 
 		bool IsPlaying() { return m_playing; }
 
@@ -72,6 +73,9 @@ namespace ThomasEditor {
 		{
 			return s_loading;
 		}
+
+		static void RestartCurrentScene();
+
 
 		void UnLoad();
 		void PostLoad();
