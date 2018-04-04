@@ -35,9 +35,13 @@ List<Type^>^ ThomasEditor::Component::GetAllComponentTypes()
 {
 	List<System::Type^>^ types = gcnew List<System::Type^>(System::Reflection::Assembly::GetAssembly(Scene::typeid)->GetExportedTypes());
 	
+
 	Assembly^ scriptAssembly = ScriptingManger::GetAssembly();
 	if (scriptAssembly)
 		types->AddRange(scriptAssembly->GetExportedTypes());
+
+	if (editorAssembly)
+		types->AddRange(editorAssembly->GetExportedTypes());
 
 	for (int i = 0; i < types->Count; i++)
 	{
@@ -57,7 +61,7 @@ List<Type^>^ ThomasEditor::Component::GetAllAddableComponentTypes()
 	for (int i = 0; i < types->Count; i++)
 	{
 		Type^ t = types[i];
-		if (t == Component::typeid || t == Transform::typeid)
+		if (t == Component::typeid || t == Transform::typeid || t == ScriptComponent::typeid)
 		{
 			types->RemoveAt(i);
 			i--;

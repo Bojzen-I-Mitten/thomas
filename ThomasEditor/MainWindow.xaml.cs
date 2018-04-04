@@ -41,7 +41,9 @@ namespace ThomasEditor
 
             InitializeComponent();
 
-            
+
+            Component.editorAssembly = Assembly.GetAssembly(this.GetType());
+
             //Changeds decimals to . instead of ,
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
