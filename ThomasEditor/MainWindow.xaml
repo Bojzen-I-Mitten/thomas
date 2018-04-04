@@ -98,7 +98,6 @@
                                                 <Image Source="icons/translate-selected.png"/>
                                             </Setter.Value>
                                         </Setter>
-                                        <Setter Property="Foreground" Value="Red"/>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -121,7 +120,6 @@
                                                 <Image Source="icons/scale-selected.png"/>
                                             </Setter.Value>
                                         </Setter>
-                                        <Setter Property="Foreground" Value="Red"/>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -142,7 +140,27 @@
                                                 <Image Source="icons/rotate-selected.png"/>
                                             </Setter.Value>
                                         </Setter>
-                                        <Setter Property="Foreground" Value="Red"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+
+                    <ToggleButton BorderThickness="0" Margin="25, 0, 0, 0" Height="15" Padding="-1" x:Name="transformModeButton" Click="transformModeButton_Click" ToolTip="Switch transform mode">
+                        <ToggleButton.Style>
+                            <Style TargetType="{x:Type ToggleButton}">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <Image Source="icons/local-transform.png"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <Image Source="icons/global-transform.png"/>
+                                            </Setter.Value>
+                                        </Setter>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
