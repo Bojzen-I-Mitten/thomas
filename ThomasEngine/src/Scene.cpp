@@ -67,6 +67,7 @@ namespace ThomasEditor
 			i--;
 		}
 		m_gameObjects.Clear();
+		m_gameObjects.CollectionChanged -= sceneChanged;
 	}
 
 	void Scene::PostLoad()

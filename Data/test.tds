@@ -3,45 +3,55 @@
   <GameObjects z:Size="1">
     <GameObject z:Id="2">
       <m_name z:Id="3">gameObject</m_name>
-      <Components z:Size="2">
+      <Components z:Size="3">
         <Component z:Id="4" i:type="Transform">
           <m_name i:nil="true" />
+          <enabled>true</enabled>
           <children z:Size="0" />
           <eulerAngles>
-            <x>0</x>
-            <y>-0</y>
-            <z>0</z>
+            <x>-31.37101</x>
+            <y>0</y>
+            <z>-50.66357</z>
           </eulerAngles>
           <localPosition>
-            <x>-8.856138</x>
-            <y>0.9046421</y>
-            <z>-31.32562</z>
+            <x>-0.220273972</x>
+            <y>5.61288261</y>
+            <z>-2.7628727</z>
           </localPosition>
           <localScale>
-            <x>1</x>
-            <y>1</y>
-            <z>1</z>
+            <x>5.10168934</x>
+            <y>4.81535244</y>
+            <z>0.623703539</z>
           </localScale>
           <parent i:nil="true" />
           <position>
-            <x>-8.856138</x>
-            <y>0.9046421</y>
-            <z>-31.32562</z>
+            <x>-0.220273972</x>
+            <y>5.61288261</y>
+            <z>-2.7628727</z>
           </position>
           <scale>
-            <x>1</x>
-            <y>1</y>
-            <z>1</z>
+            <x>5.10168934</x>
+            <y>4.81535244</y>
+            <z>0.623703539</z>
           </scale>
         </Component>
-        <Component z:Id="5" i:type="RenderComponent">
+        <Component z:Id="5" i:type="Camera">
           <m_name i:nil="true" />
-          <Model z:Id="6">testModel</Model>
+          <enabled>true</enabled>
+          <farPlane>50</farPlane>
+          <fieldOfView>70</fieldOfView>
+          <nearPlane>0.5</nearPlane>
+          <targetDisplay>0</targetDisplay>
+        </Component>
+        <Component z:Id="6" i:type="RenderComponent">
+          <m_name i:nil="true" />
+          <enabled>true</enabled>
+          <Model z:Id="7">testModel</Model>
         </Component>
       </Components>
       <activeSelf>true</activeSelf>
       <transform z:Ref="4" i:nil="true" />
     </GameObject>
   </GameObjects>
-  <Name z:Id="7">test</Name>
+  <Name z:Id="8">test</Name>
 </Scene>
