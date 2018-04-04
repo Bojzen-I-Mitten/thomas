@@ -186,6 +186,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </SplashScreen>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\rotate-selected.png" />
+    <Resource Include="icons\rotate-unselected.png" />
+    <Resource Include="icons\scale-selected.png" />
+    <Resource Include="icons\scale-unselected.png" />
+    <Resource Include="icons\stop.png" />
+    <Resource Include="icons\translate-selected.png" />
+    <Resource Include="icons\translate-unselected.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(SolutionDir)ThomasCore\dlls"  "$(TargetDir)" /y</PostBuildEvent>
