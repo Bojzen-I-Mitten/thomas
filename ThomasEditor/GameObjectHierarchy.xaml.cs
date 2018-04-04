@@ -101,42 +101,44 @@ namespace ThomasEditor
             }
 
         }
+
+
+
+        private void SelectOrDeselectInTree(ItemCollection nodes, System.Collections.IList items, bool select)
+        {
+            foreach (TreeViewItem node in nodes)
+            {
+                if(items.Contains(node.DataContext))
+                {
+                    node.IsSelected = select;
+                }
+                SelectOrDeselectInTree(node.Items, items, select);
+            }
+        }
+
+        private void ResetTree(ItemCollection nodes)
+        {
+            foreach (TreeViewItem node in nodes)
+            {
+                node.IsSelected = false;
+                ResetTree(node.Items);
+            }
+        }
+
         private void SceneSelectedGameObjectChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (TreeViewItem node in hierarchy.Items)
-                {
-                    if (node.DataContext == (GameObject)e.NewItems[0])
-                    {
-                        node.IsSelected = true;
-                        break;
-                    }
-                }
-               // __inspector.SelectedGameObject = (GameObject)e.NewItems[0];
+                SelectOrDeselectInTree(hierarchy.Items, e.NewItems, true);
             }
             if (e.OldItems != null)
             {
-                foreach (GameObject gObj in e.OldItems)
-                {
-                    foreach (TreeViewItem node in hierarchy.Items)
-                    {
-                        if (node.DataContext == gObj)
-                        {
-                            node.IsSelected = false;
-                            break;
-                        }
-                    }
-                }
+                SelectOrDeselectInTree(hierarchy.Items, e.NewItems, false);
             }
 
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
             {
-                foreach (TreeViewItem node in hierarchy.Items)
-                {
-                    if (node.IsSelected)
-                        node.IsSelected = false;
-                }
+                ResetTree(hierarchy.Items);
             }
         }
 
