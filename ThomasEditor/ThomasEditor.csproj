@@ -100,6 +100,9 @@
       <DependentUpon>ThomasGameObjectInspector.xaml</DependentUpon>
     </Compile>
     <Compile Include="ThomasWindow.cs" />
+    <Compile Include="TransformGizmo.xaml.cs">
+      <DependentUpon>TransformGizmo.xaml</DependentUpon>
+    </Compile>
     <Page Include="GameObjectHierarchy.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -129,6 +132,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ThomasGameObjectInspector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TransformGizmo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -176,12 +183,6 @@
     <Resource Include="icons\pause.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThomasEngine\ThomasEngine.vcxproj">
-      <Project>{64d247ed-db4d-4ea3-b8ae-680bf66a8f2e}</Project>
-      <Name>ThomasEngine</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <SplashScreen Include="splash.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </SplashScreen>
@@ -198,6 +199,12 @@
   <ItemGroup>
     <Resource Include="icons\global-transform.png" />
     <Resource Include="icons\local-transform.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThomasEngine\ThomasEngine.vcxproj">
+      <Project>{64d247ed-db4d-4ea3-b8ae-680bf66a8f2e}</Project>
+      <Name>ThomasEngine</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

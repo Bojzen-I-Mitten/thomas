@@ -93,9 +93,8 @@ namespace ThomasEditor
             {
                 ThomasWrapper.Update();
                 editorWindow.Title = ThomasWrapper.FrameRate.ToString();
-               lastRender = args.RenderingTime;
-
-                UpdateTransformGizmo();
+                lastRender = args.RenderingTime;
+                transformGizmo.UpdateTransformGizmo();
              }
             
         }
@@ -183,15 +182,6 @@ namespace ThomasEditor
             Shader.RecompileShaders();
         }
 
-        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
-        {
-            if(ThomasWrapper.IsPlaying())
-            {
-                
-            }
-            ThomasWrapper.Play();
-        }
-
         private void Play_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -257,21 +247,6 @@ namespace ThomasEditor
 
                 Scene.CurrentScene = newScene;
                                          
-
-                //Refresh tree
-                //thomasObjects.Items.Clear();
-
-                //foreach (GameObject newItem in Scene.CurrentScene.GameObjects)
-                //{
-                //    if (newItem.transform.parent == null)
-                //    {
-                //        TreeViewItem node = new TreeViewItem { DataContext = newItem };
-                //        node.MouseRightButtonUp += Node_MouseRightButtonUp;
-                //        node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
-                //        BuildTree(newItem.transform, node);
-                //        thomasObjects.Items.Add(node);
-                //    }
-                //}
                 Scene.CurrentScene.PostLoad();
 
             }
@@ -279,51 +254,6 @@ namespace ThomasEditor
 
 
            
-        }
-
-        private void UpdateTransformGizmo()
-        {
-            switch(ThomasWrapper.GetEditorGizmoManipulatorOperation())
-            {
-                case ThomasWrapper.ManipulatorOperation.TRANSLATE:
-                    translateButton_Click(null, null);
-                    break;
-                case ThomasWrapper.ManipulatorOperation.ROTATE:
-                    rotateButton_Click(null, null);
-                    break;
-                case ThomasWrapper.ManipulatorOperation.SCALE:
-                    scaleButton_Click(null, null);
-                    break;
-            }
-        }
-
-        private void scaleButton_Click(object sender, RoutedEventArgs e)
-        {
-            rotateButton.IsChecked = false;
-            translateButton.IsChecked = false;
-            scaleButton.IsChecked = true;
-            ThomasWrapper.SetEditorGizmoManipulatorOperation(ThomasWrapper.ManipulatorOperation.SCALE);
-        }
-
-        private void rotateButton_Click(object sender, RoutedEventArgs e)
-        {
-            scaleButton.IsChecked = false;
-            translateButton.IsChecked = false;
-            rotateButton.IsChecked = true;
-            ThomasWrapper.SetEditorGizmoManipulatorOperation(ThomasWrapper.ManipulatorOperation.ROTATE);
-        }
-
-        private void translateButton_Click(object sender, RoutedEventArgs e)
-        {
-            scaleButton.IsChecked = false;
-            rotateButton.IsChecked = false;
-            translateButton.IsChecked = true;
-            ThomasWrapper.SetEditorGizmoManipulatorOperation(ThomasWrapper.ManipulatorOperation.TRANSLATE);
-        }
-
-        private void transformModeButton_Click(object sender, RoutedEventArgs e)
-        {
-            ThomasWrapper.ToggleEditorGizmoManipulatorMode();
         }
 
         private void PlayPauseButton_Click(object sender, ExecutedRoutedEventArgs e)
