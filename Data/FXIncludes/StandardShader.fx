@@ -69,6 +69,7 @@ struct Light
     float4 direction;
     float range;
     uint type;
+    float spotAngle;
     bool drawHalo;
 };
 
@@ -81,10 +82,11 @@ float4 frag(v2f input) : SV_TARGET
     tempLight.range = 7;
     tempLight.direction = normalize(float4(-1, -1, -1, 0));
     tempLight.type = 1;
+    float3 attenuation = float3(1.0f, 0.2f, 0.1f);
     
     float4 finalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    float4 ambient = float4(0.5f, 0.5f, 0.5f, 1.0f);
-    float4 diffuse = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 ambient = float4(0.1f, 0.1f, 0.1f, 1.0f);
+    float4 diffuse = float4(0.4f, 0.4f, 0.4f, 1.0f);
     float4 specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
     
     float4 viewDir = float4(input.worldPos.xyz - _WorldSpaceCameraPos, 0.0f);
@@ -101,8 +103,13 @@ float4 frag(v2f input) : SV_TARGET
         lightDir = tempLight.position - input.worldPos;
         float lightDistance = length(lightDir);
         lightDir = normalize(lightDir);
-        lightDistance *= lightDistance;
-        lightMultiplyer = tempLight.color * tempLight.range / lightDistance;
+
+        lightMultiplyer = tempLight.color * tempLight.range / (attenuation.x + attenuation.y * lightDistance + attenuation.z * lightDistance * lightDistance);// * pow(saturate(dot(viewDir, tempLight.direction)), 20);
+    }
+    else if (2 == tempLight.type)
+    {
+        saturate(dot(viewDir, tempLight.direction));
+
     }
     
     float lambertian = saturate(dot(input.normal, lightDir));
