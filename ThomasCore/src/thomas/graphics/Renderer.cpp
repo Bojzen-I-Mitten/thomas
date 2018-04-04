@@ -52,6 +52,7 @@ namespace thomas
 			Shader::SetGlobalMatrix("thomas_MatrixVP", camera->GetViewProjMatrix().Transpose());
 			
 			Shader::SetGlobalVector("_WorldSpaceCameraPos", (math::Vector4)camera->GetPosition());
+			Shader::SetGlobalVector("_WorldSpaceCameraDir", (math::Vector4)camera->GetDirection());
 		}
 
 		void Renderer::ClearRenderQueue()

@@ -89,8 +89,8 @@ float4 frag(v2f input) : SV_TARGET
     float4 diffuse = float4(0.4f, 0.4f, 0.4f, 1.0f);
     float4 specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
     
-    float4 viewDir = float4(input.worldPos.xyz - _WorldSpaceCameraPos, 0.0f);
-    float4 lightDir = float4(0, 0, 0, 0);
+    float4 viewDir = float4(normalize(_WorldSpaceCameraPos - input.worldPos.xyz), 0.0f);
+	float4 lightDir = float4(0, 0, 0, 0);
     float lightMultiplyer = 1.0f;
 
     if (0 == tempLight.type)//directional
@@ -112,11 +112,14 @@ float4 frag(v2f input) : SV_TARGET
 
     }
     
+	
     float lambertian = saturate(dot(input.normal, lightDir));
     float specularIntensity = 0.0f;
     if (lambertian > 0.0f)
     {
-        specularIntensity = pow(saturate(dot(input.normal, GetHalfwayVec(viewDir, lightDir))), 16.0f);
+        specularIntensity = pow(dot(input.normal, GetHalfwayVec(viewDir, lightDir)), 16.0f); //blinn-phong
+		//float4 test = float4(normalize(tempLight.position.xyz - input.worldPos.xyz), 0.0f);
+		//specularIntensity = pow(max(0.0, dot(viewDir, reflect(-test, input.normal))), 6.0f); //phong
     }
     
     return saturate(ambient + (diffuse * lambertian + specular * specularIntensity) * lightMultiplyer);
