@@ -121,6 +121,14 @@ namespace thomas
 		{
 			return m_cameraComponent;
 		}
+		void EditorCamera::SetManipulatorOperation(ImGuizmo::OPERATION operation)
+		{
+			s_editorCamera->m_manipulatorOperation = operation;
+		}
+		ImGuizmo::OPERATION EditorCamera::GetManipulatorOperation()
+		{
+			return s_editorCamera->m_manipulatorOperation;
+		}
 		void EditorCamera::renderCamera()
 		{		
 			thomas::graphics::Renderer::BindCamera(m_cameraComponent);

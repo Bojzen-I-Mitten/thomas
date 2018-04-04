@@ -37,6 +37,9 @@ namespace thomas
 			static bool HasSelectionChanged();
 			static void SetHasSelectionChanged(bool selectionChanged);
 			object::component::Camera* GetCamera();
+
+			static void SetManipulatorOperation(ImGuizmo::OPERATION operation);
+			static ImGuizmo::OPERATION GetManipulatorOperation();
 		private:
 			ImGuizmo::OPERATION m_manipulatorOperation;
 			ImGuizmo::MODE m_manipulatorMode;
