@@ -251,6 +251,11 @@ namespace ThomasEditor {
 			return (ManipulatorOperation)thomas::editor::EditorCamera::GetManipulatorOperation();
 		}
 
+		static void ToggleEditorGizmoManipulatorMode()
+		{
+			thomas::editor::EditorCamera::ToggleManipulatorMode();
+		}
+
 		static void UpdateLog() {
 			std::vector<std::string> nativeOutputs = thomas::ThomasCore::GetLogOutput();
 			

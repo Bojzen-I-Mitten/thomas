@@ -40,6 +40,8 @@ namespace thomas
 
 			static void SetManipulatorOperation(ImGuizmo::OPERATION operation);
 			static ImGuizmo::OPERATION GetManipulatorOperation();
+
+			static void ToggleManipulatorMode();
 		private:
 			ImGuizmo::OPERATION m_manipulatorOperation;
 			ImGuizmo::MODE m_manipulatorMode;

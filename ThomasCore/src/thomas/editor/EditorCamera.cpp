@@ -129,6 +129,10 @@ namespace thomas
 		{
 			return s_editorCamera->m_manipulatorOperation;
 		}
+		void EditorCamera::ToggleManipulatorMode()
+		{
+			s_editorCamera->m_manipulatorMode = s_editorCamera->m_manipulatorMode == ImGuizmo::MODE::WORLD ? ImGuizmo::MODE::LOCAL : ImGuizmo::MODE::WORLD;
+		}
 		void EditorCamera::renderCamera()
 		{		
 			thomas::graphics::Renderer::BindCamera(m_cameraComponent);

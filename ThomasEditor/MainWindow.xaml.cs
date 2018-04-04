@@ -320,6 +320,11 @@ namespace ThomasEditor
             translateButton.IsChecked = true;
             ThomasWrapper.SetEditorGizmoManipulatorOperation(ThomasWrapper.ManipulatorOperation.TRANSLATE);
         }
+
+        private void transformModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            ThomasWrapper.ToggleEditorGizmoManipulatorMode();
+        }
     }
 
     public static class Extensions

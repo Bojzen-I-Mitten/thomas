@@ -195,6 +195,10 @@
     <Resource Include="icons\translate-selected.png" />
     <Resource Include="icons\translate-unselected.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\global-transform.png" />
+    <Resource Include="icons\local-transform.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(SolutionDir)ThomasCore\dlls"  "$(TargetDir)" /y</PostBuildEvent>
