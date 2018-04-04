@@ -278,6 +278,28 @@ namespace ThomasEditor
 
            
         }
+
+        private void scaleButton_Click(object sender, RoutedEventArgs e)
+        {
+            rotateButton.IsChecked = false;
+            translateButton.IsChecked = false;
+            scaleButton.IsChecked = true;
+        }
+
+        private void rotateButton_Click(object sender, RoutedEventArgs e)
+        {
+            scaleButton.IsChecked = false;
+            translateButton.IsChecked = false;
+            rotateButton.IsChecked = true;
+        }
+
+        private void translateButton_Click(object sender, RoutedEventArgs e)
+        {
+            scaleButton.IsChecked = false;
+            rotateButton.IsChecked = false;
+            translateButton.IsChecked = true;
+
+        }
     }
 
     public static class Extensions
