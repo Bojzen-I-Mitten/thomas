@@ -51,51 +51,8 @@ namespace ThomasEditor
 
             CompositionTarget.Rendering += DoUpdates;
 
-            thomasObjects.SelectedItemChanged += ThomasObjects_SelectedItemChanged;
-
-
-            Scene.CurrentScene.GameObjects.CollectionChanged += GameObjects_CollectionChanged;
+      
             ThomasWrapper.OutputLog.CollectionChanged += OutputLog_CollectionChanged;
-            ThomasWrapper.SelectedGameObjects.CollectionChanged += SelectedGameObjects_CollectionChanged;
-        }
-
-        private void SelectedGameObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (TreeViewItem node in thomasObjects.Items)
-                {
-                    if (node.DataContext == (GameObject)e.NewItems[0])
-                    {
-                        node.IsSelected = true;
-                        break;
-                    }
-                }
-                __inspector.SelectedGameObject = (GameObject)e.NewItems[0];
-            }
-            if(e.OldItems != null)
-            {
-                foreach(GameObject gObj in e.OldItems)
-                {
-                    foreach (TreeViewItem node in thomasObjects.Items)
-                    {
-                        if (node.DataContext == gObj)
-                        {
-                            node.IsSelected = false;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
-            {
-                foreach (TreeViewItem node in thomasObjects.Items)
-                {
-                    if(node.IsSelected)
-                        node.IsSelected = false;
-                }
-            }
         }
         private void OutputLog_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -116,78 +73,12 @@ namespace ThomasEditor
             }
         }
 
-        private void GameObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-
-                foreach (GameObject newItem in e.NewItems)
-                {
-                    if (newItem.transform.parent == null)
-                    {
-                        TreeViewItem node = new TreeViewItem { DataContext = newItem};
-                        node.MouseRightButtonUp += Node_MouseRightButtonUp;
-                        node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
-                        BuildTree(newItem.transform, node);
-                        thomasObjects.Items.Add(node);
-                    }
-                }
-            }
-            
-            if(e.OldItems != null)
-            {
-                foreach (GameObject oldItem in e.OldItems)
-                {
-                    //oldItem.Destroy();
-                    foreach (TreeViewItem node in thomasObjects.Items)
-                    {
-                        if (node.DataContext == oldItem)
-                        {
-                            node.MouseRightButtonUp -= Node_MouseRightButtonUp;
-                            thomasObjects.Items.Remove(node);
-                            break;
-                        }
-                    }
-                }
-            }
-            
-        }
 
         private void Node_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             ContextMenu cm = this.FindResource("gameObjectContext") as ContextMenu;
             cm.PlacementTarget = sender as TreeViewItem;
             cm.IsOpen = true;
-        }
-
-        private void ThomasObjects_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            ItemContainerGenerator gen = thomasObjects.ItemContainerGenerator;
-           
-            __inspector.SelectedGameObject = null;
-            if (thomasObjects.SelectedItem != null)
-            {
-                TreeViewItem item = gen.ContainerFromItem(thomasObjects.SelectedItem) as TreeViewItem;
-                if (item != null)
-                {
-                    __inspector.SelectedGameObject = (GameObject)item.DataContext;
-                    if(!ThomasWrapper.SelectedGameObjects.Contains((GameObject)item.DataContext))
-                        ThomasWrapper.SelectGameObject((GameObject)item.DataContext);
-                }
-            }
-        }
-
-        private void BuildTree(Transform parent, TreeViewItem parentTree)
-        {
-            parentTree.IsExpanded = true;
-            foreach(Transform child in parent.children)
-            {
-                TreeViewItem node = new TreeViewItem {DataContext = child.gameObject};
-                node.MouseRightButtonUp += Node_MouseRightButtonUp;
-                node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
-                BuildTree(child, node);
-                parentTree.Items.Add(node);
-            }
         }
 
                 
@@ -358,28 +249,26 @@ namespace ThomasEditor
 
                 Scene newScene = Scene.LoadScene(openFileDialog.FileName);
                 
-                Scene.CurrentScene.GameObjects.CollectionChanged -= GameObjects_CollectionChanged;
                 Scene.CurrentScene.UnLoad();
 
                 Scene.CurrentScene = newScene;
                                          
 
                 //Refresh tree
-                thomasObjects.Items.Clear();
+                //thomasObjects.Items.Clear();
 
-                foreach (GameObject newItem in Scene.CurrentScene.GameObjects)
-                {
-                    if (newItem.transform.parent == null)
-                    {
-                        TreeViewItem node = new TreeViewItem { DataContext = newItem };
-                        node.MouseRightButtonUp += Node_MouseRightButtonUp;
-                        node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
-                        BuildTree(newItem.transform, node);
-                        thomasObjects.Items.Add(node);
-                    }
-                }
+                //foreach (GameObject newItem in Scene.CurrentScene.GameObjects)
+                //{
+                //    if (newItem.transform.parent == null)
+                //    {
+                //        TreeViewItem node = new TreeViewItem { DataContext = newItem };
+                //        node.MouseRightButtonUp += Node_MouseRightButtonUp;
+                //        node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
+                //        BuildTree(newItem.transform, node);
+                //        thomasObjects.Items.Add(node);
+                //    }
+                //}
                 Scene.CurrentScene.PostLoad();
-                Scene.CurrentScene.GameObjects.CollectionChanged += GameObjects_CollectionChanged;
 
             }
 

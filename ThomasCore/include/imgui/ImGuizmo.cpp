@@ -1025,7 +1025,7 @@ namespace ImGuizmo
       {
          vec_t dirPlaneX, dirPlaneY;
          ComputeTripodAxisAndVisibility(i, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit);
-         
+
          // draw axis
          if (belowAxisLimit)
          {
@@ -1047,7 +1047,7 @@ namespace ImGuizmo
             // Arrow head end
 
             if (gContext.mAxisFactor[i] < 0.f)
-               DrawHatchedAxis(dirPlaneX);
+				DrawHatchedAxis(dirPlaneX);
          }
 
          // draw plane
