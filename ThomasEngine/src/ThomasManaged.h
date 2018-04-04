@@ -30,6 +30,7 @@ using namespace thomas;
 
 namespace ThomasEditor {
 
+
 	public ref class ThomasWrapper
 	{
 	private:
@@ -38,6 +39,12 @@ namespace ThomasEditor {
 		static bool playing = false;	
 
 	public:
+
+		enum class ManipulatorOperation {
+			TRANSLATE,
+			ROTATE,
+			SCALE
+		};
 
 		static void Start() {
 			thomas::ThomasCore::Init();
@@ -232,6 +239,16 @@ namespace ThomasEditor {
 			}
 			Monitor::Exit(SelectedGameObjects);
 			thomas::editor::EditorCamera::SetHasSelectionChanged(false);
+		}
+
+		static void SetEditorGizmoManipulatorOperation(ManipulatorOperation op)
+		{
+			thomas::editor::EditorCamera::SetManipulatorOperation((ImGuizmo::OPERATION)op);
+		}
+
+		static ManipulatorOperation GetEditorGizmoManipulatorOperation()
+		{
+			return (ManipulatorOperation)thomas::editor::EditorCamera::GetManipulatorOperation();
 		}
 
 		static void UpdateLog() {
