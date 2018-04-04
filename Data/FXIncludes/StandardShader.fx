@@ -44,7 +44,7 @@ float4 GetReflectVec(float4 inVec, float4 normal)
 
 float4 GetHalfwayVec(float4 lightDir, float4 viewDir)
 {
-	return normalize(lightDir + viewDir);
+    return normalize(viewDir + lightDir);
 }
 
 struct v2f {
@@ -67,7 +67,6 @@ struct Light
     float4 color;
     float4 position;
     float4 direction;
-    float intensity;
     float range;
     uint type;
     bool drawHalo;
@@ -78,26 +77,26 @@ float4 frag(v2f input) : SV_TARGET
 
     Light tempLight;
     tempLight.color = float4(0.5f, 0.5f, 0.5f, 1.0f);
-    tempLight.position = float4(5, 5, 5, 1);
+    tempLight.position = float4(3, 3, 3, 1);
     tempLight.range = 7;
-    tempLight.direction = normalize(float4(1, 1, 1, 0));
+    tempLight.direction = normalize(float4(-1, -1, -1, 0));
     tempLight.type = 1;
     
-    //colors
-    float4 ambient = float4(0.2, 0.2, 0.2, 1.0f);
-    float4 diffuse = float4(0.5f, 0.5f, 0.5f, 1.0f);
+    float4 finalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 ambient = float4(0.5f, 0.5f, 0.5f, 1.0f);
+    float4 diffuse = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
     
     float4 viewDir = float4(input.worldPos.xyz - _WorldSpaceCameraPos, 0.0f);
     float4 lightDir = float4(0, 0, 0, 0);
     float lightMultiplyer = 1.0f;
 
-    if (0 == tempLight.type)
+    if (0 == tempLight.type)//directional
     {
-        lightDir = tempLight.direction;
-        lightMultiplyer = tempLight.color;
+        lightDir = -tempLight.direction;
+        lightMultiplyer = tempLight.color * 2.5f;
     }
-    else if (1 == tempLight.type)
+    else if (1 == tempLight.type)//point
     {
         lightDir = tempLight.position - input.worldPos;
         float lightDistance = length(lightDir);
@@ -106,7 +105,6 @@ float4 frag(v2f input) : SV_TARGET
         lightMultiplyer = tempLight.color * tempLight.range / lightDistance;
     }
     
-
     float lambertian = saturate(dot(input.normal, lightDir));
     float specularIntensity = 0.0f;
     if (lambertian > 0.0f)
