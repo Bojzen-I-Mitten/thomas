@@ -138,7 +138,7 @@
                             </xcad:LayoutDocumentPane>
                             <xcad:LayoutDocumentPane>
                                 <xcad:LayoutAnchorable ContentId="Project" Title="Project" >
-                                    <TreeView Focusable="True" x:Name="thomasProjectView" Background="#444444"/>
+                                    <local:AssetBrowser/>
                                 </xcad:LayoutAnchorable>
                                 <xcad:LayoutAnchorable ContentId="Console" Title="Console">
                                     <ListBox Name="console" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.ScrollChanged="Console_ScrollChanged">

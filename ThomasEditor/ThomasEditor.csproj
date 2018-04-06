@@ -86,6 +86,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AssetBrowser.xaml.cs">
+      <DependentUpon>AssetBrowser.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomCommands.cs" />
     <Compile Include="GameObjectHierarchy.xaml.cs">
       <DependentUpon>GameObjectHierarchy.xaml</DependentUpon>
@@ -103,6 +106,10 @@
     <Compile Include="TransformGizmo.xaml.cs">
       <DependentUpon>TransformGizmo.xaml</DependentUpon>
     </Compile>
+    <Page Include="AssetBrowser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GameObjectHierarchy.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -205,6 +212,16 @@
       <Project>{64d247ed-db4d-4ea3-b8ae-680bf66a8f2e}</Project>
       <Name>ThomasEngine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\assets\dir.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\assets\unknown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\assets\scene.png" />
+    <Resource Include="icons\assets\shader.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
