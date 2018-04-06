@@ -42,6 +42,7 @@ namespace ThomasEditor
                 TreeViewItem node = new TreeViewItem { DataContext = child.gameObject };
                // node.MouseRightButtonUp += Node_MouseRightButtonUp;
                 node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
+                node.Padding = new Thickness(0, 0, 0, 2);
                 BuildTree(child, node);
                 parentTree.Items.Add(node);
             }
@@ -58,6 +59,7 @@ namespace ThomasEditor
                     TreeViewItem node = new TreeViewItem { DataContext = gObj };
                     //node.MouseRightButtonUp += Node_MouseRightButtonUp;
                     node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
+                    node.Padding = new Thickness(0, 0, 0, 2);
                     BuildTree(gObj.transform, node);
                     hierarchy.Items.Add(node);
                 }
@@ -77,6 +79,9 @@ namespace ThomasEditor
                         TreeViewItem node = new TreeViewItem { DataContext = newItem };
                         //node.MouseRightButtonUp += Node_MouseRightButtonUp;
                         node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
+                        node.Padding = new Thickness(0, 0, 0, 2);
+                        
+                       
                         BuildTree(newItem.transform, node);
                         hierarchy.Items.Add(node);
                     }

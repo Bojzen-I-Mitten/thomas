@@ -104,7 +104,7 @@ namespace ThomasEditor
 
 		bool IsChildOf(Transform^ _parent)
 		{
-			if (this == _parent)
+			if (this->nativePtr == _parent->nativePtr)
 				return true;
 			else if (parent != nullptr)
 				return parent->IsChildOf(_parent);
