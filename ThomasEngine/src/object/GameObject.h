@@ -284,6 +284,7 @@ namespace ThomasEditor {
 		}
 
 
+
 		bool GetActive()
 		{
 			return ((thomas::object::GameObject*)nativePtr)->GetActive();
