@@ -4,6 +4,7 @@
 #include <thomas\object\component\Component.h>
 
 #pragma managed
+#include "../../resource/AudioClip.h"
 #include <string>
 #include <msclr\marshal_cppstd.h>
 #include "../../Utility.h"
@@ -14,16 +15,19 @@ namespace ThomasEditor
 {
 	public ref class SoundComponent : public Component
 	{
+	private:
+		AudioClip ^ m_clip;
 	public:
 		SoundComponent() : Component(new thomas::object::component::SoundComponent()) {}
 		
-		property String^ SoundClip {
-			String^ get() {
-				return Utility::ConvertString(((thomas::object::component::SoundComponent*)nativePtr)->GetName());
+		property AudioClip^ clip {
+			AudioClip^ get() {
+				return m_clip;
 			}
-			void set(String^ value)
+			void set(AudioClip^ value)
 			{
-				((thomas::object::component::SoundComponent*)nativePtr)->SetClip(Utility::ConvertString(value));
+				m_clip = value;
+				((thomas::object::component::SoundComponent*)nativePtr)->SetClip((thomas::resource::AudioClip*)value->m_nativePtr);
 			}
 		}
 		property float Volume {
