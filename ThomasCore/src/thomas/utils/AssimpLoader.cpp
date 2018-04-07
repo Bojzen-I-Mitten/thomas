@@ -1,6 +1,5 @@
 #include "AssimpLoader.h"
 
-#include "../graphics/Model.h"
 #include "../graphics/Texture.h"
 #include "../graphics/Mesh.h"
 #include "../graphics/Material.h"
@@ -13,15 +12,16 @@ namespace thomas
 {
 	namespace utils
 	{
-		graphics::Model* AssimpLoader::LoadModel(std::string name, std::string path, std::string materialType)
+		std::vector<graphics::Mesh*> AssimpLoader::LoadModel(std::string path)
 		{
-			std::string dir = path.substr(0, path.find_last_of("\\/"));
 
+			std::vector<graphics::Mesh*> meshes;
+			std::string dir = path.substr(0, path.find_last_of("\\/"));
 			// Read file via ASSIMP
 			Assimp::Importer importer;
 			const aiScene* scene = importer.ReadFile
 			(
-				path, 
+				path,
 				aiProcess_FindDegenerates |
 				aiProcess_FindInvalidData |
 				aiProcess_ImproveCacheLocality |
@@ -38,25 +38,17 @@ namespace thomas
 				aiProcess_FlipUVs |
 				aiProcess_PreTransformVertices
 			);
-			
+
 			if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 			{
 				LOG("ERROR::ASSIMP " << importer.GetErrorString());
-				return NULL;
+				return meshes;
 			}
 
-				
-
-
-			std::vector<graphics::Mesh*> meshes;
 
 			// Process ASSIMP's root node recursively
-			ProcessNode(scene->mRootNode, scene, meshes, dir, materialType);
-
-			graphics::Model* model = graphics::Model::CreateModel(name, meshes);
-			
-
-			return model;			
+			ProcessNode(scene->mRootNode, scene, meshes);
+			return meshes;
 		}
 
 		std::string AssimpLoader::GetMaterialName(aiMaterial * material)
@@ -101,7 +93,7 @@ namespace thomas
 			return blendMode;
 		}
 
-		std::vector<graphics::Texture*> AssimpLoader::GetMaterialTextures(aiMaterial * material, std::string dir)
+		std::vector<graphics::Texture*> AssimpLoader::GetMaterialTextures(aiMaterial * material)
 		{
 			struct TextureInfo {
 				aiString textureNameAiString;
@@ -146,18 +138,18 @@ namespace thomas
 
 			//Create a texture object for every texture found.
 			std::vector<graphics::Texture*> textures;
-			for (unsigned int i = 0; i < textureInfos.size(); i++)
-			{
-				std::string textureName(textureInfos[i].textureNameAiString.C_Str());
-				graphics::Texture* texture = graphics::Texture::CreateTexture
-				(
-					textureInfos[i].mappingMode,
-					textureInfos[i].textureType,
-					dir + "/" + textureName
-				);
-				if(texture->Initialized())
-					textures.push_back(texture);
-			}
+			//for (unsigned int i = 0; i < textureInfos.size(); i++)
+			//{
+			//	std::string textureName(textureInfos[i].textureNameAiString.C_Str());
+			//	graphics::Texture* texture = graphics::Texture::CreateTexture
+			//	(
+			//		textureInfos[i].mappingMode,
+			//		textureInfos[i].textureType,
+			//		dir + "/" + textureName
+			//	);
+			//	if(texture->Initialized())
+			//		textures.push_back(texture);
+			//}
 			return textures;
 			
 		}
@@ -169,7 +161,7 @@ namespace thomas
 			return opacity;
 		}
 
-		graphics::Mesh* AssimpLoader::ProcessMesh(aiMesh * mesh, const aiScene* scene, std::string meshName, std::string dir, std::string materialType)
+		graphics::Mesh* AssimpLoader::ProcessMesh(aiMesh * mesh, const aiScene* scene, std::string meshName)
 		{
 			std::vector <graphics::Vertex> vertices;
 			std::vector <int> indices;
@@ -248,7 +240,7 @@ namespace thomas
 			return m;
 		}
 
-		void AssimpLoader::ProcessNode(aiNode * node, const aiScene * scene, std::vector<graphics::Mesh*> &meshes, std::string dir, std::string materialType)
+		void AssimpLoader::ProcessNode(aiNode * node, const aiScene * scene, std::vector<graphics::Mesh*> &meshes)
 		{
 			std::string modelName(scene->mRootNode->mName.C_Str());
 			std::string nodeName(node->mName.C_Str());
@@ -260,13 +252,13 @@ namespace thomas
 				// The node object only contains indices to index the actual objects in the scene. 
 				// The scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 				aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-				graphics::Mesh* processedMesh = ProcessMesh(mesh, scene, modelName + "-" + nodeName + "-" + std::to_string(i), dir, materialType);
+				graphics::Mesh* processedMesh = ProcessMesh(mesh, scene, modelName + "-" + nodeName + "-" + std::to_string(i));
 				meshes.push_back(processedMesh);
 			}
 			// After we've processed all of the meshes (if any) we then recursively process each of the children nodes
 			for (unsigned int i = 0; i < node->mNumChildren; i++)
 			{
-				ProcessNode(node->mChildren[i], scene, meshes, dir, materialType);
+				ProcessNode(node->mChildren[i], scene, meshes);
 			}
 		}
 	}

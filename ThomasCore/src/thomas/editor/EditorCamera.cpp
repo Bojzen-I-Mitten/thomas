@@ -9,7 +9,7 @@
 #include "../graphics/Shader.h"
 #include "../graphics/Material.h"
 #include "../graphics/Renderer.h"
-#include "../graphics/Model.h"
+#include "../resource/Model.h"
 namespace thomas
 {
 	namespace editor
@@ -235,7 +235,7 @@ namespace thomas
 				object::component::RenderComponent* renderComponent = gameObject->GetComponent<object::component::RenderComponent>();
 				if (renderComponent)
 				{
-					graphics::Model* model = gameObject->GetComponent<object::component::RenderComponent>()->GetModel();
+					resource::Model* model = gameObject->GetComponent<object::component::RenderComponent>()->GetModel();
 					if (model)
 					{
 						for (graphics::Mesh* mesh : model->GetMeshes())

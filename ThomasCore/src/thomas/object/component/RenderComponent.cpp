@@ -1,7 +1,7 @@
 #include "RenderComponent.h"
 #include "../../graphics/Mesh.h"
 #include "../../graphics/Material.h"
-#include "../../graphics/Model.h"
+#include "../../resource/Model.h"
 #include "../GameObject.h"
 #include "../../graphics/Renderer.h"
 #include "../../editor/gizmos/Gizmos.h"
@@ -19,7 +19,7 @@ namespace thomas {
 				m_bounds.Extents.z = 0;
 			}
 
-			void RenderComponent::SetModel(graphics::Model* model)
+			void RenderComponent::SetModel(resource::Model* model)
 			{
 				if (!model)
 				{
@@ -80,7 +80,7 @@ namespace thomas {
 				editor::Gizmos::DrawBoundingOrientedBox(m_bounds);
 			}
 
-			graphics::Model * RenderComponent::GetModel()
+			resource::Model * RenderComponent::GetModel()
 			{
 				return m_model;
 			}
