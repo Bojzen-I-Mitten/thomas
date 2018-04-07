@@ -78,7 +78,8 @@ namespace ThomasEditor {
 					Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
 					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 					{
-						gameObject->UpdateComponents();
+						if(gameObject->GetActive())
+							gameObject->UpdateComponents();
 					}
 
 					if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
@@ -90,14 +91,15 @@ namespace ThomasEditor {
 						editor::EditorCamera::Render();
 						for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 						{
-							gameObject->RenderGizmos();
+							if(gameObject->GetActive())
+								gameObject->RenderGizmos();
 						}
 
 						Monitor::Enter(SelectedGameObjects);
 						for each(ThomasEditor::GameObject^ gameObject in SelectedGameObjects)
 						{
-
-							gameObject->RenderSelectedGizmos();
+							if(gameObject->GetActive())
+								gameObject->RenderSelectedGizmos();
 						}
 						Monitor::Exit(SelectedGameObjects);
 						//end editor rendering

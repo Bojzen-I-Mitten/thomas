@@ -228,6 +228,8 @@ namespace thomas
 				return;
 			for(object::GameObject* gameObject : s_selectedObjects)
 			{
+				if (!gameObject->GetActive())
+					continue;
 				graphics::Renderer::BindObject(m_objectHighlighter, gameObject->m_transform);
 				math::Matrix test = math::Matrix::CreateScale(1.03f) * gameObject->m_transform->GetWorldMatrix();
 				m_objectHighlighter->SetMatrix("thomas_ObjectToWorld", test.Transpose());

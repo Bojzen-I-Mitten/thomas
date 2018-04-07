@@ -17,12 +17,12 @@ namespace ThomasEditor
 		RenderComponent() : Component(new thomas::object::component::RenderComponent()) {
 		}
 
-		property ThomasEditor::Model^ Model {
-			ThomasEditor::Model^ get() {
+		property Model^ model {
+			Model^ get() {
 				return m_model;
 				
 			}
-			void set(ThomasEditor::Model^ value)
+			void set(Model^ value)
 			{
 				m_model = value;
 				((thomas::object::component::RenderComponent*)nativePtr)->SetModel((thomas::resource::Model*)value->m_nativePtr);
