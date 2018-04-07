@@ -9,7 +9,7 @@ namespace ThomasEditor
     public class TestComponent : ScriptComponent
     {
         public int testVar { get; set; }
-        
+        public AudioClip audioClip { get; set; }
         
         public override void Update()
         {

@@ -5,13 +5,18 @@ namespace thomas
 {
 	namespace resource
 	{
-		AudioClip::AudioClip(std::string name) : Resource(name)
+		AudioClip::AudioClip(std::string path) : Resource(path)
 		{
-			Sound::LoadWave(name);
-			Sound::LoadWaveBank(name);
+
+			m_data = std::unique_ptr<DirectX::SoundEffect>(Sound::LoadWave(path));
+		}
+		std::unique_ptr<DirectX::SoundEffectInstance> AudioClip::CreateInstance()
+		{
+			return m_data->CreateInstance();
 		}
 		AudioClip::~AudioClip()
 		{
+			m_data.release();
 		}
 	}
 }

@@ -4,9 +4,9 @@ namespace thomas
 {
 	namespace resource
 	{
-		Resource::Resource(std::string name)
+		Resource::Resource(std::string path)
 		{
-			m_name = name;
+			m_path = path;
 		}
 
 		thomas::resource::Resource::~Resource()

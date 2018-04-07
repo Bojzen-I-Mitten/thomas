@@ -7,17 +7,28 @@
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::ComponentModel;
+using namespace System::Runtime::Serialization;
 
 namespace ThomasEditor
 {
+	[DataContractAttribute]
 	public ref class Resource
 	{
 	internal:
-		thomas::resource::Resource* native_ptr;
+		thomas::resource::Resource* m_nativePtr;
+
+		[DataMemberAttribute]
+		String^ m_path;
 	public:
-		Resource(thomas::resource::Resource* ptr)
+		Resource(String^ path, thomas::resource::Resource* ptr)
 		{
-			native_ptr = ptr;
+			m_path = path;
+			m_nativePtr = ptr;
+		}
+
+		String^ ToString() override
+		{
+			return System::IO::Path::GetFileNameWithoutExtension(m_path);
 		}
 	};
 }

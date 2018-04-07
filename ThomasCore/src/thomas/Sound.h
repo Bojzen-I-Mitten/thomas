@@ -20,7 +20,7 @@ namespace thomas
 		static void SetMusicVolume(float volume);
 		static float GetMusicVolume();
 		static bool LoadWaveBank(std::string name);
-		static bool LoadWave(std::string name);
+		static DirectX::SoundEffect* LoadWave(std::string path);
 		static void Destroy();
 		static void Update();
 	private:

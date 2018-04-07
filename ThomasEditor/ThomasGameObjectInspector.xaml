@@ -20,7 +20,14 @@
 
         <local:ComponentToNameConverter x:Key="converter"/>
         <local:Vector3Converter x:Key="convertVector3" x:Shared="False"/>
-
+        
+        
+        <DataTemplate x:Key="ResourceEditor">
+            <StackPanel Orientation="Horizontal">
+                <xctk:PropertyGridEditorTextBox Text='{Binding Value, TargetNullValue="None"}' IsReadOnly="True" AllowDrop="True" Drop="ResourceEditor_Drop" PreviewDragOver="ResourceEditor_PreviewDragOver"/>
+            </StackPanel>
+        </DataTemplate>
+        
         <DataTemplate x:Key="Vector3Editor" x:Name="vector3Test">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -75,6 +82,11 @@
                                 <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource Vector3Editor}">
                                     <xctk:EditorTemplateDefinition.TargetProperties>
                                         <xctk:TargetPropertyType Type="managed:Vector3"/>
+                                    </xctk:EditorTemplateDefinition.TargetProperties>
+                                </xctk:EditorTemplateDefinition>
+                                <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource ResourceEditor}">
+                                    <xctk:EditorTemplateDefinition.TargetProperties>
+                                        <xctk:TargetPropertyType Type="managed:Resource"/>
                                     </xctk:EditorTemplateDefinition.TargetProperties>
                                 </xctk:EditorTemplateDefinition>
                             </xctk:PropertyGrid.EditorDefinitions>

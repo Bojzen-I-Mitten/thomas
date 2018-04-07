@@ -10,9 +10,12 @@ using System.Windows.Threading;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Xceed.Wpf.Toolkit.PropertyGrid;
+using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
 
 namespace ThomasEditor
 {
+
+
     public class Vector3Converter : IValueConverter
     {
         Vector3 vector;
@@ -160,6 +163,42 @@ namespace ThomasEditor
             Component component = (Component)button.DataContext;
             if(component.GetType() != typeof(Transform))
                 component.Destroy();
+        }
+
+        private void ResourceEditor_Drop(object sender, DragEventArgs e)
+        {
+
+            if(e.Data.GetDataPresent(typeof(TreeViewItem)))
+            {
+                TreeViewItem item = e.Data.GetData(typeof(TreeViewItem)) as TreeViewItem;
+                if(item.DataContext is Resource)
+                {
+                    Resource resource = item.DataContext as Resource;
+                    PropertyGridEditorTextBox tb = sender as PropertyGridEditorTextBox;
+                    PropertyItem pi = tb.DataContext as PropertyItem;
+                    if(resource.GetType() == pi.PropertyType)
+                        pi.Value = resource;
+                }
+            }
+        }
+
+
+
+        private void ResourceEditor_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(TreeViewItem)))
+            {
+                TreeViewItem item = e.Data.GetData(typeof(TreeViewItem)) as TreeViewItem;
+                if (item.DataContext is Resource)
+                {
+                    Resource resource = item.DataContext as Resource;
+                    PropertyGridEditorTextBox tb = sender as PropertyGridEditorTextBox;
+                    PropertyItem pi = tb.DataContext as PropertyItem;
+                    if (resource.GetType() == pi.PropertyType)
+                        e.Handled = true;
+                }
+            }
+            
         }
     }
 

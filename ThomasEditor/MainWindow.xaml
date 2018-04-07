@@ -98,6 +98,7 @@
                         </Image.Style>
                     </Image>
                 </Button>
+
                 <!--<Button  Width="50" Height="50">
                     <Button.Content>
                         <Image Source="icons/pause.png"/>

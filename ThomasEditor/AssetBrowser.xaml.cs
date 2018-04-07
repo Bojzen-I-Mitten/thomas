@@ -21,36 +21,10 @@ namespace ThomasEditor
     public partial class AssetBrowser : UserControl
     {
 
-        enum AssetTypes
-        {
-            MODEL,
-            TEXTURE,
-            SCENE,
-            SHADER,
-            MATERIAL,
-            SCRIPT,
-            UNKNOWN
-        }
 
-        
-        
-        private AssetTypes GetFileAssetType(String file)
-        {
-            string extension = Path.GetExtension(file).Remove(0, 1);
-            switch(extension)
-            {
-                case "fx":
-                    return AssetTypes.SHADER;
-                case "tds":
-                    return AssetTypes.SCENE;
-                default:
-                    return AssetTypes.UNKNOWN;
-
-            }
-        }
-
+        bool _isDragging = false;
         List<object> items;
-        Dictionary<AssetTypes, BitmapImage> assetImages = new Dictionary<AssetTypes, BitmapImage>();
+        Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage> assetImages = new Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage>();
 
         FileSystemWatcher watcher;
 
@@ -74,9 +48,11 @@ namespace ThomasEditor
 
         private void LoadAssetImages()
         {
-            assetImages[AssetTypes.UNKNOWN] = new BitmapImage(new Uri("pack://application:,,/icons/assets/unknown.png"));
-            assetImages[AssetTypes.SCENE] = new BitmapImage(new Uri("pack://application:,,/icons/assets/scene.png"));
-            assetImages[AssetTypes.SHADER] = new BitmapImage(new Uri("pack://application:,,/icons/assets/shader.png"));
+            
+            assetImages[ThomasEditor.Resources.AssetTypes.UNKNOWN] = new BitmapImage(new Uri("pack://application:,,/icons/assets/unknown.png"));
+            assetImages[ThomasEditor.Resources.AssetTypes.SCENE] = new BitmapImage(new Uri("pack://application:,,/icons/assets/scene.png"));
+            assetImages[ThomasEditor.Resources.AssetTypes.SHADER] = new BitmapImage(new Uri("pack://application:,,/icons/assets/shader.png"));
+            assetImages[ThomasEditor.Resources.AssetTypes.AUDIO_CLIP] = new BitmapImage(new Uri("pack://application:,,/icons/assets/audio.png"));
 
 
 
@@ -110,8 +86,8 @@ namespace ThomasEditor
             foreach(String file in files)
             {
                 String fileName = Path.GetFileNameWithoutExtension(file);
-                AssetTypes assetType = GetFileAssetType(file);
-                if (assetType == AssetTypes.UNKNOWN)
+                ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(file);
+                if (assetType == ThomasEditor.Resources.AssetTypes.UNKNOWN)
                     continue;
                 StackPanel stack = new StackPanel();
                 stack.Orientation = Orientation.Horizontal;
@@ -124,7 +100,8 @@ namespace ThomasEditor
                 stack.Children.Add(lbl);
                 stack.MouseDown += Asset_MouseDown;
                 stack.DataContext = file;
-                nodes.Add(new TreeViewItem { Header = stack});
+
+                nodes.Add(new TreeViewItem { Header = stack, DataContext = ThomasEditor.Resources.Load(file)});
             }
             return nodes;
         }
@@ -133,11 +110,11 @@ namespace ThomasEditor
         {
             StackPanel stack = sender as StackPanel;
             String file = stack.DataContext as String;
-            AssetTypes assetType = GetFileAssetType(file);
+            ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(file);
             if(e.ClickCount == 2)
             {
 
-                if(assetType == AssetTypes.SCENE)
+                if(assetType == ThomasEditor.Resources.AssetTypes.SCENE)
                 {
                     SplashScreen splash = new SplashScreen("splash.png");
                     splash.Show(false, true);
@@ -145,12 +122,33 @@ namespace ThomasEditor
                     Scene.CurrentScene = Scene.LoadScene(file);
                     splash.Close(TimeSpan.FromSeconds(0.2));
 
-                }else if(assetType == AssetTypes.SHADER)
+                }else if(assetType == ThomasEditor.Resources.AssetTypes.SHADER)
                 {
                     System.Diagnostics.Process.Start(file);
                 }
             }
         }
+
+
+
+      
+        private void AssetBrowser_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!_isDragging && e.LeftButton == MouseButtonState.Pressed && fileTree.SelectedValue != null)
+            {
+                _isDragging = true;
+                DragDrop.DoDragDrop(fileTree, fileTree.SelectedValue,
+                    DragDropEffects.Move);
+               
+            }
+            else if (e.LeftButton != MouseButtonState.Pressed)
+            {
+                _isDragging = false;
+
+            }
+
+        }
+
     }
 
 

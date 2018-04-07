@@ -21,6 +21,7 @@ namespace ThomasEditor
 	{
 		using namespace System::Runtime::Serialization;
 		DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
+
 		serializserSettings->KnownTypes = Component::GetAllComponentTypes()->ToArray();
 		serializserSettings->PreserveObjectReferences = true;
 		DataContractSerializer^ serializer = gcnew DataContractSerializer(Scene::typeid, serializserSettings);
