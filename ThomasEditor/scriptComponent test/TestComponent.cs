@@ -17,8 +17,6 @@ namespace ThomasEditor
             {
 
                 RenderComponent r = gameObject.AddComponent<RenderComponent>();
-                if (r)
-                    r.Model = "testModel";
                 
             }
             if (Input.GetKeyDown(Input.Keys.Space))

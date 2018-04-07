@@ -5,8 +5,6 @@
 
 #pragma managed
 #include "../../resource/AudioClip.h"
-#include <string>
-#include <msclr\marshal_cppstd.h>
 #include "../../Utility.h"
 #include "../Component.h"
 #include "../../Input.h"

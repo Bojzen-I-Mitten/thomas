@@ -2,11 +2,10 @@
 #pragma unmanaged
 #include "thomas\resource\Resource.h"
 #pragma managed
-#include <msclr\marshal_cppstd.h>
+
+#include "../Utility.h"
 
 using namespace System;
-using namespace System::Collections::Generic;
-using namespace System::ComponentModel;
 using namespace System::Runtime::Serialization;
 
 namespace ThomasEditor
@@ -19,12 +18,14 @@ namespace ThomasEditor
 
 		[DataMemberAttribute]
 		String^ m_path;
-	public:
+
 		Resource(String^ path, thomas::resource::Resource* ptr)
 		{
 			m_path = path;
 			m_nativePtr = ptr;
 		}
+	public:
+		
 
 		String^ ToString() override
 		{

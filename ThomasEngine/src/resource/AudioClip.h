@@ -1,10 +1,8 @@
 #pragma once
-#pragma once
 #pragma unmanaged
 #include "thomas\resource\AudioClip.h"
 #pragma managed
-#include <string>
-#include "../Utility.h"
+
 #include "Resource.h"
 
 namespace ThomasEditor

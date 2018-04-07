@@ -12,7 +12,6 @@
 #include <thomas\utils\DebugTools.h>
 #include <thomas\graphics\Shader.h>
 #include <thomas\graphics\Renderer.h>
-#include <thomas\utils\AssimpLoader.h>
 
 #pragma managed
 //#include <Sound.h>
@@ -51,8 +50,6 @@ namespace ThomasEditor {
 			if (ThomasCore::Initialized())
 			{
 				ScriptingManger::Init();
-				thomas::utils::AssimpLoader::LoadModel("testModel", "../Data/box.obj", "poop");
-				thomas::utils::AssimpLoader::LoadModel("o", "../Data/sphere.obj", "poops");
 				Scene::CurrentScene = gcnew Scene("test");
 				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
 				testThread = gcnew Thread(gcnew ThreadStart(StartEngine));

@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\object\component\Rigidbody.h" />
+    <ClInclude Include="src\resource\Model.h" />
     <ClInclude Include="src\resource\Resource.h" />
     <ClInclude Include="src\ScriptingManager.h" />
     <ClInclude Include="src\resource\AudioClip.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="src\object\GameObject.cpp" />
     <ClCompile Include="src\object\Object.cpp" />
     <ClCompile Include="src\resource\AudioClip.cpp" />
+    <ClCompile Include="src\resource\Model.cpp" />
     <ClCompile Include="src\resource\Resource.cpp" />
     <ClCompile Include="src\resource\Resources.cpp" />
     <ClCompile Include="src\Scene.cpp" />

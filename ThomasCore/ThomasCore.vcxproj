@@ -35,7 +35,7 @@
     <ClCompile Include="src\thomas\graphics\Material.cpp" />
     <ClCompile Include="src\thomas\graphics\MaterialProperty.cpp" />
     <ClCompile Include="src\thomas\graphics\Mesh.cpp" />
-    <ClCompile Include="src\thomas\graphics\Model.cpp" />
+    <ClCompile Include="src\thomas\resource\Model.cpp" />
     <ClCompile Include="src\thomas\graphics\ParticleSystem.cpp" />
     <ClCompile Include="src\thomas\graphics\Renderer.cpp" />
     <ClCompile Include="src\thomas\graphics\Shader.cpp" />
@@ -90,7 +90,7 @@
     <ClInclude Include="src\thomas\graphics\Material.h" />
     <ClInclude Include="src\thomas\graphics\MaterialProperty.h" />
     <ClInclude Include="src\thomas\graphics\Mesh.h" />
-    <ClInclude Include="src\thomas\graphics\Model.h" />
+    <ClInclude Include="src\thomas\resource\Model.h" />
     <ClInclude Include="src\thomas\graphics\ParticleSystem.h" />
     <ClInclude Include="src\thomas\graphics\Renderer.h" />
     <ClInclude Include="src\thomas\graphics\Shader.h" />

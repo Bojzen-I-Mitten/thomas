@@ -5,7 +5,6 @@
 #include "graphics\Texture.h"
 #include "graphics\Renderer.h"
 #include "graphics\Shader.h"
-#include "graphics\Model.h"
 #include "graphics\Material.h"
 #include "graphics\LightManager.h"
 #include "graphics\TextRender.h"
@@ -159,7 +158,6 @@ namespace thomas {
 		//graphics::TextRender::Destroy();
 		graphics::Texture::ReleaseSamplers();
 		graphics::Texture::Destroy();
-		graphics::Model::Destroy();
 		graphics::Shader::DestroyAllShaders();
 		graphics::Material::Destroy();
 		//utils::DebugTools::Destroy();

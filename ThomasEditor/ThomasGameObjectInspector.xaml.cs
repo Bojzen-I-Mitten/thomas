@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
+using System.Threading;
 
 namespace ThomasEditor
 {
@@ -177,7 +178,12 @@ namespace ThomasEditor
                     PropertyGridEditorTextBox tb = sender as PropertyGridEditorTextBox;
                     PropertyItem pi = tb.DataContext as PropertyItem;
                     if(resource.GetType() == pi.PropertyType)
+                    {
+                        Monitor.Enter(Scene.CurrentScene.GetGameObjectsLock());
                         pi.Value = resource;
+                        Monitor.Exit(Scene.CurrentScene.GetGameObjectsLock());
+                    }
+                        
                 }
             }
         }

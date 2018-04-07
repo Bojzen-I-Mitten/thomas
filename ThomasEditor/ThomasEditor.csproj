@@ -226,6 +226,9 @@
   <ItemGroup>
     <Resource Include="icons\assets\audio.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\assets\model.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(SolutionDir)ThomasCore\dlls"  "$(TargetDir)" /y</PostBuildEvent>
