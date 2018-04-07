@@ -26,9 +26,10 @@ void ThomasEditor::Component::setGameObject(GameObject ^ gObj)
 
 void ThomasEditor::Component::Destroy()
 {
+	Monitor::Enter(m_gameObject->m_componentsLock);
 	m_gameObject->Components->Remove(this);
 	thomas::object::Object::Destroy(nativePtr);
-	
+	Monitor::Exit(m_gameObject->m_componentsLock);
 }
 
 List<Type^>^ ThomasEditor::Component::GetAllComponentTypes()

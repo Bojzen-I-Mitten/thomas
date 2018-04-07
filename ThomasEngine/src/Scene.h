@@ -41,6 +41,11 @@ namespace ThomasEditor {
 
 		bool IsPlaying() { return m_playing; }
 
+		property System::String^ SavePath {
+			System::String^ get() { return m_savePath; }
+			void set(System::String^ value) { m_savePath = value; }
+		}
+
 		System::Object^ GetGameObjectsLock()
 		{
 			return m_gameObjectsLock;
@@ -49,10 +54,6 @@ namespace ThomasEditor {
 		property System::String^ Name {
 			System::String^ get() { return m_name; }
 			void set(System::String^ value) { m_name = value; }
-		}
-
-		property bool HasFile {
-			bool get() { return m_savePath != nullptr; }
 		}
 
 		

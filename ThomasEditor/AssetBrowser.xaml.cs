@@ -17,6 +17,7 @@ namespace ThomasEditor
     /// <summary>
     /// Interaction logic for AssetBrowser.xaml
     /// </summary>
+    
     public partial class AssetBrowser : UserControl
     {
 
@@ -51,13 +52,25 @@ namespace ThomasEditor
         List<object> items;
         Dictionary<AssetTypes, BitmapImage> assetImages = new Dictionary<AssetTypes, BitmapImage>();
 
+        FileSystemWatcher watcher;
+
         public AssetBrowser()
         {
             InitializeComponent();
             LoadAssetImages();
             items = CreateTree("..\\Data");
             fileTree.ItemsSource = items;
+
+            watcher = new FileSystemWatcher("..\\Data");
+            watcher.IncludeSubdirectories = true;
+            
+            //watcher.Created += Watcher_Created;
+            //watcher.Deleted += Watcher_Deleted;
+            //watcher.EnableRaisingEvents = true;
         }
+
+
+
 
         private void LoadAssetImages()
         {

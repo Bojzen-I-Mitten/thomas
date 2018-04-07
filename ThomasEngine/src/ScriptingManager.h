@@ -59,9 +59,10 @@ namespace ThomasEditor
 			String^ tempFile = Path::Combine(Environment::GetFolderPath(Environment::SpecialFolder::LocalApplicationData), "thomas/scene.tds");
 			if (File::Exists(assemblyFolderPath + "/Assembly.dll"))
 			{
+				String^ currentSavePath;
 				if (Scene::CurrentScene)
 				{
-					
+					currentSavePath = Scene::CurrentScene->SavePath;
 					Scene::SaveSceneAs(Scene::CurrentScene, tempFile);
 				}
 				
@@ -78,6 +79,7 @@ namespace ThomasEditor
 					Scene::CurrentScene = Scene::LoadScene(tempFile);
 					oldScene->UnLoad();
 					File::Delete(tempFile);
+					Scene::CurrentScene->SavePath = currentSavePath;
 				}
 
 				

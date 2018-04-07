@@ -190,7 +190,7 @@ namespace ThomasEditor
         private void SaveScene_Click(object sender, RoutedEventArgs e)
         {
 
-            if(Scene.CurrentScene.HasFile)
+            if(Scene.CurrentScene.SavePath != null)
             {
                 Scene sceneToSave = Scene.CurrentScene;
                 Scene.SaveScene(sceneToSave);
