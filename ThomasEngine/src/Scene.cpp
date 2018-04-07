@@ -57,7 +57,7 @@ namespace ThomasEditor
 
 		scene->PostLoad();
 		s_loading = false;
-
+		scene->m_savePath = fullPath;
 		return scene;
 
 	}
