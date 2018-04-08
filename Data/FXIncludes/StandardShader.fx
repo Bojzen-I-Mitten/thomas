@@ -2,6 +2,11 @@
 
 #include "ThomasCG.fx"
 
+cbuffer MATERIAL_PROPERTIES
+{
+	float testMat;
+	float4 wow;
+};
 
 DepthStencilState EnableDepth
 {

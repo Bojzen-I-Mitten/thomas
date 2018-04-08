@@ -6,7 +6,7 @@
 #include "../Window.h"
 #include "../graphics/BulletDebugDraw.h"
 #include "EditorGrid.h"
-#include "../graphics/Shader.h"
+#include "../resource/Shader.h"
 #include "../graphics/Material.h"
 #include "../graphics/Renderer.h"
 #include "../resource/Model.h"
@@ -30,7 +30,7 @@ namespace thomas
 			m_speed = 2.0f;
 			m_hasSelectionChanged = false;
 			m_objectHighlighter = nullptr;
-			graphics::Shader* outliner = graphics::Shader::CreateShader("editorOutliner", "../Data/FXIncludes/EditorOutlineShader.fx");
+			resource::Shader* outliner = resource::Shader::CreateShader("../Data/FXIncludes/EditorOutlineShader.fx");
 			if (outliner)
 				m_objectHighlighter = new graphics::Material(outliner);
 

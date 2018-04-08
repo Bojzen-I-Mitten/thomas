@@ -49,8 +49,8 @@ namespace thomas
 			s_maxNumberOfBillboardsSupported = 1000000;
 			s_cameraBuffer = nullptr;
 			
-			s_emitParticlesCS = new ComputeShader(Shader::CreateShader("EmitParticlesCS", "../Data/oldShaders/emitParticlesCS.hlsl"));
-			s_updateParticlesCS = new ComputeShader(Shader::CreateShader("UpdateParticlesCS", "../Data/oldShaders/updateParticlesCS.hlsl"));
+			s_emitParticlesCS = new ComputeShader(resource::Shader::CreateShader("../Data/oldShaders/emitParticlesCS.hlsl"));
+			s_updateParticlesCS = new ComputeShader(resource::Shader::CreateShader("../Data/oldShaders/updateParticlesCS.hlsl"));
 
 
 			D3D11_BLEND_DESC blendDesc;

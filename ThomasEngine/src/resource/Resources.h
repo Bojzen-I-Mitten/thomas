@@ -26,6 +26,25 @@ namespace ThomasEditor
 			UNKNOWN
 		};
 
+		static void SaveResource(Resource^ resource, String^ path)
+		{
+			using namespace System::Runtime::Serialization;
+			DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
+			serializserSettings->PreserveObjectReferences = true;
+			serializserSettings->KnownTypes = System::Reflection::Assembly::GetAssembly(Resource::typeid)->ExportedTypes;
+			DataContractSerializer^ serializer = gcnew DataContractSerializer(resource->GetType(), serializserSettings);
+			System::IO::FileInfo^ fi = gcnew System::IO::FileInfo(path);
+
+			fi->Directory->Create();
+			Xml::XmlWriterSettings^ settings = gcnew Xml::XmlWriterSettings();
+			settings->Indent = true;
+			Xml::XmlWriter^ file = Xml::XmlWriter::Create(path, settings);
+			serializer->WriteObject(file, resource);
+			file->Close();
+
+			resources[path] = resource;
+		}
+
 		static AssetTypes GetResourceAssetType(Type^ type);
 
 		static AssetTypes GetResourceAssetType(String^ path)

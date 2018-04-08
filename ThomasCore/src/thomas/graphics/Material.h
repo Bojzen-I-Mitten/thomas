@@ -4,9 +4,12 @@
 #include "MaterialProperty.h"
 namespace thomas
 {
-	namespace graphics
+	namespace resource
 	{
 		class Shader;
+	}
+	namespace graphics
+	{
 		class Texture;
 		class Mesh;
 
@@ -15,21 +18,23 @@ namespace thomas
 		protected:
 			void SetSampler(const std::string name, Texture& value);
 			
-			
+		private:
+			void CreateProperties();
 		public:
 			static void Init();
 			static void Destroy();
 			static Material* GetStandardMaterial();
 
-			Material(Shader* shader);
-			Material(std::string name, Shader* shader);
+			Material(resource::Shader* shader);
+			Material(std::string name, resource::Shader* shader);
 			Material(Material* original);
+			Material();
 			~Material();
 
 			void Bind();
 			MaterialProperty* GetProperty(const std::string& name);
-			void SetShader(Shader* shader);
-			Shader* GetShader();
+			void SetShader(resource::Shader* shader);
+			resource::Shader* GetShader();
 			std::string GetName();
 			void SetName(std::string name);
 
@@ -69,6 +74,7 @@ namespace thomas
 			void Draw(UINT vertexCount, UINT startVertexLocation);
 
 			std::vector<MaterialProperty*> GetEditorProperties();
+			std::vector<MaterialProperty*> GetAllProperties();
 
 			Material* GetBaseMaterial();
 			static Material* Find(std::string name);
@@ -91,7 +97,7 @@ namespace thomas
 			bool m_isInstance;
 			Material* m_baseMaterial;
 			UINT m_id;
-			Shader* m_shader;
+			resource::Shader* m_shader;
 			std::vector<MaterialProperty*> m_properties;
 			std::vector<Pass> m_passes;
 

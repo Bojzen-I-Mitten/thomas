@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\object\component\Rigidbody.h" />
+    <ClInclude Include="src\resource\MaterialResource.h" />
     <ClInclude Include="src\resource\Model.h" />
     <ClInclude Include="src\resource\Resource.h" />
     <ClInclude Include="src\ScriptingManager.h" />
@@ -157,7 +158,7 @@
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\object\component\Camera.h" />
     <ClInclude Include="src\object\component\SoundComponent.h" />
-    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\resource\Shader.h" />
     <ClInclude Include="src\Utility.h" />
     <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\math\Math.h" />
@@ -185,12 +186,13 @@
     <ClCompile Include="src\object\GameObject.cpp" />
     <ClCompile Include="src\object\Object.cpp" />
     <ClCompile Include="src\resource\AudioClip.cpp" />
+    <ClCompile Include="src\resource\MaterialResource.cpp" />
     <ClCompile Include="src\resource\Model.cpp" />
     <ClCompile Include="src\resource\Resource.cpp" />
     <ClCompile Include="src\resource\Resources.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\ScriptingManager.cpp" />
-    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\resource\Shader.cpp" />
     <ClCompile Include="src\ThomasManaged.cpp" />
   </ItemGroup>
   <ItemGroup>

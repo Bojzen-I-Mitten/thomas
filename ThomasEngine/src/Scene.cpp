@@ -65,10 +65,13 @@ namespace ThomasEditor
 
 	void Scene::RestartCurrentScene()
 	{
+		Object^ lock = Scene::CurrentScene->GetGameObjectsLock();
 		String^ tempFile = System::IO::Path::Combine(Environment::GetFolderPath(Environment::SpecialFolder::LocalApplicationData), "thomas/scene.tds");
+		Monitor::Enter(lock);
 		Scene::CurrentScene->UnLoad();
 		Scene::CurrentScene = Scene::LoadScene(tempFile);
 		System::IO::File::Delete(tempFile);
+		Monitor::Exit(lock);
 	}
 
 	void Scene::UnLoad()

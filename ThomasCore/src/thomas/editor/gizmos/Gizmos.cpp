@@ -1,7 +1,7 @@
 #include "Gizmos.h"
 #include "../../resource/Model.h"
 #include "../../graphics/Material.h"
-#include "../../graphics/Shader.h"
+#include "../../resource/Shader.h"
 #include "../../graphics/Mesh.h"
 #include "../../utils/d3d.h"
 namespace thomas
@@ -293,7 +293,7 @@ namespace thomas
 
 		void Gizmos::Init()
 		{
-			graphics::Shader* shader = graphics::Shader::CreateShader("gizmoShader", "../Data/FXIncludes/GizmoShader.fx");
+			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/GizmoShader.fx");
 			if (shader)
 			{
 				s_gizmoMaterial = new graphics::Material(shader);

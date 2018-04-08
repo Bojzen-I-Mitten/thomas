@@ -10,7 +10,7 @@
 #include <thomas\ThomasTime.h>
 #include <thomas\Input.h>
 #include <thomas\utils\DebugTools.h>
-#include <thomas\graphics\Shader.h>
+#include <thomas\resource\Shader.h>
 #include <thomas\graphics\Renderer.h>
 
 #pragma managed
@@ -72,10 +72,11 @@ namespace ThomasEditor {
 
 
 				{
+					Object^ lock = Scene::CurrentScene->GetGameObjectsLock();
 					ThomasCore::Update();
 					if(playing)
 						thomas::Physics::Update();
-					Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
+					Monitor::Enter(lock);
 					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 					{
 						if(gameObject->GetActive())
@@ -112,7 +113,7 @@ namespace ThomasEditor {
 					}
 
 					//ThomasCore::Render();
-					Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
+					Monitor::Exit(lock);
 				}
 			}
 			ThomasCore::Destroy();

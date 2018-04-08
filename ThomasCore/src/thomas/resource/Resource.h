@@ -10,8 +10,9 @@ namespace thomas
 		public:
 			Resource(std::string path);
 			std::string GetName();
+			std::string GetPath();
 			~Resource();
-		private:
+		protected:
 			std::string m_path;
 		};
 	}

@@ -1,5 +1,5 @@
 #include "DebugTools.h"
-#include "../graphics/Shader.h"
+#include "../resource/Shader.h"
 #include "../Window.h"
 #include "../ThomasCore.h"
 namespace thomas

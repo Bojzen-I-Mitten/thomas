@@ -5,6 +5,62 @@ namespace thomas
 {
 	namespace graphics
 	{
+		void MaterialProperty::SetInitialData()
+		{
+			switch (m_class)
+			{
+				case PropClass::Scalar:
+				{
+					switch (m_type)
+					{
+					case PropType::Bool:
+						m_value = new bool(false);
+						break;
+					case PropType::Float:
+						m_value = new float(0);
+						break;
+					case PropType::Int:
+						m_value = new int(0);
+						break;
+					default:
+						break;
+					}
+					break;
+				}
+
+				case PropClass::Vector:
+				{
+					switch (m_type)
+					{
+					case PropType::Float:
+					{
+						m_value = new math::Vector4();
+						break;
+					}
+
+					default:
+						break;
+					}
+					break;
+				}
+
+
+				case PropClass::Matrix:
+				{
+					switch (m_type)
+					{
+					case PropType::Float:
+						m_value = new math::Matrix();
+						break;
+					default:
+						break;
+					}
+					break;
+				}
+			}
+			
+		}
+
 		MaterialProperty::PropClass MaterialProperty::GetPropClass(D3D_SHADER_VARIABLE_CLASS Class, D3D_SHADER_VARIABLE_TYPE type)
 		{
 			PropClass tempClass;
@@ -115,12 +171,15 @@ namespace thomas
 
 		MaterialProperty::MaterialProperty(UINT index, ID3DX11EffectVariable* variable)
 		{
+			m_rawSize = 0;
 			m_value = nullptr;
 			m_isSet = false;
 			m_index = index;
+			m_rawCount = 1;
 			variable->GetType()->GetDesc(&m_typeDesc);
 			variable->GetDesc(&m_variableDesc);
-			variable->GetParentConstantBuffer()->GetDesc(&m_bufferDesc);
+			m_bufferDesc = new D3DX11_EFFECT_VARIABLE_DESC();
+			variable->GetParentConstantBuffer()->GetDesc(m_bufferDesc);
 			m_class = GetPropClass(m_typeDesc.Class, m_typeDesc.Type);
 
 			switch (m_class)
@@ -136,26 +195,33 @@ namespace thomas
 				default:
 					break;
 			}
+			SetInitialData();
 			
 		}
 
 			MaterialProperty::MaterialProperty(const MaterialProperty* otherProperty)
 			{
+				m_value = otherProperty->m_value;
 				m_isSet = otherProperty->m_isSet;
 				m_index = otherProperty->m_index;
 				m_typeDesc = otherProperty->m_typeDesc;
 				m_variableDesc = otherProperty->m_variableDesc;
+				m_bufferDesc = new D3DX11_EFFECT_VARIABLE_DESC(*otherProperty->m_bufferDesc);
 				m_class = otherProperty->m_class;
 				m_type = otherProperty->m_type;
 				m_textureDimension = otherProperty->m_textureDimension;
-				m_value = otherProperty->m_value;
+				
 				m_rawCount = otherProperty->m_rawCount;
 				m_rawSize = otherProperty->m_rawSize;
+				
+
+				
 				
 			}
 
 			MaterialProperty::~MaterialProperty()
 			{
+				delete m_bufferDesc;
 				switch (m_class)
 				{
 				case PropClass::Scalar:
@@ -167,7 +233,7 @@ namespace thomas
 				}
 			}
 
-			void MaterialProperty::ApplyProperty(Shader * shader)
+			void MaterialProperty::ApplyProperty(resource::Shader * shader)
 		{
 			if (!m_isSet)
 				return;
@@ -276,7 +342,9 @@ namespace thomas
 
 		std::string MaterialProperty::GetBufferName()
 		{
-			return m_bufferDesc.Name;
+			if(m_bufferDesc->Name != NULL)
+				return m_bufferDesc->Name;
+			return "";
 		}
 
 		void MaterialProperty::SetBool(bool & value)
@@ -429,6 +497,11 @@ namespace thomas
 			}
 		}
 
+		void MaterialProperty::SetRaw(void * value)
+		{
+			m_value = value;
+		}
+
 
 
 		bool* MaterialProperty::GetBool()
@@ -475,7 +548,8 @@ namespace thomas
 		{
 			if (m_class == PropClass::Vector)
 			{
-				return (math::Vector4*)m_value;
+				math::Vector4* v = (math::Vector4*)m_value;
+				return v;
 			}
 			else
 			{
@@ -560,6 +634,21 @@ namespace thomas
 				LOG("Material property: " << GetName() << " is not of type: Unordered access view");
 				return nullptr;
 			}
+		}
+
+		MaterialProperty::PropClass MaterialProperty::GetPropClass()
+		{
+			return m_class;
+		}
+
+		MaterialProperty::PropType MaterialProperty::GetPropType()
+		{
+			return m_type;
+		}
+
+		MaterialProperty::TexDim MaterialProperty::GetTexDim()
+		{
+			return m_textureDimension;
 		}
 
 	}
