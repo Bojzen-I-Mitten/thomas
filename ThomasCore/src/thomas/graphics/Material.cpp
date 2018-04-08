@@ -1,5 +1,5 @@
 #include "Material.h"
-#include "Shader.h"
+#include "../resource/Shader.h"
 #include "Texture.h"
 #include "Mesh.h"
 namespace thomas
@@ -20,9 +20,26 @@ namespace thomas
 			}
 		}
 
+		void Material::CreateProperties()
+		{
+			for (MaterialProperty* mProp : m_properties)
+			{
+				delete mProp;
+			}
+			m_properties.clear();
+
+			if (m_shader)
+			{
+				for (graphics::MaterialProperty* prop : m_shader->GetProperties())
+				{
+					m_properties.push_back(new graphics::MaterialProperty(prop));
+				}
+			}
+		}
+
 		void Material::Init()
 		{
-			s_standardMaterial = new Material(Shader::GetStandardShader());
+			s_standardMaterial = new Material(resource::Shader::GetStandardShader());
 		}
 
 		void Material::Destroy()
@@ -40,7 +57,7 @@ namespace thomas
 			return s_standardMaterial;
 		}
 
-		Material::Material(Shader * shader)
+		Material::Material(resource::Shader * shader)
 		{
 			m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			m_shader = shader;
@@ -51,7 +68,7 @@ namespace thomas
 			m_id = s_idCounter;
 			s_idCounter++;
 
-			for (Shader::ShaderPass p : *shader->GetPasses())
+			for (resource::Shader::ShaderPass p : *shader->GetPasses())
 			{
 				Pass pass;
 				pass.name = p.name;
@@ -59,11 +76,24 @@ namespace thomas
 				pass.index = m_passes.size();
 				m_passes.push_back(pass);
 			}
+
+			CreateProperties();
 		}
 
-		Material::Material(std::string name, Shader * shader) : Material(shader)
+		Material::Material(std::string name, resource::Shader * shader) : Material(shader)
 		{
 			m_name = name;
+		}
+
+		Material::Material()
+		{
+			m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			m_shader = nullptr;
+			s_materialInstances.push_back(this);
+			s_materials.push_back(this);
+			m_isInstance = false;
+			m_id = s_idCounter;
+			s_idCounter++;
 		}
 
 		Material::Material(Material * original)
@@ -94,14 +124,23 @@ namespace thomas
 			m_properties.clear();
 		}
 
-		void Material::SetShader(Shader * shader)
+		void Material::SetShader(resource::Shader * shader)
 		{
 			m_shader = shader;
 			m_renderQueue = -1;
-			m_properties.clear();
+			m_passes.clear();
+			for (resource::Shader::ShaderPass p : *m_shader->GetPasses())
+			{
+				Pass pass;
+				pass.name = p.name;
+				pass.enabled = true;
+				pass.index = m_passes.size();
+				m_passes.push_back(pass);
+			}
+			CreateProperties();
 		}
 
-		Shader * Material::GetShader()
+		resource::Shader * Material::GetShader()
 		{
 			return m_shader;
 		}
@@ -135,16 +174,8 @@ namespace thomas
 					if (prop->GetName() == name)
 						return prop;
 				}
-				return nullptr;
 			}
-			else if (m_shader->HasProperty(name))
-			{
-				MaterialProperty* prop = new MaterialProperty(m_shader->GetProperty(name));
-				m_properties.push_back(prop);
-				return prop;
-			}
-			else
-				return nullptr;
+			return nullptr;
 		}
 		math::Color* Material::GetColor(const std::string& name)
 		{
@@ -403,6 +434,10 @@ namespace thomas
 				if (matProp->GetBufferName() == "MATERIAL_PROPERTIES")
 					editorProperties.push_back(matProp);
 			return editorProperties;
+		}
+		std::vector<MaterialProperty*> Material::GetAllProperties()
+		{
+			return m_properties;
 		}
 		Material * Material::GetBaseMaterial()
 		{

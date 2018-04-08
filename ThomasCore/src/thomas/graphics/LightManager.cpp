@@ -1,6 +1,6 @@
 #include "LightManager.h"
 #include "../utils/d3d.h"
-#include "../graphics/Shader.h"
+#include "../resource/Shader.h"
 namespace thomas
 {
 	namespace graphics

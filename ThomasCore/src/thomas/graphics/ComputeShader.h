@@ -8,7 +8,7 @@ namespace thomas
 		class THOMAS_API ComputeShader : public Material
 		{
 		public:
-			ComputeShader(Shader* shader);
+			ComputeShader(resource::Shader* shader);
 			void Dispatch(int threadGroupX, int threadGroupY, int threadGroupZ);
 			void SetUAV(const std::string& name, ID3D11UnorderedAccessView& value);
 			ID3D11UnorderedAccessView* GetUAV(const std::string& name);

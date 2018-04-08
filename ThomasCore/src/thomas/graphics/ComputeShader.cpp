@@ -4,7 +4,7 @@ namespace thomas
 {
 	namespace graphics
 	{
-		ComputeShader::ComputeShader(Shader* shader) : Material(shader)
+		ComputeShader::ComputeShader(resource::Shader* shader) : Material(shader)
 		{
 			
 		}

@@ -4,7 +4,7 @@
 #include "object\Object.h"
 #include "graphics\Texture.h"
 #include "graphics\Renderer.h"
-#include "graphics\Shader.h"
+#include "resource\Shader.h"
 #include "graphics\Material.h"
 #include "graphics\LightManager.h"
 #include "graphics\TextRender.h"
@@ -65,7 +65,7 @@ namespace thomas {
 
 		//graphics::ParticleSystem::Init();
 		if(init)
-			init = graphics::Shader::Init();
+			init = resource::Shader::Init();
 		if(init)
 			graphics::Material::Init();
 		if (init)
@@ -110,7 +110,7 @@ namespace thomas {
 
 		Window::Update();
 		graphics::Renderer::ClearRenderQueue();
-		graphics::Shader::Update();
+		resource::Shader::Update();
 		thomas::ThomasTime::Update();
 		Input::Update();
 		
@@ -158,7 +158,7 @@ namespace thomas {
 		//graphics::TextRender::Destroy();
 		graphics::Texture::ReleaseSamplers();
 		graphics::Texture::Destroy();
-		graphics::Shader::DestroyAllShaders();
+		resource::Shader::DestroyAllShaders();
 		graphics::Material::Destroy();
 		//utils::DebugTools::Destroy();
 		object::Object::Destroy();

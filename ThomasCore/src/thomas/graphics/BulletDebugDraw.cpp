@@ -16,7 +16,7 @@ namespace thomas
 			m_initialized = false;
 			//Create VS shader
 			m_vertexBuffer = nullptr;
-			Shader* shader = Shader::CreateShader("debugDraw", "../Data/FXIncludes/lineShader.fx");
+			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/lineShader.fx");
 			if (shader != nullptr)
 			{
 				m_material = new Material(shader);

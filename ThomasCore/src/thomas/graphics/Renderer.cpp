@@ -31,7 +31,7 @@ namespace thomas
 			float dt = ThomasTime::GetDeltaTime();
 			math::Vector4 thomas_DeltaTime(realDeltaTime, 1 / realDeltaTime, dt, 1 / dt);
 
-			Shader::SetGlobalVector("thomas_DeltaTime", thomas_DeltaTime);
+			resource::Shader::SetGlobalVector("thomas_DeltaTime", thomas_DeltaTime);
 		}
 
 		void Renderer::BindCamera(thomas::object::component::Camera * camera)
@@ -45,12 +45,12 @@ namespace thomas
 			ThomasCore::GetDeviceContext()->RSSetViewports(1, camera->GetViewport().Get11());
 
 			//ThomasPerCamera
-			Shader::SetGlobalMatrix("thomas_MatrixP", camera->GetProjMatrix().Transpose());
-			Shader::SetGlobalMatrix("thomas_MatrixV", camera->GetViewMatrix().Transpose());
-			Shader::SetGlobalMatrix("thomas_MatrixInvV", camera->GetViewMatrix().Invert());
-			Shader::SetGlobalMatrix("thomas_MatrixVP", camera->GetViewProjMatrix().Transpose());
+			resource::Shader::SetGlobalMatrix("thomas_MatrixP", camera->GetProjMatrix().Transpose());
+			resource::Shader::SetGlobalMatrix("thomas_MatrixV", camera->GetViewMatrix().Transpose());
+			resource::Shader::SetGlobalMatrix("thomas_MatrixInvV", camera->GetViewMatrix().Invert());
+			resource::Shader::SetGlobalMatrix("thomas_MatrixVP", camera->GetViewProjMatrix().Transpose());
 			
-			Shader::SetGlobalVector("_WorldSpaceCameraPos", (math::Vector4)camera->GetPosition());
+			resource::Shader::SetGlobalVector("_WorldSpaceCameraPos", (math::Vector4)camera->GetPosition());
 		}
 
 		void Renderer::ClearRenderQueue()

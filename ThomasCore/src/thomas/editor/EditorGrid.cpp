@@ -1,7 +1,7 @@
 #include "EditorGrid.h"
 #include "../utils/d3d.h"
 #include "../graphics/Material.h"
-#include "../graphics/Shader.h"
+#include "../resource/Shader.h"
 namespace thomas
 {
 	namespace editor
@@ -64,7 +64,7 @@ namespace thomas
 				}
 			}
 
-			graphics::Shader* shader = graphics::Shader::CreateShader("editorGrid", "../Data/FXIncludes/EditorGridShader.fx");
+			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/EditorGridShader.fx");
 			if (shader)
 			{
 				m_material = new graphics::Material(shader);

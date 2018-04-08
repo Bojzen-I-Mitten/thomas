@@ -2,21 +2,28 @@
 #pragma unmanaged
 #include <thomas\graphics\Material.h>
 #pragma managed
-#include "Shader.h"
+#include "resource\Shader.h"
 #include "math/Math.h"
-#include "Utility.h"
 using namespace System;
+using namespace System::Collections::Generic;
 namespace ThomasEditor
 {
+	[DataContractAttribute]
 	public ref class Material
 	{
 	internal:
 		thomas::graphics::Material* nativePtr;
 		Material(thomas::graphics::Material* ptr) { nativePtr = ptr; }
 	public:
+
+		Material()
+		{
+			nativePtr = new thomas::graphics::Material();
+		}
+
 		Material(String^ name, Shader^ shader)
 		{
-			nativePtr = new thomas::graphics::Material(Utility::ConvertString(name), shader->nativePtr);
+			nativePtr = new thomas::graphics::Material(Utility::ConvertString(name), (thomas::resource::Shader*)shader->m_nativePtr);
 		}
 		Material(Material^ original)
 		{
@@ -54,17 +61,79 @@ namespace ThomasEditor
 			String^ get() { return Utility::ConvertString(nativePtr->GetName()); }
 			void set(String^ value) { nativePtr->SetName(Utility::ConvertString(value)); }
 		};
+		[DataMemberAttribute]
 		property Shader^ Shader
 		{
 			ThomasEditor::Shader^ get() {return %ThomasEditor::Shader(nativePtr->GetShader()); }
-			void set(ThomasEditor::Shader^ value) { nativePtr->SetShader(value->nativePtr); }
+			void set(ThomasEditor::Shader^ value) { nativePtr->SetShader((thomas::resource::Shader*)value->m_nativePtr); }
 		}
+		
+	internal:
+		[DataMemberAttribute]
+		property Dictionary<String^, System::Object^>^ EditorProperties
+		{
+			Dictionary<String^, System::Object^>^ get() {
+				Dictionary<String^, System::Object^>^ props = gcnew Dictionary<String^, System::Object^>();
+				for each(thomas::graphics::MaterialProperty* prop in nativePtr->GetEditorProperties())
+				{
 
+					String^ name = Utility::ConvertString(prop->GetName());
+					Object^ obj;
+					switch (prop->GetPropClass())
+					{
+					case thomas::graphics::MaterialProperty::PropClass::Scalar:
+					{
+						switch (prop->GetPropType())
+						{
+						case thomas::graphics::MaterialProperty::PropType::Bool:
+						{
+							obj = *prop->GetBool();
+							break;
+						}
+						case thomas::graphics::MaterialProperty::PropType::Int:
+						{
+							obj = *prop->GetInt();
+							break;
+						}
+						case thomas::graphics::MaterialProperty::PropType::Float:
+						{
+							obj = *prop->GetFloat();
+							break;
+						}
+						default:
+							break;
+						}
+						break;
+					}
+					case thomas::graphics::MaterialProperty::PropClass::Vector:
+					{
+						thomas::math::Vector4* v = prop->GetVector();
+						obj = Vector4(*v);
+						break;
+					}
+					case thomas::graphics::MaterialProperty::PropClass::Texture:
+					{
+						break;
+					}
+					default:
+						break;
+					}
 
+					if (obj != nullptr)
+					{
+						props->Add(name, obj);
+					}
+				}
+				return props;
+			}
+			void set(Dictionary<String^, System::Object^>^ value)
+			{
+
+			}
+		}
+				
 	/*	Texture* GetTexture(String^ name);
 		void SetTexture(String^ name, Texture& value);*/
-
-
 
 	private:
 

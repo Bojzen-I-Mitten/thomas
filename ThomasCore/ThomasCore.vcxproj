@@ -38,7 +38,7 @@
     <ClCompile Include="src\thomas\resource\Model.cpp" />
     <ClCompile Include="src\thomas\graphics\ParticleSystem.cpp" />
     <ClCompile Include="src\thomas\graphics\Renderer.cpp" />
-    <ClCompile Include="src\thomas\graphics\Shader.cpp" />
+    <ClCompile Include="src\thomas\resource\Shader.cpp" />
     <ClCompile Include="src\thomas\graphics\Skybox.cpp" />
     <ClCompile Include="src\thomas\graphics\Sprite.cpp" />
     <ClCompile Include="src\thomas\graphics\TextRender.cpp" />
@@ -93,7 +93,7 @@
     <ClInclude Include="src\thomas\resource\Model.h" />
     <ClInclude Include="src\thomas\graphics\ParticleSystem.h" />
     <ClInclude Include="src\thomas\graphics\Renderer.h" />
-    <ClInclude Include="src\thomas\graphics\Shader.h" />
+    <ClInclude Include="src\thomas\resource\Shader.h" />
     <ClInclude Include="src\thomas\graphics\Skybox.h" />
     <ClInclude Include="src\thomas\graphics\Sprite.h" />
     <ClInclude Include="src\thomas\graphics\TextRender.h" />
@@ -117,7 +117,6 @@
     <ClInclude Include="src\thomas\Physics.h" />
     <ClInclude Include="src\thomas\resource\AudioClip.h" />
     <ClInclude Include="src\thomas\resource\Resource.h" />
-    <ClInclude Include="src\thomas\resource\Resources.h" />
     <ClInclude Include="src\thomas\Sound.h" />
     <ClInclude Include="src\thomas\Thomas.h" />
     <ClInclude Include="src\thomas\ThomasCore.h" />

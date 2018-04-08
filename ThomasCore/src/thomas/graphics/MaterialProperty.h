@@ -1,6 +1,6 @@
 #pragma once
 #include "../Common.h"
-#include "Shader.h"
+#include "../resource/Shader.h"
 #include "../utils/Math.h"
 namespace thomas
 {
@@ -42,7 +42,7 @@ namespace thomas
 				Any = 6
 			};
 		private:
-
+			void SetInitialData();
 			PropClass GetPropClass(D3D_SHADER_VARIABLE_CLASS Class, D3D_SHADER_VARIABLE_TYPE type);
 			PropType GetPropType(D3D_SHADER_VARIABLE_TYPE type);
 			PropClass GetObjectPropClass(D3D_SHADER_VARIABLE_TYPE type);
@@ -51,7 +51,7 @@ namespace thomas
 			MaterialProperty(UINT index, ID3DX11EffectVariable* variable);
 			MaterialProperty(const MaterialProperty* otherProperty);
 			~MaterialProperty();
-			void ApplyProperty(Shader* shader);
+			void ApplyProperty(resource::Shader* shader);
 
 			std::string GetName();
 			std::string GetBufferName();
@@ -67,7 +67,8 @@ namespace thomas
 			void SetBuffer(ID3D11Buffer& value);
 			void SetUAV(ID3D11UnorderedAccessView& value);
 			void SetRaw(void* value, size_t size, UINT count);
-			
+			void SetRaw(void* value);
+
 			bool* GetBool();
 			float* GetFloat();
 			int* GetInt();
@@ -79,6 +80,11 @@ namespace thomas
 			ID3D11ShaderResourceView* GetResource();
 			ID3D11Buffer* GetBuffer();
 			ID3D11UnorderedAccessView* GetUAV();
+
+
+			PropClass GetPropClass();
+			PropType GetPropType();
+			TexDim GetTexDim();
 
 		private:
 			bool m_isSet;
@@ -92,7 +98,7 @@ namespace thomas
 			UINT m_rawCount;
 			D3DX11_EFFECT_TYPE_DESC m_typeDesc;
 			D3DX11_EFFECT_VARIABLE_DESC m_variableDesc;
-			D3DX11_EFFECT_VARIABLE_DESC m_bufferDesc;
+			D3DX11_EFFECT_VARIABLE_DESC* m_bufferDesc;
 		};
 
 
