@@ -23,7 +23,11 @@ namespace thomas {
 			{
 				if (!model)
 				{
-					LOG("ERROR: model was NULL");
+					for (graphics::RenderPair* pair : m_renderPairs)
+						delete pair;
+					m_renderPairs.clear();
+					m_model = model;
+					m_bounds = math::BoundingOrientedBox();
 				}
 				else
 				{

@@ -25,7 +25,10 @@ namespace ThomasEditor
 			void set(Model^ value)
 			{
 				m_model = value;
-				((thomas::object::component::RenderComponent*)nativePtr)->SetModel((thomas::resource::Model*)value->m_nativePtr);
+				if (m_model == nullptr)
+					((thomas::object::component::RenderComponent*)nativePtr)->SetModel(nullptr);
+				else
+					((thomas::object::component::RenderComponent*)nativePtr)->SetModel((thomas::resource::Model*)value->m_nativePtr);
 			}
 		}
 

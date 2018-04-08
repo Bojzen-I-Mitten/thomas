@@ -26,6 +26,10 @@ namespace ThomasEditor
 		}
 	public:
 		
+		String ^ GetPath()
+		{
+			return m_path;
+		}
 
 		String^ ToString() override
 		{

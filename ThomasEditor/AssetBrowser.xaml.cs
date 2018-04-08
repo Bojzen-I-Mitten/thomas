@@ -24,7 +24,7 @@ namespace ThomasEditor
 
         bool _isDragging = false;
         List<object> items;
-        Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage> assetImages = new Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage>();
+        public static Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage> assetImages = new Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage>();
 
         FileSystemWatcher watcher;
 
