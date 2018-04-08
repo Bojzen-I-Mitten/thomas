@@ -12,6 +12,7 @@ using System.Windows.Input;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace ThomasEditor
 {
@@ -69,13 +70,13 @@ namespace ThomasEditor
     /// </summary>
     public partial class ThomasGameObjectInspector : UserControl
     {
+        private ResourceListPopup resourceListPopup;
         private GameObject _gameObject;
         //public Collection<EditorDefinitionBase> customEditors;
         public ThomasGameObjectInspector()
         {
 
             InitializeComponent();
-
             // propertyGrid.Editors.Add(editor);
 
         }
@@ -205,6 +206,20 @@ namespace ThomasEditor
                 }
             }
             
+        }
+
+
+        private void ResourceList_Open(object sender, RoutedEventArgs e)
+        {
+            if (resourceListPopup != null && resourceListPopup.IsLoaded)
+            {
+                resourceListPopup.Close();
+            }
+            Button b = sender as Button;
+            PropertyItem pi = b.DataContext as PropertyItem;
+            Type resourceType = pi.PropertyType;
+
+            resourceListPopup = new ResourceListPopup(pi, resourceType);
         }
     }
 

@@ -1,4 +1,4 @@
-﻿<UserControl    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿ <UserControl    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
@@ -23,9 +23,16 @@
         
         
         <DataTemplate x:Key="ResourceEditor">
-            <StackPanel Orientation="Horizontal">
-                <xctk:PropertyGridEditorTextBox Text='{Binding Value, TargetNullValue="None"}' IsReadOnly="True" AllowDrop="True" Drop="ResourceEditor_Drop" PreviewDragOver="ResourceEditor_PreviewDragOver"/>
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <xctk:PropertyGridEditorTextBox Grid.Column="0" Text='{Binding Value, TargetNullValue="None"}' IsReadOnly="True" AllowDrop="True" Drop="ResourceEditor_Drop" PreviewDragOver="ResourceEditor_PreviewDragOver"/>
+                <Button Background="Transparent" BorderThickness="0" Height="20" Grid.Column="1" Cursor="Hand" Click="ResourceList_Open">
+                    <Image Source="icons/resourceList.png"/>
+                </Button>
+            </Grid>
         </DataTemplate>
         
         <DataTemplate x:Key="Vector3Editor" x:Name="vector3Test">
@@ -48,6 +55,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
+    
     <Grid x:Name="gameObjectGrid" Background="#444444" Visibility="Hidden">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -67,6 +75,7 @@
 
 
         </Grid>
+
         <ItemsControl ItemsSource="{Binding Components}" Grid.Row="1" Background="#333333">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>

@@ -4,13 +4,14 @@
 #pragma managed
 #include "Resource.h"
 
-
+using namespace System::Collections::Generic;
+using namespace System::Linq;
 namespace ThomasEditor
 {
 	public ref class Resources
 	{
 	internal:
-		static System::Collections::Generic::Dictionary<String^, Resource^>^ resources = gcnew System::Collections::Generic::Dictionary<String^, Resource^>();
+		static Dictionary<String^, Resource^>^ resources = gcnew Dictionary<String^, ThomasEditor::Resource^>();
 	public:
 
 		enum class AssetTypes
@@ -24,6 +25,8 @@ namespace ThomasEditor
 			AUDIO_CLIP,
 			UNKNOWN
 		};
+
+		static AssetTypes GetResourceAssetType(Type^ type);
 
 		static AssetTypes GetResourceAssetType(String^ path)
 		{
@@ -71,6 +74,24 @@ namespace ThomasEditor
 				resources[path] = resource;
 				return resource;
 			}
+		}
+
+		generic<typename T>
+		where T : Resource
+		static List<T>^ GetResourcesOfType()
+		{
+			return (List<T>^)Enumerable::OfType<T>(resources->Values);
+		}
+
+		static List<Resource^>^ GetResourcesOfType(Type^ type)
+		{
+			List<Resource^>^ list = gcnew List<Resource^>();
+			for each (Resource^ resource in resources->Values)
+			{
+				if (resource->GetType() == type)
+					list->Add(resource);
+			}
+			return list;
 		}
 
 		static Resource^ Load(String^ path);

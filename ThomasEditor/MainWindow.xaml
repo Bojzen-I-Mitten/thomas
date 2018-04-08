@@ -82,7 +82,7 @@
             </Menu>
             <WrapPanel Grid.Row="1" Height="40">
                 <local:TransformGizmo x:Name="transformGizmo"/>
-                <Button Margin="250,0,0,0" Height="30" x:Name="playPauseButton" Command="commands:CustomCommands.GetPlay">
+                <Button Margin="250,0,0,0" Height="30" x:Name="playPauseButton" Command="commands:CustomCommands.GetPlay"  Cursor="Hand">
                     <Image>
                         <Image.Style>
                             <Style TargetType="{x:Type Image}">

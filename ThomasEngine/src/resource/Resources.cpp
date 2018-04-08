@@ -47,4 +47,20 @@ namespace ThomasEditor
 			}
 		}
 	}
+	Resources::AssetTypes Resources::GetResourceAssetType(Type ^ type)
+	{
+		
+		if (type == AudioClip::typeid)
+		{
+			return AssetTypes::AUDIO_CLIP;
+		}
+		else if (type == Model::typeid)
+		{
+			return AssetTypes::MODEL;
+		}
+		else
+		{
+			return AssetTypes::UNKNOWN;
+		}
+	}
 }
