@@ -9,9 +9,11 @@ namespace thomas
 		{
 		public:
 			Resource(std::string path);
+			virtual ~Resource() {};
 			std::string GetName();
 			std::string GetPath();
-			~Resource();
+
+			static std::string PathToName(std::string path);
 		protected:
 			std::string m_path;
 		};

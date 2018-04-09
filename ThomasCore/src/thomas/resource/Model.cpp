@@ -23,7 +23,7 @@ namespace thomas {
 		Model::Model(std::string path) : Resource(path)
 		{
 			m_meshes = utils::AssimpLoader::LoadModel(path);
-			GenerateBounds();
+			m_bounds = GenerateBounds();
 		}
 				
 

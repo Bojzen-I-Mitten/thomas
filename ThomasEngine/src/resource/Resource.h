@@ -1,6 +1,7 @@
 #pragma once
 #pragma unmanaged
 #include "thomas\resource\Resource.h"
+#include <memory>
 #pragma managed
 
 #include "../Utility.h"
@@ -24,8 +25,13 @@ namespace ThomasEditor
 			m_path = path;
 			m_nativePtr = ptr;
 		}
+		virtual ~Resource()
+		{
+		}
 	public:
 		
+		
+
 		String ^ GetPath()
 		{
 			return m_path;

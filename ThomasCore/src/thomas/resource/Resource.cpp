@@ -23,8 +23,11 @@ namespace thomas
 			return m_path;
 		}
 
-		thomas::resource::Resource::~Resource()
+		std::string Resource::PathToName(std::string path)
 		{
+			std::string name = PathFindFileName(path.c_str());
+			name = name.substr(0, name.find_last_of('.'));
+			return name;
 		}
 	}
 }

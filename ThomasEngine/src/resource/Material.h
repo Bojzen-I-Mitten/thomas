@@ -15,8 +15,14 @@ namespace ThomasEditor
 	{
 	internal:
 		Material(thomas::resource::Material* ptr) : Resource("", ptr) {};
-		Material(String^ path) : Resource(path, new thomas::resource::Material(Utility::ConvertString(path))) {};
+
+		void SetRaw(String^ name, void* value) { ((thomas::resource::Material*)m_nativePtr)->SetRaw(Utility::ConvertString(name), value); }
 	public:
+
+		~Material()
+		{
+			delete m_nativePtr;
+		}
 
 		Material(Shader^ shader) : Resource("", new thomas::resource::Material((thomas::resource::Shader*)shader->m_nativePtr))
 		{
@@ -55,7 +61,12 @@ namespace ThomasEditor
 			ThomasEditor::Shader^ get() {return gcnew ThomasEditor::Shader(((thomas::resource::Material*)m_nativePtr)->GetShader()); }
 			void set(ThomasEditor::Shader^ value) 
 			{ 
-				((thomas::resource::Material*)m_nativePtr)->SetShader((thomas::resource::Shader*)value->m_nativePtr);
+				if(m_nativePtr)
+					((thomas::resource::Material*)m_nativePtr)->SetShader((thomas::resource::Shader*)value->m_nativePtr);
+				else
+				{
+					m_nativePtr = new thomas::resource::Material((thomas::resource::Shader*)value->m_nativePtr);
+				}
 			}
 		}
 		
@@ -126,16 +137,11 @@ namespace ThomasEditor
 					if (t == Vector4::typeid)
 					{
 						Vector4 v = (Vector4)prop;
-						SetVector(key, v);
+						//SetVector(key, v);
 					}
-					else if (t == int::typeid)
+					else if (t == System::Single::typeid)
 					{
-						int i = (int)prop;
-						SetInt(key, i);
-					}else if (t == float::typeid)
-					{
-						float i = (float)prop;
-						SetFloat(key, i);
+						//SetRaw(key, &prop);
 					}
 				}
 			}

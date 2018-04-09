@@ -12,10 +12,10 @@
     <d2p1:KeyValueOfstringanyType>
       <d2p1:Key z:Id="8">wow</d2p1:Key>
       <d2p1:Value z:Id="9" i:type="Vector4">
-        <w>0</w>
-        <x>0</x>
-        <y>0</y>
-        <z>0</z>
+        <w>2.802597E-45</w>
+        <x>2.242078E-44</x>
+        <y>1.008935E-43</y>
+        <z>1.401298E-45</z>
       </d2p1:Value>
     </d2p1:KeyValueOfstringanyType>
   </EditorProperties>

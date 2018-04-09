@@ -215,7 +215,7 @@ namespace thomas
 
 		Shader * Shader::CreateShader(std::string path)
 		{
-			Shader* foundShader = FindByPath(path);
+			Shader* foundShader = FindByName(PathToName(path));
 			if (foundShader)
 				return foundShader;
 
@@ -230,6 +230,7 @@ namespace thomas
 				}
 				else
 				{
+					SAFE_RELEASE(effect);
 					return nullptr;
 					LOG("Can't create shader: " << path << " because it contains no techniques or passes");
 				}	
