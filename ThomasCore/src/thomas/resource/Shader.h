@@ -10,12 +10,11 @@ namespace thomas
 {
 	namespace graphics
 	{
-		class MaterialProperty;
 		class Texture;
 	}
 	namespace resource
 	{
-		
+		class ShaderProperty;
 		class THOMAS_API Shader : public Resource
 		{
 		public:
@@ -67,14 +66,14 @@ namespace thomas
 
 			ID3DX11Effect* GetEffect();
 			bool HasProperty(const std::string& name);
-			graphics::MaterialProperty* GetProperty(const std::string& name);
-			std::vector<graphics::MaterialProperty*> GetProperties();
+			ShaderProperty* GetProperty(const std::string& name);
+			std::vector<ShaderProperty*> GetProperties();
 			static void Update();
 			void Recompile();
 			static void QueueRecompile();
 		private:
 			ID3DX11Effect* m_effect;
-			std::vector<graphics::MaterialProperty*> m_properties;
+			std::vector<ShaderProperty*> m_properties;
 			std::vector<ShaderPass> m_passes;
 			
 			static std::vector<Shader*> s_loadedShaders;

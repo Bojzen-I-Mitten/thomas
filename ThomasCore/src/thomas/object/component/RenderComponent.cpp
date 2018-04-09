@@ -1,6 +1,6 @@
 #include "RenderComponent.h"
 #include "../../graphics/Mesh.h"
-#include "../../graphics/Material.h"
+#include "../../resource/Material.h"
 #include "../../resource/Model.h"
 #include "../GameObject.h"
 #include "../../graphics/Renderer.h"
@@ -17,6 +17,7 @@ namespace thomas {
 				m_bounds.Extents.x = 0;
 				m_bounds.Extents.y = 0;
 				m_bounds.Extents.z = 0;
+				m_material = resource::Material::GetStandardMaterial();
 			}
 
 			void RenderComponent::SetModel(resource::Model* model)
@@ -39,7 +40,7 @@ namespace thomas {
 					{
 						graphics::RenderPair* renderPair = new graphics::RenderPair();
 						renderPair->mesh = mesh;
-						renderPair->material = graphics::Material::GetStandardMaterial();
+						renderPair->material = m_material;
 						renderPair->transform = m_gameObject->m_transform;
 						
 						m_renderPairs.push_back(renderPair);
@@ -66,7 +67,7 @@ namespace thomas {
 					}
 						
 			}
-			void RenderComponent::SetMaterial(int meshIndex, graphics::Material * material)
+			void RenderComponent::SetMaterial(int meshIndex, resource::Material * material)
 			{
 				if (!material)
 				{

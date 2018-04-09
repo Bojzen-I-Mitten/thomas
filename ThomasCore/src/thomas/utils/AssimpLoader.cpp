@@ -2,7 +2,7 @@
 
 #include "../graphics/Texture.h"
 #include "../graphics/Mesh.h"
-#include "../graphics/Material.h"
+#include "../resource/Material.h"
 #include <assimp\Importer.hpp>
 #include <assimp\scene.h>
 #include <assimp\postprocess.h>
@@ -166,7 +166,7 @@ namespace thomas
 			std::vector <graphics::Vertex> vertices;
 			std::vector <int> indices;
 			std::string name = meshName + "-" + std::string(mesh->mName.C_Str());
-			graphics::Material* material;
+			resource::Material* material;
 
 			//vector<Texture> textures;
 

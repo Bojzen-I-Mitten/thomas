@@ -3,7 +3,7 @@
 #include <atlconv.h>
 #include <d3dcompiler.h>
 #include "Shader.h"
-#include "../graphics/MaterialProperty.h"
+#include "ShaderProperty.h"
 namespace thomas
 {
 	namespace resource
@@ -37,7 +37,8 @@ namespace thomas
 				ID3DX11EffectVariable* variable = m_effect->GetVariableByIndex(i);
 				if (variable->IsValid())
 				{
-					graphics::MaterialProperty* prop = new graphics::MaterialProperty(i, variable);
+					
+					ShaderProperty* prop = new ShaderProperty(i, variable);
 					m_properties.push_back(prop);
 				}
 				
@@ -148,7 +149,7 @@ namespace thomas
 			for (auto pass : m_passes)
 				SAFE_RELEASE(pass.inputLayout);
 			m_passes.clear();
-			for (graphics::MaterialProperty* mProp : m_properties)
+			for (ShaderProperty* mProp : m_properties)
 				delete mProp;
 			m_properties.clear();
 		}
@@ -360,16 +361,16 @@ namespace thomas
 
 		bool Shader::HasProperty(const std::string & name)
 		{
-			for (graphics::MaterialProperty* prop : m_properties)
+			for (ShaderProperty* prop : m_properties)
 			{
 				if (prop->GetName() == name)
 					return true;
 			}
 			return false;
 		}
-		graphics::MaterialProperty * Shader::GetProperty(const std::string & name)
+		ShaderProperty * Shader::GetProperty(const std::string & name)
 		{
-			for (graphics::MaterialProperty* prop : m_properties)
+			for (ShaderProperty* prop : m_properties)
 			{
 				if (prop->GetName() == name)
 					return prop;
@@ -377,7 +378,7 @@ namespace thomas
 			return nullptr;
 		}
 
-		std::vector<graphics::MaterialProperty*> Shader::GetProperties()
+		std::vector<ShaderProperty*> Shader::GetProperties()
 		{
 			return m_properties;
 		}

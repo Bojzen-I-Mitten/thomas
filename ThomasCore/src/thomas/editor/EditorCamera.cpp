@@ -7,7 +7,7 @@
 #include "../graphics/BulletDebugDraw.h"
 #include "EditorGrid.h"
 #include "../resource/Shader.h"
-#include "../graphics/Material.h"
+#include "../resource/Material.h"
 #include "../graphics/Renderer.h"
 #include "../resource/Model.h"
 namespace thomas
@@ -32,7 +32,7 @@ namespace thomas
 			m_objectHighlighter = nullptr;
 			resource::Shader* outliner = resource::Shader::CreateShader("../Data/FXIncludes/EditorOutlineShader.fx");
 			if (outliner)
-				m_objectHighlighter = new graphics::Material(outliner);
+				m_objectHighlighter = new resource::Material(outliner);
 
 			m_transform->SetPosition(math::Vector3(5, 5, 5));
 			m_transform->LookAt(math::Vector3(0, 0, 0));

@@ -14,7 +14,6 @@ namespace thomas
 	namespace graphics 
 	{
 		class Mesh;
-		class Model;
 		class Texture;
 	}
 	namespace utils

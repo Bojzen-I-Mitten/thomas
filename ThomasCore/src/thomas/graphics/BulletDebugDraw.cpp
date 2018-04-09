@@ -1,6 +1,7 @@
 #include "BulletDebugDraw.h"
 #include "../ThomasCore.h"
-#include "Material.h"
+#include "../resource/Material.h"
+#include "../resource/Shader.h"
 #include "../utils/d3d.h"
 #include "../object/component/Camera.h"
 #include "DirectXTK/CommonStates.h"
@@ -19,7 +20,7 @@ namespace thomas
 			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/lineShader.fx");
 			if (shader != nullptr)
 			{
-				m_material = new Material(shader);
+				m_material = new resource::Material(shader);
 				LineVertex a;
 				a.pos = math::Vector3(1, 0, 0);
 				m_lines.push_back(a); //Line start

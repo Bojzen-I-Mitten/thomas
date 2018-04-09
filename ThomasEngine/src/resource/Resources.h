@@ -39,6 +39,7 @@ namespace ThomasEditor
 			Xml::XmlWriterSettings^ settings = gcnew Xml::XmlWriterSettings();
 			settings->Indent = true;
 			Xml::XmlWriter^ file = Xml::XmlWriter::Create(path, settings);
+			resource->m_path = path;
 			serializer->WriteObject(file, resource);
 			file->Close();
 
