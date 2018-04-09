@@ -4,8 +4,8 @@
 #include "../../utils/Math.h"
 namespace thomas
 {
-	namespace graphics {class Material; struct RenderPair; }
-	namespace resource { class Model; }
+	namespace graphics {struct RenderPair; }
+	namespace resource { class Model; class Material; }
 	namespace object
 	{
 		namespace component
@@ -20,7 +20,7 @@ namespace thomas
 				resource::Model * GetModel();
 				void Update();
 
-				void SetMaterial(int meshIndex, graphics::Material* material);
+				void SetMaterial(int meshIndex, resource::Material* material);
 
 				void OnDrawGizmos();
 
@@ -29,6 +29,7 @@ namespace thomas
 				math::BoundingOrientedBox m_bounds;
 			private:
 				std::vector<graphics::RenderPair*> m_renderPairs;
+				resource::Material* m_material;
 				//graphics::Geometry* m_geometry;
 			};
 		}

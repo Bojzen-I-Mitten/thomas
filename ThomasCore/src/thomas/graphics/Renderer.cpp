@@ -13,7 +13,9 @@
 #include "../Input.h"
 
 #include "../ThomasTime.h"
-#include "Material.h"
+#include "../resource/Material.h"
+#include "../resource/Shader.h"
+#include "../resource/ShaderProperty.h"
 #include <algorithm>
 #include "../utils/DebugTools.h"
 #include "../Window.h"
@@ -68,9 +70,9 @@ namespace thomas
 			return s_renderQueue;
 		}
 
-		void Renderer::BindObject(thomas::graphics::Material * material, thomas::object::component::Transform * transform)
+		void Renderer::BindObject(thomas::resource::Material * material, thomas::object::component::Transform * transform)
 		{
-			thomas::graphics::MaterialProperty* prop;
+			thomas::resource::ShaderProperty* prop;
 
 			prop = material->GetProperty("thomas_ObjectToWorld");
 			prop->SetMatrix(transform->GetWorldMatrix().Transpose());
@@ -97,7 +99,7 @@ namespace thomas
 		{
 			std::sort(renderQueue.begin(), renderQueue.end(), SortPairs);
 
-			Material* lastMaterial = nullptr;
+			resource::Material* lastMaterial = nullptr;
 			for (RenderPair* renderPair : renderQueue)
 			{
 				if (!lastMaterial || lastMaterial != renderPair->material)

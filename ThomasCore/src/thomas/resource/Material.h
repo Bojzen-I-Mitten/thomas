@@ -1,22 +1,23 @@
 #pragma once
 #include "../Common.h"
 #include "../utils/Math.h"
-#include "MaterialProperty.h"
+#include "Resource.h"
 namespace thomas
 {
-	namespace resource
-	{
-		class Shader;
-	}
 	namespace graphics
 	{
 		class Texture;
 		class Mesh;
-
-		class THOMAS_API Material
+		
+	}
+	namespace resource
+	{
+		class ShaderProperty;
+		class Shader;
+		class THOMAS_API Material : public Resource
 		{
 		protected:
-			void SetSampler(const std::string name, Texture& value);
+			void SetSampler(const std::string name, graphics::Texture& value);
 			
 		private:
 			void CreateProperties();
@@ -26,17 +27,14 @@ namespace thomas
 			static Material* GetStandardMaterial();
 
 			Material(resource::Shader* shader);
-			Material(std::string name, resource::Shader* shader);
 			Material(Material* original);
-			Material();
+			Material(std::string path);
 			~Material();
 
 			void Bind();
-			MaterialProperty* GetProperty(const std::string& name);
+			ShaderProperty* GetProperty(const std::string& name);
 			void SetShader(resource::Shader* shader);
 			resource::Shader* GetShader();
-			std::string GetName();
-			void SetName(std::string name);
 
 			bool HasProperty(const std::string& name);
 
@@ -52,8 +50,8 @@ namespace thomas
 			math::Matrix* GetMatrix(const std::string& name);
 			void SetMatrix(const std::string& name, math::Matrix& value);
 
-			Texture* GetTexture(const std::string& name);
-			void SetTexture(const std::string& name, Texture& value);
+			graphics::Texture* GetTexture(const std::string& name);
+			void SetTexture(const std::string& name, graphics::Texture& value);
 
 			math::Vector4* GetVector(const std::string& name);
 			void SetVector(const std::string& name, math::Vector4& value);
@@ -70,22 +68,16 @@ namespace thomas
 			void SetShaderPass(int index);
 			void SetShaderPass(std::string name);
 
-			void Draw(Mesh* mesh);
+			void Draw(graphics::Mesh* mesh);
 			void Draw(UINT vertexCount, UINT startVertexLocation);
 
-			std::vector<MaterialProperty*> GetEditorProperties();
-			std::vector<MaterialProperty*> GetAllProperties();
-
-			Material* GetBaseMaterial();
-			static Material* Find(std::string name);
-
-			static std::vector<Material*>* GetMaterialInstances();
+			std::vector<ShaderProperty*> GetEditorProperties();
+			std::vector<ShaderProperty*> GetAllProperties();
 
 			UINT GetId();
 
 		public:
 			int m_renderQueue;
-			std::string m_name;
 			D3D11_PRIMITIVE_TOPOLOGY m_topology;
 		private:
 			struct Pass
@@ -98,12 +90,8 @@ namespace thomas
 			Material* m_baseMaterial;
 			UINT m_id;
 			resource::Shader* m_shader;
-			std::vector<MaterialProperty*> m_properties;
+			std::vector<ShaderProperty*> m_properties;
 			std::vector<Pass> m_passes;
-
-			static std::vector<Material*> s_materials;
-			static std::vector<Material*> s_materialInstances;
-
 			static Material* s_standardMaterial;
 
 			static UINT s_idCounter;

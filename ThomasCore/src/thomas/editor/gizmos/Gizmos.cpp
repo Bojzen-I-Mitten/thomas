@@ -1,6 +1,6 @@
 #include "Gizmos.h"
 #include "../../resource/Model.h"
-#include "../../graphics/Material.h"
+#include "../../resource/Material.h"
 #include "../../resource/Shader.h"
 #include "../../graphics/Mesh.h"
 #include "../../utils/d3d.h"
@@ -8,7 +8,7 @@ namespace thomas
 {
 	namespace editor
 	{
-		graphics::Material* Gizmos::s_gizmoMaterial;
+		resource::Material* Gizmos::s_gizmoMaterial;
 		void Gizmos::DrawModel(resource::Model * model, math::Vector3 position = math::Vector3::Zero, math::Quaternion rotation = math::Quaternion::Identity, math::Vector3 scale = math::Vector3::One)
 		{
 			DrawModel(model, -1, position, rotation, scale);
@@ -296,7 +296,7 @@ namespace thomas
 			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/GizmoShader.fx");
 			if (shader)
 			{
-				s_gizmoMaterial = new graphics::Material(shader);
+				s_gizmoMaterial = new resource::Material(shader);
 				SetColor(math::Color(1, 1, 1));
 				SetMatrix(math::Matrix::Identity);
 			}

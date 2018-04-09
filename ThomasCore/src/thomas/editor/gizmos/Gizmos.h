@@ -3,8 +3,7 @@
 #include "../../utils/Math.h"
 namespace thomas
 {
-	namespace graphics {class Material; }
-	namespace resource { class Model; }
+	namespace resource { class Model; class Material; }
 	namespace utils { struct Ray; }
 	namespace editor
 	{
@@ -45,7 +44,7 @@ namespace thomas
 			static void SetColor(math::Color color);
 			static void SetMatrix(math::Matrix matrix);
 		private:
-			static graphics::Material* s_gizmoMaterial;
+			static resource::Material* s_gizmoMaterial;
 		};
 	}
 }

@@ -14,15 +14,19 @@ namespace thomas {
 		class RenderComponent;
 	} }
 
+	namespace resource
+	{
+		class Material;
+	}
+
 	namespace graphics
 	{
 		class Mesh;
-		class Material;
 		struct RenderPair
 		{
 			object::component::Transform* transform;
 			Mesh* mesh;
-			Material* material;
+			resource::Material* material;
 		};
 
 		class THOMAS_API Renderer {
@@ -36,7 +40,7 @@ namespace thomas {
 		public:
 			static void Begin();
 			static void Render();
-			static void BindObject(thomas::graphics::Material* material, thomas::object::component::Transform* transform);
+			static void BindObject(thomas::resource::Material* material, thomas::object::component::Transform* transform);
 			static void BindCamera(thomas::object::component::Camera* camera);
 			static void ClearRenderQueue();
 

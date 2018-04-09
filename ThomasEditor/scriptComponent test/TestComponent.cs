@@ -13,9 +13,8 @@ namespace ThomasEditor
         
         public override void Start()
         {
-            Material x = Material.Find("StandardShader");
-            MaterialResource res = new MaterialResource(x);
-            Resources.SaveResource(res, "..\\Data\\testMat.mat");
+            Material mat = new Material(Shader.Find("StandardShader"));
+            Resources.SaveResource(mat, "..\\Data\\testMat.mat");
         }
 
         public override void Update()

@@ -1,24 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<MaterialResource xmlns:i="http://www.w3.org/2001/XMLSchema-instance" z:Id="1" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/" xmlns="http://schemas.datacontract.org/2004/07/ThomasEditor">
-  <m_path z:Id="2"></m_path>
-  <material z:Id="3">
-    <EditorProperties xmlns:d3p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" z:Id="4" z:Size="2">
-      <d3p1:KeyValueOfstringanyType>
-        <d3p1:Key z:Id="5">testMat</d3p1:Key>
-        <d3p1:Value z:Id="6" xmlns:d5p1="http://www.w3.org/2001/XMLSchema" i:type="d5p1:float">0</d3p1:Value>
-      </d3p1:KeyValueOfstringanyType>
-      <d3p1:KeyValueOfstringanyType>
-        <d3p1:Key z:Id="7">wow</d3p1:Key>
-        <d3p1:Value z:Id="8" i:type="Vector4">
-          <w>0</w>
-          <x>0</x>
-          <y>0</y>
-          <z>0</z>
-        </d3p1:Value>
-      </d3p1:KeyValueOfstringanyType>
-    </EditorProperties>
-    <Shader z:Id="9">
-      <m_path z:Id="10">../Data/FXIncludes/StandardShader.fx</m_path>
-    </Shader>
-  </material>
-</MaterialResource>
+<Material xmlns:i="http://www.w3.org/2001/XMLSchema-instance" z:Id="1" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/" xmlns="http://schemas.datacontract.org/2004/07/ThomasEditor">
+  <m_path z:Id="2">..\Data\testMat.mat</m_path>
+  <Shader z:Id="3">
+    <m_path z:Id="4">../Data/FXIncludes/StandardShader.fx</m_path>
+  </Shader>
+  <EditorProperties xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" z:Id="5" z:Size="2">
+    <d2p1:KeyValueOfstringanyType>
+      <d2p1:Key z:Id="6">testMat</d2p1:Key>
+      <d2p1:Value z:Id="7" xmlns:d4p1="http://www.w3.org/2001/XMLSchema" i:type="d4p1:float">0</d2p1:Value>
+    </d2p1:KeyValueOfstringanyType>
+    <d2p1:KeyValueOfstringanyType>
+      <d2p1:Key z:Id="8">wow</d2p1:Key>
+      <d2p1:Value z:Id="9" i:type="Vector4">
+        <w>0</w>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </d2p1:Value>
+    </d2p1:KeyValueOfstringanyType>
+  </EditorProperties>
+</Material>

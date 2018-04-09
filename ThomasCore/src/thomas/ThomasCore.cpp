@@ -5,7 +5,7 @@
 #include "graphics\Texture.h"
 #include "graphics\Renderer.h"
 #include "resource\Shader.h"
-#include "graphics\Material.h"
+#include "resource\Material.h"
 #include "graphics\LightManager.h"
 #include "graphics\TextRender.h"
 #include <assimp\Importer.hpp>
@@ -67,7 +67,7 @@ namespace thomas {
 		if(init)
 			init = resource::Shader::Init();
 		if(init)
-			graphics::Material::Init();
+			resource::Material::Init();
 		if (init)
 			init = Physics::Init();
 		if(init)
@@ -159,7 +159,7 @@ namespace thomas {
 		graphics::Texture::ReleaseSamplers();
 		graphics::Texture::Destroy();
 		resource::Shader::DestroyAllShaders();
-		graphics::Material::Destroy();
+		resource::Material::Destroy();
 		//utils::DebugTools::Destroy();
 		object::Object::Destroy();
 		editor::EditorCamera::Destroy();

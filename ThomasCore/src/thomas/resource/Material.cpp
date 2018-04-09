@@ -1,18 +1,16 @@
 #include "Material.h"
-#include "../resource/Shader.h"
-#include "Texture.h"
-#include "Mesh.h"
+#include "Shader.h"
+#include "../graphics/Texture.h"
+#include "../graphics/Mesh.h"
+#include "ShaderProperty.h"
 namespace thomas
 {
-	namespace graphics
+	namespace resource
 	{
-		std::vector<Material*> Material::s_materials;
-		std::vector<Material*> Material::s_materialInstances;
 		Material* Material::s_standardMaterial;
-
 		UINT Material::s_idCounter = 0;
 
-		void Material::SetSampler(const std::string name, Texture & value)
+		void Material::SetSampler(const std::string name, graphics::Texture & value)
 		{
 			if (m_shader->HasProperty(name))
 			{
@@ -22,7 +20,7 @@ namespace thomas
 
 		void Material::CreateProperties()
 		{
-			for (MaterialProperty* mProp : m_properties)
+			for (ShaderProperty* mProp : m_properties)
 			{
 				delete mProp;
 			}
@@ -30,9 +28,9 @@ namespace thomas
 
 			if (m_shader)
 			{
-				for (graphics::MaterialProperty* prop : m_shader->GetProperties())
+				for (ShaderProperty* prop : m_shader->GetProperties())
 				{
-					m_properties.push_back(new graphics::MaterialProperty(prop));
+					m_properties.push_back(new resource::ShaderProperty(prop));
 				}
 			}
 		}
@@ -44,12 +42,7 @@ namespace thomas
 
 		void Material::Destroy()
 		{
-			for (Material* material : s_materialInstances)
-			{
-				delete material;
-			}
-			s_materialInstances.clear();
-			s_materials.clear();
+			delete s_standardMaterial;
 		}
 
 		Material * Material::GetStandardMaterial()
@@ -57,13 +50,10 @@ namespace thomas
 			return s_standardMaterial;
 		}
 
-		Material::Material(resource::Shader * shader)
+		Material::Material(resource::Shader * shader) : Resource("")
 		{
 			m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			m_shader = shader;
-			m_name = shader->GetName();
-			s_materialInstances.push_back(this);
-			s_materials.push_back(this);
 			m_isInstance = false;
 			m_id = s_idCounter;
 			s_idCounter++;
@@ -80,44 +70,36 @@ namespace thomas
 			CreateProperties();
 		}
 
-		Material::Material(std::string name, resource::Shader * shader) : Material(shader)
-		{
-			m_name = name;
-		}
 
-		Material::Material()
+		Material::Material(Material * original) : Resource("")
 		{
-			m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			m_shader = nullptr;
-			s_materialInstances.push_back(this);
-			s_materials.push_back(this);
-			m_isInstance = false;
+			m_baseMaterial = original->m_baseMaterial;
+			m_isInstance = true;
+			m_shader = original->m_shader;
+			m_renderQueue = original->m_renderQueue;
+			m_topology = original->m_topology;
+			m_passes = original->m_passes;
+			for (ShaderProperty* prop : original->m_properties)
+			{
+				m_properties.push_back(new ShaderProperty(prop));
+			}
+
 			m_id = s_idCounter;
 			s_idCounter++;
 		}
 
-		Material::Material(Material * original)
+		Material::Material(std::string path) : Resource(path)
 		{
-			m_baseMaterial = original->GetBaseMaterial();
-			m_isInstance = true;
-			m_shader = original->m_shader;
-			m_renderQueue = original->m_renderQueue;
-			m_name = original->m_name;
-			m_topology = original->m_topology;
-			m_passes = original->m_passes;
-			for (MaterialProperty* prop : original->m_properties)
-			{
-				m_properties.push_back(new MaterialProperty(prop));
-			}
-			s_materialInstances.push_back(this);
-
+			m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			m_shader = nullptr;
+			m_isInstance = false;
 			m_id = s_idCounter;
 			s_idCounter++;
 		}
 
 		Material::~Material()
 		{
-			for (MaterialProperty* mProp : m_properties)
+			for (ShaderProperty* mProp : m_properties)
 			{
 				delete mProp;
 			}
@@ -145,19 +127,9 @@ namespace thomas
 			return m_shader;
 		}
 
-		std::string Material::GetName()
-		{
-			return m_name;
-		}
-
-		void Material::SetName(std::string name)
-		{
-			m_name = name;
-		}
-
 		bool Material::HasProperty(const std::string & name)
 		{
-			for (MaterialProperty* prop : m_properties)
+			for (ShaderProperty* prop : m_properties)
 			{
 				if (prop->GetName() == name)
 					return true;
@@ -165,11 +137,11 @@ namespace thomas
 			return false;
 		}
 
-		MaterialProperty* Material::GetProperty(const std::string & name)
+		ShaderProperty* Material::GetProperty(const std::string & name)
 		{
 			if (HasProperty(name))
 			{
-				for (MaterialProperty* prop : m_properties)
+				for (ShaderProperty* prop : m_properties)
 				{
 					if (prop->GetName() == name)
 						return prop;
@@ -185,7 +157,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
@@ -197,7 +169,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 			}
 		}
 		float* Material::GetFloat(const std::string& name)
@@ -208,7 +180,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
@@ -221,7 +193,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 			}
 
 		}
@@ -233,7 +205,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material" );
 				return nullptr;
 			}
 		}
@@ -245,7 +217,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 			}
 		}
 		math::Matrix* Material::GetMatrix(const std::string& name)
@@ -256,7 +228,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
@@ -268,10 +240,10 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 			}
 		}
-		Texture* Material::GetTexture(const std::string& name)
+		graphics::Texture* Material::GetTexture(const std::string& name)
 		{
 			if (HasProperty(name))
 			{
@@ -279,11 +251,11 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
-		void Material::SetTexture(const std::string& name, Texture& value)
+		void Material::SetTexture(const std::string& name, graphics::Texture& value)
 		{
 			if (m_shader->HasProperty(name))
 			{
@@ -292,7 +264,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 			}
 		}
 		math::Vector4* Material::GetVector(const std::string& name)
@@ -303,7 +275,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
@@ -315,7 +287,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 			}
 		}
 		void Material::SetResource(const std::string & name, ID3D11ShaderResourceView & value)
@@ -326,7 +298,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 			}
 		}
 		void Material::SetBuffer(const std::string & name, ID3D11Buffer & value)
@@ -337,7 +309,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material" );
 			}
 		}
 		void Material::SetRaw(const std::string & name, void * value, size_t size, UINT count)
@@ -348,7 +320,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material:" << m_name);
+				LOG("Property " << name << " does not exist for material");
 			}
 		}
 
@@ -403,7 +375,7 @@ namespace thomas
 			}
 			ThomasCore::GetDeviceContext()->IASetPrimitiveTopology(m_topology);
 		}
-		void Material::Draw(Mesh * mesh)
+		void Material::Draw(graphics::Mesh * mesh)
 		{
 			for (Pass p : m_passes)
 			{
@@ -426,38 +398,18 @@ namespace thomas
 				}
 			}
 		}
-		std::vector<MaterialProperty*> Material::GetEditorProperties()
+		std::vector<ShaderProperty*> Material::GetEditorProperties()
 		{
 			//optimize maybe?
-			std::vector<MaterialProperty*> editorProperties;
-			for (MaterialProperty* matProp : m_properties)
+			std::vector<ShaderProperty*> editorProperties;
+			for (ShaderProperty* matProp : m_properties)
 				if (matProp->GetBufferName() == "MATERIAL_PROPERTIES")
 					editorProperties.push_back(matProp);
 			return editorProperties;
 		}
-		std::vector<MaterialProperty*> Material::GetAllProperties()
+		std::vector<ShaderProperty*> Material::GetAllProperties()
 		{
 			return m_properties;
-		}
-		Material * Material::GetBaseMaterial()
-		{
-			if (m_isInstance)
-				return m_baseMaterial->GetBaseMaterial();
-			else
-				return this;
-		}
-		Material * Material::Find(std::string name)
-		{
-			for (Material* mat : s_materials)
-			{
-				if (mat->m_name == name)
-					return mat;
-			}
-			return nullptr;
-		}
-		std::vector<Material*>* Material::GetMaterialInstances()
-		{
-			return &s_materialInstances;
 		}
 		UINT Material::GetId()
 		{

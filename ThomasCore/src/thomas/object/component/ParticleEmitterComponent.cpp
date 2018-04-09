@@ -6,7 +6,7 @@
 #include "../../utils/DebugTools.h"
 #include "../../utils/d3d.h"
 
-#include "..\..\graphics\Material.h"
+#include "..\..\resource\Material.h"
 #include "..\..\graphics\ParticleSystem.h"
 #include "../../utils/DebugTools.h"
 #include "Transform.h"
@@ -313,12 +313,12 @@ namespace thomas
 				SetOffset(math::Vector3(x, y, z));
 			}
 
-			void ParticleEmitterComponent::SetMaterial(graphics::Material * material)
+			void ParticleEmitterComponent::SetMaterial(resource::Material * material)
 			{
 				m_material = material;
 			}
 
-			graphics::Material * ParticleEmitterComponent::GetMaterial()
+			resource::Material * ParticleEmitterComponent::GetMaterial()
 			{
 				return m_material;
 			}
@@ -458,7 +458,7 @@ namespace thomas
 				//Header size and texture size
 				int texturesize;
 
-				std::string matName = m_material->GetName();
+				std::string matName = "";
 				//Texturesize is how long the string is * bytes
 				int matSize = matName.length() * sizeof(char);
 
@@ -520,7 +520,7 @@ namespace thomas
 
 				CalculateMaxNrOfParticles();
 
-				SetMaterial(graphics::Material::Find(materialName));
+				//SetMaterial(graphics::Material::Find(materialName));
 			}
 
 			unsigned int ParticleEmitterComponent::GetSpawnedParticleCount()
