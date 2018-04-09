@@ -65,7 +65,8 @@ namespace ThomasEditor
 					((thomas::resource::Material*)m_nativePtr)->SetShader((thomas::resource::Shader*)value->m_nativePtr);
 				else
 				{
-					m_nativePtr = new thomas::resource::Material((thomas::resource::Shader*)value->m_nativePtr);
+					m_nativePtr = new thomas::resource::Material(Utility::ConvertString(m_path));
+					((thomas::resource::Material*)m_nativePtr)->SetShader((thomas::resource::Shader*)value->m_nativePtr);
 				}
 			}
 		}
@@ -137,11 +138,11 @@ namespace ThomasEditor
 					if (t == Vector4::typeid)
 					{
 						Vector4 v = (Vector4)prop;
-						//SetVector(key, v);
+						SetVector(key, v);
 					}
 					else if (t == System::Single::typeid)
 					{
-						//SetRaw(key, &prop);
+						SetRaw(key, &prop);
 					}
 				}
 			}
@@ -150,7 +151,5 @@ namespace ThomasEditor
 	/*	Texture* GetTexture(String^ name);
 		void SetTexture(String^ name, Texture& value);*/
 
-	private:
-
-	};
+};
 }
