@@ -324,6 +324,18 @@ namespace thomas
 			}
 		}
 
+		void Material::SetRaw(const std::string & name, void * value)
+		{
+			if (m_shader->HasProperty(name))
+			{
+				GetProperty(name)->SetRaw(value);
+			}
+			else
+			{
+				LOG("Property " << name << " does not exist for material");
+			}
+		}
+
 
 		void Material::SetShaderPassEnabled(int index, bool enabled)
 		{

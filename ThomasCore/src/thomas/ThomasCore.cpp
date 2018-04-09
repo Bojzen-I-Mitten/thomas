@@ -178,7 +178,7 @@ namespace thomas {
 
 		#ifdef _DEBUG_DX
 
-			//s_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+			s_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 			s_debug->Release();
 			s_debug = nullptr;
 		#endif // _DEBUG

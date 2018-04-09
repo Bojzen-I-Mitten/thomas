@@ -29,6 +29,9 @@ namespace thomas {
 					m_renderPairs.clear();
 					m_model = model;
 					m_bounds = math::BoundingOrientedBox();
+					m_bounds.Extents.x = 0;
+					m_bounds.Extents.y = 0;
+					m_bounds.Extents.z = 0;
 				}
 				else
 				{
@@ -80,7 +83,7 @@ namespace thomas {
 
 			void RenderComponent::OnDrawGizmos()
 			{
-				editor::Gizmos::SetMatrix(math::Matrix::Identity);
+				editor::Gizmos::SetMatrix(math::Matrix::CreateWorld(m_bounds.Center, math::Vector3::Forward, math::Vector3::Up));
 				editor::Gizmos::SetColor(math::Color(0, 0, 1));
 				editor::Gizmos::DrawBoundingOrientedBox(m_bounds);
 			}

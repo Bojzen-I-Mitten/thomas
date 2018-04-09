@@ -60,7 +60,7 @@ namespace thomas
 			void SetBuffer(const std::string& name, ID3D11Buffer& value);
 
 			void SetRaw(const std::string& name, void* value, size_t size, UINT count);
-
+			void SetRaw(const std::string& name, void* value);
 			void SetShaderPassEnabled(int index, bool enabled);
 			void SetShaderPassEnabled(std::string name, bool enabled);
 

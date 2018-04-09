@@ -72,7 +72,7 @@ namespace thomas
 			void SetUAV(ID3D11UnorderedAccessView& value);
 			void SetRaw(void* value, size_t size, UINT count);
 			void SetRaw(void* value);
-
+			void SetRaw(void* value, size_t size);
 			bool* GetBool();
 			float* GetFloat();
 			int* GetInt();

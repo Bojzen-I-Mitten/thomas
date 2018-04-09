@@ -10,11 +10,10 @@ namespace ThomasEditor
     {
         public int testVar { get; set; }
         public AudioClip audioClip { get; set; }
-        
+        public Material mat { get; set; }
         public override void Start()
         {
-            Material mat = new Material(Shader.Find("StandardShader"));
-            Resources.SaveResource(mat, "..\\Data\\testMat.mat");
+
         }
 
         public override void Update()

@@ -12,6 +12,11 @@ namespace ThomasEditor
 	public:
 		Model(String^ path) : Resource(path, new thomas::resource::Model(Utility::ConvertString(path))) {};
 
+		~Model()
+		{
+			if (m_nativePtr)
+				delete m_nativePtr;
+		}
 		[OnDeserializedAttribute]
 		void OnDeserialized(StreamingContext c)
 		{

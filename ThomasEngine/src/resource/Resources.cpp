@@ -1,6 +1,8 @@
 
 #include "Model.h"
 #include "AudioClip.h"
+#include "Material.h"
+#include "Shader.h"
 #include "Resources.h"
 namespace ThomasEditor
 {
@@ -26,8 +28,10 @@ namespace ThomasEditor
 				case AssetTypes::SCENE:
 					break;
 				case AssetTypes::SHADER:
+					obj = gcnew Shader(path);
 					break;
 				case AssetTypes::MATERIAL:
+					obj = Deserialize<Material^>(path);
 					break;
 				case AssetTypes::SCRIPT:
 					break;
@@ -57,6 +61,14 @@ namespace ThomasEditor
 		else if (type == Model::typeid)
 		{
 			return AssetTypes::MODEL;
+		}
+		else if (type == Material::typeid)
+		{
+			return AssetTypes::MATERIAL;
+		}
+		else if (type == Shader::typeid)
+		{
+			return AssetTypes::SHADER;
 		}
 		else
 		{

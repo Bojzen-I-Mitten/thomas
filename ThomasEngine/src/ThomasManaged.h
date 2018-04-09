@@ -15,7 +15,7 @@
 
 #pragma managed
 //#include <Sound.h>
-
+#include "resource\Resources.h"
 #include "object\GameObject.h"
 #include "object\component\Transform.h"
 #include "Scene.h"
@@ -116,6 +116,7 @@ namespace ThomasEditor {
 					Monitor::Exit(lock);
 				}
 			}
+			Resources::UnloadAll();
 			ThomasCore::Destroy();
 				
 		}

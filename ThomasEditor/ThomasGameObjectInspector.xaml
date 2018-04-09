@@ -17,7 +17,8 @@
     </UserControl.CommandBindings>
 
     <UserControl.Resources>
-
+        <local:ResourceImageConverter x:Key="resourceImageConverter"/>
+        <local:NullResourceConverter x:Key="nullResourceConverter"/>
         <local:ComponentToNameConverter x:Key="converter"/>
         <local:Vector3Converter x:Key="convertVector3" x:Shared="False"/>
         
@@ -25,11 +26,26 @@
         <DataTemplate x:Key="ResourceEditor">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <xctk:PropertyGridEditorTextBox Grid.Column="0" Text='{Binding Value, TargetNullValue="None"}' IsReadOnly="True" AllowDrop="True" Drop="ResourceEditor_Drop" PreviewDragOver="ResourceEditor_PreviewDragOver"/>
-                <Button Background="Transparent" BorderThickness="0" Height="20" Grid.Column="1" Cursor="Hand" Click="ResourceList_Open">
+                <Border Background="#333333" Grid.Column="0" >
+                    <Image Height="20" Source="{Binding Value, Converter={StaticResource resourceImageConverter}, Mode=OneWay}" VerticalAlignment="Center" />
+                </Border>
+                 <Label Height="20" Foreground="White" FontSize="10" Grid.Column="1" Background="#333333" AllowDrop="True" Drop="ResourceEditor_Drop" PreviewDragOver="ResourceEditor_PreviewDragOver">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="Content" Value="{Binding Value}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
+                                    <Setter Property="Content" Value="{Binding PropertyType.Name, Converter={StaticResource nullResourceConverter}, Mode=OneWay}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+                <Button Background="Transparent" BorderThickness="0" Height="20" Grid.Column="2" Cursor="Hand" Click="ResourceList_Open">
                     <Image Source="icons/resourceList.png"/>
                 </Button>
             </Grid>

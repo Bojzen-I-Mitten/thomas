@@ -12,6 +12,23 @@ namespace ThomasEditor
 	{
 	internal:
 		static Dictionary<String^, Resource^>^ resources = gcnew Dictionary<String^, ThomasEditor::Resource^>();
+
+		generic<typename T>
+		where T : Resource
+		static T Deserialize(String^ path)
+		{
+			using namespace System::Runtime::Serialization;
+			DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
+			serializserSettings->PreserveObjectReferences = true;
+			serializserSettings->KnownTypes = System::Reflection::Assembly::GetAssembly(Resource::typeid)->ExportedTypes;
+			DataContractSerializer^ serializer = gcnew DataContractSerializer(T::typeid, serializserSettings);
+
+			Xml::XmlReader^ file = Xml::XmlReader::Create(path);
+			T resource = (T)serializer->ReadObject(file);
+			file->Close();
+
+			return resource;
+		}
 	public:
 
 		enum class AssetTypes
@@ -42,7 +59,6 @@ namespace ThomasEditor
 			resource->m_path = path;
 			serializer->WriteObject(file, resource);
 			file->Close();
-
 			resources[path] = resource;
 		}
 
@@ -66,6 +82,10 @@ namespace ThomasEditor
 			else if (extension == "obj")
 			{
 				return AssetTypes::MODEL;
+			}
+			else if (extension == "mat")
+			{
+				return AssetTypes::MATERIAL;
 			}
 			else
 			{
@@ -116,5 +136,13 @@ namespace ThomasEditor
 
 		static Resource^ Load(String^ path);
 		
+
+		static void UnloadAll()
+		{
+			for each(String^ resource in resources->Keys)
+			{
+				resources[resource]->~Resource();
+			}
+		}
 	};
 }

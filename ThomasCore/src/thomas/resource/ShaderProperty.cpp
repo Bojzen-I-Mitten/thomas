@@ -201,7 +201,7 @@ namespace thomas
 
 			ShaderProperty::ShaderProperty(const ShaderProperty* otherProperty)
 			{
-				m_value = otherProperty->m_value;
+				m_value = nullptr;
 				m_isSet = otherProperty->m_isSet;
 				m_index = otherProperty->m_index;
 				m_typeDesc = otherProperty->m_typeDesc;
@@ -214,8 +214,20 @@ namespace thomas
 				m_rawCount = otherProperty->m_rawCount;
 				m_rawSize = otherProperty->m_rawSize;
 				
-
-				
+				switch (m_class)
+				{
+					case PropClass::Scalar:
+						SetRaw(otherProperty->m_value);
+					case PropClass::Vector:
+						SetRaw(otherProperty->m_value, sizeof(math::Vector4));
+					case PropClass::Matrix:
+					{
+						SetRaw(otherProperty->m_value, sizeof(math::Matrix));
+						break;
+					}	
+					default:
+						break;
+				}
 				
 			}
 
@@ -228,6 +240,7 @@ namespace thomas
 				case PropClass::Vector:
 				case PropClass::Matrix:
 					SAFE_DELETE(m_value);
+					break;
 				default:
 					break;
 				}
@@ -499,10 +512,17 @@ namespace thomas
 
 		void ShaderProperty::SetRaw(void * value)
 		{
-			m_value = value;
+			SAFE_DELETE(m_value);
+			m_value = malloc(sizeof(float));
+			memcpy(m_value, value, sizeof(float));
 		}
 
-
+		void ShaderProperty::SetRaw(void * value, size_t size)
+		{
+			SAFE_DELETE(m_value);
+			m_value = malloc(sizeof(size));
+			memcpy(m_value, value, sizeof(size));
+		}
 
 		bool* ShaderProperty::GetBool()
 		{
