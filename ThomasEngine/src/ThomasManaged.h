@@ -214,6 +214,14 @@ namespace ThomasEditor {
 
 		}
 
+		static void UnselectGameObjects()
+		{
+			Monitor::Enter(SelectedGameObjects);
+			SelectedGameObjects->Clear();
+			thomas::editor::EditorCamera::SelectObject(nullptr);
+			Monitor::Exit(SelectedGameObjects);
+		}
+
 		static void UpdateSelectedObjects() {
 			List<GameObject^> tempSelectedGameObjects;
 			Monitor::Enter(SelectedGameObjects);

@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Scene xmlns:i="http://www.w3.org/2001/XMLSchema-instance" z:Id="1" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/" xmlns="http://schemas.datacontract.org/2004/07/ThomasEditor">
+  <GameObjects z:Size="1">
+    <GameObject z:Id="2">
+      <m_name z:Id="3">gameObject</m_name>
+      <Components z:Size="2">
+        <Component z:Id="4" i:type="Transform">
+          <m_name i:nil="true" />
+          <enabled>true</enabled>
+          <children z:Size="0" />
+          <eulerAngles>
+            <x>0</x>
+            <y>-0</y>
+            <z>0</z>
+          </eulerAngles>
+          <localEulerAngles>
+            <x>0</x>
+            <y>-0</y>
+            <z>0</z>
+          </localEulerAngles>
+          <localPosition>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+          </localPosition>
+          <localScale>
+            <x>1</x>
+            <y>1</y>
+            <z>1</z>
+          </localScale>
+          <parent i:nil="true" />
+          <position>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+          </position>
+          <scale>
+            <x>1</x>
+            <y>1</y>
+            <z>1</z>
+          </scale>
+        </Component>
+        <Component z:Id="5" i:type="TestComponent">
+          <m_name i:nil="true" />
+          <enabled>true</enabled>
+          <audioClip z:Id="6">
+            <path z:Id="7">..\Data\sound\theme.wav</path>
+          </audioClip>
+          <mat z:Id="8">
+            <path z:Id="9">..\Data\testMat.mat</path>
+          </mat>
+          <testVar>0</testVar>
+        </Component>
+      </Components>
+      <activeSelf>true</activeSelf>
+      <transform z:Ref="4" i:nil="true" />
+    </GameObject>
+  </GameObjects>
+  <Name z:Id="10">test</Name>
+  <SavePath z:Id="11">..\Data\test.tds</SavePath>
+</Scene>

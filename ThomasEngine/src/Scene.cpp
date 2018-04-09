@@ -1,8 +1,8 @@
 #include "Scene.h"
 #include "object\GameObject.h"
 #include "object\Component.h"
-
-
+#include "resource\Resources.h"
+#include "ThomasManaged.h"
 namespace ThomasEditor
 {
 	void Scene::Play()
@@ -16,14 +16,28 @@ namespace ThomasEditor
 		}
 	}
 
+	Scene^ Scene::CurrentScene::get()
+	{
+		return s_currentScene;
+	}
+
+	void Scene::CurrentScene::set(Scene^ value)
+	{
+		ThomasWrapper::UnselectGameObjects();
+		s_currentScene = value;
+	}
+
 
 	void Scene::SaveSceneAs(Scene ^ scene, System::String ^ fullPath)
 	{
 		using namespace System::Runtime::Serialization;
 		DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
 
-		serializserSettings->KnownTypes = Component::GetAllComponentTypes()->ToArray();
+		auto list = Component::GetAllComponentTypes();
+		list->Add(SceneResource::typeid);
+		serializserSettings->KnownTypes = list->ToArray();
 		serializserSettings->PreserveObjectReferences = true;
+		serializserSettings->DataContractSurrogate = gcnew SceneSurrogate();
 		DataContractSerializer^ serializer = gcnew DataContractSerializer(Scene::typeid, serializserSettings);
 		System::IO::FileInfo^ fi = gcnew System::IO::FileInfo(fullPath);
 		fi->Directory->Create();
@@ -48,10 +62,12 @@ namespace ThomasEditor
 
 		using namespace System::Runtime::Serialization;
 		DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
-		serializserSettings->KnownTypes = Component::GetAllComponentTypes()->ToArray();
+		auto list = Component::GetAllComponentTypes();
+		list->Add(SceneResource::typeid);
+		serializserSettings->KnownTypes = list;
 		serializserSettings->PreserveObjectReferences = true;
+		serializserSettings->DataContractSurrogate = gcnew SceneSurrogate();
 		DataContractSerializer^ serializer = gcnew DataContractSerializer(Scene::typeid, serializserSettings);
-
 		Xml::XmlReader^ file = Xml::XmlReader::Create(fullPath);
 		Scene^ scene = (Scene^)serializer->ReadObject(file);
 		file->Close();
@@ -91,6 +107,65 @@ namespace ThomasEditor
 		{
 			gObj->PostLoad();
 		}
+	}
+
+
+
+	System::Type ^ Scene::SceneSurrogate::GetDataContractType(System::Type ^ type)
+	{
+		if (type->BaseType == Resource::typeid)
+		{
+			return SceneResource::typeid;
+		}
+		else
+		{
+			return type;
+		}
+	}
+
+	System::Object ^ Scene::SceneSurrogate::GetObjectToSerialize(System::Object ^obj, System::Type ^targetType)
+	{
+		if (obj->GetType()->BaseType == Resource::typeid)
+		{
+			Resource^ resource = (Resource^)obj;
+			return gcnew SceneResource(resource->GetPath());
+		}
+		return obj;
+	}
+
+	System::Object ^ Scene::SceneSurrogate::GetDeserializedObject(System::Object ^obj, System::Type ^targetType)
+	{
+		if (obj->GetType() == SceneResource::typeid)
+		{
+			SceneResource^ sceneResource = (SceneResource^)obj;
+			return Resources::Load(sceneResource->path);
+		}
+		return obj;
+	}
+
+	System::Object ^ Scene::SceneSurrogate::GetCustomDataToExport(System::Reflection::MemberInfo ^memberInfo, System::Type ^dataContractType)
+	{
+		throw gcnew NotSupportedException("unused");
+	}
+
+	System::Object ^ Scene::SceneSurrogate::GetCustomDataToExport(System::Type ^clrType, System::Type ^dataContractType)
+	{
+		throw gcnew NotSupportedException("unused");
+	}
+
+	void Scene::SceneSurrogate::GetKnownCustomDataTypes(System::Collections::ObjectModel::Collection<System::Type ^> ^customDataTypes)
+	{
+		throw gcnew NotSupportedException("unused");
+	}
+
+	System::Type ^ Scene::SceneSurrogate::GetReferencedTypeOnImport(System::String ^typeName, System::String ^typeNamespace, System::Object ^customData)
+	{
+		throw gcnew NotSupportedException("unused");
+	}
+
+	System::CodeDom::CodeTypeDeclaration ^ Scene::SceneSurrogate::ProcessImportedType(System::CodeDom::CodeTypeDeclaration ^typeDeclaration, System::CodeDom::CodeCompileUnit ^compileUnit)
+	{
+		throw gcnew NotSupportedException("unused");
 	}
 
 }
