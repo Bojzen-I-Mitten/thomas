@@ -59,7 +59,7 @@ namespace ThomasEditor
 			resource->m_path = path;
 			serializer->WriteObject(file, resource);
 			file->Close();
-			resources[path] = resource;
+			resources[System::IO::Path::GetFullPath(path)] = resource;
 		}
 
 		static AssetTypes GetResourceAssetType(Type^ type);
@@ -97,9 +97,9 @@ namespace ThomasEditor
 		where T : Resource
 		static T Load(String^ path) 
 		{
-			if (resources->ContainsKey(path))
+			if (resources->ContainsKey(System::IO::Path::GetFullPath(path)))
 			{
-				Resource^ obj = resources[path];
+				Resource^ obj = resources[System::IO::Path::GetFullPath(path)];
 				if (obj->GetType() == T::typeid)
 					return (T)obj;
 				else
@@ -111,7 +111,7 @@ namespace ThomasEditor
 			else
 			{
 				T resource = (T)Activator::CreateInstance(T::typeid, path);
-				resources[path] = resource;
+				resources[System::IO::Path::GetFullPath(path)] = resource;
 				return resource;
 			}
 		}

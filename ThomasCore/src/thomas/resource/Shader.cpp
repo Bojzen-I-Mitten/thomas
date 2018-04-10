@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include "Shader.h"
 #include "ShaderProperty.h"
+#include <fstream>
 namespace thomas
 {
 	namespace resource
@@ -156,12 +157,17 @@ namespace thomas
 
 		bool Shader::Compile(std::string filePath, ID3DX11Effect** effect)
 		{
+			size_t found = filePath.find_last_of("/\\");
+			std::string dir = filePath.substr(0, found);
+			
+			Shader::ShaderInclude include(dir.c_str(), "..\\Data\\FxIncludes");
+
 			ID3DX11Effect* tempEffect = nullptr;
 			ID3DBlob* errorBlob = nullptr;
 			HRESULT result = D3DX11CompileEffectFromFile(
 				CA2W(filePath.c_str()),
 				nullptr,
-				D3D_COMPILE_STANDARD_FILE_INCLUDE,
+				&include,
 				D3DCOMPILE_DEBUG,
 				0,
 				ThomasCore::GetDevice(),
@@ -181,8 +187,8 @@ namespace thomas
 				}
 				else
 				{
-					LOG("Error compiling shader: " << filePath << " error:");
-					LOG_HR(result);
+					std::string error = HR_TO_STRING(result);
+					LOG("Error compiling shader: " << filePath << " error: " << error);
 				}
 				
 				return false;
@@ -422,6 +428,80 @@ namespace thomas
 		void Shader::QueueRecompile()
 		{
 			s_shouldRecompile = true;
+		}
+
+
+		Shader::ShaderInclude::ShaderInclude(const char * shaderDir, const char * systemDir) : m_shaderDir(shaderDir), m_systemDir(systemDir)
+		{
+		}
+
+		HRESULT Shader::ShaderInclude::Open(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID * ppData, UINT * pBytes)
+		{
+			try
+			{
+				
+				std::string finalPath;
+				std::string dir;
+				switch (IncludeType)
+				{
+				case D3D_INCLUDE_LOCAL: // #include "FILE"
+					dir = m_shaderDir;
+					break;
+				case D3D_INCLUDE_SYSTEM: // #include <FILE>
+					dir = m_systemDir;
+					break;
+				default:
+					assert(0);
+				}
+
+				/*
+				If pFileName is absolute: finalPath = pFileName.
+				If pFileName is relative: finalPath = dir + "\\" + pFileName
+				*/
+				if (PathIsRelative(pFileName))
+				{
+					finalPath = dir + "\\" + pFileName;
+				}
+				else
+				{
+					finalPath = pFileName;
+				}
+				
+				std::ifstream fileStream(finalPath, std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
+				if (fileStream.fail())
+				{
+					LOG("Failed to find shader: " << finalPath);
+					return E_FAIL;
+				}
+				uint32_t fileSize = fileStream.tellg();
+
+				if (fileSize)
+				{
+					char* buffer = new char[fileSize];
+					fileStream.seekg(0, std::ifstream::beg);
+					fileStream.read(buffer, fileSize);
+
+					*ppData = buffer;
+					*pBytes = fileSize;
+				}
+				else
+				{
+					*ppData = nullptr;
+					*pBytes = 0;
+				}
+				return S_OK;
+			}
+			catch (std::exception e)
+			{
+				LOG("Failed to read shader include: " << pFileName << " error: " << e.what());
+				return E_FAIL;
+			}
+		}
+		HRESULT Shader::ShaderInclude::Close(LPCVOID pData)
+		{
+			char* bufffer = (char*)pData;
+			delete[] bufffer;
+			return S_OK;
 		}
 	}
 }

@@ -1,6 +1,6 @@
 #pragma warning(disable: 4717) // removes effect deprecation warning.
 
-#include "ThomasCG.fx"
+#include <ThomasCG.fx>
 
 PROPERTIES_START
 float4 color;

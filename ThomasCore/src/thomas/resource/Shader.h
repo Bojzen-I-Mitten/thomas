@@ -80,6 +80,19 @@ namespace thomas
 			static Shader* s_standardShader;
 			static bool s_shouldRecompile;
 
+
+			class ShaderInclude : public ID3DInclude
+			{
+				public:
+					ShaderInclude(const char* shaderDir, const char* systemDir);
+					// Inherited via ID3DInclude
+					virtual HRESULT __stdcall Open(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID * ppData, UINT * pBytes) override;
+					virtual HRESULT __stdcall Close(LPCVOID pData) override;
+
+			private:
+				std::string m_shaderDir;
+				std::string m_systemDir;
+			};
 		};
 	}
 }
