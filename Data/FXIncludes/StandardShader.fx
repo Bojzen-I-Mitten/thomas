@@ -96,6 +96,8 @@ float4 frag(v2f i) : SV_TARGET
 	
 	//color = saturate(color + specular);
 	return color;
+
+	
 }
 
 

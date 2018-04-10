@@ -136,6 +136,9 @@ namespace ThomasEditor
 
 		static Resource^ Load(String^ path);
 		
+		static Resource^ Find(String^ path);
+
+		static void RenameResource(String^ oldPath, String^ newPath);
 
 		static void UnloadAll()
 		{

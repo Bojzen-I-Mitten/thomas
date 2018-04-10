@@ -17,16 +17,12 @@ namespace thomas {
 				m_bounds.Extents.x = 0;
 				m_bounds.Extents.y = 0;
 				m_bounds.Extents.z = 0;
-				m_material = resource::Material::GetStandardMaterial();
 			}
 
 			void RenderComponent::SetModel(resource::Model* model)
 			{
 				if (!model)
 				{
-					for (graphics::RenderPair* pair : m_renderPairs)
-						delete pair;
-					m_renderPairs.clear();
 					m_model = model;
 					m_bounds = math::BoundingOrientedBox();
 					m_bounds.Extents.x = 0;
@@ -35,19 +31,6 @@ namespace thomas {
 				}
 				else
 				{
-					for (graphics::RenderPair* pair : m_renderPairs)
-						delete pair;
-					m_renderPairs.clear();
-					std::vector<graphics::Mesh*> meshes = model->GetMeshes();
-					for (graphics::Mesh* mesh : meshes)
-					{
-						graphics::RenderPair* renderPair = new graphics::RenderPair();
-						renderPair->mesh = mesh;
-						renderPair->material = m_material;
-						renderPair->transform = m_gameObject->m_transform;
-						
-						m_renderPairs.push_back(renderPair);
-					}
 					m_model = model;
 					
 				}
@@ -60,15 +43,22 @@ namespace thomas {
 				{
 					math::BoundingOrientedBox::CreateFromBoundingBox(m_bounds, m_model->m_bounds);
 					m_bounds.Transform(m_bounds, m_gameObject->m_transform->GetWorldMatrix());
-				}
-				
-				std::vector<graphics::RenderPair*> setPairs;
-				for (auto pair : m_renderPairs)
-					if (pair->material) {
-						pair->transform = m_gameObject->m_transform;
-						thomas::graphics::Renderer::AddToRenderQueue(pair);
+
+					if (m_model->GetMeshes().size() != m_materials.size())
+						m_materials.resize(m_model->GetMeshes().size());
+
+					std::vector<graphics::RenderPair*> setPairs;
+
+					for (int i = 0; i < m_model->GetMeshes().size(); i++)
+					{
+						resource::Material* material = m_materials[i];
+						if (material == nullptr)
+							material = resource::Material::GetStandardMaterial();
+
+						graphics::Mesh* mesh = m_model->GetMeshes()[i];
+						thomas::graphics::Renderer::SubmitToRenderQueue(m_gameObject->m_transform, mesh, material);
 					}
-						
+				}		
 			}
 			void RenderComponent::SetMaterial(int meshIndex, resource::Material * material)
 			{
@@ -77,8 +67,11 @@ namespace thomas {
 					LOG("Material is NULL");
 					return;
 				}
-				if (meshIndex < m_renderPairs.size())
-					m_renderPairs[meshIndex]->material = material;
+				if (meshIndex < m_model->GetMeshes().size() && meshIndex >= 0)
+				{
+					m_materials[meshIndex] = material;
+				}
+					
 			}
 
 			void RenderComponent::OnDrawGizmos()

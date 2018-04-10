@@ -21,6 +21,7 @@ namespace thomas
 			
 		private:
 			void CreateProperties();
+			void OnChanged();
 		public:
 			static void Init();
 			static void Destroy();

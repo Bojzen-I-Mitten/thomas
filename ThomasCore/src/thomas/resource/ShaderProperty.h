@@ -52,6 +52,7 @@ namespace thomas
 			PropClass GetObjectPropClass(D3D_SHADER_VARIABLE_TYPE type);
 			TexDim GetTextureDimension(D3D_SHADER_VARIABLE_TYPE type);
 		public:
+
 			ShaderProperty(UINT index, ID3DX11EffectVariable* variable);
 			ShaderProperty(const ShaderProperty* otherProperty);
 			~ShaderProperty();
@@ -73,6 +74,9 @@ namespace thomas
 			void SetRaw(void* value, size_t size, UINT count);
 			void SetRaw(void* value);
 			void SetRaw(void* value, size_t size);
+
+			void UpdateVariable(ID3DX11EffectVariable* variable);
+
 			bool* GetBool();
 			float* GetFloat();
 			int* GetInt();
@@ -91,6 +95,8 @@ namespace thomas
 			TexDim GetTexDim();
 
 		private:
+			std::string m_name;
+			std::string m_bufferName;
 			bool m_isSet;
 
 			unsigned int m_index;
@@ -100,9 +106,6 @@ namespace thomas
 			TexDim m_textureDimension;
 			size_t m_rawSize;
 			UINT m_rawCount;
-			D3DX11_EFFECT_TYPE_DESC m_typeDesc;
-			D3DX11_EFFECT_VARIABLE_DESC m_variableDesc;
-			D3DX11_EFFECT_VARIABLE_DESC* m_bufferDesc;
 		};
 	}
 }

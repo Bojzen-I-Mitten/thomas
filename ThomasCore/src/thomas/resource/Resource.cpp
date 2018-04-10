@@ -23,6 +23,17 @@ namespace thomas
 			return m_path;
 		}
 
+		void Resource::Rename(std::string newPath)
+		{
+			m_path = newPath;
+			OnChanged();
+		}
+
+		void Resource::Reload()
+		{
+			OnChanged();
+		}
+
 		std::string Resource::PathToName(std::string path)
 		{
 			std::string name = PathFindFileName(path.c_str());

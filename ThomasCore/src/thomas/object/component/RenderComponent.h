@@ -28,8 +28,7 @@ namespace thomas
 				resource::Model* m_model;
 				math::BoundingOrientedBox m_bounds;
 			private:
-				std::vector<graphics::RenderPair*> m_renderPairs;
-				resource::Material* m_material;
+				std::vector<resource::Material*> m_materials;
 				//graphics::Geometry* m_geometry;
 			};
 		}
