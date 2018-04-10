@@ -24,5 +24,11 @@ namespace ThomasEditor
         {
             InitializeComponent();
         }
+
+
+        public void SetMaterial(Material material)
+        {
+            propertyGrid.DataContext = new DictionaryPropertyGridAdapter(material.EditorProperties);
+        }
     }
 }

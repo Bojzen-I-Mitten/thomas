@@ -153,6 +153,11 @@
                                 <local:ThomasGameObjectInspector x:Name="__inspector" x:FieldModifier="public" Background="#444444"/>
                             </xcad:LayoutAnchorable>
                         </xcad:LayoutDocumentPane>
+                        <xcad:LayoutDocumentPane DockWidth="2*">
+                            <xcad:LayoutAnchorable ContentId="MaterialEditor" Title="Material Editor">
+                                <ContentControl Content="{StaticResource materialEditor}"/>
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutDocumentPane>
                     </xcad:LayoutDocumentPaneGroup>
                 </xcad:LayoutPanel>
             </xcad:LayoutRoot>
