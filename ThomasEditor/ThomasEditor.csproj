@@ -90,8 +90,15 @@
       <DependentUpon>AssetBrowser.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomCommands.cs" />
+    <Compile Include="DictionaryPropertyGridAdapter.cs" />
+    <Compile Include="ExtendedPropertyGrid.xaml.cs">
+      <DependentUpon>ExtendedPropertyGrid.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GameObjectHierarchy.xaml.cs">
       <DependentUpon>GameObjectHierarchy.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MaterialEditor.xaml.cs">
+      <DependentUpon>MaterialEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
@@ -113,6 +120,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ExtendedPropertyGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GameObjectHierarchy.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -129,6 +140,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MaterialEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="OptionsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
