@@ -29,6 +29,8 @@ namespace thomas
 			
 			void Destroy();
 			static void RecompileShaders();
+
+			void OnChanged();
 		public:
 			struct ShaderPass
 			{

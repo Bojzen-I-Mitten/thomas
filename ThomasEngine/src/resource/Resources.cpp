@@ -4,6 +4,7 @@
 #include "Material.h"
 #include "Shader.h"
 #include "Resources.h"
+#include "../Scene.h"
 namespace ThomasEditor
 {
 	Resource^ Resources::Load(String^ path)
@@ -73,6 +74,30 @@ namespace ThomasEditor
 		else
 		{
 			return AssetTypes::UNKNOWN;
+		}
+	}
+	Resource ^ Resources::Find(String ^ path)
+	{
+		if (resources->ContainsKey(System::IO::Path::GetFullPath(path)))
+		{
+			return resources[System::IO::Path::GetFullPath(path)];
+		}
+		return nullptr;
+	}
+	void Resources::RenameResource(String ^ oldPath, String ^ newPath)
+	{
+		if (resources->ContainsKey(System::IO::Path::GetFullPath(oldPath)))
+		{
+			Object^ lock = Scene::CurrentScene->GetGameObjectsLock();
+
+			System::Threading::Monitor::Enter(lock);
+			Resource^ resource = resources[System::IO::Path::GetFullPath(oldPath)];
+			resources->Remove(System::IO::Path::GetFullPath(oldPath));
+			resources[System::IO::Path::GetFullPath(newPath)] = resource;
+			if (resource)
+				resource->Rename(newPath);
+
+			System::Threading::Monitor::Exit(lock);
 		}
 	}
 }

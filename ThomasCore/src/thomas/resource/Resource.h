@@ -13,9 +13,14 @@ namespace thomas
 			std::string GetName();
 			std::string GetPath();
 
+			void Rename(std::string newPath);
+			void Reload();
 			static std::string PathToName(std::string path);
 		protected:
 			std::string m_path;
+
+		private:
+			virtual void OnChanged() = 0;
 		};
 	}
 }

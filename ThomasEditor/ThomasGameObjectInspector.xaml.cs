@@ -189,8 +189,8 @@ namespace ThomasEditor
                 if(item.DataContext is Resource)
                 {
                     Resource resource = item.DataContext as Resource;
-                    PropertyGridEditorTextBox tb = sender as PropertyGridEditorTextBox;
-                    PropertyItem pi = tb.DataContext as PropertyItem;
+                    Label label = sender as Label;
+                    PropertyItem pi = label.DataContext as PropertyItem;
                     if(resource.GetType() == pi.PropertyType)
                     {
                         Monitor.Enter(Scene.CurrentScene.GetGameObjectsLock());
@@ -212,8 +212,8 @@ namespace ThomasEditor
                 if (item.DataContext is Resource)
                 {
                     Resource resource = item.DataContext as Resource;
-                    PropertyGridEditorTextBox tb = sender as PropertyGridEditorTextBox;
-                    PropertyItem pi = tb.DataContext as PropertyItem;
+                    Label label = sender as Label;
+                    PropertyItem pi = label.DataContext as PropertyItem;
                     if (resource.GetType() == pi.PropertyType)
                         e.Handled = true;
                 }

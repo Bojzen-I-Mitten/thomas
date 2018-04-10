@@ -5,6 +5,7 @@
 #pragma managed
 
 #include "../Utility.h"
+#include "../Scene.h"
 
 using namespace System;
 using namespace System::Runtime::Serialization;
@@ -28,9 +29,19 @@ namespace ThomasEditor
 		virtual ~Resource()
 		{
 		}
+
+		void Rename(String^ newPath) {
+			m_path = newPath;
+			m_nativePtr->Rename(Utility::ConvertString(newPath));
+		}
+
 	public:
 		
-		virtual void Reload() {};
+		virtual void Reload() {
+			System::Threading::Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
+			m_nativePtr->Reload();
+			System::Threading::Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
+		};
 
 		String ^ GetPath()
 		{

@@ -38,9 +38,15 @@ namespace thomas
 				ID3DX11EffectVariable* variable = m_effect->GetVariableByIndex(i);
 				if (variable->IsValid())
 				{
+					if (m_properties.size() > i)
+					{
+						m_properties[i]->UpdateVariable(variable);
+					}else
+					{ 
+						ShaderProperty* prop = new ShaderProperty(i, variable);
+						m_properties.push_back(prop);
+					}
 					
-					ShaderProperty* prop = new ShaderProperty(i, variable);
-					m_properties.push_back(prop);
 				}
 				
 
@@ -407,7 +413,11 @@ namespace thomas
 			
 			if (Compile(m_path, &tempEffect))
 			{
-				Destroy();
+				SAFE_RELEASE(m_effect);
+				for (auto pass : m_passes)
+					SAFE_RELEASE(pass.inputLayout);
+
+				m_passes.clear();
 				m_effect = tempEffect;
 				SetupReflection();
 			}
@@ -424,6 +434,10 @@ namespace thomas
 			{
 				shader->Recompile();
 			}
+		}
+		void Shader::OnChanged()
+		{
+			Recompile();
 		}
 		void Shader::QueueRecompile()
 		{

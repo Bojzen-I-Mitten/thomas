@@ -159,28 +159,6 @@ namespace ThomasEditor {
 		static float timeSinceLastUpdate = 100000;
 		static void Update() 
 		{
-			/*if (thomas::ThomasCore::Initialized() && thomas::Scene::GetCurrentScene() != NULL)
-			{
-				timeSinceLastUpdate += thomas::ThomasTime::GetActualDeltaTime();
-				if (timeSinceLastUpdate > 1.0f / 120.0f)
-				{
-					thomas::Scene::ClearRenderQueue();
-					thomas::ThomasCore::Update();
-					thomas::Scene::UpdateCurrentScene();
-					for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
-					{
-						gameObject->UpdateComponents();
-					}
-					thomas::Physics::Update();
-
-					UpdateLog();
-					timeSinceLastUpdate = 0.0f;
-				}
-				thomas::ThomasCore::Render();
-				if (thomas::editor::EditorCamera::HasSelectionChanged())
-					UpdateSelectedObjects();
-				
-			}*/
 			Window::UpdateFocus();
 			UpdateLog();
 			if (thomas::editor::EditorCamera::HasSelectionChanged())

@@ -35,6 +35,10 @@ namespace thomas
 			}
 		}
 
+		void Material::OnChanged()
+		{
+		}
+
 		void Material::Init()
 		{
 			s_standardMaterial = new Material(resource::Shader::GetStandardShader());
@@ -163,7 +167,7 @@ namespace thomas
 		}
 		void Material::SetColor(const std::string& name, const math::Color& value)
 		{
-			if (m_shader->HasProperty(name))
+			if (HasProperty(name))
 			{
 				GetProperty(name)->SetVector(value.ToVector4());
 			}
@@ -211,7 +215,7 @@ namespace thomas
 		}
 		void Material::SetInt(const std::string& name, int& value)
 		{
-			if (m_shader->HasProperty(name))
+			if (HasProperty(name))
 			{
 				GetProperty(name)->SetInt(value);
 			}
@@ -234,7 +238,7 @@ namespace thomas
 		}
 		void Material::SetMatrix(const std::string& name, math::Matrix& value)
 		{
-			if (m_shader->HasProperty(name))
+			if (HasProperty(name))
 			{
 				GetProperty(name)->SetMatrix(value);
 			}
@@ -257,7 +261,7 @@ namespace thomas
 		}
 		void Material::SetTexture(const std::string& name, graphics::Texture& value)
 		{
-			if (m_shader->HasProperty(name))
+			if (HasProperty(name))
 			{
 				GetProperty(name)->SetTexture(value);
 				SetSampler("sampler" + name, value);
@@ -281,7 +285,7 @@ namespace thomas
 		}
 		void Material::SetVector(const std::string& name, math::Vector4& value)
 		{
-			if (m_shader->HasProperty(name))
+			if (HasProperty(name))
 			{
 				GetProperty(name)->SetVector(value);
 			}
@@ -303,7 +307,7 @@ namespace thomas
 		}
 		void Material::SetBuffer(const std::string & name, ID3D11Buffer & value)
 		{
-			if (m_shader->HasProperty(name))
+			if (HasProperty(name))
 			{
 				GetProperty(name)->SetBuffer(value);
 			}
@@ -314,7 +318,7 @@ namespace thomas
 		}
 		void Material::SetRaw(const std::string & name, void * value, size_t size, UINT count)
 		{
-			if (m_shader->HasProperty(name))
+			if (HasProperty(name))
 			{
 				GetProperty(name)->SetRaw(value, size, count);
 			}
@@ -326,7 +330,7 @@ namespace thomas
 
 		void Material::SetRaw(const std::string & name, void * value)
 		{
-			if (m_shader->HasProperty(name))
+			if (HasProperty(name))
 			{
 				GetProperty(name)->SetRaw(value);
 			}

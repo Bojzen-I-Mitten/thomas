@@ -41,10 +41,66 @@ namespace ThomasEditor
             watcher = new FileSystemWatcher(path);
             watcher.IncludeSubdirectories = true;
 
-
+            watcher.Renamed += ResourceRenamed;
+            watcher.Changed += ResourceChanged;
             watcher.Created += ResourceCreated;
             watcher.Deleted += ResourceDeleted;
             watcher.EnableRaisingEvents = true;
+
+        }
+
+        private void ResourceRenamed(object sender, RenamedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action<String, String>((String oldPath, String newPath) =>
+            {
+                ThomasEditor.Resources.AssetTypes oldType = ThomasEditor.Resources.GetResourceAssetType(oldPath);
+                ThomasEditor.Resources.AssetTypes newType = ThomasEditor.Resources.GetResourceAssetType(newPath);
+
+                TreeViewItem foundItem = FindNode(oldPath);
+                if (foundItem != null)
+                {
+                    
+                    if (oldType != newType)
+                        return;
+
+                    ThomasEditor.Resources.RenameResource(oldPath, newPath);
+
+                    StackPanel stack = foundItem.Header as StackPanel;
+                    stack.DataContext = newPath;
+
+                    String visibleName = Path.GetFileNameWithoutExtension(newPath);
+
+                    stack.Children.OfType<TextBlock>().First().Text = visibleName;
+                }
+                else
+                {
+                    if(newType == ThomasEditor.Resources.AssetTypes.SHADER)
+                    {
+                        Resource shader = ThomasEditor.Resources.Find(newPath);
+                        if (shader != null)
+                            shader.Reload();
+                    }
+                }
+
+            }), e.OldFullPath, e.FullPath);
+        }
+
+        private void ResourceChanged(object sender, FileSystemEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action<String>((String p) =>
+            {
+
+                TreeViewItem foundItem = FindNode(p);
+                if (foundItem != null)
+                {
+                   if(foundItem.DataContext is Resource)
+                    {
+                        Resource resource = foundItem.DataContext as Resource;
+                        resource.Reload();
+                    }
+                }
+
+            }), e.FullPath);
         }
 
         private void ResourceDeleted(object sender, FileSystemEventArgs e)

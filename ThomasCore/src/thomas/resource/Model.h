@@ -25,6 +25,7 @@ namespace thomas {
 		class THOMAS_API Model : public Resource {
 		private:
 			math::BoundingBox GenerateBounds();
+			void OnChanged();
 		public:
 			Model(std::string path);
 

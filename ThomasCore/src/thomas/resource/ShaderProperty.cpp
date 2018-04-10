@@ -176,21 +176,39 @@ namespace thomas
 			m_isSet = false;
 			m_index = index;
 			m_rawCount = 1;
-			variable->GetType()->GetDesc(&m_typeDesc);
-			variable->GetDesc(&m_variableDesc);
-			m_bufferDesc = new D3DX11_EFFECT_VARIABLE_DESC();
-			variable->GetParentConstantBuffer()->GetDesc(m_bufferDesc);
-			m_class = GetPropClass(m_typeDesc.Class, m_typeDesc.Type);
+
+			D3DX11_EFFECT_TYPE_DESC typeDesc;
+			D3DX11_EFFECT_VARIABLE_DESC variableDesc;
+		
+			variable->GetType()->GetDesc(&typeDesc);
+			variable->GetDesc(&variableDesc);
+			ID3DX11EffectConstantBuffer* cBuffer = variable->GetParentConstantBuffer();
+			m_class = GetPropClass(typeDesc.Class, typeDesc.Type);
+
+			m_name = variableDesc.Name;
+
+			if (cBuffer->IsValid())
+			{
+				D3DX11_EFFECT_VARIABLE_DESC bufferDesc;
+				cBuffer->GetDesc(&bufferDesc);
+				m_bufferName = bufferDesc.Name;
+			}
+			else
+			{
+				m_bufferName = "";
+			}
+			
+			
 
 			switch (m_class)
 			{
 				case PropClass::Scalar:
 				case PropClass::Vector:
 				case PropClass::Matrix:
-					m_type = GetPropType(m_typeDesc.Type);
+					m_type = GetPropType(typeDesc.Type);
 					break;
 				case PropClass::Texture:
-					m_textureDimension = GetTextureDimension(m_typeDesc.Type);
+					m_textureDimension = GetTextureDimension(typeDesc.Type);
 					break;
 				default:
 					break;
@@ -201,12 +219,11 @@ namespace thomas
 
 			ShaderProperty::ShaderProperty(const ShaderProperty* otherProperty)
 			{
+				m_name = otherProperty->m_name;
+				m_bufferName = otherProperty->m_bufferName;
 				m_value = nullptr;
 				m_isSet = otherProperty->m_isSet;
 				m_index = otherProperty->m_index;
-				m_typeDesc = otherProperty->m_typeDesc;
-				m_variableDesc = otherProperty->m_variableDesc;
-				m_bufferDesc = new D3DX11_EFFECT_VARIABLE_DESC(*otherProperty->m_bufferDesc);
 				m_class = otherProperty->m_class;
 				m_type = otherProperty->m_type;
 				m_textureDimension = otherProperty->m_textureDimension;
@@ -233,7 +250,6 @@ namespace thomas
 
 			ShaderProperty::~ShaderProperty()
 			{
-				delete m_bufferDesc;
 				switch (m_class)
 				{
 				case PropClass::Scalar:
@@ -350,14 +366,12 @@ namespace thomas
 
 		std::string ShaderProperty::GetName()
 		{
-			return m_variableDesc.Name;
+			return m_name;
 		}
 
 		std::string ShaderProperty::GetBufferName()
 		{
-			if(m_bufferDesc->Name != NULL)
-				return m_bufferDesc->Name;
-			return "";
+			return m_bufferName;
 		}
 
 		void ShaderProperty::SetBool(bool & value)
@@ -522,6 +536,12 @@ namespace thomas
 			SAFE_DELETE(m_value);
 			m_value = malloc(sizeof(size));
 			memcpy(m_value, value, sizeof(size));
+		}
+
+		void ShaderProperty::UpdateVariable(ID3DX11EffectVariable * variable)
+		{
+			
+			
 		}
 
 		bool* ShaderProperty::GetBool()

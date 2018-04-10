@@ -24,8 +24,8 @@ namespace thomas
 	namespace graphics
 	{
 		
-		std::vector<graphics::RenderPair*> Renderer::s_renderQueue;
-		std::vector<graphics::RenderPair*> Renderer::s_lastFramesRenederQueue;
+		std::vector<graphics::RenderPair> Renderer::s_renderQueue;
+		std::vector<graphics::RenderPair> Renderer::s_lastFramesRenderQueue;
 		void Renderer::BindFrame()
 		{
 			//ThomasPerFrame
@@ -60,12 +60,13 @@ namespace thomas
 			s_renderQueue.clear();
 		}
 
-		void Renderer::AddToRenderQueue(graphics::RenderPair * renderPair)
+
+		void Renderer::SubmitToRenderQueue(object::component::Transform * transform, Mesh * mesh, resource::Material * material)
 		{
-			s_renderQueue.push_back(renderPair);
+			s_renderQueue.push_back(RenderPair(transform, mesh, material));
 		}
 
-		std::vector<graphics::RenderPair*> Renderer::GetRenderQueue()
+		std::vector<graphics::RenderPair>& Renderer::GetRenderQueue()
 		{
 			return s_renderQueue;
 		}
@@ -91,32 +92,31 @@ namespace thomas
 
 		void Renderer::Render()
 		{
-			
 			RenderQueue(s_renderQueue);
 		}
 
-		void Renderer::RenderQueue(std::vector<RenderPair*> renderQueue)
+		void Renderer::RenderQueue(std::vector<RenderPair>& renderQueue)
 		{
 			std::sort(renderQueue.begin(), renderQueue.end(), SortPairs);
 
 			resource::Material* lastMaterial = nullptr;
-			for (RenderPair* renderPair : renderQueue)
+			for (RenderPair& renderPair : renderQueue)
 			{
-				if (!lastMaterial || lastMaterial != renderPair->material)
+				if (!lastMaterial || lastMaterial != renderPair.material)
 				{
-					lastMaterial = renderPair->material;
+					lastMaterial = renderPair.material;
 					lastMaterial->Bind();
 				}
-				BindObject(lastMaterial, renderPair->transform);
+				BindObject(lastMaterial, renderPair.transform);
 
-				lastMaterial->Draw(renderPair->mesh);
+				lastMaterial->Draw(renderPair.mesh);
 			}
 
 		}
 
-		bool Renderer::SortPairs(RenderPair* a, RenderPair* b)
+		bool Renderer::SortPairs(RenderPair& a, RenderPair& b)
 		{
-			return a->material->GetId() < b->material->GetId();
+			return a.material->GetId() < b.material->GetId();
 		}
 
 	}

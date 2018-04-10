@@ -13,7 +13,8 @@ namespace thomas
 	{
 		class AudioClip : public Resource
 		{
-		
+		private:
+			void OnChanged();
 		public:
 			AudioClip(std::string path);
 			std::unique_ptr<DirectX::SoundEffectInstance> CreateInstance();

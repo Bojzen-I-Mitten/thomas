@@ -20,6 +20,17 @@ namespace thomas {
 			return bounds;
 		}
 
+		void Model::OnChanged()
+		{
+			for (unsigned int i = 0; i < m_meshes.size(); i++)
+			{
+				delete m_meshes[i];
+			}
+			m_meshes.clear();
+			m_meshes = utils::AssimpLoader::LoadModel(m_path);
+			m_bounds = GenerateBounds();
+		}
+
 		Model::Model(std::string path) : Resource(path)
 		{
 			m_meshes = utils::AssimpLoader::LoadModel(path);
