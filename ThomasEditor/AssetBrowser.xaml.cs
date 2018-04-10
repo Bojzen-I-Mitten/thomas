@@ -21,9 +21,9 @@ namespace ThomasEditor
     public partial class AssetBrowser : UserControl
     {
 
-
+        String path = "..\\Data";
         bool _isDragging = false;
-        List<object> items;
+       
         public static Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage> assetImages = new Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage>();
 
         FileSystemWatcher watcher;
@@ -32,19 +32,100 @@ namespace ThomasEditor
         {
             InitializeComponent();
             LoadAssetImages();
-            items = CreateTree("..\\Data");
-            fileTree.ItemsSource = items;
+            List<object> items = CreateTree(path);
+            foreach(object item in items)
+            {
+                fileTree.Items.Add(item);
+            }
 
-            watcher = new FileSystemWatcher("..\\Data");
+            watcher = new FileSystemWatcher(path);
             watcher.IncludeSubdirectories = true;
-            
-            //watcher.Created += Watcher_Created;
-            //watcher.Deleted += Watcher_Deleted;
-            //watcher.EnableRaisingEvents = true;
+
+
+            watcher.Created += ResourceCreated;
+            watcher.Deleted += ResourceDeleted;
+            watcher.EnableRaisingEvents = true;
         }
 
+        private void ResourceDeleted(object sender, FileSystemEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action<String>((String p) =>
+            {
 
+                TreeViewItem foundItem = FindNode(p);
+                if(foundItem != null)
+                {
+                    if (foundItem.Parent is TreeView)
+                    {
+                        fileTree.Items.Remove(foundItem);
+                    }
+                    else if (foundItem.Parent is TreeViewItem)
+                    {
+                        TreeViewItem parent = foundItem.Parent as TreeViewItem;
+                        parent.Items.Remove(foundItem);
+                    }
+                }
+              
+            }), e.FullPath);
+           
+        }
 
+        private List<TreeViewItem> FlattenTree(ItemCollection children)
+        {
+            List<TreeViewItem> flatTree = new List<TreeViewItem>();
+            foreach(TreeViewItem child in children)
+            {
+                flatTree.Add(child);
+                if(child.Items.Count > 0)
+                {
+                    flatTree.AddRange(FlattenTree(child.Items));
+                }
+            }
+            return flatTree;
+        }
+
+        private TreeViewItem FindNode(String nodeName)
+        {
+            List<TreeViewItem> flat = FlattenTree(fileTree.Items);
+            foreach (TreeViewItem item in flat)
+            {
+                if (((item.Header as StackPanel).DataContext as String) == nodeName)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        private void AddNode(String filePath)
+        {
+            object item = CreateItem(filePath);
+            if (item == null)
+                return;
+            String parentDir = filePath.Remove(filePath.LastIndexOf(Path.DirectorySeparatorChar, filePath.Length-1));
+
+            if(parentDir == path)
+            {
+                    fileTree.Items.Add(item);
+            }
+            else
+            {
+                TreeViewItem dir = FindNode(parentDir);
+                if (dir != null)
+                    dir.Items.Add(item);
+              
+            }
+        }
+
+        private void ResourceCreated(object sender, FileSystemEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action<String>((String p) =>
+            {
+
+                AddNode(p);
+
+            }), e.FullPath);
+        }
 
         private void LoadAssetImages()
         {
@@ -55,19 +136,14 @@ namespace ThomasEditor
             assetImages[ThomasEditor.Resources.AssetTypes.AUDIO_CLIP] = new BitmapImage(new Uri("pack://application:,,/icons/assets/audio.png"));
             assetImages[ThomasEditor.Resources.AssetTypes.MODEL] = new BitmapImage(new Uri("pack://application:,,/icons/assets/model.png"));
             assetImages[ThomasEditor.Resources.AssetTypes.MATERIAL] = new BitmapImage(new Uri("pack://application:,,/icons/assets/material.png"));
-
-
         }
 
 
-        private List<object> CreateTree(String directory)
+        private object CreateItem(string filePath)
         {
-            List<object> nodes = new List<object>();
-            String[] directories = Directory.GetDirectories(directory);
-            String[] files = Directory.GetFiles(directory);
-            foreach(String dir in directories)
+            if(Directory.Exists(filePath)) //dir
             {
-                String dirName = new DirectoryInfo(dir).Name;
+                String dirName = new DirectoryInfo(filePath).Name;
 
                 StackPanel stack = new StackPanel();
                 stack.Orientation = Orientation.Horizontal;
@@ -77,32 +153,54 @@ namespace ThomasEditor
                 TextBlock lbl = new TextBlock { Text = dirName };
                 stack.Children.Add(image);
                 stack.Children.Add(lbl);
+                stack.DataContext = filePath;
 
                 TreeViewItem item = new TreeViewItem { Header = stack };
-                foreach (object i in CreateTree(dir))
+                foreach (object i in CreateTree(filePath))
                     item.Items.Add(i);
 
-                nodes.Add(item);
+                return item;
             }
-            foreach(String file in files)
+            else if(File.Exists(filePath))
             {
-                String fileName = Path.GetFileNameWithoutExtension(file);
-                ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(file);
+                String fileName = Path.GetFileNameWithoutExtension(filePath);
+                ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(filePath);
                 if (assetType == ThomasEditor.Resources.AssetTypes.UNKNOWN)
-                    continue;
+                    return null;
                 StackPanel stack = new StackPanel();
                 stack.Orientation = Orientation.Horizontal;
                 stack.Height = 15;
-                
+
                 Image image = new Image { Source = assetImages[assetType] };
-                
+
                 TextBlock lbl = new TextBlock { Text = fileName };
                 stack.Children.Add(image);
                 stack.Children.Add(lbl);
                 stack.MouseDown += Asset_MouseDown;
-                stack.DataContext = file;
+                stack.DataContext = filePath;
 
-                nodes.Add(new TreeViewItem { Header = stack, DataContext = ThomasEditor.Resources.Load(file)});
+                return new TreeViewItem { Header = stack, DataContext = ThomasEditor.Resources.Load(filePath) };
+            }
+            return null;
+        }
+
+        private List<object> CreateTree(String directory)
+        {
+            List<object> nodes = new List<object>();
+            String[] directories = Directory.GetDirectories(directory);
+            String[] files = Directory.GetFiles(directory);
+            foreach(String dir in directories)
+            {
+                object item = CreateItem(dir);
+                if(item != null)
+                    nodes.Add(item);
+            }
+            foreach(String file in files)
+            {
+
+                object item = CreateItem(file);
+                if (item != null)
+                    nodes.Add(item);
             }
             return nodes;
         }
