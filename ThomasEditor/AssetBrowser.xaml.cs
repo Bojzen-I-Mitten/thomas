@@ -280,6 +280,11 @@ namespace ThomasEditor
                 }else if(assetType == ThomasEditor.Resources.AssetTypes.SHADER)
                 {
                     System.Diagnostics.Process.Start(file);
+                }else if(assetType == ThomasEditor.Resources.AssetTypes.MATERIAL)
+                {
+
+                    MaterialEditor matEdit = FindResource("materialEditor") as MaterialEditor;
+                    matEdit.SetMaterial(ThomasEditor.Resources.Load(file) as Material);
                 }
             }
         }

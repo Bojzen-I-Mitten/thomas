@@ -70,9 +70,8 @@ namespace ThomasEditor
 				}
 			}
 		}
-		
-	internal:
-		[DataMemberAttribute(Order=1)]
+
+		[DataMemberAttribute(Order = 1)]
 		property Dictionary<String^, System::Object^>^ EditorProperties
 		{
 			Dictionary<String^, System::Object^>^ get() {
@@ -147,6 +146,8 @@ namespace ThomasEditor
 				}
 			}
 		}
+	internal:
+		
 				
 	/*	Texture* GetTexture(String^ name);
 		void SetTexture(String^ name, Texture& value);*/
