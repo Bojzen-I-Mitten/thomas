@@ -14,6 +14,11 @@ namespace ThomasEditor
 		Shader(String^ path) : Resource(path, thomas::resource::Shader::CreateShader(Utility::ConvertString(path))) {};
 	public:
 		
+
+		void Reload() override
+		{
+			((thomas::resource::Shader*)m_nativePtr)->Recompile();
+		}
 		
 		static Shader^ Find(String^ name) { 
 			thomas::resource::Shader* s = thomas::resource::Shader::FindByName(Utility::ConvertString(name));

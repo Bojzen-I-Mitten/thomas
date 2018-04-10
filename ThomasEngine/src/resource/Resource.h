@@ -30,7 +30,7 @@ namespace ThomasEditor
 		}
 	public:
 		
-		
+		virtual void Reload() {};
 
 		String ^ GetPath()
 		{
