@@ -15,7 +15,7 @@ namespace thomas
 			std::string name = PathFindFileName(m_path.c_str());
 			name = name.substr(0, name.find_last_of('.'));
 			return name;	
-				
+			
 		}
 
 		std::string Resource::GetPath()
