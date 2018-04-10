@@ -44,6 +44,9 @@ namespace ThomasEditor
 
     public partial class ResourceListPopup : Window
     {
+
+        static public ResourceListPopup instance;
+
         private PropertyItem _property;
         public ResourceListPopup(PropertyItem property, Type resourceType)
         {
