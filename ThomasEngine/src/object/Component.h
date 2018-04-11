@@ -28,6 +28,7 @@ namespace ThomasEditor {
 		virtual void OnEnable() { ((thomas::object::component::Component*)nativePtr)->OnEnable(); }
 		virtual void OnDisable() { ((thomas::object::component::Component*)nativePtr)->OnDisable(); };
 		virtual void Update() { ((thomas::object::component::Component*)nativePtr)->Update(); }
+		virtual void FixedUpdate() {((thomas::object::component::Component*)nativePtr)->FixedUpdate();}
 		virtual void OnDrawGizmosSelected() { ((thomas::object::component::Component*)nativePtr)->OnDrawGizmosSelected(); }
 		virtual void OnDrawGizmos() { ((thomas::object::component::Component*)nativePtr)->OnDrawGizmos(); }
 
