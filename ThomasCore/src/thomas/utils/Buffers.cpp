@@ -2,7 +2,7 @@
 
 namespace thomas
 {
-	namespace graphics
+	namespace utils
 	{
 		namespace buffers
 		{
@@ -10,9 +10,9 @@ namespace thomas
 			{
 				D3D11_BUFFER_DESC bufferDesc;
 				bufferDesc.ByteWidth = size;
-				bufferDesc.Usage = D3D11_USAGE_DEFAULT; //TODO: Maybe dynamic for map/unmap
+				bufferDesc.Usage = usageFlag; //TODO: Maybe dynamic for map/unmap
 				bufferDesc.BindFlags = bindFlag;
-				bufferDesc.CPUAccessFlags = 0; //CPU if dynamic
+				bufferDesc.CPUAccessFlags = usageFlag == DYNAMIC_BUFFER ? D3D11_CPU_ACCESS_WRITE : 0; //CPU if dynamic
 				bufferDesc.MiscFlags = 0;
 
 
@@ -22,7 +22,12 @@ namespace thomas
 				InitData.SysMemPitch = 0;
 				InitData.SysMemSlicePitch = 0;
 
-				HRESULT result = ThomasCore::GetDevice()->CreateBuffer(&bufferDesc, &InitData, &m_buffer);
+				HRESULT result;
+
+				if (data == nullptr)
+					result = ThomasCore::GetDevice()->CreateBuffer(&bufferDesc, nullptr, &m_buffer);
+				else
+					result = ThomasCore::GetDevice()->CreateBuffer(&bufferDesc, &InitData, &m_buffer);
 
 				if (result != S_OK)
 					LOG(result);
@@ -35,8 +40,17 @@ namespace thomas
 			{
 				SAFE_RELEASE(m_buffer);
 			}
-			void Buffer::SetData(void * data)
+			void Buffer::SetData(void * data, size_t size)
 			{
+				if (size > m_size)
+				{
+					LOG("Cannot set buffer data. the data size is bigger than the buffer.");
+					return;
+				}
+				D3D11_MAPPED_SUBRESOURCE resource;
+				ThomasCore::GetDeviceContext()->Map(m_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+				memcpy(resource.pData, data, size);
+				ThomasCore::GetDeviceContext()->Unmap(m_buffer, 0);
 			}
 			size_t Buffer::GetSize()
 			{
@@ -46,7 +60,7 @@ namespace thomas
 			{
 				return m_buffer;
 			}
-			VertexBuffer::VertexBuffer(void * data, size_t stride, size_t count, D3D11_USAGE usageFlag = STATIC_BUFFER): Buffer(data, stride*count, D3D11_BIND_VERTEX_BUFFER, usageFlag), m_stride(stride)
+			VertexBuffer::VertexBuffer(void * data, size_t stride, size_t count, D3D11_USAGE usageFlag): Buffer(data, stride*count, D3D11_BIND_VERTEX_BUFFER, usageFlag), m_stride(stride)
 			{
 			}
 			size_t VertexBuffer::GetStride()

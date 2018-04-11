@@ -2,7 +2,7 @@
 #include "../utils/d3d.h"
 namespace thomas
 {
-	namespace graphics
+	namespace utils
 	{
 		namespace buffers
 		{
@@ -17,7 +17,11 @@ namespace thomas
 				Buffer(std::vector<T>& data, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usageFlag) : Buffer(data.data(), sizeof(data[0])*data.size(), bindFlag, usageFlag) {};
 				virtual ~Buffer();
 				void Release();
-				virtual void SetData(void* data);
+				void SetData(void* data, size_t size);
+
+				template <typename T>
+				void SetData(std::vector<T>& data) {SetData(data.data(), data.size() * sizeof(data[0]));}
+
 				size_t GetSize();
 				ID3D11Buffer* GetBuffer();
 			protected:
@@ -30,9 +34,21 @@ namespace thomas
 			class VertexBuffer : public Buffer
 			{
 			public:
-				VertexBuffer(void* data, size_t stride, size_t count, D3D11_USAGE usageFlag);
+				VertexBuffer(void* data, size_t stride, size_t count, D3D11_USAGE usageFlag = STATIC_BUFFER);
 				template <typename T>
 				VertexBuffer(std::vector<T>& data, D3D11_USAGE usageFlag = STATIC_BUFFER) : VertexBuffer(data.data(), sizeof(data[0]), data.size(), usageFlag) {};
+
+				template <typename T>
+				void SetData(std::vector<T>& data) 
+				{
+					if (sizeof(data[0]) != m_stride)
+					{
+						LOG("Cannot set vertex buffer data. new data stride differs from buffers stride");
+						return;
+					}
+
+					Buffer::SetData(data.data(), data.size() * sizeof(data[0]));
+				}
 
 				size_t GetStride();
 			private:
@@ -47,6 +63,7 @@ namespace thomas
 				template <typename T>
 				IndexBuffer(std::vector<T>& data, D3D11_USAGE usageFlag = STATIC_BUFFER) : IndexBuffer(data.data(), data.size(), usageFlag) {};
 			};
+
 
 		}
 	}

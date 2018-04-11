@@ -251,18 +251,21 @@ namespace thomas
 		{
 			ThomasCore::GetDeviceContext()->IASetPrimitiveTopology(type);
 		}
-		void Shader::BindVertexBuffer(ID3D11Buffer * vertexBuffer, UINT stride, UINT offset)
+		void Shader::BindVertexBuffer(utils::buffers::VertexBuffer* buffer)
 		{
-			ThomasCore::GetDeviceContext()->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+			size_t stride = buffer->GetStride();
+			ID3D11Buffer* buff = buffer->GetBuffer();
+			size_t offset = 0;
+			ThomasCore::GetDeviceContext()->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
 		}
 
-		void Shader::BindVertexBuffers(std::vector<graphics::buffers::VertexBuffer*> buffers)
+		void Shader::BindVertexBuffers(std::vector<utils::buffers::VertexBuffer*> buffers)
 		{
 			std::vector<ID3D11Buffer*> buffs;
 			std::vector<size_t> strides;
 			std::vector<size_t> offsets;
 
-			for (graphics::buffers::VertexBuffer* buffer : buffers)
+			for (utils::buffers::VertexBuffer* buffer : buffers)
 			{
 				buffs.push_back(buffer->GetBuffer());
 				strides.push_back(buffer->GetStride());
@@ -273,9 +276,9 @@ namespace thomas
 		}
 
 
-		void Shader::BindIndexBuffer(ID3D11Buffer * indexBuffer)
+		void Shader::BindIndexBuffer(utils::buffers::IndexBuffer* indexBuffer)
 		{
-			ThomasCore::GetDeviceContext()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			ThomasCore::GetDeviceContext()->IASetIndexBuffer(indexBuffer->GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 		}
 		void Shader::Bind()
 		{

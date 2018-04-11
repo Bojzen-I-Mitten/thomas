@@ -4,7 +4,6 @@
 #include "../utils/Math.h"
 #include <vector>
 #include <map>
-#include "Buffers.h"
 #include "../resource/Shader.h"
 namespace thomas 
 {
@@ -26,8 +25,8 @@ namespace thomas
 		{
 			Vertices vertices;
 			std::vector<int> indices;
-			std::map<resource::Shader::Semantics, buffers::VertexBuffer*> vertexBuffers;
-			buffers::IndexBuffer* indexBuffer;
+			std::map<resource::Shader::Semantics, utils::buffers::VertexBuffer*> vertexBuffers;
+			utils::buffers::IndexBuffer* indexBuffer;
 		};
 
 		class THOMAS_API Mesh

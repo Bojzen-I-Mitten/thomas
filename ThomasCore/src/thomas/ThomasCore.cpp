@@ -163,6 +163,7 @@ namespace thomas {
 		//utils::DebugTools::Destroy();
 		object::Object::Destroy();
 		editor::EditorCamera::Destroy();
+		editor::Gizmos::Destroy();
 		Physics::Destroy();
 		ImGui::DestroyContext(s_imGuiContext);
 
@@ -183,9 +184,7 @@ namespace thomas {
 			s_debug = nullptr;
 		#endif // _DEBUG
 
-		
-
-		//Sound::Destroy();
+		Sound::Destroy();
 
 		return true;
 	}
