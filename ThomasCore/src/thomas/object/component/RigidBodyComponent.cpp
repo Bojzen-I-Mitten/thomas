@@ -21,7 +21,7 @@ namespace thomas
 			}
 			RigidBodyComponent::RigidBodyComponent() : btRigidBody(1, NULL, NULL)
 			{
-				Physics::s_world->removeRigidBody(this);
+				Physics::RemoveRigidBody(this);
 				btDefaultMotionState* motionState = new btDefaultMotionState();
 				setMotionState(motionState);
 				m_kinematic = false;
@@ -34,7 +34,7 @@ namespace thomas
 				Physics::s_world->removeCollisionObject(this);
 				delete getCollisionShape();
 				
-				Physics::s_world->removeRigidBody(this);
+				Physics::RemoveRigidBody(this);
 				
 			}
 
@@ -47,12 +47,15 @@ namespace thomas
 				btCollisionShape* collider = new btBoxShape(btVector3(1, 1, 1));
 				setCollisionShape(collider);
 				UpdateRigidbodyMass();
-				Physics::s_world->addRigidBody(this);
+				Physics::AddRigidBody(this);
+
 			}
 
 			void RigidBodyComponent::OnDisable()
 			{
-				Physics::s_world->removeRigidBody(this);
+				Physics::RemoveRigidBody(this);
+
+				
 			}
 
 			void RigidBodyComponent::OnDestroy()
@@ -63,27 +66,30 @@ namespace thomas
 
 
 
-			void RigidBodyComponent::Update()
+			void RigidBodyComponent::UpdateRigidbodyToTransform()
+			{			
+				btTransform trans;
+				float* transMatrix = *math::Matrix().m;
+				getMotionState()->getWorldTransform(trans);
+				trans.getOpenGLMatrix(transMatrix);
+				math::Matrix newMatrix = math::Matrix::CreateScale(m_gameObject->m_transform->GetScale()) * math::Matrix(transMatrix);
+				m_gameObject->m_transform->SetLocalMatrix(newMatrix);
+				m_prevMatrix = newMatrix;
+				m_gameObject->m_transform->SetDirty(true);
+			}
+
+			void RigidBodyComponent::UpdateTransformToRigidBody()
 			{
-				if (m_kinematic)
+				math::Matrix currentMatrix = m_gameObject->m_transform->GetWorldMatrix();
+				if (m_prevMatrix != currentMatrix) //maybe use internal bool in transform
 				{
 					btTransform trans;
 					trans.setFromOpenGLMatrix(*m_gameObject->m_transform->GetWorldMatrix().m);
 					getMotionState()->setWorldTransform(trans);
 					setCenterOfMassTransform(trans);
 				}
-				else
-				{
-					//Update our transform to match the rigidbody.
-					btTransform trans;
-					float* transMatrix = *math::Matrix().m;
-					getMotionState()->getWorldTransform(trans);
-					trans.getOpenGLMatrix(transMatrix);
-					math::Matrix newMatrix = math::Matrix::CreateScale(m_gameObject->m_transform->GetScale()) * math::Matrix(transMatrix);
-					m_gameObject->m_transform->SetLocalMatrix(newMatrix);
-				}
-				
 			}
+
 			void RigidBodyComponent::SetKinematic(bool kinematic)
 			{
 				
@@ -92,9 +98,9 @@ namespace thomas
 					m_kinematic = kinematic;
 					if (initialized)
 					{
-						Physics::s_world->removeRigidBody(this);
+						Physics::RemoveRigidBody(this);
 						UpdateRigidbodyMass();
-						Physics::s_world->addRigidBody(this);
+						Physics::AddRigidBody(this);
 					}
 					
 				}
@@ -106,20 +112,20 @@ namespace thomas
 			}
 			void RigidBodyComponent::SetCollider(btCollisionShape * collider)
 			{
-				Physics::s_world->removeRigidBody(this);
+				Physics::RemoveRigidBody(this);
 				delete getCollisionShape();
 				setCollisionShape(collider);
 				UpdateRigidbodyMass();
-				Physics::s_world->addRigidBody(this);
+				Physics::AddRigidBody(this);
 			}
 			void RigidBodyComponent::SetMass(float mass)
 			{
 				m_mass = mass;
 				if (initialized)
 				{
-					Physics::s_world->removeRigidBody(this);
+					Physics::RemoveRigidBody(this);
 					UpdateRigidbodyMass();
-					Physics::s_world->addRigidBody(this);
+					Physics::AddRigidBody(this);
 					
 				}
 					

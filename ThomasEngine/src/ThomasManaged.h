@@ -74,13 +74,27 @@ namespace ThomasEditor {
 				{
 					Object^ lock = Scene::CurrentScene->GetGameObjectsLock();
 					ThomasCore::Update();
-					if(playing)
-						thomas::Physics::Update();
 					Monitor::Enter(lock);
+
+
+					if (playing)
+					{
+						thomas::Physics::UpdateRigidbodies();
+						for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
+						{
+							if (gameObject->GetActive())
+								gameObject->FixedUpdate(); //Should only be ran at fixed timeSteps.
+						}
+						thomas::Physics::Simulate();
+					}
+						
+
+					
+
 					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 					{
 						if(gameObject->GetActive())
-							gameObject->UpdateComponents();
+							gameObject->Update();
 					}
 
 					if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
