@@ -6,7 +6,7 @@
 #include <map>
 #include "../utils/Math.h"
 #include "Resource.h"
-#include "../graphics/Buffers.h"
+#include "../utils/Buffers.h"
 namespace thomas
 {
 	namespace graphics
@@ -61,9 +61,9 @@ namespace thomas
 
 			static Shader* CreateShader(std::string path);
 			void BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY type);
-			void BindVertexBuffer(ID3D11Buffer * vertexBuffer, UINT stride, UINT offset = 0);
-			void BindVertexBuffers(std::vector<graphics::buffers::VertexBuffer*> buffers);
-			void BindIndexBuffer(ID3D11Buffer * indexBuffer);
+			void BindVertexBuffer(utils::buffers::VertexBuffer* buffer);
+			void BindVertexBuffers(std::vector<utils::buffers::VertexBuffer*> buffers);
+			void BindIndexBuffer(utils::buffers::IndexBuffer* indexBuffer);
 			void Bind();
 			std::vector<ShaderPass>* GetPasses();
 			void SetPass(int passIndex);

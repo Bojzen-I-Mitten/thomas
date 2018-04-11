@@ -51,7 +51,7 @@ namespace thomas {
 		void Mesh::Draw(resource::Shader * shader)
 		{
 
-			std::vector<buffers::VertexBuffer*> vertexBuffers;
+			std::vector<utils::buffers::VertexBuffer*> vertexBuffers;
 
 			for (auto semantic : shader->GetPasses()->at(0).inputSemantics)
 			{
@@ -60,7 +60,7 @@ namespace thomas {
 			}
 
 			shader->BindVertexBuffers(vertexBuffers);
-			shader->BindIndexBuffer(m_data.indexBuffer->GetBuffer());
+			shader->BindIndexBuffer(m_data.indexBuffer);
 			thomas::ThomasCore::GetDeviceContext()->DrawIndexed(GetIndexCount(), 0, 0);
 		}
 
@@ -78,13 +78,13 @@ namespace thomas {
 		void Mesh::SetupMesh()
 		{
 
-			m_data.vertexBuffers[resource::Shader::Semantics::POSITION] = new buffers::VertexBuffer(m_data.vertices.positions);
-			m_data.vertexBuffers[resource::Shader::Semantics::TEXCOORD] = new buffers::VertexBuffer(m_data.vertices.uvs);
-			m_data.vertexBuffers[resource::Shader::Semantics::NORMAL] = new buffers::VertexBuffer(m_data.vertices.normals);
-			m_data.vertexBuffers[resource::Shader::Semantics::TANGENT] = new buffers::VertexBuffer(m_data.vertices.tangents);
-			m_data.vertexBuffers[resource::Shader::Semantics::BITANGENT] = new buffers::VertexBuffer(m_data.vertices.bitangents);
+			m_data.vertexBuffers[resource::Shader::Semantics::POSITION] = new utils::buffers::VertexBuffer(m_data.vertices.positions);
+			m_data.vertexBuffers[resource::Shader::Semantics::TEXCOORD] = new utils::buffers::VertexBuffer(m_data.vertices.uvs);
+			m_data.vertexBuffers[resource::Shader::Semantics::NORMAL] = new utils::buffers::VertexBuffer(m_data.vertices.normals);
+			m_data.vertexBuffers[resource::Shader::Semantics::TANGENT] = new utils::buffers::VertexBuffer(m_data.vertices.tangents);
+			m_data.vertexBuffers[resource::Shader::Semantics::BITANGENT] = new utils::buffers::VertexBuffer(m_data.vertices.bitangents);
 
-			m_data.indexBuffer = new buffers::IndexBuffer(m_data.indices);
+			m_data.indexBuffer = new utils::buffers::IndexBuffer(m_data.indices);
 			
 
 		}

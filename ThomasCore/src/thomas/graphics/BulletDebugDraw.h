@@ -7,7 +7,7 @@
 #include "../utils/Math.h"
 #include "../Common.h"
 #include <vector>
-
+#include "../utils/Buffers.h"
 namespace thomas
 {
 	namespace object { namespace component { class Camera; } }
@@ -46,19 +46,15 @@ namespace thomas
 			bool m_initialized;
 
 		private:
-			struct LineVertex
+			struct Lines
 			{
-				math::Vector3 pos;
-				math::Vector3 color;
-			};
-			struct Test
-			{
-				LineVertex lines[2];
-			};
+				std::vector<math::Vector3> positions;
+				std::vector<math::Vector3> colors;
+			}m_lines;
 			resource::Material* m_material;
 			int m_debugMode;
-			std::vector<LineVertex> m_lines;
-			ID3D11Buffer* m_vertexBuffer;
+			utils::buffers::VertexBuffer* m_vertexBufferPos;
+			utils::buffers::VertexBuffer* m_vertexBufferColor;
 			math::Matrix m_viewProjection;
 		};
 	}

@@ -28,7 +28,7 @@
     <ClCompile Include="src\thomas\editor\EditorCamera.cpp" />
     <ClCompile Include="src\thomas\editor\EditorGrid.cpp" />
     <ClCompile Include="src\thomas\editor\gizmos\Gizmos.cpp" />
-    <ClCompile Include="src\thomas\graphics\Buffers.cpp" />
+    <ClCompile Include="src\thomas\utils\Buffers.cpp" />
     <ClCompile Include="src\thomas\graphics\BulletDebugDraw.cpp" />
     <ClCompile Include="src\thomas\resource\ComputeShader.cpp" />
     <ClCompile Include="src\thomas\graphics\Light.cpp" />
@@ -40,7 +40,6 @@
     <ClCompile Include="src\thomas\graphics\ParticleSystem.cpp" />
     <ClCompile Include="src\thomas\graphics\Renderer.cpp" />
     <ClCompile Include="src\thomas\resource\Shader.cpp" />
-    <ClCompile Include="src\thomas\graphics\Skybox.cpp" />
     <ClCompile Include="src\thomas\graphics\Sprite.cpp" />
     <ClCompile Include="src\thomas\graphics\TextRender.cpp" />
     <ClCompile Include="src\thomas\graphics\Texture.cpp" />
@@ -83,7 +82,7 @@
     <ClInclude Include="src\thomas\editor\EditorCamera.h" />
     <ClInclude Include="src\thomas\editor\EditorGrid.h" />
     <ClInclude Include="src\thomas\editor\gizmos\Gizmos.h" />
-    <ClInclude Include="src\thomas\graphics\Buffers.h" />
+    <ClInclude Include="src\thomas\utils\Buffers.h" />
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />
     <ClInclude Include="src\thomas\resource\ComputeShader.h" />
     <ClInclude Include="src\thomas\graphics\Light.h" />
@@ -95,7 +94,6 @@
     <ClInclude Include="src\thomas\graphics\ParticleSystem.h" />
     <ClInclude Include="src\thomas\graphics\Renderer.h" />
     <ClInclude Include="src\thomas\resource\Shader.h" />
-    <ClInclude Include="src\thomas\graphics\Skybox.h" />
     <ClInclude Include="src\thomas\graphics\Sprite.h" />
     <ClInclude Include="src\thomas\graphics\TextRender.h" />
     <ClInclude Include="src\thomas\graphics\Texture.h" />

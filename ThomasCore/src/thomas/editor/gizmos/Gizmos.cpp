@@ -4,10 +4,12 @@
 #include "../../resource/Shader.h"
 #include "../../graphics/Mesh.h"
 #include "../../utils/d3d.h"
+#include "../../utils/Buffers.h"
 namespace thomas
 {
 	namespace editor
 	{
+		utils::buffers::VertexBuffer* Gizmos::s_vertexBuffer;
 		resource::Material* Gizmos::s_gizmoMaterial;
 		void Gizmos::DrawModel(resource::Model * model, math::Vector3 position = math::Vector3::Zero, math::Quaternion rotation = math::Quaternion::Identity, math::Vector3 scale = math::Vector3::One)
 		{
@@ -108,15 +110,7 @@ namespace thomas
 			lines[22] = corners[7];
 			lines[23] = corners[4];
 
-			ID3D11Buffer* vertexBuffer = utils::D3d::CreateBufferFromVector(lines, D3D11_BIND_VERTEX_BUFFER);
-
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
-
-			s_gizmoMaterial->GetShader()->BindVertexBuffer(vertexBuffer, sizeof(math::Vector3));
-			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_LINELIST;
-			s_gizmoMaterial->Bind();
-			s_gizmoMaterial->Draw(lines.size(), 0);
-			SAFE_RELEASE(vertexBuffer);
+			DrawLines(lines);
 		}
 
 		void Gizmos::DrawBoundingSphere(math::BoundingSphere & sphere)
@@ -159,15 +153,7 @@ namespace thomas
 			lines[ringSegments] = lines[0];
 
 
-			ID3D11Buffer* vertexBuffer = utils::D3d::CreateBufferFromVector(lines, D3D11_BIND_VERTEX_BUFFER);
-
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
-
-			s_gizmoMaterial->GetShader()->BindVertexBuffer(vertexBuffer, sizeof(math::Vector3));
-			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_LINESTRIP;
-			s_gizmoMaterial->Bind();
-			s_gizmoMaterial->Draw(lines.size(), 0);
-			SAFE_RELEASE(vertexBuffer);
+			DrawLines(lines);
 
 		}
 
@@ -177,15 +163,7 @@ namespace thomas
 			corners[0] = from;
 			corners[1] = to;
 
-			ID3D11Buffer* vertexBuffer = utils::D3d::CreateBufferFromVector(corners, D3D11_BIND_VERTEX_BUFFER);
-
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
-
-			s_gizmoMaterial->GetShader()->BindVertexBuffer(vertexBuffer, sizeof(math::Vector3));
-			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_LINELIST;
-			s_gizmoMaterial->Bind();
-			s_gizmoMaterial->Draw(corners.size(), 0);
-			SAFE_RELEASE(vertexBuffer);
+			DrawLines(corners);
 		}
 
 		void Gizmos::DrawSphere(math::Vector3 center, float radius)
@@ -211,15 +189,7 @@ namespace thomas
 			corners[0] = from;
 			corners[1] = from + direction * 1000;
 
-			ID3D11Buffer* vertexBuffer = utils::D3d::CreateBufferFromVector(corners, D3D11_BIND_VERTEX_BUFFER);
-
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
-
-			s_gizmoMaterial->GetShader()->BindVertexBuffer(vertexBuffer, sizeof(math::Vector3));
-			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_LINELIST;
-			s_gizmoMaterial->Bind();
-			s_gizmoMaterial->Draw(corners.size(), 0);
-			SAFE_RELEASE(vertexBuffer);
+			DrawLines(corners);
 		}
 
 		void Gizmos::DrawRay(math::Ray ray)
@@ -228,15 +198,7 @@ namespace thomas
 			corners[0] = ray.position;
 			corners[1] = ray.position + ray.direction * 1000;
 
-			ID3D11Buffer* vertexBuffer = utils::D3d::CreateBufferFromVector(corners, D3D11_BIND_VERTEX_BUFFER);
-
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
-
-			s_gizmoMaterial->GetShader()->BindVertexBuffer(vertexBuffer, sizeof(math::Vector3));
-			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_LINELIST;
-			s_gizmoMaterial->Bind();
-			s_gizmoMaterial->Draw(corners.size(), 0);
-			SAFE_RELEASE(vertexBuffer);
+			DrawLines(corners);		
 		}
 
 		void Gizmos::DrawFrustum(math::Vector3 center, float fov, float maxRange, float minRange, float aspect)
@@ -280,15 +242,20 @@ namespace thomas
 			lines[22] = corners[7];
 			lines[23] = corners[4];
 			
-			ID3D11Buffer* vertexBuffer = utils::D3d::CreateBufferFromVector(lines, D3D11_BIND_VERTEX_BUFFER);
+
+			DrawLines(lines);
+		}
+
+		void Gizmos::DrawLines(std::vector<math::Vector3> lines)
+		{
+			s_vertexBuffer->SetData(lines);
 
 			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
 
-			s_gizmoMaterial->GetShader()->BindVertexBuffer(vertexBuffer, sizeof(math::Vector3));
+			s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_LINELIST;
 			s_gizmoMaterial->Bind();
 			s_gizmoMaterial->Draw(lines.size(), 0);
-			SAFE_RELEASE(vertexBuffer);
 		}
 
 		void Gizmos::Init()
@@ -300,6 +267,15 @@ namespace thomas
 				SetColor(math::Color(1, 1, 1));
 				SetMatrix(math::Matrix::Identity);
 			}
+
+			s_vertexBuffer = new utils::buffers::VertexBuffer(nullptr, sizeof(math::Vector3), 500, DYNAMIC_BUFFER); //500 hardcoded here :/
+
+		}
+
+		void Gizmos::Destroy()
+		{
+			delete s_gizmoMaterial;
+			delete s_vertexBuffer;
 		}
 
 		//TODO: Needs destroy

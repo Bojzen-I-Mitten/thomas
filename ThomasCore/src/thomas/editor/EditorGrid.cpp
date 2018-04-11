@@ -1,6 +1,7 @@
 #include "EditorGrid.h"
 #include "../utils/d3d.h"
 #include "../resource/Material.h"
+#include "../utils/Buffers.h"
 #include "../resource/Shader.h"
 namespace thomas
 {
@@ -68,8 +69,8 @@ namespace thomas
 			{
 				m_material = new resource::Material(shader);
 				m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
-				m_vertexBuffers.push_back(new graphics::buffers::VertexBuffer(m_lines.positions));
-				m_vertexBuffers.push_back(new graphics::buffers::VertexBuffer(m_lines.colors));
+				m_vertexBuffers.push_back(new utils::buffers::VertexBuffer(m_lines.positions));
+				m_vertexBuffers.push_back(new utils::buffers::VertexBuffer(m_lines.colors));
 			}
 			
 		}
