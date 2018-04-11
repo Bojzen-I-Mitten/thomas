@@ -163,43 +163,45 @@ namespace thomas
 
 		graphics::Mesh* AssimpLoader::ProcessMesh(aiMesh * mesh, const aiScene* scene, std::string meshName)
 		{
-			std::vector <graphics::Vertex> vertices;
+			graphics::Vertices vertices;
 			std::vector <int> indices;
 			std::string name = meshName + "-" + std::string(mesh->mName.C_Str());
 			resource::Material* material;
 
 			//vector<Texture> textures;
+			vertices.positions.resize(mesh->mNumVertices);
+			vertices.uvs.resize(mesh->mNumVertices);
+			vertices.normals.resize(mesh->mNumVertices);
+			vertices.tangents.resize(mesh->mNumVertices);
+			vertices.bitangents.resize(mesh->mNumVertices);
 
 			// Walk through each of the mesh's vertices
 			for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 			{
-				graphics::Vertex vertex;
-				math::Vector3 vector;
+				
 
 				// Positions
-				vector.x = mesh->mVertices[i].x;
-				vector.y = mesh->mVertices[i].y;
-				vector.z = mesh->mVertices[i].z;
-				vertex.position = vector;
+				vertices.positions[i].x = mesh->mVertices[i].x;
+				vertices.positions[i].y = mesh->mVertices[i].y;
+				vertices.positions[i].z = mesh->mVertices[i].z;
 
 				// Normals
-				vector.x = mesh->mNormals[i].x;
-				vector.y = mesh->mNormals[i].y;
-				vector.z = mesh->mNormals[i].z;
-				vertex.normal = vector;
+				vertices.normals[i].x = mesh->mNormals[i].x;
+				vertices.normals[i].y = mesh->mNormals[i].y;
+				vertices.normals[i].z = mesh->mNormals[i].z;
 
 				// Tangents
 				if (mesh->HasTangentsAndBitangents())
 				{
-					vector.x = mesh->mTangents[i].x;
-					vector.y = mesh->mTangents[i].y;
-					vector.z = mesh->mTangents[i].z;
-					vertex.tangent = vector;
+					vertices.tangents[i].x = mesh->mTangents[i].x;
+					vertices.tangents[i].y = mesh->mTangents[i].y;
+					vertices.tangents[i].z = mesh->mTangents[i].z;
+
 					// Bitangents
-					vector.x = mesh->mBitangents[i].x;
-					vector.y = mesh->mBitangents[i].y;
-					vector.z = mesh->mBitangents[i].z;
-					vertex.bitangent = vector;
+					vertices.bitangents[i].x = mesh->mBitangents[i].x;
+					vertices.bitangents[i].y = mesh->mBitangents[i].y;
+					vertices.bitangents[i].z = mesh->mBitangents[i].z;
+
 				}
 				
 
@@ -210,13 +212,9 @@ namespace thomas
 
 					// A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
 					// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-					vec.x = mesh->mTextureCoords[0][i].x;
-					vec.y = mesh->mTextureCoords[0][i].y;
-					vertex.uv = vec;
+					vertices.uvs[i].x = mesh->mTextureCoords[0][i].x;
+					vertices.uvs[i].y = mesh->mTextureCoords[0][i].y;
 				}
-				else
-					vertex.uv = math::Vector2(0.0f, 0.0f);
-				vertices.push_back(vertex);
 			}
 
 			// Now walk through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.

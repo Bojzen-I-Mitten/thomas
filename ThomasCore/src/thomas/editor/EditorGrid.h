@@ -1,6 +1,7 @@
 #pragma once
 #include "../Common.h"
 #include "../utils/Math.h"
+#include "../graphics/Buffers.h"
 namespace thomas
 {
 	namespace resource
@@ -20,17 +21,16 @@ namespace thomas
 			void Draw(math::Vector3 cameraPos);
 			~EditorGrid();
 		private:
-			struct LineVertex
+			struct LineVertices
 			{
-				math::Vector3 pos;
-				float viewDistance;
-				math::Vector4 color;
+				std::vector<math::Vector4> positions;
+				std::vector<math::Vector4> colors;
 				
 			};
-			std::vector<LineVertex> m_lines;
+			LineVertices m_lines;
 			resource::Material* m_material = nullptr;
 			math::Matrix worldMatrix;
-			ID3D11Buffer* m_vertexBuffer;
+			std::vector<graphics::buffers::VertexBuffer*> m_vertexBuffers;
 			int m_gridSize;
 			float m_cellSize;
 			int m_internalGridSize;
