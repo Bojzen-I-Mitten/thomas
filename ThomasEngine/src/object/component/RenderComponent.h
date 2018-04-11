@@ -1,13 +1,9 @@
 #pragma once
 #pragma unmanaged
 #include <thomas\object\component\RenderComponent.h>
-#include <thomas\graphics\Model.h>
-
 #pragma managed
 #include "../Component.h"
-#include <string>
-#include <msclr\marshal_cppstd.h>
-
+#include "../../resource/Model.h"
 
 namespace ThomasEditor
 {
@@ -15,22 +11,24 @@ namespace ThomasEditor
 	[ExecuteInEditor]
 	public ref class RenderComponent : public Component
 	{
+	private:
+		Model^ m_model;
 	public:
 		RenderComponent() : Component(new thomas::object::component::RenderComponent()) {
 		}
 
-		property String^ Model {
-			String^ get() {
-				thomas::graphics::Model* model = ((thomas::object::component::RenderComponent*)nativePtr)->GetModel();
-				if (model)
-					return gcnew String(model->GetName().c_str());
-				else
-					return "";
+		property Model^ model {
+			Model^ get() {
+				return m_model;
+				
 			}
-			void set(String^ value)
+			void set(Model^ value)
 			{
-				thomas::graphics::Model* model = thomas::graphics::Model::GetModelByName(msclr::interop::marshal_as<std::string>(value));
-				((thomas::object::component::RenderComponent*)nativePtr)->SetModel(model);
+				m_model = value;
+				if (m_model == nullptr)
+					((thomas::object::component::RenderComponent*)nativePtr)->SetModel(nullptr);
+				else
+					((thomas::object::component::RenderComponent*)nativePtr)->SetModel((thomas::resource::Model*)value->m_nativePtr);
 			}
 		}
 

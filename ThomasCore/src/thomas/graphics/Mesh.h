@@ -6,9 +6,13 @@
 
 namespace thomas 
 {
-	namespace graphics 
+	namespace resource
 	{
 		class Shader;
+	}
+	namespace graphics 
+	{
+		
 		struct Vertex 
 		{
 			math::Vector3 position;
@@ -43,7 +47,7 @@ namespace thomas
 			int GetIndexCount();
 			int GetVertexCount();
 
-			void Draw(Shader* shader);
+			void Draw(resource::Shader* shader);
 			
 			std::vector<Vertex>* GetVertices();
 			std::vector<int>* GetIndices();

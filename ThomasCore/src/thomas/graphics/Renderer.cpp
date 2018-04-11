@@ -1,5 +1,4 @@
 #include "Renderer.h"
-#include "Model.h"
 #include "../object/component/Light.h"
 #include "LightManager.h"
 #include "TextRender.h"
@@ -14,7 +13,9 @@
 #include "../Input.h"
 
 #include "../ThomasTime.h"
-#include "Material.h"
+#include "../resource/Material.h"
+#include "../resource/Shader.h"
+#include "../resource/ShaderProperty.h"
 #include <algorithm>
 #include "../utils/DebugTools.h"
 #include "../Window.h"
@@ -23,8 +24,8 @@ namespace thomas
 	namespace graphics
 	{
 		
-		std::vector<graphics::RenderPair*> Renderer::s_renderQueue;
-		std::vector<graphics::RenderPair*> Renderer::s_lastFramesRenederQueue;
+		std::vector<graphics::RenderPair> Renderer::s_renderQueue;
+		std::vector<graphics::RenderPair> Renderer::s_lastFramesRenderQueue;
 		void Renderer::BindFrame()
 		{
 			//ThomasPerFrame
@@ -32,7 +33,7 @@ namespace thomas
 			float dt = ThomasTime::GetDeltaTime();
 			math::Vector4 thomas_DeltaTime(realDeltaTime, 1 / realDeltaTime, dt, 1 / dt);
 
-			Shader::SetGlobalVector("thomas_DeltaTime", thomas_DeltaTime);
+			resource::Shader::SetGlobalVector("thomas_DeltaTime", thomas_DeltaTime);
 		}
 
 		void Renderer::BindCamera(thomas::object::component::Camera * camera)
@@ -46,12 +47,12 @@ namespace thomas
 			ThomasCore::GetDeviceContext()->RSSetViewports(1, camera->GetViewport().Get11());
 
 			//ThomasPerCamera
-			Shader::SetGlobalMatrix("thomas_MatrixP", camera->GetProjMatrix().Transpose());
-			Shader::SetGlobalMatrix("thomas_MatrixV", camera->GetViewMatrix().Transpose());
-			Shader::SetGlobalMatrix("thomas_MatrixInvV", camera->GetViewMatrix().Invert());
-			Shader::SetGlobalMatrix("thomas_MatrixVP", camera->GetViewProjMatrix().Transpose());
+			resource::Shader::SetGlobalMatrix("thomas_MatrixP", camera->GetProjMatrix().Transpose());
+			resource::Shader::SetGlobalMatrix("thomas_MatrixV", camera->GetViewMatrix().Transpose());
+			resource::Shader::SetGlobalMatrix("thomas_MatrixInvV", camera->GetViewMatrix().Invert());
+			resource::Shader::SetGlobalMatrix("thomas_MatrixVP", camera->GetViewProjMatrix().Transpose());
 			
-			Shader::SetGlobalVector("_WorldSpaceCameraPos", (math::Vector4)camera->GetPosition());
+			resource::Shader::SetGlobalVector("_WorldSpaceCameraPos", (math::Vector4)camera->GetPosition());
 		}
 
 		void Renderer::ClearRenderQueue()
@@ -59,19 +60,20 @@ namespace thomas
 			s_renderQueue.clear();
 		}
 
-		void Renderer::AddToRenderQueue(graphics::RenderPair * renderPair)
+
+		void Renderer::SubmitToRenderQueue(object::component::Transform * transform, Mesh * mesh, resource::Material * material)
 		{
-			s_renderQueue.push_back(renderPair);
+			s_renderQueue.push_back(RenderPair(transform, mesh, material));
 		}
 
-		std::vector<graphics::RenderPair*> Renderer::GetRenderQueue()
+		std::vector<graphics::RenderPair>& Renderer::GetRenderQueue()
 		{
 			return s_renderQueue;
 		}
 
-		void Renderer::BindObject(thomas::graphics::Material * material, thomas::object::component::Transform * transform)
+		void Renderer::BindObject(thomas::resource::Material * material, thomas::object::component::Transform * transform)
 		{
-			thomas::graphics::MaterialProperty* prop;
+			thomas::resource::ShaderProperty* prop;
 
 			prop = material->GetProperty("thomas_ObjectToWorld");
 			prop->SetMatrix(transform->GetWorldMatrix().Transpose());
@@ -90,32 +92,31 @@ namespace thomas
 
 		void Renderer::Render()
 		{
-			
 			RenderQueue(s_renderQueue);
 		}
 
-		void Renderer::RenderQueue(std::vector<RenderPair*> renderQueue)
+		void Renderer::RenderQueue(std::vector<RenderPair>& renderQueue)
 		{
 			std::sort(renderQueue.begin(), renderQueue.end(), SortPairs);
 
-			Material* lastMaterial = nullptr;
-			for (RenderPair* renderPair : renderQueue)
+			resource::Material* lastMaterial = nullptr;
+			for (RenderPair& renderPair : renderQueue)
 			{
-				if (!lastMaterial || lastMaterial != renderPair->material)
+				if (!lastMaterial || lastMaterial != renderPair.material)
 				{
-					lastMaterial = renderPair->material;
+					lastMaterial = renderPair.material;
 					lastMaterial->Bind();
 				}
-				BindObject(lastMaterial, renderPair->transform);
+				BindObject(lastMaterial, renderPair.transform);
 
-				lastMaterial->Draw(renderPair->mesh);
+				lastMaterial->Draw(renderPair.mesh);
 			}
 
 		}
 
-		bool Renderer::SortPairs(RenderPair* a, RenderPair* b)
+		bool Renderer::SortPairs(RenderPair& a, RenderPair& b)
 		{
-			return a->material->GetId() < b->material->GetId();
+			return a.material->GetId() < b.material->GetId();
 		}
 
 	}

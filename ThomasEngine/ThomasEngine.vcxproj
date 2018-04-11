@@ -141,11 +141,14 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\object\component\Rigidbody.h" />
+    <ClInclude Include="src\resource\Model.h" />
+    <ClInclude Include="src\resource\Resource.h" />
     <ClInclude Include="src\ScriptingManager.h" />
     <ClInclude Include="src\resource\AudioClip.h" />
     <ClInclude Include="src\resource\Resources.h" />
@@ -154,9 +157,9 @@
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\object\component\Camera.h" />
     <ClInclude Include="src\object\component\SoundComponent.h" />
-    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\resource\Shader.h" />
     <ClInclude Include="src\Utility.h" />
-    <ClInclude Include="src\Material.h" />
+    <ClInclude Include="src\resource\Material.h" />
     <ClInclude Include="src\math\Math.h" />
     <ClInclude Include="src\object\Component.h" />
     <ClInclude Include="src\object\component\RenderComponent.h" />
@@ -170,7 +173,7 @@
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="src\Input.cpp" />
-    <ClCompile Include="src\Material.cpp" />
+    <ClCompile Include="src\resource\Material.cpp" />
     <ClCompile Include="src\math\Math.cpp" />
     <ClCompile Include="src\object\Component.cpp" />
     <ClCompile Include="src\object\component\Camera.cpp" />
@@ -182,11 +185,12 @@
     <ClCompile Include="src\object\GameObject.cpp" />
     <ClCompile Include="src\object\Object.cpp" />
     <ClCompile Include="src\resource\AudioClip.cpp" />
+    <ClCompile Include="src\resource\Model.cpp" />
     <ClCompile Include="src\resource\Resource.cpp" />
     <ClCompile Include="src\resource\Resources.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\ScriptingManager.cpp" />
-    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\resource\Shader.cpp" />
     <ClCompile Include="src\ThomasManaged.cpp" />
   </ItemGroup>
   <ItemGroup>

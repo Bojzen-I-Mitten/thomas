@@ -24,7 +24,7 @@ namespace ThomasEditor {
 	public ref class GameObject : public Object
 	{
 
-		System::Object^ m_componentsLock = gcnew System::Object();
+		
 		ObservableCollection<Component^> m_components;
 		Transform^ m_transform;
 		Scene^ scene;
@@ -39,6 +39,8 @@ namespace ThomasEditor {
 		}
 
 	internal:
+		System::Object^ m_componentsLock = gcnew System::Object();
+
 		void PostLoad()
 		{
 			scene = Scene::CurrentScene;
@@ -83,6 +85,7 @@ namespace ThomasEditor {
 		
 		void Awake()
 		{
+			Monitor::Enter(m_componentsLock);
 			List<Component^>^ uninitializedComponents = gcnew List<Component^>;
 			for each(Component^ component in m_components)
 			{
@@ -91,33 +94,38 @@ namespace ThomasEditor {
 
 			}
 			initComponents(uninitializedComponents);
-			
+			Monitor::Exit(m_componentsLock);
 		}
 		void UpdateComponents()
 		{
+			Monitor::Enter(m_componentsLock);
 			for (int i = 0; i < m_components.Count; i++)
 			{
 				Component^ component = m_components[i];
 				if (component->initialized && component->enabled)
 					component->Update();
 			}
+			Monitor::Exit(m_componentsLock);
 		}
 
 		void RenderGizmos()
 		{
+			Monitor::Enter(m_componentsLock);
 			for (int i = 0; i < m_components.Count; i++)
 			{
 				m_components[i]->OnDrawGizmos();
 			}
+			Monitor::Exit(m_componentsLock);
 		}
 
 		void RenderSelectedGizmos()
 		{
-			
+			Monitor::Enter(m_componentsLock);
 			for each(Component^ component in m_components)
 			{
 				component->OnDrawGizmosSelected();
 			}
+			Monitor::Exit(m_componentsLock);
 		}
 
 	public:
@@ -140,13 +148,14 @@ namespace ThomasEditor {
 		virtual void Destroy() override
 		{
 			Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
+			Monitor::Enter(m_componentsLock);
 			for (int i = 0; i < m_components.Count; i++) {
 				m_components[i]->Destroy();
 				i--;
 			}
 			thomas::object::Object::Destroy(nativePtr);
 			m_components.Clear();
-
+			Monitor::Exit(m_componentsLock);
 			
 			Scene::CurrentScene->GameObjects->Remove(this);
 			Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
@@ -199,7 +208,7 @@ namespace ThomasEditor {
 		generic<typename T>
 		where T : Component
 		T AddComponent() {
-			
+			Monitor::Enter(m_componentsLock);
 			Type^ typ = T::typeid;
 
 			T existingComponent = GetComponent<T>();
@@ -212,7 +221,10 @@ namespace ThomasEditor {
 
 			T component = (T)Activator::CreateInstance(T::typeid);
 			((Component^)component)->setGameObject(this);
+
+			
 			m_components.Add((Component^)component);
+			
 			
 			if ((typ->IsDefined(ExecuteInEditor::typeid, false) || scene->IsPlaying()) && !component->initialized && component->enabled)
 			{
@@ -221,6 +233,7 @@ namespace ThomasEditor {
 				component->OnEnable();
 				component->Start();
 			}
+			Monitor::Exit(m_componentsLock);
 			return component;
 		}
 
@@ -269,6 +282,7 @@ namespace ThomasEditor {
 			}
 			return nullptr;
 		}
+
 
 
 		bool GetActive()
