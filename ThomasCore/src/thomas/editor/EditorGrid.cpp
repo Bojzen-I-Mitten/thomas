@@ -8,18 +8,14 @@ namespace thomas
 	{
 		void EditorGrid::AddLine(math::Vector3 from, math::Vector3 to, math::Vector4 color, float viewDistance)
 		{
-			LineVertex fromLine;
-			LineVertex toLine;
 
+
+			m_lines.positions.push_back(math::Vector4(from.x, from.y, from.z, viewDistance));
+			m_lines.colors.push_back(color);
 	
-			fromLine.pos = from;
-			fromLine.color = color;
-			fromLine.viewDistance = viewDistance;
-			toLine.pos = to;
-			toLine.color = color;
-			toLine.viewDistance = viewDistance;
-			m_lines.push_back(fromLine);
-			m_lines.push_back(toLine);
+			m_lines.positions.push_back(math::Vector4(to.x, to.y, to.z, viewDistance));
+			m_lines.colors.push_back(color);
+
 		}
 
 		EditorGrid::EditorGrid(int gridSize, float cellSize, int internalGridSize)
@@ -27,7 +23,10 @@ namespace thomas
 			m_gridSize = gridSize;
 			m_cellSize = cellSize;
 			m_internalGridSize = internalGridSize;
-			m_lines.reserve(gridSize*gridSize * 2 * 3);
+
+			m_lines.positions.reserve(gridSize*gridSize * 2 * 3);
+			m_lines.colors.reserve(gridSize*gridSize * 2 * 3);
+
 			for (int x = -m_gridSize / 2; x <= m_gridSize / 2; x++)
 			{
 				for (int z = -m_gridSize / 2; z <= m_gridSize / 2; z++)
@@ -69,15 +68,14 @@ namespace thomas
 			{
 				m_material = new resource::Material(shader);
 				m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
-				m_vertexBuffer = utils::D3d::CreateDynamicBufferFromVector(m_lines, D3D11_BIND_VERTEX_BUFFER);
+				m_vertexBuffers.push_back(new graphics::buffers::VertexBuffer(m_lines.positions));
+				m_vertexBuffers.push_back(new graphics::buffers::VertexBuffer(m_lines.colors));
 			}
 			
 		}
 
 		void EditorGrid::Draw(math::Vector3 cameraPos)
 		{
-			UINT stride = sizeof(LineVertex);
-			UINT offset = 0;
 			if (m_material)
 			{
 				int scale = (int)log10(((abs(cameraPos.y/2)+1) / m_cellSize)*m_cellSize);
@@ -92,16 +90,19 @@ namespace thomas
 				m_material->SetMatrix("thomas_ObjectToWorld", worldMatrix.Transpose());
 				m_material->SetVector("cameraPos", math::Vector4(cameraScaleMatrix));
 				m_material->SetInt("gridScale", scale);
-				m_material->GetShader()->BindVertexBuffer(m_vertexBuffer, stride, offset);
+
+				m_material->GetShader()->BindVertexBuffers(m_vertexBuffers);
+
 				m_material->Bind();
-				m_material->Draw(m_lines.size(), 0);
+				m_material->Draw(m_lines.positions.size(), 0);
 			}
 			
 		}
 
 		EditorGrid::~EditorGrid()
 		{
-			SAFE_RELEASE(m_vertexBuffer);
+			for (auto buffer : m_vertexBuffers)
+				delete buffer;
 		}
 
 	}

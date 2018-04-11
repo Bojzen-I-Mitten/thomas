@@ -6,6 +6,7 @@
 #include <map>
 #include "../utils/Math.h"
 #include "Resource.h"
+#include "../graphics/Buffers.h"
 namespace thomas
 {
 	namespace graphics
@@ -18,7 +19,21 @@ namespace thomas
 		class THOMAS_API Shader : public Resource
 		{
 		public:
-
+			enum class Semantics
+			{
+				POSITION = 0,
+				TEXCOORD = 1,
+				NORMAL = 2,
+				TANGENT = 3,
+				BITANGENT = 4, //Remove?
+				BINORMAL = 5,
+				BLENDINDICES = 6,
+				BLENDWEIGHT = 7,
+				COLOR = 8,
+				POSITIONT = 9,
+				PSIZE = 10,
+				UNKNOWN = 11
+			};
 		private:
 			static bool Compile(std::string path, ID3DX11Effect** effect);
 
@@ -31,11 +46,14 @@ namespace thomas
 			static void RecompileShaders();
 
 			void OnChanged();
+
+			Semantics GetSemanticFromName(std::string semanticName);
 		public:
 			struct ShaderPass
 			{
 				std::string name;
 				ID3D11InputLayout* inputLayout;
+				std::vector<Semantics> inputSemantics;
 			};
 
 			static bool Init();
@@ -44,6 +62,7 @@ namespace thomas
 			static Shader* CreateShader(std::string path);
 			void BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY type);
 			void BindVertexBuffer(ID3D11Buffer * vertexBuffer, UINT stride, UINT offset = 0);
+			void BindVertexBuffers(std::vector<graphics::buffers::VertexBuffer*> buffers);
 			void BindIndexBuffer(ID3D11Buffer * indexBuffer);
 			void Bind();
 			std::vector<ShaderPass>* GetPasses();
@@ -80,6 +99,7 @@ namespace thomas
 			
 			static std::vector<Shader*> s_loadedShaders;
 			static Shader* s_standardShader;
+			static Shader* s_failedShader;
 			static bool s_shouldRecompile;
 
 

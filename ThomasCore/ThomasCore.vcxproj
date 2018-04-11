@@ -28,6 +28,7 @@
     <ClCompile Include="src\thomas\editor\EditorCamera.cpp" />
     <ClCompile Include="src\thomas\editor\EditorGrid.cpp" />
     <ClCompile Include="src\thomas\editor\gizmos\Gizmos.cpp" />
+    <ClCompile Include="src\thomas\graphics\Buffers.cpp" />
     <ClCompile Include="src\thomas\graphics\BulletDebugDraw.cpp" />
     <ClCompile Include="src\thomas\resource\ComputeShader.cpp" />
     <ClCompile Include="src\thomas\graphics\Light.cpp" />
@@ -67,7 +68,6 @@
     <ClCompile Include="src\thomas\utils\D3d.cpp" />
     <ClCompile Include="src\thomas\utils\DebugTools.cpp" />
     <ClCompile Include="src\thomas\utils\FrustumCulling.cpp" />
-    <ClCompile Include="src\thomas\utils\Plane.cpp" />
     <ClCompile Include="src\thomas\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -83,6 +83,7 @@
     <ClInclude Include="src\thomas\editor\EditorCamera.h" />
     <ClInclude Include="src\thomas\editor\EditorGrid.h" />
     <ClInclude Include="src\thomas\editor\gizmos\Gizmos.h" />
+    <ClInclude Include="src\thomas\graphics\Buffers.h" />
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />
     <ClInclude Include="src\thomas\resource\ComputeShader.h" />
     <ClInclude Include="src\thomas\graphics\Light.h" />
@@ -126,7 +127,6 @@
     <ClInclude Include="src\thomas\utils\DebugTools.h" />
     <ClInclude Include="src\thomas\utils\FrustumCulling.h" />
     <ClInclude Include="src\thomas\utils\Math.h" />
-    <ClInclude Include="src\thomas\utils\Plane.h" />
     <ClInclude Include="src\thomas\Window.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

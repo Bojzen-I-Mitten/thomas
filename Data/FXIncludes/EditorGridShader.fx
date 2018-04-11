@@ -10,8 +10,7 @@ cbuffer buffer : register(b0)
 
 struct VS_IN
 {
-	float3 Pos : POSITION;
-	float viewDistance : COLOR1;
+	float4 PosAndDistance : POSITION;
 	float4 Color : COLOR0;
 };
 
@@ -54,10 +53,12 @@ RasterizerState TestRasterizer
 
 VS_OUT VSMain(VS_IN input)
 {
+	float3 pos = input.PosAndDistance.xyz;
+	float3 viewDistance = input.PosAndDistance.w;
 	VS_OUT output = (VS_OUT)0;
-	output.Pos = mul(thomas_MatrixVP, mul(thomas_ObjectToWorld, float4(input.Pos, 1.0)));
-	float4 positionW = mul(thomas_ObjectToWorld, float4(input.Pos, 1.0));
-	float2 dist = distance(positionW.xz, cameraPos.xz) * 1 / input.viewDistance;
+	output.Pos = mul(thomas_MatrixVP, mul(thomas_ObjectToWorld, float4(pos, 1.0)));
+	float4 positionW = mul(thomas_ObjectToWorld, float4(pos, 1.0));
+	float2 dist = distance(positionW.xz, cameraPos.xz) * 1 / viewDistance;
 	dist -= pow(cameraPos.y + 1, 1.5f);
 	dist /= gridScale;
 	output.Color = input.Color;

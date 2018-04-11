@@ -3,31 +3,31 @@
 
 #include "../utils/Math.h"
 #include <vector>
-
+#include <map>
+#include "Buffers.h"
+#include "../resource/Shader.h"
 namespace thomas 
 {
-	namespace resource
-	{
-		class Shader;
-	}
+
 	namespace graphics 
 	{
 		
-		struct Vertex 
+		struct Vertices 
 		{
-			math::Vector3 position;
-			math::Vector2 uv;
-			math::Vector3 normal;
-			math::Vector3 tangent;
-			math::Vector3 bitangent;
+			std::vector<math::Vector3> positions;
+			std::vector<math::Vector2> uvs;
+			std::vector<math::Vector3> normals;
+			std::vector<math::Vector3> tangents;
+			std::vector<math::Vector3> bitangents;
 		};
+
 
 		struct MeshData
 		{
-			std::vector<Vertex> vertices;
+			Vertices vertices;
 			std::vector<int> indices;
-			ID3D11Buffer* vertexBuffer;
-			ID3D11Buffer* indexBuffer;
+			std::map<resource::Shader::Semantics, buffers::VertexBuffer*> vertexBuffers;
+			buffers::IndexBuffer* indexBuffer;
 		};
 
 		class THOMAS_API Mesh
@@ -36,7 +36,7 @@ namespace thomas
 			void SetupMesh();
 			math::BoundingBox GenerateBounds();
 		public:
-			Mesh(std::vector<Vertex> vertices, std::vector<int> indices, std::string name);
+			Mesh(Vertices vertices, std::vector<int> indices, std::string name);
 			~Mesh();
 			bool SetName(std::string name);
 
@@ -49,7 +49,7 @@ namespace thomas
 
 			void Draw(resource::Shader* shader);
 			
-			std::vector<Vertex>* GetVertices();
+			Vertices* GetVertices();
 			std::vector<int>* GetIndices();
 
 			math::BoundingBox m_bounds;
