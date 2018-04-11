@@ -1,11 +1,67 @@
-#include "MaterialProperty.h"
-#include "Texture.h"
+#include "ShaderProperty.h"
+#include "../graphics/Texture.h"
 
 namespace thomas
 {
-	namespace graphics
+	namespace resource
 	{
-		MaterialProperty::PropClass MaterialProperty::GetPropClass(D3D_SHADER_VARIABLE_CLASS Class, D3D_SHADER_VARIABLE_TYPE type)
+		void ShaderProperty::SetInitialData()
+		{
+			switch (m_class)
+			{
+				case PropClass::Scalar:
+				{
+					switch (m_type)
+					{
+					case PropType::Bool:
+						m_value = new bool(false);
+						break;
+					case PropType::Float:
+						m_value = new float(0);
+						break;
+					case PropType::Int:
+						m_value = new int(0);
+						break;
+					default:
+						break;
+					}
+					break;
+				}
+
+				case PropClass::Vector:
+				{
+					switch (m_type)
+					{
+					case PropType::Float:
+					{
+						m_value = new math::Vector4();
+						break;
+					}
+
+					default:
+						break;
+					}
+					break;
+				}
+
+
+				case PropClass::Matrix:
+				{
+					switch (m_type)
+					{
+					case PropType::Float:
+						m_value = new math::Matrix();
+						break;
+					default:
+						break;
+					}
+					break;
+				}
+			}
+			
+		}
+
+		ShaderProperty::PropClass ShaderProperty::GetPropClass(D3D_SHADER_VARIABLE_CLASS Class, D3D_SHADER_VARIABLE_TYPE type)
 		{
 			PropClass tempClass;
 			switch (Class)
@@ -28,7 +84,7 @@ namespace thomas
 			return tempClass;
 		}
 
-		MaterialProperty::PropType MaterialProperty::GetPropType(D3D_SHADER_VARIABLE_TYPE type)
+		ShaderProperty::PropType ShaderProperty::GetPropType(D3D_SHADER_VARIABLE_TYPE type)
 		{
 			PropType tempType;
 			switch (type)
@@ -50,7 +106,7 @@ namespace thomas
 			return tempType;
 		}
 
-		MaterialProperty::PropClass MaterialProperty::GetObjectPropClass(D3D_SHADER_VARIABLE_TYPE type)
+		ShaderProperty::PropClass ShaderProperty::GetObjectPropClass(D3D_SHADER_VARIABLE_TYPE type)
 		{
 			PropClass tempClass;
 			switch (type)
@@ -86,7 +142,7 @@ namespace thomas
 			return tempClass;
 		}
 
-		MaterialProperty::TexDim MaterialProperty::GetTextureDimension(D3D_SHADER_VARIABLE_TYPE type)
+		ShaderProperty::TexDim ShaderProperty::GetTextureDimension(D3D_SHADER_VARIABLE_TYPE type)
 		{
 			TexDim dimension;
 			switch (type)
@@ -113,48 +169,86 @@ namespace thomas
 			return dimension;
 		}
 
-		MaterialProperty::MaterialProperty(UINT index, ID3DX11EffectVariable* variable)
+		ShaderProperty::ShaderProperty(UINT index, ID3DX11EffectVariable* variable)
 		{
+			m_rawSize = 0;
 			m_value = nullptr;
 			m_isSet = false;
 			m_index = index;
-			variable->GetType()->GetDesc(&m_typeDesc);
-			variable->GetDesc(&m_variableDesc);
-			variable->GetParentConstantBuffer()->GetDesc(&m_bufferDesc);
-			m_class = GetPropClass(m_typeDesc.Class, m_typeDesc.Type);
+			m_rawCount = 1;
+
+			D3DX11_EFFECT_TYPE_DESC typeDesc;
+			D3DX11_EFFECT_VARIABLE_DESC variableDesc;
+		
+			variable->GetType()->GetDesc(&typeDesc);
+			variable->GetDesc(&variableDesc);
+			ID3DX11EffectConstantBuffer* cBuffer = variable->GetParentConstantBuffer();
+			m_class = GetPropClass(typeDesc.Class, typeDesc.Type);
+
+			m_name = variableDesc.Name;
+
+			if (cBuffer->IsValid())
+			{
+				D3DX11_EFFECT_VARIABLE_DESC bufferDesc;
+				cBuffer->GetDesc(&bufferDesc);
+				m_bufferName = bufferDesc.Name;
+			}
+			else
+			{
+				m_bufferName = "";
+			}
+			
+			
 
 			switch (m_class)
 			{
 				case PropClass::Scalar:
 				case PropClass::Vector:
 				case PropClass::Matrix:
-					m_type = GetPropType(m_typeDesc.Type);
+					m_type = GetPropType(typeDesc.Type);
 					break;
 				case PropClass::Texture:
-					m_textureDimension = GetTextureDimension(m_typeDesc.Type);
+					m_textureDimension = GetTextureDimension(typeDesc.Type);
 					break;
 				default:
 					break;
 			}
+			SetInitialData();
 			
 		}
 
-			MaterialProperty::MaterialProperty(const MaterialProperty* otherProperty)
+			ShaderProperty::ShaderProperty(const ShaderProperty* otherProperty)
 			{
+				m_name = otherProperty->m_name;
+				m_bufferName = otherProperty->m_bufferName;
+				m_value = nullptr;
 				m_isSet = otherProperty->m_isSet;
 				m_index = otherProperty->m_index;
-				m_typeDesc = otherProperty->m_typeDesc;
-				m_variableDesc = otherProperty->m_variableDesc;
 				m_class = otherProperty->m_class;
 				m_type = otherProperty->m_type;
 				m_textureDimension = otherProperty->m_textureDimension;
-				m_value = otherProperty->m_value;
+				
 				m_rawCount = otherProperty->m_rawCount;
 				m_rawSize = otherProperty->m_rawSize;
 				
+				switch (m_class)
+				{
+					case PropClass::Scalar:
+						SetRaw(otherProperty->m_value);
+					case PropClass::Vector:
+						SetRaw(otherProperty->m_value, sizeof(math::Vector4));
+					case PropClass::Matrix:
+					{
+						SetRaw(otherProperty->m_value, sizeof(math::Matrix));
+						break;
+					}	
+					default:
+						break;
+				}
+				
 			}
 
-			MaterialProperty::~MaterialProperty()
+			ShaderProperty::~ShaderProperty()
 			{
 				switch (m_class)
 				{
@@ -162,12 +256,13 @@ namespace thomas
 				case PropClass::Vector:
 				case PropClass::Matrix:
 					SAFE_DELETE(m_value);
+					break;
 				default:
 					break;
 				}
 			}
 
-			void MaterialProperty::ApplyProperty(Shader * shader)
+			void ShaderProperty::ApplyProperty(resource::Shader * shader)
 		{
 			if (!m_isSet)
 				return;
@@ -269,17 +364,17 @@ namespace thomas
 			}
 		}
 
-		std::string MaterialProperty::GetName()
+		std::string ShaderProperty::GetName()
 		{
-			return m_variableDesc.Name;
+			return m_name;
 		}
 
-		std::string MaterialProperty::GetBufferName()
+		std::string ShaderProperty::GetBufferName()
 		{
-			return m_bufferDesc.Name;
+			return m_bufferName;
 		}
 
-		void MaterialProperty::SetBool(bool & value)
+		void ShaderProperty::SetBool(bool & value)
 		{
 			if (m_class == PropClass::Scalar && m_type == PropType::Bool)
 			{
@@ -293,7 +388,7 @@ namespace thomas
 			}
 		}
 
-		void MaterialProperty::SetFloat(float & value)
+		void ShaderProperty::SetFloat(float & value)
 		{
 			if (m_class == PropClass::Scalar && m_type == PropType::Float)
 			{
@@ -307,7 +402,7 @@ namespace thomas
 			}
 		}
 
-		void MaterialProperty::SetInt(int & value)
+		void ShaderProperty::SetInt(int & value)
 		{
 			if (m_class == PropClass::Scalar && m_type == PropType::Int)
 			{
@@ -321,7 +416,7 @@ namespace thomas
 			}
 		}
 
-		void MaterialProperty::SetVector(math::Vector4 & value)
+		void ShaderProperty::SetVector(math::Vector4 & value)
 		{
 			if (m_class == PropClass::Vector)
 			{
@@ -335,7 +430,7 @@ namespace thomas
 			}
 		}
 
-		void MaterialProperty::SetMatrix(math::Matrix & value)
+		void ShaderProperty::SetMatrix(math::Matrix & value)
 		{
 			if (m_class == PropClass::Matrix)
 			{
@@ -349,7 +444,7 @@ namespace thomas
 			}
 		}
 
-		void MaterialProperty::SetTexture(Texture & value)
+		void ShaderProperty::SetTexture(graphics::Texture & value)
 		{
 			if (m_class == PropClass::Texture)
 			{
@@ -362,7 +457,7 @@ namespace thomas
 			}
 		}
 
-		void MaterialProperty::SetSampler(Texture & value)
+		void ShaderProperty::SetSampler(graphics::Texture & value)
 		{
 			if (m_class == PropClass::TextureSampler)
 			{
@@ -375,7 +470,7 @@ namespace thomas
 			}
 		}
 
-		void MaterialProperty::SetResource(ID3D11ShaderResourceView & value)
+		void ShaderProperty::SetResource(ID3D11ShaderResourceView & value)
 		{
 			if (m_class == PropClass::Resource)
 			{
@@ -388,7 +483,7 @@ namespace thomas
 			}
 		}
 
-		void MaterialProperty::SetBuffer(ID3D11Buffer & value)
+		void ShaderProperty::SetBuffer(ID3D11Buffer & value)
 		{
 			if (m_class == PropClass::Buffer)
 			{
@@ -401,7 +496,7 @@ namespace thomas
 			}
 		}
 
-		void MaterialProperty::SetUAV(ID3D11UnorderedAccessView & value)
+		void ShaderProperty::SetUAV(ID3D11UnorderedAccessView & value)
 		{
 			if (m_class == PropClass::UAV)
 			{
@@ -414,7 +509,7 @@ namespace thomas
 			}
 		}
 
-		void MaterialProperty::SetRaw(void * value, size_t size, UINT count)
+		void ShaderProperty::SetRaw(void * value, size_t size, UINT count)
 		{
 			if (m_class == PropClass::Unknown)
 			{
@@ -429,9 +524,27 @@ namespace thomas
 			}
 		}
 
+		void ShaderProperty::SetRaw(void * value)
+		{
+			SAFE_DELETE(m_value);
+			m_value = malloc(sizeof(float));
+			memcpy(m_value, value, sizeof(float));
+		}
 
+		void ShaderProperty::SetRaw(void * value, size_t size)
+		{
+			SAFE_DELETE(m_value);
+			m_value = malloc(sizeof(size));
+			memcpy(m_value, value, sizeof(size));
+		}
 
-		bool* MaterialProperty::GetBool()
+		void ShaderProperty::UpdateVariable(ID3DX11EffectVariable * variable)
+		{
+			
+			
+		}
+
+		bool* ShaderProperty::GetBool()
 		{
 			if (m_class == PropClass::Scalar && m_type == PropType::Bool)
 			{
@@ -444,7 +557,7 @@ namespace thomas
 			}
 		}
 
-		float* MaterialProperty::GetFloat()
+		float* ShaderProperty::GetFloat()
 		{
 			if (m_class == PropClass::Scalar && m_type == PropType::Float)
 			{
@@ -457,7 +570,7 @@ namespace thomas
 			}
 		}
 
-		int* MaterialProperty::GetInt()
+		int* ShaderProperty::GetInt()
 		{
 			if (m_class == PropClass::Scalar && m_type == PropType::Int)
 			{
@@ -471,11 +584,12 @@ namespace thomas
 		}
 
 
-		math::Vector4* MaterialProperty::GetVector()
+		math::Vector4* ShaderProperty::GetVector()
 		{
 			if (m_class == PropClass::Vector)
 			{
-				return (math::Vector4*)m_value;
+				math::Vector4* v = (math::Vector4*)m_value;
+				return v;
 			}
 			else
 			{
@@ -484,7 +598,7 @@ namespace thomas
 			}
 		}
 
-		math::Matrix* MaterialProperty::GetMatrix()
+		math::Matrix* ShaderProperty::GetMatrix()
 		{
 			if (m_class == PropClass::Matrix)
 			{
@@ -497,11 +611,11 @@ namespace thomas
 			}
 		}
 
-		Texture* MaterialProperty::GetTexture()
+		graphics::Texture* ShaderProperty::GetTexture()
 		{
 			if (m_class == PropClass::Texture)
 			{
-				return (Texture*)m_value;
+				return (graphics::Texture*)m_value;
 			}
 			else
 			{
@@ -510,11 +624,11 @@ namespace thomas
 			}
 		}
 
-		Texture * MaterialProperty::GetSampler()
+		graphics::Texture * ShaderProperty::GetSampler()
 		{
 			if (m_class == PropClass::TextureSampler)
 			{
-				return (Texture*)m_value;
+				return (graphics::Texture*)m_value;
 			}
 			else
 			{
@@ -523,7 +637,7 @@ namespace thomas
 			}
 		}
 
-		ID3D11ShaderResourceView * MaterialProperty::GetResource()
+		ID3D11ShaderResourceView * ShaderProperty::GetResource()
 		{
 			if (m_class == PropClass::Resource)
 			{
@@ -536,7 +650,7 @@ namespace thomas
 			}
 		}
 
-		ID3D11Buffer * MaterialProperty::GetBuffer()
+		ID3D11Buffer * ShaderProperty::GetBuffer()
 		{
 			if (m_class == PropClass::Buffer)
 			{
@@ -549,7 +663,7 @@ namespace thomas
 			}
 		}
 
-		ID3D11UnorderedAccessView * MaterialProperty::GetUAV()
+		ID3D11UnorderedAccessView * ShaderProperty::GetUAV()
 		{
 			if (m_class == PropClass::UAV)
 			{
@@ -560,6 +674,21 @@ namespace thomas
 				LOG("Material property: " << GetName() << " is not of type: Unordered access view");
 				return nullptr;
 			}
+		}
+
+		ShaderProperty::PropClass ShaderProperty::GetPropClass()
+		{
+			return m_class;
+		}
+
+		ShaderProperty::PropType ShaderProperty::GetPropType()
+		{
+			return m_type;
+		}
+
+		ShaderProperty::TexDim ShaderProperty::GetTexDim()
+		{
+			return m_textureDimension;
 		}
 
 	}

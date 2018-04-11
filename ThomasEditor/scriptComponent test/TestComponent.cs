@@ -9,16 +9,20 @@ namespace ThomasEditor
     public class TestComponent : ScriptComponent
     {
         public int testVar { get; set; }
-        
-        
+        public AudioClip audioClip { get; set; }
+        public Material mat { get; set; }
+        public override void Start()
+        {
+
+        }
+
         public override void Update()
         {
+
             if (Input.GetKeyDown(Input.Keys.K))
             {
 
                 RenderComponent r = gameObject.AddComponent<RenderComponent>();
-                if (r)
-                    r.Model = "testModel";
                 
             }
             if (Input.GetKeyDown(Input.Keys.Space))

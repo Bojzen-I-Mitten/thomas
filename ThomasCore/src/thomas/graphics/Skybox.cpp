@@ -3,7 +3,7 @@
 #include "LightManager.h"
 #include "../utils/d3d.h"
 #include "../ThomasCore.h"
-#include "Material.h"
+#include "../resource/Material.h"
 namespace thomas
 {
 	namespace graphics
@@ -34,11 +34,11 @@ namespace thomas
 			ThomasCore::GetDeviceContext()->RSGetState(&m_rasterizerP);
 			ThomasCore::GetDeviceContext()->OMGetDepthStencilState(&m_depthstencilP, &m_depthRefP);
 
-			m_data.material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			
+			//m_data.material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			//
 
-			m_data.material->GetShader()->BindVertexBuffer(m_data.vertexBuffer, sizeof(math::Vector3), 0);
-			m_data.material->GetShader()->BindIndexBuffer(m_data.indexBuffer);
+			//m_data.material->GetShader()->BindVertexBuffer(m_data.vertexBuffer, sizeof(math::Vector3), 0);
+			//m_data.material->GetShader()->BindIndexBuffer(m_data.indexBuffer);
 			m_mvpStruct.mvpMatrix = mvpMatrix.Transpose();
 			m_mvpStruct.viewMatrix = viewMatrix;
 			viewMatrix.Invert().Decompose(math::Vector3(), math::Quaternion(),m_mvpStruct.camPosition);

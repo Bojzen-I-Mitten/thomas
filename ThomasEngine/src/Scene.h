@@ -7,7 +7,6 @@
 #using "PresentationFramework.dll"
 
 
-
 namespace ThomasEditor {
 	ref class GameObject;
 
@@ -41,6 +40,11 @@ namespace ThomasEditor {
 
 		bool IsPlaying() { return m_playing; }
 
+		property System::String^ SavePath {
+			System::String^ get() { return m_savePath; }
+			void set(System::String^ value) { m_savePath = value; }
+		}
+
 		System::Object^ GetGameObjectsLock()
 		{
 			return m_gameObjectsLock;
@@ -51,18 +55,12 @@ namespace ThomasEditor {
 			void set(System::String^ value) { m_name = value; }
 		}
 
-		property bool HasFile {
-			bool get() { return m_savePath != nullptr; }
-		}
-
 		
 		property System::Collections::ObjectModel::ObservableCollection<GameObject^>^ GameObjects {
 			System::Collections::ObjectModel::ObservableCollection<GameObject^>^ get() {
 				return %m_gameObjects;
 			}
 		}
-
-
 
 		static void SaveSceneAs(Scene^ scene, System::String^ fullPath);
 		static void SaveScene(Scene^ scene);
@@ -81,13 +79,32 @@ namespace ThomasEditor {
 		void PostLoad();
 
 		static property Scene^ CurrentScene {
-			Scene^ get() {
-				return s_currentScene;
-			}
-			void set(Scene^ value) {
-				s_currentScene = value;
-			}
+			Scene^ get();
+			void set(Scene^ value);
 		}
 
+	private:
+		ref class SceneSurrogate : System::Runtime::Serialization::IDataContractSurrogate
+		{
+			public:
+				virtual System::Type ^ GetDataContractType(System::Type ^type);
+				virtual System::Object ^ GetObjectToSerialize(System::Object ^obj, System::Type ^targetType);
+				virtual System::Object ^ GetDeserializedObject(System::Object ^obj, System::Type ^targetType);
+				virtual System::Object ^ GetCustomDataToExport(System::Reflection::MemberInfo ^memberInfo, System::Type ^dataContractType);
+				virtual System::Object ^ GetCustomDataToExport(System::Type ^clrType, System::Type ^dataContractType);
+				virtual void GetKnownCustomDataTypes(System::Collections::ObjectModel::Collection<System::Type ^> ^customDataTypes);
+				virtual System::Type ^ GetReferencedTypeOnImport(System::String ^typeName, System::String ^typeNamespace, System::Object ^customData);
+				virtual System::CodeDom::CodeTypeDeclaration ^ ProcessImportedType(System::CodeDom::CodeTypeDeclaration ^typeDeclaration, System::CodeDom::CodeCompileUnit ^compileUnit);
+		};
+
+		
+	};
+	[System::Runtime::Serialization::DataContractAttribute]
+	ref class SceneResource
+	{
+	public:
+		[System::Runtime::Serialization::DataMemberAttribute]
+		System::String^ path;
+		SceneResource(System::String^ resourcePath) { path = resourcePath; }
 	};
 }

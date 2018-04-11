@@ -2,6 +2,11 @@
 
 #include "ThomasCG.fx"
 
+cbuffer MATERIAL_PROPERTIES
+{
+	float testMat;
+	float4 wow;
+};
 
 DepthStencilState EnableDepth
 {
@@ -91,6 +96,8 @@ float4 frag(v2f i) : SV_TARGET
 	
 	//color = saturate(color + specular);
 	return color;
+
+	
 }
 
 

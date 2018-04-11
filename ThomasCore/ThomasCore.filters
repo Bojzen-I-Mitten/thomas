@@ -10,7 +10,6 @@
     <ClCompile Include="src\thomas\graphics\Model.cpp" />
     <ClCompile Include="src\thomas\graphics\ParticleSystem.cpp" />
     <ClCompile Include="src\thomas\graphics\Renderer.cpp" />
-    <ClCompile Include="src\thomas\graphics\Shader.cpp" />
     <ClCompile Include="src\thomas\graphics\Skybox.cpp" />
     <ClCompile Include="src\thomas\graphics\Sprite.cpp" />
     <ClCompile Include="src\thomas\graphics\TextRender.cpp" />
@@ -50,6 +49,7 @@
     <ClCompile Include="src\thomas\resource\AudioClip.cpp" />
     <ClCompile Include="src\thomas\graphics\Light.cpp" />
     <ClCompile Include="src\thomas\object\component\Component.cpp" />
+    <ClInclude Include="src\thomas\resource\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />
@@ -61,7 +61,6 @@
     <ClInclude Include="src\thomas\graphics\Model.h" />
     <ClInclude Include="src\thomas\graphics\ParticleSystem.h" />
     <ClInclude Include="src\thomas\graphics\Renderer.h" />
-    <ClInclude Include="src\thomas\graphics\Shader.h" />
     <ClInclude Include="src\thomas\graphics\Skybox.h" />
     <ClInclude Include="src\thomas\graphics\Sprite.h" />
     <ClInclude Include="src\thomas\graphics\TextRender.h" />
@@ -109,6 +108,7 @@
     <ClInclude Include="src\thomas\resource\AudioClip.h" />
     <ClInclude Include="src\thomas\resource\Resources.h" />
     <ClInclude Include="src\thomas\resource\Resource.h" />
+    <ClInclude Include="src\thomas\resource\Shader.h" />
     <ClInclude Include="src\thomas\graphics\Light.h" />
   </ItemGroup>
 </Project>

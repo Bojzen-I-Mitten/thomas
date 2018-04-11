@@ -1,11 +1,16 @@
 #pragma once
 #include "../Common.h"
 #include "../utils/Math.h"
+#include "Resource.h"
 #include <vector>
 namespace thomas {
-	namespace graphics {
+	namespace graphics
+	{
 		class Material;
 		class Mesh;
+	}
+	namespace resource {
+		
 
 		enum class PrimitiveType
 		{
@@ -17,27 +22,21 @@ namespace thomas {
 			Quad
 		};
 
-		class THOMAS_API Model {
+		class THOMAS_API Model : public Resource {
 		private:
-			Model(std::string name, std::vector<Mesh*> meshes);
 			math::BoundingBox GenerateBounds();
+			void OnChanged();
 		public:
-			static Model* CreateModel(std::string name, std::vector<Mesh*> meshes);
-			static Model* GetModelByName(std::string name);
-			static std::vector<Model*> GetLoadedModels();
-			std::string GetName();
-			std::vector<Mesh*> GetMeshes();
+			Model(std::string path);
 
-			static void Destroy();
+			std::vector<graphics::Mesh*> GetMeshes();
 
 			~Model();
 			
 		public:
 			math::BoundingBox m_bounds;
 		private:
-			static std::vector<Model*> s_loadedModels;
-			std::vector<Mesh*> m_meshes;
-			std::string m_name;
+			std::vector<graphics::Mesh*> m_meshes;
 
 			static struct Primitives
 			{

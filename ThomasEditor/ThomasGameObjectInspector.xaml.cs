@@ -10,42 +10,12 @@ using System.Windows.Threading;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Xceed.Wpf.Toolkit.PropertyGrid;
+using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace ThomasEditor
 {
-    public class Vector3Converter : IValueConverter
-    {
-        Vector3 vector;
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            vector = (Vector3)value;
-            String type = (String)parameter;
-            switch (type)
-            {
-                case "x": return vector.x;
-                case "y": return vector.y;
-                case "z": return vector.z;
-                default: return vector.x;
-            }
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            String type = (String)parameter;
-            if(value != null)
-            {
-                switch (type)
-                {
-                    case "x": vector.x = (float)(double)value; break;
-                    case "y": vector.y = (float)(double)value; break;
-                    case "z": vector.z = (float)(double)value; break;
-                }
-            }
-            
-            return vector;
-        }
-    }
 
     public class ComponentToNameConverter : IValueConverter
     {
@@ -60,18 +30,21 @@ namespace ThomasEditor
         }
     }
 
+
+    
+
     /// <summary>
     /// Interaction logic for ThomasGameObjectInspector.xaml
     /// </summary>
     public partial class ThomasGameObjectInspector : UserControl
     {
+        
         private GameObject _gameObject;
         //public Collection<EditorDefinitionBase> customEditors;
         public ThomasGameObjectInspector()
         {
 
             InitializeComponent();
-
             // propertyGrid.Editors.Add(editor);
 
         }
@@ -97,11 +70,7 @@ namespace ThomasEditor
             }
         }
 
-        private void PropertyGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            PropertyGrid grid = sender as PropertyGrid;
-            grid.ExpandAllProperties();
-        }
+        
 
         private bool ComponentsFilter(object item)
         {

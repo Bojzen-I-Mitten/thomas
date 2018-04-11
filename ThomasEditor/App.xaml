@@ -5,12 +5,16 @@
              xmlns:uc="http://www.quickzip.org/UserControls"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Themes\Styles.xaml" />
                 <ResourceDictionary Source="Themes\PropertyGridStyle.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
+
+            <local:MaterialEditor x:Key="materialEditor" Background="#444444"/>
         </ResourceDictionary>
+        
     </Application.Resources>
 </Application>

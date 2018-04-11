@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="ThomasEditor.ExtendedPropertyGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ThomasEditor"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:managed="clr-namespace:ThomasEditor;assembly=ThomasEngine"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <local:ResourceImageConverter x:Key="resourceImageConverter"/>
+        <local:NullResourceConverter x:Key="nullResourceConverter"/>
+        
+        <local:Vector3Converter x:Key="convertVector3" x:Shared="False"/>
+
+
+        <DataTemplate x:Key="ResourceEditor">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Border Background="#333333" Grid.Column="0" >
+                    <Image Height="20" Source="{Binding Value, Converter={StaticResource resourceImageConverter}, Mode=OneWay}" VerticalAlignment="Center" />
+                </Border>
+                <Label Height="20" Foreground="White" FontSize="10" Grid.Column="1" Background="#333333" AllowDrop="True" Drop="ResourceEditor_Drop" PreviewDragOver="ResourceEditor_PreviewDragOver">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="Content" Value="{Binding Value}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
+                                    <Setter Property="Content" Value="{Binding PropertyType.Name, Converter={StaticResource nullResourceConverter}, Mode=OneWay}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+                <Button Background="Transparent" BorderThickness="0" Height="20" Grid.Column="2" Cursor="Hand" Click="ResourceList_Open">
+                    <Image Source="icons/resourceList.png"/>
+                </Button>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Vector3Editor" x:Name="vector3Test">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="X"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}"  TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="1" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='x'}"/>
+                <Label Grid.Column="2" Content="Y"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="3" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='y'}"/>
+                <Label Grid.Column="4" Content="Z"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="5" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='z'}"/>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <xctk:PropertyGrid NameColumnWidth="75" IsCategorized="False" UpdateTextBoxSourceOnEnterKey="True"  Background="Aqua" AutoGenerateProperties="True" SelectedObject="{Binding}" ShowAdvancedOptions="False" ShowSummary="False" ShowSortOptions="False" ShowTitle="False" ShowSearchBox="False" Loaded="PropertyGrid_Loaded">
+        <xctk:PropertyGrid.EditorDefinitions>
+            <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource Vector3Editor}">
+                <xctk:EditorTemplateDefinition.TargetProperties>
+                    <xctk:TargetPropertyType Type="managed:Vector3"/>
+                </xctk:EditorTemplateDefinition.TargetProperties>
+            </xctk:EditorTemplateDefinition>
+            <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource ResourceEditor}">
+                <xctk:EditorTemplateDefinition.TargetProperties>
+                    <xctk:TargetPropertyType Type="managed:Resource"/>
+                </xctk:EditorTemplateDefinition.TargetProperties>
+            </xctk:EditorTemplateDefinition>
+        </xctk:PropertyGrid.EditorDefinitions>
+    </xctk:PropertyGrid>
+</UserControl>

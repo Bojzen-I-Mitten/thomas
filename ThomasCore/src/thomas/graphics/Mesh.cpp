@@ -1,5 +1,5 @@
 #include "Mesh.h"
-#include "Shader.h"
+#include "../resource/Shader.h"
 #include "../utils/d3d.h"
 #include "../ThomasCore.h"
 
@@ -50,7 +50,7 @@ namespace thomas {
 			return m_data.vertices.size();
 		}
 
-		void Mesh::Draw(Shader * shader)
+		void Mesh::Draw(resource::Shader * shader)
 		{
 			shader->BindVertexBuffer(m_data.vertexBuffer, sizeof(Vertex), 0);
 			shader->BindIndexBuffer(m_data.indexBuffer);

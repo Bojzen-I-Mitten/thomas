@@ -3,7 +3,7 @@
 #include "../utils/Math.h"
 namespace thomas
 {
-	namespace graphics
+	namespace resource
 	{
 		class Material;
 	}
@@ -28,7 +28,7 @@ namespace thomas
 				
 			};
 			std::vector<LineVertex> m_lines;
-			graphics::Material* m_material = nullptr;
+			resource::Material* m_material = nullptr;
 			math::Matrix worldMatrix;
 			ID3D11Buffer* m_vertexBuffer;
 			int m_gridSize;
