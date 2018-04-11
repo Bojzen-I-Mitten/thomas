@@ -64,39 +64,43 @@ v2f vert(appdata_thomas v)
 
 struct Light
 {
-    float4 color;
-    float4 position;
-    float4 direction;
-    float range;
-    uint type;
-    float spotAngle;
-    bool drawHalo;
+    float4  color;
+    float4  position;
+    float4  direction;
+    float   intensity;
+    float   smoothness; //specularIntensity;
+    float   spotInnerAngle;//theta
+    float   spotOuterAngle;//phi
+    uint    type;
+    //bool drawHalo;
 };
 
 float4 frag(v2f input) : SV_TARGET
 {
 
     Light tempLight;
-    tempLight.color = float4(0.5f, 0.5f, 0.5f, 1.0f);
+    tempLight.color = float4(0.5f, 0.5f, 0.1f, 1.0f);
     tempLight.position = float4(3, 3, 3, 1);
-    tempLight.range = 7;
-    tempLight.direction = normalize(float4(-1, -1, -1, 0));
+    tempLight.intensity = 4;
+    tempLight.direction = normalize(float4(1, 1, 1, 0));
     tempLight.type = 1;
-    float3 attenuation = float3(1.0f, 0.2f, 0.1f);
+    tempLight.spotInnerAngle = 15.0f;
+    tempLight.spotOuterAngle = 20.0f;
+    float3 attenuation = float3(0.4f, 0.02f, 0.1f);
     
     float4 finalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 ambient = float4(0.1f, 0.1f, 0.1f, 1.0f);
     float4 diffuse = float4(0.4f, 0.4f, 0.4f, 1.0f);
     float4 specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
     
-    float4 viewDir = float4(normalize(_WorldSpaceCameraPos - input.worldPos.xyz), 0.0f);
+    float4 viewDir = normalize(float4(_WorldSpaceCameraPos - input.worldPos.xyz, 0.0f));
 	float4 lightDir = float4(0, 0, 0, 0);
     float lightMultiplyer = 1.0f;
 
     if (0 == tempLight.type)//directional
     {
         lightDir = -tempLight.direction;
-        lightMultiplyer = tempLight.color * 2.5f;
+        lightMultiplyer = tempLight.color * 2.2f;
     }
     else if (1 == tempLight.type)//point
     {
@@ -104,12 +108,26 @@ float4 frag(v2f input) : SV_TARGET
         float lightDistance = length(lightDir);
         lightDir = normalize(lightDir);
 
-        lightMultiplyer = tempLight.color * tempLight.range / (attenuation.x + attenuation.y * lightDistance + attenuation.z * lightDistance * lightDistance);// * pow(saturate(dot(viewDir, tempLight.direction)), 20);
+        lightMultiplyer = tempLight.color * tempLight.intensity / (attenuation.x + attenuation.y * lightDistance + attenuation.z * lightDistance * lightDistance);
     }
     else if (2 == tempLight.type)
     {
-        saturate(dot(viewDir, tempLight.direction));
+        lightDir = tempLight.position - input.worldPos;
+        float lightDistance = length(lightDir);
+        lightDir = normalize(lightDir);
 
+        float angle = degrees(acos(dot(tempLight.direction, lightDir)));
+        float spotFactor = 0.0f;
+        if (angle < tempLight.spotInnerAngle)
+        {
+            spotFactor = 1.0f;
+        }
+        else if (angle < tempLight.spotOuterAngle)
+        {
+            spotFactor = 1.0f - smoothstep(tempLight.spotInnerAngle, tempLight.spotOuterAngle, angle);
+        }
+
+        lightMultiplyer = spotFactor * tempLight.color * tempLight.intensity / (attenuation.x + attenuation.y * lightDistance + attenuation.z * lightDistance * lightDistance);
     }
     
 	
@@ -117,13 +135,12 @@ float4 frag(v2f input) : SV_TARGET
     float specularIntensity = 0.0f;
     if (lambertian > 0.0f)
     {
-        specularIntensity = pow(dot(input.normal, GetHalfwayVec(viewDir, lightDir)), 16.0f); //blinn-phong
+        specularIntensity = pow(saturate(dot(input.normal, GetHalfwayVec(viewDir, lightDir))), 4.0f /*lightType.smoothness*/); //blinn-phong
 		//float4 test = float4(normalize(tempLight.position.xyz - input.worldPos.xyz), 0.0f);
-		//specularIntensity = pow(max(0.0, dot(viewDir, reflect(-test, input.normal))), 6.0f); //phong
+        //specularIntensity = pow(max(0.0, dot(viewDir, reflect(lightDir, input.normal))), 6.0f); //phong
     }
     
     return saturate(ambient + (diffuse * lambertian + specular * specularIntensity) * lightMultiplyer);
-
 }
 
 
