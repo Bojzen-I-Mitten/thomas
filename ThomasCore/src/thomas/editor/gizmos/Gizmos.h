@@ -4,7 +4,7 @@
 namespace thomas
 {
 	namespace resource { class Model; class Material; }
-	namespace utils { struct Ray; }
+	namespace utils { struct Ray; namespace buffers { class VertexBuffer; } }
 	namespace editor
 	{
 		class THOMAS_API Gizmos
@@ -16,11 +16,11 @@ namespace thomas
 				SOLID = 0,
 				WIREFRAME = 1,
 			};
-
+			static void DrawLines(std::vector<math::Vector3> lines);
 		public:
 
 			static void Init();
-
+			static void Destroy();
 			static void DrawModel(resource::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
 			static void DrawModel(resource::Model* model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
 
@@ -45,6 +45,7 @@ namespace thomas
 			static void SetMatrix(math::Matrix matrix);
 		private:
 			static resource::Material* s_gizmoMaterial;
+			static utils::buffers::VertexBuffer* s_vertexBuffer;
 		};
 	}
 }

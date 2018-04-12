@@ -34,9 +34,11 @@ namespace ThomasEditor {
 	{
 	private:
 
-		static Thread^ testThread;
+		static Thread^ mainThread;
+		static Thread^ renderThread;
 		static bool playing = false;	
-
+		static bool readyToRender = false;
+		static Object^ renderLock = gcnew Object();
 	public:
 
 		enum class ManipulatorOperation {
@@ -52,11 +54,35 @@ namespace ThomasEditor {
 				ScriptingManger::Init();
 				Scene::CurrentScene = gcnew Scene("test");
 				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
-				testThread = gcnew Thread(gcnew ThreadStart(StartEngine));
-				testThread->Name = "Thomas Engine";
-				testThread->Start();
+				mainThread = gcnew Thread(gcnew ThreadStart(StartEngine));
+				mainThread->Name = "Thomas Engine (Main Thread)";
+				mainThread->Start();
+
+				renderThread = gcnew Thread(gcnew ThreadStart(StartRenderer));
+				renderThread->Name = "Thomas Engine (Render Thread)";
+				renderThread->Start();
 			}
 
+		}
+
+		static void StartRenderer()
+		{
+			while (ThomasCore::Initialized())
+			{
+				if (readyToRender)
+				{
+										
+					Window::ClearAllWindows();
+					Monitor::Enter(renderLock);
+					thomas::graphics::Renderer::TransferCommandList();
+					Monitor::Exit(renderLock);
+					thomas::graphics::Renderer::ProcessCommands();
+					thomas::Window::PresentAllWindows();
+					readyToRender = false;
+					
+				}
+				
+			}
 		}
 
 		static void StartEngine()
@@ -74,21 +100,35 @@ namespace ThomasEditor {
 				{
 					Object^ lock = Scene::CurrentScene->GetGameObjectsLock();
 					ThomasCore::Update();
-					if(playing)
-						thomas::Physics::Update();
 					Monitor::Enter(lock);
+					
+					if (playing)
+					{
+						//Physics
+						thomas::Physics::UpdateRigidbodies();
+						for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
+						{
+							if (gameObject->GetActive())
+								gameObject->FixedUpdate(); //Should only be ran at fixed timeSteps.
+						}
+						thomas::Physics::Simulate();
+					}
+
+					//Logic
 					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 					{
 						if(gameObject->GetActive())
-							gameObject->UpdateComponents();
+							gameObject->Update();
 					}
 
+
+
+					//Rendering
+					Monitor::Enter(renderLock);
+					graphics::Renderer::ClearCommands();
 					if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
 					{
-						Window::ClearAllWindows();
-
-						graphics::Renderer::Begin();
-						//Editor rendering
+						
 						editor::EditorCamera::Render();
 						for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 						{
@@ -109,9 +149,13 @@ namespace ThomasEditor {
 						{
 							camera->Render();
 						}
-						Window::PresentAllWindows();
+						thomas::Window::EndFrame(!readyToRender);
+						readyToRender = true;
+						
 					}
-
+					
+					Monitor::Exit(renderLock);
+					
 					//ThomasCore::Render();
 					Monitor::Exit(lock);
 				}

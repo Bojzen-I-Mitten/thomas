@@ -109,7 +109,6 @@ namespace thomas {
 		editor::EditorCamera::Update();
 
 		Window::Update();
-		graphics::Renderer::ClearRenderQueue();
 		resource::Shader::Update();
 		thomas::ThomasTime::Update();
 		Input::Update();
@@ -126,15 +125,6 @@ namespace thomas {
 		Sound::Update();
 	}
 		
-
-
-
-
-	void ThomasCore::Render()
-	{
-		graphics::Renderer::Render();
-	}
-
 	void ThomasCore::Stop()
 	{
 		s_initialized = false;
@@ -163,6 +153,7 @@ namespace thomas {
 		//utils::DebugTools::Destroy();
 		object::Object::Destroy();
 		editor::EditorCamera::Destroy();
+		editor::Gizmos::Destroy();
 		Physics::Destroy();
 		ImGui::DestroyContext(s_imGuiContext);
 
@@ -183,9 +174,7 @@ namespace thomas {
 			s_debug = nullptr;
 		#endif // _DEBUG
 
-		
-
-		//Sound::Destroy();
+		Sound::Destroy();
 
 		return true;
 	}

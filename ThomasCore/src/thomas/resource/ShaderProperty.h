@@ -56,7 +56,7 @@ namespace thomas
 			ShaderProperty(UINT index, ID3DX11EffectVariable* variable);
 			ShaderProperty(const ShaderProperty* otherProperty);
 			~ShaderProperty();
-			void ApplyProperty(resource::Shader* shader);
+			void ApplyProperty();
 
 			std::string GetName();
 			std::string GetBufferName();
@@ -106,6 +106,7 @@ namespace thomas
 			TexDim m_textureDimension;
 			size_t m_rawSize;
 			UINT m_rawCount;
+			ID3DX11EffectVariable* m_variable;
 		};
 	}
 }

@@ -9,6 +9,9 @@ namespace thomas
 {
 	graphics::BulletDebugDraw* Physics::s_debugDraw;
 	btDiscreteDynamicsWorld* Physics::s_world;
+	float Physics::s_timeStep = 1.0f/60.0f;
+	float Physics::s_timeSinceLastPhysicsStep = 0.0f;
+	std::vector<object::component::RigidBodyComponent*> Physics::s_rigidBodies;
 	float Physics::s_accumulator;
 	bool Physics::Init()
 	{
@@ -39,11 +42,38 @@ namespace thomas
 		return s_debugDraw->m_initialized;
 
 	}
-	void Physics::Update()
+	void Physics::AddRigidBody(object::component::RigidBodyComponent * rigidBody)
 	{
-		
-		s_world->stepSimulation(ThomasTime::GetDeltaTime(), 7); 
+		s_rigidBodies.push_back(rigidBody);
+		s_world->addRigidBody(rigidBody);
+	}
+	void Physics::RemoveRigidBody(object::component::RigidBodyComponent * rigidBody)
+	{
+		for (int i = 0; i < s_rigidBodies.size(); i++)
+		{
+			object::component::RigidBodyComponent* rb = s_rigidBodies[i];
+			if (rb == rigidBody)
+			{
+				s_rigidBodies.erase(s_rigidBodies.begin() + i);
+				break;
+			}
+		}
+		s_world->removeRigidBody(rigidBody);
+	}
+	void Physics::UpdateRigidbodies()
+	{
+		for (object::component::RigidBodyComponent* rb : s_rigidBodies)
+		{
+			rb->UpdateTransformToRigidBody();
+		}
+	}
+	void Physics::Simulate()
+	{
+		s_timeSinceLastPhysicsStep += ThomasTime::GetDeltaTime();
 
+		if (s_timeSinceLastPhysicsStep < s_timeStep)
+			return;
+		s_world->stepSimulation(s_timeSinceLastPhysicsStep, 5, s_timeStep);
 		int numManifolds = s_world->getDispatcher()->getNumManifolds();
 		for (int i = 0; i < numManifolds; i++)
 		{
@@ -72,8 +102,11 @@ namespace thomas
 			}
 				
 		}
-		
-
+		for (object::component::RigidBodyComponent* rb : s_rigidBodies)
+		{
+			rb->UpdateRigidbodyToTransform();
+		}
+		s_timeSinceLastPhysicsStep = 0.0f;
 	}
 	void Physics::DrawDebug(object::component::Camera* camera)
 	{

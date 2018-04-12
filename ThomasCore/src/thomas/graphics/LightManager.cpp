@@ -21,11 +21,12 @@ namespace thomas
 		{
 			if (!s_lightBuffer)
 			{
-				s_lightBuffer = thomas::utils::D3d::CreateBufferFromStruct(s_lightstruct, D3D11_BIND_CONSTANT_BUFFER);
+				//s_lightBuffer = thomas::utils::D3d::CreateBufferFromStruct(s_lightstruct, D3D11_BIND_CONSTANT_BUFFER);
 				return true;
 			}
 			else
-				return thomas::utils::D3d::FillBuffer(s_lightBuffer, s_lightstruct);
+				//return thomas::utils::D3d::FillBuffer(s_lightBuffer, s_lightstruct);
+				return true;
 
 		}
 
