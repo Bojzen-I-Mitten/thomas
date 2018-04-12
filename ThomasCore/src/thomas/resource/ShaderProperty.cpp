@@ -176,6 +176,7 @@ namespace thomas
 			m_isSet = false;
 			m_index = index;
 			m_rawCount = 1;
+			m_variable = variable;
 
 			D3DX11_EFFECT_TYPE_DESC typeDesc;
 			D3DX11_EFFECT_VARIABLE_DESC variableDesc;
@@ -219,6 +220,7 @@ namespace thomas
 
 			ShaderProperty::ShaderProperty(const ShaderProperty* otherProperty)
 			{
+				m_variable = otherProperty->m_variable;
 				m_name = otherProperty->m_name;
 				m_bufferName = otherProperty->m_bufferName;
 				m_value = nullptr;
@@ -262,11 +264,11 @@ namespace thomas
 				}
 			}
 
-			void ShaderProperty::ApplyProperty(resource::Shader * shader)
+			void ShaderProperty::ApplyProperty()
 		{
 			if (!m_isSet)
 				return;
-			ID3DX11EffectVariable* variable = shader->GetEffect()->GetVariableByIndex(m_index);
+			ID3DX11EffectVariable* variable = m_variable;
 			if (!variable->IsValid())
 			{
 				LOG("Failed to Apply property to variable: " << GetName());
@@ -360,7 +362,7 @@ namespace thomas
 			}
 			if (result != S_OK)
 			{
-				LOG("Failed to apply material property to shader: " << shader->GetName());
+				LOG("Failed to apply shader property: " << m_name);
 			}
 		}
 
@@ -395,6 +397,7 @@ namespace thomas
 				SAFE_DELETE(m_value);
 				m_value = new float(value);
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -409,6 +412,7 @@ namespace thomas
 				SAFE_DELETE(m_value);
 				m_value = new int(value);
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -423,6 +427,7 @@ namespace thomas
 				SAFE_DELETE(m_value);
 				m_value = new math::Vector4(value);
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -437,6 +442,7 @@ namespace thomas
 				SAFE_DELETE(m_value);
 				m_value = new math::Matrix(value);
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -450,6 +456,7 @@ namespace thomas
 			{
 				m_value = (void*)&value;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -463,6 +470,7 @@ namespace thomas
 			{
 				m_value = (void*)&value;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -476,6 +484,7 @@ namespace thomas
 			{
 				m_value = (void*)&value;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -489,6 +498,7 @@ namespace thomas
 			{
 				m_value = (void*)&value;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -502,6 +512,7 @@ namespace thomas
 			{
 				m_value = (void*)&value;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -517,6 +528,7 @@ namespace thomas
 				m_rawSize = size;
 				m_rawCount = count;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{

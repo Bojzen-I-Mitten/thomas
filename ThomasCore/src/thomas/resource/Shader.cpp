@@ -284,8 +284,8 @@ namespace thomas
 		}
 		void Shader::Bind()
 		{
-			for (auto prop : m_properties)
-				prop->ApplyProperty(this);
+			//for (auto prop : m_properties)
+			//	prop->ApplyProperty();
 		}
 		std::vector<Shader::ShaderPass>* Shader::GetPasses()
 		{
