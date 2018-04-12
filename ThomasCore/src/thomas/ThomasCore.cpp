@@ -109,7 +109,7 @@ namespace thomas {
 		editor::EditorCamera::Update();
 
 		Window::Update();
-		graphics::Renderer::ClearRenderQueue();
+		graphics::Renderer::ClearCommands();
 		resource::Shader::Update();
 		thomas::ThomasTime::Update();
 		Input::Update();
@@ -126,15 +126,6 @@ namespace thomas {
 		Sound::Update();
 	}
 		
-
-
-
-
-	void ThomasCore::Render()
-	{
-		graphics::Renderer::Render();
-	}
-
 	void ThomasCore::Stop()
 	{
 		s_initialized = false;
