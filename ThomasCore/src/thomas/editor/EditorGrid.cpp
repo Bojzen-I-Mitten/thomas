@@ -101,8 +101,7 @@ namespace thomas
 
 		EditorGrid::~EditorGrid()
 		{
-			for (auto buffer : m_vertexBuffers)
-				delete buffer;
+			delete m_mesh;
 		}
 
 	}
