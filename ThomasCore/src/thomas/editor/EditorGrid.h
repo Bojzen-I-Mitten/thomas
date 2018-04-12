@@ -33,7 +33,6 @@ namespace thomas
 			graphics::Mesh* m_mesh;
 			resource::Material* m_material = nullptr;
 			math::Matrix worldMatrix;
-			std::vector<utils::buffers::VertexBuffer*> m_vertexBuffers;
 			int m_gridSize;
 			float m_cellSize;
 			int m_internalGridSize;
