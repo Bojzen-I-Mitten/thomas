@@ -23,9 +23,9 @@ namespace thomas
 {
 	namespace graphics
 	{
-		
-		std::vector<graphics::RenderPair> Renderer::s_renderQueue;
-		std::vector<graphics::RenderPair> Renderer::s_lastFramesRenderQueue;
+		CommandQueue Renderer::s_renderCommands;
+		CommandQueue Renderer::s_lastFramesCommands;
+
 		void Renderer::BindFrame()
 		{
 			//ThomasPerFrame
@@ -55,20 +55,15 @@ namespace thomas
 			resource::Shader::SetGlobalVector("_WorldSpaceCameraPos", (math::Vector4)camera->GetPosition());
 		}
 
-		void Renderer::ClearRenderQueue()
+		void Renderer::ClearCommands()
 		{
-			s_renderQueue.clear();
+			s_renderCommands.clear();
 		}
 
 
-		void Renderer::SubmitToRenderQueue(object::component::Transform * transform, Mesh * mesh, resource::Material * material)
+		void Renderer::SubmitCommand(RenderCommand command)
 		{
-			s_renderQueue.push_back(RenderPair(transform, mesh, material));
-		}
-
-		std::vector<graphics::RenderPair>& Renderer::GetRenderQueue()
-		{
-			return s_renderQueue;
+			s_renderCommands[command.camera][command.material].push_back(command);
 		}
 
 		void Renderer::BindObject(thomas::resource::Material * material, thomas::object::component::Transform * transform)
@@ -85,38 +80,29 @@ namespace thomas
 
 		}
 
-		void Renderer::Begin()
+		void Renderer::ProcessCommands()
 		{
 			BindFrame();
-		}
-
-		void Renderer::Render()
-		{
-			RenderQueue(s_renderQueue);
-		}
-
-		void Renderer::RenderQueue(std::vector<RenderPair>& renderQueue)
-		{
-			std::sort(renderQueue.begin(), renderQueue.end(), SortPairs);
-
-			resource::Material* lastMaterial = nullptr;
-			for (RenderPair& renderPair : renderQueue)
+			s_lastFramesCommands = s_renderCommands;
+			for (auto& perCameraQueue : s_lastFramesCommands)
 			{
-				if (!lastMaterial || lastMaterial != renderPair.material)
+				object::component::Camera* camera = perCameraQueue.first;
+				BindCamera(camera);
+				for (auto& perMaterialQueue : perCameraQueue.second)
 				{
-					lastMaterial = renderPair.material;
-					lastMaterial->Bind();
+					resource::Material* material = perMaterialQueue.first;
+					material->Bind();
+					for (RenderCommand& perMeshCommand : perMaterialQueue.second)
+					{
+						BindObject(material, perMeshCommand.transform);
+						material->Draw(perMeshCommand.mesh);
+					}
 				}
-				BindObject(lastMaterial, renderPair.transform);
-
-				lastMaterial->Draw(renderPair.mesh);
+				
+				
+				
 			}
 
-		}
-
-		bool Renderer::SortPairs(RenderPair& a, RenderPair& b)
-		{
-			return a.material->GetId() < b.material->GetId();
 		}
 
 	}

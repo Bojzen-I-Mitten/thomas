@@ -11,6 +11,7 @@ namespace thomas
 			class VertexBuffer;
 		}
 	}
+	namespace object { namespace component { class Camera; } }
 	namespace resource
 	{
 		class Material;
@@ -25,7 +26,7 @@ namespace thomas
 			EditorGrid(int gridSize, float cellSize, int internalGridSize);
 			EditorGrid(int gridSize, float cellSize) : EditorGrid(gridSize, cellSize, 0) {};
 			EditorGrid(int gridSize) : EditorGrid(gridSize, 1.0f, 0) {}
-			void Draw(math::Vector3 cameraPos);
+			void Draw(object::component::Camera* camera);
 			~EditorGrid();
 		private:
 			struct LineVertices

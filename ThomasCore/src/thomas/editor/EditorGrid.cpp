@@ -3,6 +3,8 @@
 #include "../resource/Material.h"
 #include "../utils/Buffers.h"
 #include "../resource/Shader.h"
+#include "../object/component/Camera.h"
+#include "../graphics/Renderer.h"
 namespace thomas
 {
 	namespace editor
@@ -75,10 +77,12 @@ namespace thomas
 			
 		}
 
-		void EditorGrid::Draw(math::Vector3 cameraPos)
+		void EditorGrid::Draw(object::component::Camera* camera)
 		{
 			if (m_material)
 			{
+				graphics::Renderer::BindCamera(camera);
+				math::Vector3 cameraPos = camera->GetPosition();
 				int scale = (int)log10(((abs(cameraPos.y/2)+1) / m_cellSize)*m_cellSize);
 				scale = pow(10.0f,scale);
 				math::Matrix worldMatrix = math::Matrix::CreateScale((scale)*m_cellSize) * math::Matrix::CreateTranslation(

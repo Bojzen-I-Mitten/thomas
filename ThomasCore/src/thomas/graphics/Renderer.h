@@ -3,7 +3,7 @@
 
 #include "../utils/Math.h"
 #include <vector>
-
+#include <map>
 namespace thomas {
 
 	class Scene;
@@ -21,38 +21,36 @@ namespace thomas {
 
 	namespace graphics
 	{
+				
 		class Mesh;
-		struct RenderPair
+		struct RenderCommand
 		{
+			object::component::Camera* camera;
 			object::component::Transform* transform;
 			Mesh* mesh;
 			resource::Material* material;
 
-			RenderPair(object::component::Transform* trans, Mesh* m, resource::Material* mat) : transform(trans), mesh(m), material(mat) {};
+			RenderCommand(object::component::Transform* trans, Mesh* m, resource::Material* mat, object::component::Camera* cam) : 
+				transform(trans), mesh(m), material(mat), camera(cam) {};
 		};
+		typedef std::map<object::component::Camera*, std::map<resource::Material*, std::vector<RenderCommand>>> CommandQueue;
 
 		class THOMAS_API Renderer {
-		private:
-			static void RenderQueue(std::vector<RenderPair>& renderQueue);
-
-			static bool SortPairs(RenderPair &a, RenderPair &b);
-			
+		private:			
 			static void BindFrame();
+			static void BindObject(thomas::resource::Material* material, thomas::object::component::Transform* transform);
+			
 			
 		public:
-			static void Begin();
-			static void Render();
-			static void BindObject(thomas::resource::Material* material, thomas::object::component::Transform* transform);
 			static void BindCamera(thomas::object::component::Camera* camera);
-			static void ClearRenderQueue();
 
-			static void SubmitToRenderQueue(object::component::Transform* transform, Mesh* mesh, resource::Material* material);
-			static std::vector<graphics::RenderPair>& GetRenderQueue();
+			static void ProcessCommands();
+			static void ClearCommands();
+
+			static void SubmitCommand(RenderCommand command);
 		private:
-			
-			
-			static std::vector<graphics::RenderPair> s_renderQueue;
-			static std::vector<graphics::RenderPair> s_lastFramesRenderQueue;
+			static CommandQueue s_renderCommands;
+			static CommandQueue s_lastFramesCommands;
 		};
 	}
 }

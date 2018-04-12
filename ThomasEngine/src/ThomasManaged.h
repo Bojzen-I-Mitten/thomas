@@ -34,7 +34,8 @@ namespace ThomasEditor {
 	{
 	private:
 
-		static Thread^ testThread;
+		static Thread^ mainThread;
+		static Thread^ renderThread;
 		static bool playing = false;	
 
 	public:
@@ -52,9 +53,9 @@ namespace ThomasEditor {
 				ScriptingManger::Init();
 				Scene::CurrentScene = gcnew Scene("test");
 				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
-				testThread = gcnew Thread(gcnew ThreadStart(StartEngine));
-				testThread->Name = "Thomas Engine";
-				testThread->Start();
+				mainThread = gcnew Thread(gcnew ThreadStart(StartEngine));
+				mainThread->Name = "Thomas Engine (Main Thread)";
+				mainThread->Start();
 			}
 
 		}
@@ -101,7 +102,6 @@ namespace ThomasEditor {
 					{
 						Window::ClearAllWindows();
 
-						graphics::Renderer::Begin();
 						//Editor rendering
 						editor::EditorCamera::Render();
 						for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
@@ -123,7 +123,8 @@ namespace ThomasEditor {
 						{
 							camera->Render();
 						}
-						Window::PresentAllWindows();
+						thomas::graphics::Renderer::ProcessCommands();
+						thomas::Window::PresentAllWindows();
 					}
 
 					//ThomasCore::Render();
