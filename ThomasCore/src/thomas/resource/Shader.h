@@ -67,7 +67,7 @@ namespace thomas
 			void Bind();
 			std::vector<ShaderPass>* GetPasses();
 			void SetPass(int passIndex);
-
+			ShaderPass& GetCurrentPass();
 			static void DestroyAllShaders();
 
 			static void SetGlobalColor(const std::string& name, math::Color value);
@@ -96,7 +96,7 @@ namespace thomas
 			ID3DX11Effect* m_effect;
 			std::vector<ShaderProperty*> m_properties;
 			std::vector<ShaderPass> m_passes;
-			
+			ShaderPass* m_currentPass;
 			static std::vector<Shader*> s_loadedShaders;
 			static Shader* s_standardShader;
 			static Shader* s_failedShader;

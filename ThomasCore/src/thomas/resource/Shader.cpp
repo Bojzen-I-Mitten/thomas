@@ -15,6 +15,7 @@ namespace thomas
 		bool Shader::s_shouldRecompile = false;
 		Shader::Shader(ID3DX11Effect* effect, std::string path) : Resource(path)
 		{
+			m_currentPass = nullptr;
 			m_effect = effect;
 			SetupReflection();
 		}
@@ -295,6 +296,11 @@ namespace thomas
 			ThomasCore::GetDeviceContext()->IASetInputLayout(m_passes[passIndex].inputLayout);
 			ID3DX11EffectPass* pass = m_effect->GetTechniqueByIndex(0)->GetPassByIndex(passIndex);
 			pass->Apply(0, ThomasCore::GetDeviceContext());
+			m_currentPass = &m_passes[passIndex];
+		}
+		Shader::ShaderPass & Shader::GetCurrentPass()
+		{
+			return *m_currentPass;
 		}
 		void Shader::DestroyAllShaders()
 		{

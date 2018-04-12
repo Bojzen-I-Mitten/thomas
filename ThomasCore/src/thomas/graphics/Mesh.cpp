@@ -53,7 +53,7 @@ namespace thomas {
 
 			std::vector<utils::buffers::VertexBuffer*> vertexBuffers;
 
-			for (auto semantic : shader->GetPasses()->at(0).inputSemantics)
+			for (auto semantic : shader->GetCurrentPass().inputSemantics)
 			{
 				if (m_data.vertexBuffers.find(semantic) != m_data.vertexBuffers.end())
 					vertexBuffers.push_back(m_data.vertexBuffers[semantic]);
