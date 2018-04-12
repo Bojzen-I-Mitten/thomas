@@ -69,9 +69,7 @@ namespace thomas
 
 		void Renderer::TransferCommandList()
 		{
-			s_lastFramesCommands.clear();
-			if(!s_renderCommands.empty())
-				s_lastFramesCommands = s_renderCommands;
+			s_lastFramesCommands = s_renderCommands;
 		}
 
 		void Renderer::BindObject(thomas::resource::Material * material, thomas::math::Matrix& worldMatrix)
@@ -80,18 +78,18 @@ namespace thomas
 
 			prop = material->GetProperty("thomas_ObjectToWorld");
 			prop->SetMatrix(worldMatrix.Transpose());
-			prop->ApplyProperty(material->GetShader());
+			//prop->ApplyProperty(material->GetShader());
 
 			prop = material->GetProperty("thomas_WorldToObject");
 			prop->SetMatrix(worldMatrix.Invert());
-			prop->ApplyProperty(material->GetShader());
+			//prop->ApplyProperty(material->GetShader());
 
 		}
 
 		void Renderer::ProcessCommands()
 		{
 			BindFrame();
-			for (auto& perCameraQueue : s_renderCommands)
+			for (auto& perCameraQueue : s_lastFramesCommands)
 			{
 				object::component::Camera* camera = perCameraQueue.first;
 				BindCamera(camera);

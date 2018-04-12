@@ -385,10 +385,10 @@ namespace thomas
 		void Material::Bind()
 		{
 			m_shader->Bind();
-			for (auto prop : m_properties)
+			/*for (auto prop : m_properties)
 			{
 				prop->ApplyProperty(m_shader);
-			}
+			}*/
 			ThomasCore::GetDeviceContext()->IASetPrimitiveTopology(m_topology);
 		}
 		void Material::Draw(graphics::Mesh * mesh)
