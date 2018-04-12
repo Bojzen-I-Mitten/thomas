@@ -170,7 +170,7 @@ namespace thomas
 
 			//vector<Texture> textures;
 			vertices.positions.resize(mesh->mNumVertices);
-			vertices.uvs.resize(mesh->mNumVertices);
+			vertices.texCoord0.resize(mesh->mNumVertices);
 			vertices.normals.resize(mesh->mNumVertices);
 			vertices.tangents.resize(mesh->mNumVertices);
 			vertices.bitangents.resize(mesh->mNumVertices);
@@ -212,8 +212,8 @@ namespace thomas
 
 					// A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
 					// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-					vertices.uvs[i].x = mesh->mTextureCoords[0][i].x;
-					vertices.uvs[i].y = mesh->mTextureCoords[0][i].y;
+					vertices.texCoord0[i].x = mesh->mTextureCoords[0][i].x;
+					vertices.texCoord0[i].y = mesh->mTextureCoords[0][i].y;
 				}
 			}
 

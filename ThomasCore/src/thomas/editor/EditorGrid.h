@@ -1,7 +1,7 @@
 #pragma once
 #include "../Common.h"
 #include "../utils/Math.h"
-
+#include "../graphics/Mesh.h"
 namespace thomas
 {
 	namespace utils
@@ -29,13 +29,8 @@ namespace thomas
 			void Draw(object::component::Camera* camera);
 			~EditorGrid();
 		private:
-			struct LineVertices
-			{
-				std::vector<math::Vector4> positions;
-				std::vector<math::Vector4> colors;
-				
-			};
-			LineVertices m_lines;
+			graphics::Vertices m_lines;
+			graphics::Mesh* m_mesh;
 			resource::Material* m_material = nullptr;
 			math::Matrix worldMatrix;
 			std::vector<utils::buffers::VertexBuffer*> m_vertexBuffers;

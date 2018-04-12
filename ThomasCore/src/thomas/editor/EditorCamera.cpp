@@ -234,7 +234,7 @@ namespace thomas
 					if (model)
 					{
 						for (graphics::Mesh* mesh : model->GetMeshes())
-							graphics::Renderer::SubmitCommand(graphics::RenderCommand(gameObject->m_transform, mesh, m_objectHighlighter, m_cameraComponent));
+							graphics::Renderer::SubmitCommand(graphics::RenderCommand(gameObject->m_transform->GetWorldMatrix(), mesh, m_objectHighlighter, m_cameraComponent));
 					}
 				}	
 				
