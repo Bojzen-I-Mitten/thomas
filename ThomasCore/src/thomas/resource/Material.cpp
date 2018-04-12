@@ -1,6 +1,6 @@
 #include "Material.h"
 #include "Shader.h"
-#include "../graphics/Texture.h"
+#include "../resource/texture/Texture.h"
 #include "../graphics/Mesh.h"
 #include "ShaderProperty.h"
 namespace thomas
@@ -10,7 +10,7 @@ namespace thomas
 		Material* Material::s_standardMaterial;
 		UINT Material::s_idCounter = 0;
 
-		void Material::SetSampler(const std::string name, graphics::Texture & value)
+		void Material::SetSampler(const std::string name, resource::Texture & value)
 		{
 			if (m_shader->HasProperty(name))
 			{
@@ -247,7 +247,7 @@ namespace thomas
 				//LOG("Property " << name << " does not exist for material");
 			}
 		}
-		graphics::Texture* Material::GetTexture(const std::string& name)
+		resource::Texture* Material::GetTexture(const std::string& name)
 		{
 			if (HasProperty(name))
 			{
@@ -259,12 +259,12 @@ namespace thomas
 				return nullptr;
 			}
 		}
-		void Material::SetTexture(const std::string& name, graphics::Texture& value)
+		void Material::SetTexture(const std::string& name, resource::Texture& value)
 		{
 			if (HasProperty(name))
 			{
 				GetProperty(name)->SetTexture(value);
-				SetSampler("sampler" + name, value);
+				//SetSampler("sampler" + name, value);
 			}
 			else
 			{

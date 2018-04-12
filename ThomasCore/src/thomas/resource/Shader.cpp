@@ -352,7 +352,7 @@ namespace thomas
 				}
 			}
 		}
-		void Shader::SetGlobalTexture(const std::string & name, graphics::Texture & value)
+		void Shader::SetGlobalTexture(const std::string & name, resource::Texture & value)
 		{
 			for (auto shader : s_loadedShaders)
 			{

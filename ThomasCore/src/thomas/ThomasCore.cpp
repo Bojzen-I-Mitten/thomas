@@ -2,7 +2,7 @@
 #include "Sound.h"
 #include "Input.h"
 #include "object\Object.h"
-#include "graphics\Texture.h"
+#include "resource\texture\Texture2D.h"
 #include "graphics\Renderer.h"
 #include "resource\Shader.h"
 #include "resource\Material.h"
@@ -45,7 +45,8 @@ namespace thomas {
 		init = Input::Init();
 
 		if (init)
-			init = graphics::Texture::Init();
+		//	init = graphics::Texture2D::Init();
+
 
 
 		//utils::DebugTools::Init();
@@ -146,8 +147,8 @@ namespace thomas {
 		graphics::ParticleSystem::Destroy();
 		//graphics::Sprite::Destroy();
 		//graphics::TextRender::Destroy();
-		graphics::Texture::ReleaseSamplers();
-		graphics::Texture::Destroy();
+		//graphics::Texture::ReleaseSamplers();
+		//graphics::Texture::Destroy();
 		resource::Shader::DestroyAllShaders();
 		resource::Material::Destroy();
 		//utils::DebugTools::Destroy();

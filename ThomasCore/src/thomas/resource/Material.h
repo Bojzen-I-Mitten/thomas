@@ -6,18 +6,18 @@ namespace thomas
 {
 	namespace graphics
 	{
-		class Texture;
 		class Mesh;
 		
 	}
 	namespace resource
 	{
+		class Texture;
 		class ShaderProperty;
 		class Shader;
 		class THOMAS_API Material : public Resource
 		{
 		protected:
-			void SetSampler(const std::string name, graphics::Texture& value);
+			void SetSampler(const std::string name, resource::Texture& value);
 			
 		private:
 			void CreateProperties();
@@ -51,8 +51,8 @@ namespace thomas
 			math::Matrix* GetMatrix(const std::string& name);
 			void SetMatrix(const std::string& name, math::Matrix& value);
 
-			graphics::Texture* GetTexture(const std::string& name);
-			void SetTexture(const std::string& name, graphics::Texture& value);
+			resource::Texture* GetTexture(const std::string& name);
+			void SetTexture(const std::string& name, resource::Texture& value);
 
 			math::Vector4* GetVector(const std::string& name);
 			void SetVector(const std::string& name, math::Vector4& value);

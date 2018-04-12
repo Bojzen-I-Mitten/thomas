@@ -30,6 +30,10 @@ namespace ThomasEditor
             {
                 Resource res = value as Resource;
                 Resources.AssetTypes type = ThomasEditor.Resources.GetResourceAssetType(res.GetType());
+                if(type == Resources.AssetTypes.TEXTURE2D)
+                {
+                    return new Uri(System.IO.Path.GetFullPath(res.GetPath()));
+                }
                 return AssetBrowser.assetImages[type].UriSource.LocalPath;
             }
             else

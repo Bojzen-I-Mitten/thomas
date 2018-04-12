@@ -7,7 +7,7 @@
 #include "Renderer.h"
 #include "../utils/d3d.h"
 #include "../ThomasCore.h"
-#include "../graphics/Texture.h"
+#include "../resource/texture/Texture.h"
 #include "../ThomasTime.h"
 #include "Mesh.h"
 

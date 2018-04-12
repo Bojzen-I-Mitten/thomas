@@ -8,7 +8,6 @@
 #include "../object/GameObject.h"
 #include "../object/component/Camera.h"
 #include "../ThomasCore.h"
-#include "Texture.h"
 #include "../object/component/Transform.h"
 #include "../Input.h"
 

@@ -1,5 +1,5 @@
 #include "ShaderProperty.h"
-#include "../graphics/Texture.h"
+#include "texture\Texture.h"
 
 namespace thomas
 {
@@ -320,7 +320,7 @@ namespace thomas
 				ID3DX11EffectShaderResourceVariable* texture = variable->AsShaderResource();
 				switch (m_class)
 				{
-				case PropClass::Texture: result = texture->SetResource(GetTexture()->GetTextureView()); break;
+				case PropClass::Texture: result = texture->SetResource(GetTexture()->GetResourceView()); break;
 				case PropClass::Resource: result = texture->SetResource(GetResource()); break;
 				default:
 					break;
@@ -331,7 +331,8 @@ namespace thomas
 			case PropClass::TextureSampler:
 			{
 				ID3DX11EffectSamplerVariable* sampler = variable->AsSampler();
-				result = sampler->SetSampler(0, GetSampler()->GetSamplerState());
+				
+				//result = sampler->SetSampler(0, GetSampler()->GetSamplerState());
 				break;
 			}
 				
@@ -450,7 +451,7 @@ namespace thomas
 			}
 		}
 
-		void ShaderProperty::SetTexture(graphics::Texture & value)
+		void ShaderProperty::SetTexture(resource::Texture & value)
 		{
 			if (m_class == PropClass::Texture)
 			{
@@ -464,9 +465,9 @@ namespace thomas
 			}
 		}
 
-		void ShaderProperty::SetSampler(graphics::Texture & value)
+		void ShaderProperty::SetSampler(resource::Texture & value)
 		{
-			if (m_class == PropClass::TextureSampler)
+			/*if (m_class == PropClass::TextureSampler)
 			{
 				m_value = (void*)&value;
 				m_isSet = true;
@@ -475,7 +476,7 @@ namespace thomas
 			else
 			{
 				LOG("Material property: " << GetName() << " is not of type: texture sampler");
-			}
+			}*/
 		}
 
 		void ShaderProperty::SetResource(ID3D11ShaderResourceView & value)
@@ -623,11 +624,11 @@ namespace thomas
 			}
 		}
 
-		graphics::Texture* ShaderProperty::GetTexture()
+		resource::Texture* ShaderProperty::GetTexture()
 		{
 			if (m_class == PropClass::Texture)
 			{
-				return (graphics::Texture*)m_value;
+				return (resource::Texture*)m_value;
 			}
 			else
 			{
@@ -636,17 +637,18 @@ namespace thomas
 			}
 		}
 
-		graphics::Texture * ShaderProperty::GetSampler()
+		resource::Texture * ShaderProperty::GetSampler()
 		{
-			if (m_class == PropClass::TextureSampler)
+			return nullptr;
+			/*if (m_class == PropClass::TextureSampler)
 			{
-				return (graphics::Texture*)m_value;
+				return (resource::Texture*)m_value;
 			}
 			else
 			{
 				LOG("Material property: " << GetName() << " is not of type: texture sampler");
 				return nullptr;
-			}
+			}*/
 		}
 
 		ID3D11ShaderResourceView * ShaderProperty::GetResource()
