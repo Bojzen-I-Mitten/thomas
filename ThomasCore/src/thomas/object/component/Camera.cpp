@@ -167,8 +167,10 @@ namespace thomas
 
 			void Camera::Render()
 			{
-				graphics::Renderer::BindCamera(this);
-				graphics::Renderer::Render();
+				for (RenderComponent* renderComponent : RenderComponent::GetAllRenderComponents())
+				{
+					renderComponent->SubmitToRenderer(this);
+				}
 			}
 
 			void Camera::OnDrawGizmos()

@@ -20,11 +20,6 @@ namespace ThomasEditor
 			float get(){ return ((thomas::object::component::RigidBodyComponent*)nativePtr)->GetMass(); }
 			void set(float value) { ((thomas::object::component::RigidBodyComponent*)nativePtr)->SetMass(value); }
 		}
-
-		void Update() override
-		{
-			((thomas::object::component::RigidBodyComponent*)nativePtr)->Update();
-		}
 		
 	};
 }

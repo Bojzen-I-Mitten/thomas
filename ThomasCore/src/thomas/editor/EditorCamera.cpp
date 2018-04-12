@@ -134,15 +134,12 @@ namespace thomas
 			s_editorCamera->m_manipulatorMode = s_editorCamera->m_manipulatorMode == ImGuizmo::MODE::WORLD ? ImGuizmo::MODE::LOCAL : ImGuizmo::MODE::WORLD;
 		}
 		void EditorCamera::renderCamera()
-		{		
-			thomas::graphics::Renderer::BindCamera(m_cameraComponent);
-			
+		{	
 			renderSelectedObjects();
-			thomas::graphics::Renderer::Render();
+			m_cameraComponent->Render();
 			renderGizmos();
 			Physics::DrawDebug(m_cameraComponent);
-			m_grid->Draw(m_cameraComponent->GetPosition());
-
+			m_grid->Draw(m_cameraComponent);
 			
 		}
 		void EditorCamera::updateCamera()
@@ -230,10 +227,6 @@ namespace thomas
 			{
 				if (!gameObject->GetActive())
 					continue;
-				graphics::Renderer::BindObject(m_objectHighlighter, gameObject->m_transform);
-				math::Matrix test = math::Matrix::CreateScale(1.03f) * gameObject->m_transform->GetWorldMatrix();
-				m_objectHighlighter->SetMatrix("thomas_ObjectToWorld", test.Transpose());
-				m_objectHighlighter->Bind();
 				object::component::RenderComponent* renderComponent = gameObject->GetComponent<object::component::RenderComponent>();
 				if (renderComponent)
 				{
@@ -241,7 +234,7 @@ namespace thomas
 					if (model)
 					{
 						for (graphics::Mesh* mesh : model->GetMeshes())
-							m_objectHighlighter->Draw(mesh);
+							graphics::Renderer::SubmitCommand(graphics::RenderCommand(gameObject->m_transform->GetWorldMatrix(), mesh, m_objectHighlighter, m_cameraComponent));
 					}
 				}	
 				

@@ -11,9 +11,11 @@ namespace thomas
 	{
 		std::vector<Shader*> Shader::s_loadedShaders;
 		Shader* Shader::s_standardShader;
+		Shader* Shader::s_failedShader;
 		bool Shader::s_shouldRecompile = false;
 		Shader::Shader(ID3DX11Effect* effect, std::string path) : Resource(path)
 		{
+			m_currentPass = nullptr;
 			m_effect = effect;
 			SetupReflection();
 		}
@@ -77,29 +79,31 @@ namespace thomas
 						vs->GetShaderDesc(vsPassDesc.ShaderIndex, &vsDesc);
 
 						std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayoutDesc;
-
+						std::vector<Semantics> inputSemantics;
 						for (int iInput = 0; iInput < vsDesc.NumInputSignatureEntries; iInput++)
 						{
 							D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
 							vs->GetInputSignatureElementDesc(vsPassDesc.ShaderIndex, iInput, &paramDesc);
 
+							Semantics semantic = GetSemanticFromName(paramDesc.SemanticName);
+
 							D3D11_INPUT_ELEMENT_DESC elementDesc;
 							elementDesc.SemanticName = paramDesc.SemanticName;
 							elementDesc.SemanticIndex = paramDesc.SemanticIndex;
-							elementDesc.InputSlot = 0;
+							elementDesc.InputSlot = iInput;
 							elementDesc.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 							elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 							elementDesc.InstanceDataStepRate = 0;
 
 							// determine DXGI format
 							elementDesc.Format = GetDXGIFormat(paramDesc.Mask, paramDesc.ComponentType);
-
+							
 							inputLayoutDesc.push_back(elementDesc);
-
+							inputSemantics.push_back(semantic);
 						}
 
 						HRESULT result = ThomasCore::GetDevice()->CreateInputLayout(&inputLayoutDesc[0], inputLayoutDesc.size(), vsDesc.pBytecode, vsDesc.BytecodeLength, &pass.inputLayout);
-
+						pass.inputSemantics = inputSemantics;
 						if (result != S_OK)
 						{
 							LOG("Failed to create input layout for shader: " << m_path << " Error: " << result);
@@ -203,7 +207,8 @@ namespace thomas
 			{
 				if (errorBlob->GetBufferSize())
 				{
-					//LOG("Shader Compiler : " << (char*)errorBlob->GetBufferPointer());
+					std::string error = (char*)errorBlob->GetBufferPointer();
+					LOG("Shader Compiler : " << error);
 					errorBlob->Release();
 				}
 				
@@ -214,9 +219,8 @@ namespace thomas
 
 		bool Shader::Init()
 		{
+			s_failedShader = CreateShader("../Data/FXIncludes/FailedShader.fx");
 			s_standardShader = CreateShader("../Data/FXIncludes/StandardShader.fx");
-			if (!s_standardShader)
-				return false;
 			return true;
 		}
 
@@ -232,39 +236,56 @@ namespace thomas
 				return foundShader;
 
 			ID3DX11Effect* effect = NULL;
-			if (Compile(path, &effect))
+			
+			if (!Compile(path, &effect))
+				Compile(s_failedShader->m_path, &effect);
+
+			Shader* shader = new Shader(effect, path);
+			s_loadedShaders.push_back(shader);
+			if (shader->m_passes.empty())
 			{
-				Shader* shader = new Shader(effect, path);
-				if (!shader->m_passes.empty())
-				{
-					s_loadedShaders.push_back(shader);
-					return shader;
-				}
-				else
-				{
-					SAFE_RELEASE(effect);
-					return nullptr;
-					LOG("Can't create shader: " << path << " because it contains no techniques or passes");
-				}	
+				LOG("shader: " << path << " contains no techniques or passes");
+				
 			}
-			return nullptr;
+			return shader;
 		}
 		void Shader::BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY type)
 		{
 			ThomasCore::GetDeviceContext()->IASetPrimitiveTopology(type);
 		}
-		void Shader::BindVertexBuffer(ID3D11Buffer * vertexBuffer, UINT stride, UINT offset)
+		void Shader::BindVertexBuffer(utils::buffers::VertexBuffer* buffer)
 		{
-			ThomasCore::GetDeviceContext()->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+			size_t stride = buffer->GetStride();
+			ID3D11Buffer* buff = buffer->GetBuffer();
+			size_t offset = 0;
+			ThomasCore::GetDeviceContext()->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
 		}
-		void Shader::BindIndexBuffer(ID3D11Buffer * indexBuffer)
+
+		void Shader::BindVertexBuffers(std::vector<utils::buffers::VertexBuffer*> buffers)
 		{
-			ThomasCore::GetDeviceContext()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			std::vector<ID3D11Buffer*> buffs;
+			std::vector<size_t> strides;
+			std::vector<size_t> offsets;
+
+			for (utils::buffers::VertexBuffer* buffer : buffers)
+			{
+				buffs.push_back(buffer->GetBuffer());
+				strides.push_back(buffer->GetStride());
+				offsets.push_back(0);
+			}
+
+			ThomasCore::GetDeviceContext()->IASetVertexBuffers(0, buffs.size(), buffs.data(), strides.data(), offsets.data());
+		}
+
+
+		void Shader::BindIndexBuffer(utils::buffers::IndexBuffer* indexBuffer)
+		{
+			ThomasCore::GetDeviceContext()->IASetIndexBuffer(indexBuffer->GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 		}
 		void Shader::Bind()
 		{
-			for (auto prop : m_properties)
-				prop->ApplyProperty(this);
+			//for (auto prop : m_properties)
+			//	prop->ApplyProperty();
 		}
 		std::vector<Shader::ShaderPass>* Shader::GetPasses()
 		{
@@ -276,6 +297,11 @@ namespace thomas
 			ThomasCore::GetDeviceContext()->IASetInputLayout(m_passes[passIndex].inputLayout);
 			ID3DX11EffectPass* pass = m_effect->GetTechniqueByIndex(0)->GetPassByIndex(passIndex);
 			pass->Apply(0, ThomasCore::GetDeviceContext());
+			m_currentPass = &m_passes[passIndex];
+		}
+		Shader::ShaderPass & Shader::GetCurrentPass()
+		{
+			return *m_currentPass;
 		}
 		void Shader::DestroyAllShaders()
 		{
@@ -438,6 +464,58 @@ namespace thomas
 		void Shader::OnChanged()
 		{
 			Recompile();
+		}
+		Shader::Semantics Shader::GetSemanticFromName(std::string semanticName)
+		{
+			if (semanticName.find("BINORMAL") != std::string::npos)
+			{
+				return Semantics::BINORMAL;
+			}
+			else if (semanticName.find("COLOR") != std::string::npos)
+			{
+				return Semantics::COLOR;
+			}
+			else if (semanticName.find("BLENDINDICES") != std::string::npos)
+			{
+				return Semantics::BLENDINDICES;
+			}
+			else if (semanticName.find("BLENDWEIGHT") != std::string::npos)
+			{
+				return Semantics::BLENDWEIGHT;
+			}
+			else if (semanticName.find("NORMAL") != std::string::npos)
+			{
+				return Semantics::NORMAL;
+			}
+			else if (semanticName.find("POSITION") != std::string::npos)
+			{
+				return Semantics::POSITION;
+			}
+			else if (semanticName.find("POSITIONT") != std::string::npos)
+			{
+				return Semantics::POSITIONT;
+			}
+			else if (semanticName.find("PSIZE") != std::string::npos)
+			{
+				return Semantics::PSIZE;
+			}
+			else if (semanticName.find("TANGENT") != std::string::npos)
+			{
+				return Semantics::TANGENT;
+			}
+			else if (semanticName.find("TEXCOORD") != std::string::npos)
+			{
+				return Semantics::TEXCOORD;
+			}
+			else if (semanticName.find("BITANGENT") != std::string::npos)
+			{
+				return Semantics::BITANGENT;
+			}
+			else
+			{
+				return Semantics::UNKNOWN;
+			}
+			
 		}
 		void Shader::QueueRecompile()
 		{

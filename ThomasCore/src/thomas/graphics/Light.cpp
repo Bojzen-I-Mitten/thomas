@@ -14,7 +14,7 @@ namespace thomas
 			m_data.position = math::Vector4(0, 0, 0, 1);
 			m_data.type = (int)LightType::UNKNOWN;
 
-			thomas::utils::D3d::FillDynamicBufferVector(s_lightBuffer, s_lights);
+			//thomas::utils::D3d::FillDynamicBufferVector(s_lightBuffer, s_lights);
 
 			this->s_lights.push_back(*this);
 			s_nrOfLights++;
@@ -30,7 +30,7 @@ namespace thomas
 			s_nrOfLights = 0;
 			s_lights.reserve(sizeof(Light)*s_maxNrOfLights);
 			s_pointers.reserve(sizeof(Light*)*s_maxNrOfLights);
-			thomas::utils::D3d::CreateDynamicBufferFromVector(s_lights, D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE);
+			//thomas::utils::D3d::CreateDynamicBufferFromVector(s_lights, D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE);
 		}
 
 		void Light::Destroy()

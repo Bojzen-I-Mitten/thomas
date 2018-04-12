@@ -1,8 +1,17 @@
 #pragma once
 #include "../Common.h"
 #include "../utils/Math.h"
+#include "../graphics/Mesh.h"
 namespace thomas
 {
+	namespace utils
+	{
+		namespace buffers
+		{
+			class VertexBuffer;
+		}
+	}
+	namespace object { namespace component { class Camera; } }
 	namespace resource
 	{
 		class Material;
@@ -17,20 +26,13 @@ namespace thomas
 			EditorGrid(int gridSize, float cellSize, int internalGridSize);
 			EditorGrid(int gridSize, float cellSize) : EditorGrid(gridSize, cellSize, 0) {};
 			EditorGrid(int gridSize) : EditorGrid(gridSize, 1.0f, 0) {}
-			void Draw(math::Vector3 cameraPos);
+			void Draw(object::component::Camera* camera);
 			~EditorGrid();
 		private:
-			struct LineVertex
-			{
-				math::Vector3 pos;
-				float viewDistance;
-				math::Vector4 color;
-				
-			};
-			std::vector<LineVertex> m_lines;
+			graphics::Vertices m_lines;
+			graphics::Mesh* m_mesh;
 			resource::Material* m_material = nullptr;
 			math::Matrix worldMatrix;
-			ID3D11Buffer* m_vertexBuffer;
 			int m_gridSize;
 			float m_cellSize;
 			int m_internalGridSize;
