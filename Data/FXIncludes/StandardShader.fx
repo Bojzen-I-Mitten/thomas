@@ -68,12 +68,14 @@ struct Light
     float4  position;
     float4  direction;
     float   intensity;
-    float   smoothness; //specularIntensity;
-    float   spotInnerAngle;//theta
-    float   spotOuterAngle;//phi
+    float   smoothness; //specularIntensity
+    float   spotInnerAngle;
+    float   spotOuterAngle;
+    float3  attenuation;
     uint    type;
     //bool drawHalo;
 };
+
 
 float4 frag(v2f input) : SV_TARGET
 {
@@ -81,12 +83,13 @@ float4 frag(v2f input) : SV_TARGET
     Light tempLight;
     tempLight.color = float4(0.5f, 0.5f, 0.1f, 1.0f);
     tempLight.position = float4(3, 3, 3, 1);
-    tempLight.intensity = 4;
+    tempLight.intensity = 1;
     tempLight.direction = normalize(float4(1, 1, 1, 0));
-    tempLight.type = 1;
-    tempLight.spotInnerAngle = 15.0f;
-    tempLight.spotOuterAngle = 20.0f;
-    float3 attenuation = float3(0.4f, 0.02f, 0.1f);
+    tempLight.type = 2;
+    tempLight.smoothness = 16.0f;
+    tempLight.spotInnerAngle = 10.0f;
+    tempLight.spotOuterAngle = 30.0f;
+    tempLight.attenuation = float3(0.4f, 0.02f, 0.1f);
     
     float4 finalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 ambient = float4(0.1f, 0.1f, 0.1f, 1.0f);
@@ -108,9 +111,9 @@ float4 frag(v2f input) : SV_TARGET
         float lightDistance = length(lightDir);
         lightDir = normalize(lightDir);
 
-        lightMultiplyer = tempLight.color * tempLight.intensity / (attenuation.x + attenuation.y * lightDistance + attenuation.z * lightDistance * lightDistance);
+        lightMultiplyer = tempLight.color * tempLight.intensity / (tempLight.attenuation.x + tempLight.attenuation.y * lightDistance + tempLight.attenuation.z * lightDistance * lightDistance);
     }
-    else if (2 == tempLight.type)
+    else if (2 == tempLight.type)//spot
     {
         lightDir = tempLight.position - input.worldPos;
         float lightDistance = length(lightDir);
@@ -127,7 +130,7 @@ float4 frag(v2f input) : SV_TARGET
             spotFactor = 1.0f - smoothstep(tempLight.spotInnerAngle, tempLight.spotOuterAngle, angle);
         }
 
-        lightMultiplyer = spotFactor * tempLight.color * tempLight.intensity / (attenuation.x + attenuation.y * lightDistance + attenuation.z * lightDistance * lightDistance);
+        lightMultiplyer = spotFactor * tempLight.color * tempLight.intensity / (tempLight.attenuation.x + tempLight.attenuation.y * lightDistance + tempLight.attenuation.z * lightDistance * lightDistance);
     }
     
 	
@@ -135,9 +138,7 @@ float4 frag(v2f input) : SV_TARGET
     float specularIntensity = 0.0f;
     if (lambertian > 0.0f)
     {
-        specularIntensity = pow(saturate(dot(input.normal, GetHalfwayVec(viewDir, lightDir))), 4.0f /*lightType.smoothness*/); //blinn-phong
-		//float4 test = float4(normalize(tempLight.position.xyz - input.worldPos.xyz), 0.0f);
-        //specularIntensity = pow(max(0.0, dot(viewDir, reflect(lightDir, input.normal))), 6.0f); //phong
+        specularIntensity = pow(saturate(dot(input.normal, GetHalfwayVec(viewDir, lightDir))), tempLight.smoothness); //blinn-phong
     }
     
     return saturate(ambient + (diffuse * lambertian + specular * specularIntensity) * lightMultiplyer);
