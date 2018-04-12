@@ -4,6 +4,7 @@
 #include "../utils/Math.h"
 #include <vector>
 #include <map>
+
 namespace thomas {
 
 	class Scene;
@@ -26,21 +27,20 @@ namespace thomas {
 		struct RenderCommand
 		{
 			object::component::Camera* camera;
-			object::component::Transform* transform;
+			math::Matrix worldMatrix;
 			Mesh* mesh;
 			resource::Material* material;
 
-			RenderCommand(object::component::Transform* trans, Mesh* m, resource::Material* mat, object::component::Camera* cam) : 
-				transform(trans), mesh(m), material(mat), camera(cam) {};
+			RenderCommand(math::Matrix world, Mesh* m, resource::Material* mat, object::component::Camera* cam) : 
+				worldMatrix(world), mesh(m), material(mat), camera(cam) {};
 		};
 		typedef std::map<object::component::Camera*, std::map<resource::Material*, std::vector<RenderCommand>>> CommandQueue;
 
 		class THOMAS_API Renderer {
 		private:			
 			static void BindFrame();
-			static void BindObject(thomas::resource::Material* material, thomas::object::component::Transform* transform);
-			
-			
+			static void BindObject(thomas::resource::Material* material, thomas::math::Matrix& worldMatrix);
+						
 		public:
 			static void BindCamera(thomas::object::component::Camera* camera);
 
@@ -48,6 +48,8 @@ namespace thomas {
 			static void ClearCommands();
 
 			static void SubmitCommand(RenderCommand command);
+
+			static void TransferCommandList();
 		private:
 			static CommandQueue s_renderCommands;
 			static CommandQueue s_lastFramesCommands;

@@ -10,6 +10,8 @@ namespace thomas
 	{
 	private:
 		
+		void CloneGUIData();
+		void DeleteGUIData();
 		bool UpdateWindow();
 		bool InitDxBuffers();
 		bool Resize();
@@ -52,6 +54,8 @@ namespace thomas
 
 		void QueueResize();
 
+		static void BeginFrame();
+		static void EndFrame(bool copyGui);
 		static void Update();
 		static void UpdateFocus();
 
@@ -102,6 +106,7 @@ namespace thomas
 		bool m_focused;
 
 		IDXGISwapChain* m_swapChain;
+		ImDrawData* m_guiData = nullptr;
 
 		static std::vector<Window*> s_windows;
 		static Window* s_editorWindow;

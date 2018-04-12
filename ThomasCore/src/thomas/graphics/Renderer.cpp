@@ -19,13 +19,14 @@
 #include <algorithm>
 #include "../utils/DebugTools.h"
 #include "../Window.h"
+
+
 namespace thomas
 {
 	namespace graphics
 	{
 		CommandQueue Renderer::s_renderCommands;
 		CommandQueue Renderer::s_lastFramesCommands;
-
 		void Renderer::BindFrame()
 		{
 			//ThomasPerFrame
@@ -66,16 +67,23 @@ namespace thomas
 			s_renderCommands[command.camera][command.material].push_back(command);
 		}
 
-		void Renderer::BindObject(thomas::resource::Material * material, thomas::object::component::Transform * transform)
+		void Renderer::TransferCommandList()
+		{
+			s_lastFramesCommands.clear();
+			if(!s_renderCommands.empty())
+				s_lastFramesCommands = s_renderCommands;
+		}
+
+		void Renderer::BindObject(thomas::resource::Material * material, thomas::math::Matrix& worldMatrix)
 		{
 			thomas::resource::ShaderProperty* prop;
 
 			prop = material->GetProperty("thomas_ObjectToWorld");
-			prop->SetMatrix(transform->GetWorldMatrix().Transpose());
+			prop->SetMatrix(worldMatrix.Transpose());
 			prop->ApplyProperty(material->GetShader());
 
 			prop = material->GetProperty("thomas_WorldToObject");
-			prop->SetMatrix(transform->GetWorldMatrix().Invert());
+			prop->SetMatrix(worldMatrix.Invert());
 			prop->ApplyProperty(material->GetShader());
 
 		}
@@ -83,8 +91,7 @@ namespace thomas
 		void Renderer::ProcessCommands()
 		{
 			BindFrame();
-			s_lastFramesCommands = s_renderCommands;
-			for (auto& perCameraQueue : s_lastFramesCommands)
+			for (auto& perCameraQueue : s_renderCommands)
 			{
 				object::component::Camera* camera = perCameraQueue.first;
 				BindCamera(camera);
@@ -94,7 +101,7 @@ namespace thomas
 					material->Bind();
 					for (RenderCommand& perMeshCommand : perMaterialQueue.second)
 					{
-						BindObject(material, perMeshCommand.transform);
+						BindObject(material, perMeshCommand.worldMatrix);
 						material->Draw(perMeshCommand.mesh);
 					}
 				}

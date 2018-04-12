@@ -109,7 +109,6 @@ namespace thomas {
 		editor::EditorCamera::Update();
 
 		Window::Update();
-		graphics::Renderer::ClearCommands();
 		resource::Shader::Update();
 		thomas::ThomasTime::Update();
 		Input::Update();

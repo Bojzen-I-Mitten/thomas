@@ -71,9 +71,9 @@ namespace thomas
 			{
 				m_material = new resource::Material(shader);
 				m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
-				m_vertexBuffers.push_back(new utils::buffers::VertexBuffer(m_lines.positions));
-				m_vertexBuffers.push_back(new utils::buffers::VertexBuffer(m_lines.colors));
+				m_mesh = new graphics::Mesh(m_lines, {}, "grid");
 			}
+				
 			
 		}
 
@@ -81,7 +81,6 @@ namespace thomas
 		{
 			if (m_material)
 			{
-				graphics::Renderer::BindCamera(camera);
 				math::Vector3 cameraPos = camera->GetPosition();
 				int scale = (int)log10(((abs(cameraPos.y/2)+1) / m_cellSize)*m_cellSize);
 				scale = pow(10.0f,scale);
@@ -92,14 +91,10 @@ namespace thomas
 				);
 				scale *= m_cellSize;
 				math::Vector4 cameraScaleMatrix(cameraPos.x, cameraPos.y, cameraPos.z, 0);
-				m_material->SetMatrix("thomas_ObjectToWorld", worldMatrix.Transpose());
 				m_material->SetVector("cameraPos", math::Vector4(cameraScaleMatrix));
 				m_material->SetInt("gridScale", scale);
 
-				m_material->GetShader()->BindVertexBuffers(m_vertexBuffers);
-
-				m_material->Bind();
-				m_material->Draw(m_lines.positions.size(), 0);
+				graphics::Renderer::SubmitCommand(graphics::RenderCommand(worldMatrix, m_mesh, m_material, camera));
 			}
 			
 		}

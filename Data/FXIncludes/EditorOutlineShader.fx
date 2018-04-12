@@ -11,9 +11,9 @@ DepthStencilState DisableDepth
 RasterizerState TestRasterizerOutline
 {
 	FillMode = SOLID;
-	CullMode = BACK;
-	FrontCounterClockWise = FALSE;
-	DepthClipEnable = FALSE;
+	CullMode = FRONT;
+	FrontCounterClockWise = TRUE;
+	DepthClipEnable = TRUE;
 };
 
 
@@ -24,7 +24,7 @@ struct v2f {
 v2f vert(appdata_thomas v)
 {
 	v2f o;
-	o.vertex = ThomasObjectToClipPos(v.vertex);
+	o.vertex = ThomasObjectToClipPos(v.vertex*1.05f);
 
 	return o;
 }

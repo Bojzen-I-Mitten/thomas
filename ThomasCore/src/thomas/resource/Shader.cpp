@@ -207,7 +207,8 @@ namespace thomas
 			{
 				if (errorBlob->GetBufferSize())
 				{
-					//LOG("Shader Compiler : " << (char*)errorBlob->GetBufferPointer());
+					std::string error = (char*)errorBlob->GetBufferPointer();
+					LOG("Shader Compiler : " << error);
 					errorBlob->Release();
 				}
 				
@@ -469,6 +470,10 @@ namespace thomas
 			if (semanticName.find("BINORMAL") != std::string::npos)
 			{
 				return Semantics::BINORMAL;
+			}
+			else if (semanticName.find("COLOR") != std::string::npos)
+			{
+				return Semantics::COLOR;
 			}
 			else if (semanticName.find("BLENDINDICES") != std::string::npos)
 			{

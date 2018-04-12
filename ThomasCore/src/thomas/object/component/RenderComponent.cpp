@@ -20,7 +20,6 @@ namespace thomas {
 				m_bounds.Extents.z = 0;
 				s_renderComponents.push_back(this);
 			}
-
 			void RenderComponent::SetModel(resource::Model* model)
 			{
 				if (!model)
@@ -36,7 +35,6 @@ namespace thomas {
 					m_model = model;
 					
 				}
-					
 			}
 
 			void RenderComponent::Update()
@@ -77,7 +75,7 @@ namespace thomas {
 
 						graphics::Mesh* mesh = m_model->GetMeshes()[i];
 						
-						thomas::graphics::Renderer::SubmitCommand(thomas::graphics::RenderCommand(m_gameObject->m_transform, mesh, material, camera));
+						thomas::graphics::Renderer::SubmitCommand(thomas::graphics::RenderCommand(m_gameObject->m_transform->GetWorldMatrix(), mesh, material, camera));
 					}
 				}
 				
@@ -101,10 +99,10 @@ namespace thomas {
 			}
 
 			void RenderComponent::OnDrawGizmos()
-			{
+			{/*
 				editor::Gizmos::SetMatrix(math::Matrix::CreateWorld(m_bounds.Center, math::Vector3::Forward, math::Vector3::Up));
 				editor::Gizmos::SetColor(math::Color(0, 0, 1));
-				editor::Gizmos::DrawBoundingOrientedBox(m_bounds);
+				editor::Gizmos::DrawBoundingOrientedBox(m_bounds);*/
 			}
 
 			resource::Model * RenderComponent::GetModel()

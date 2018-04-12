@@ -130,6 +130,37 @@ namespace thomas
 		return s_windows;
 	}
 
+	void Window::CloneGUIData()
+	{
+		ImDrawData* data = ImGui::GetDrawData();
+		ImDrawData* dst = new ImDrawData();
+		dst->Valid = data->Valid;
+		dst->CmdListsCount = data->CmdListsCount;
+		dst->TotalIdxCount = data->TotalIdxCount;
+		dst->TotalVtxCount = data->TotalVtxCount;
+
+		dst->CmdLists = (ImDrawList**)malloc(data->CmdListsCount * sizeof(ImDrawList*));
+		for (int i = 0; i < data->CmdListsCount; i++)
+		{
+			dst->CmdLists[i] = data->CmdLists[i]->CloneOutput();
+		}
+		m_guiData = dst;
+	}
+
+	void Window::DeleteGUIData()
+	{
+		if (m_guiData)
+		{
+			for (int i = 0; i < m_guiData->CmdListsCount; i++)
+			{
+				delete m_guiData->CmdLists[i];
+			}
+			m_guiData->Clear();
+			delete m_guiData;
+			m_guiData = nullptr;
+		}
+	}
+
 	bool Window::UpdateWindow()
 	{
 		return false;
@@ -447,7 +478,8 @@ namespace thomas
 		if (s_editorWindow && s_editorWindow->Initialized())
 		{
 			s_editorWindow->Bind();
-			ImGui::Render();
+			if(ImGui_ImplDx11_Valid() && s_editorWindow->m_guiData)
+				ImGui_ImplDX11_RenderDrawData(s_editorWindow->m_guiData);
 			s_editorWindow->Present();
 		}
 
@@ -462,6 +494,31 @@ namespace thomas
 	void Window::QueueResize()
 	{
 		m_shouldResize = true;
+	}
+
+	void Window::BeginFrame()
+	{
+
+		ImGui_ImplDX11_NewFrame();
+		ImGuizmo::BeginFrame();
+
+	}
+
+	void Window::EndFrame(bool copyGui)
+	{
+		if (s_editorWindow)
+		{
+			if (copyGui)
+			{
+
+				ImGui::Render();
+				s_editorWindow->DeleteGUIData();
+				s_editorWindow->CloneGUIData();
+			}
+			else
+				ImGui::EndFrame();
+			
+		}
 	}
 
 	void Window::Update()
@@ -482,8 +539,7 @@ namespace thomas
 				s_editorWindow->m_shouldResize = false;
 				ImGui_ImplDX11_CreateDeviceObjects();
 			}
-			ImGui_ImplDX11_NewFrame();
-			ImGuizmo::BeginFrame();
+			BeginFrame();
 		}
 
 		for (Window* window : s_windows)

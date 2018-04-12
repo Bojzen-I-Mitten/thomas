@@ -7,14 +7,23 @@
 #include "../resource/Shader.h"
 namespace thomas 
 {
-
+	namespace object
+	{
+		namespace component
+		{
+			class Camera;
+			class Transform;
+		}
+	}
+	namespace resource { class Material; }
 	namespace graphics 
 	{
 		
 		struct Vertices 
 		{
-			std::vector<math::Vector3> positions;
-			std::vector<math::Vector2> uvs;
+			std::vector<math::Vector4> positions;
+			std::vector<math::Vector4> colors;
+			std::vector<math::Vector2> texCoord0;
 			std::vector<math::Vector3> normals;
 			std::vector<math::Vector3> tangents;
 			std::vector<math::Vector3> bitangents;
@@ -26,7 +35,7 @@ namespace thomas
 			Vertices vertices;
 			std::vector<int> indices;
 			std::map<resource::Shader::Semantics, utils::buffers::VertexBuffer*> vertexBuffers;
-			utils::buffers::IndexBuffer* indexBuffer;
+			utils::buffers::IndexBuffer* indexBuffer = nullptr;
 		};
 
 		class THOMAS_API Mesh

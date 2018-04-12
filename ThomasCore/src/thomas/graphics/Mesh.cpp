@@ -1,7 +1,9 @@
 #include "Mesh.h"
 #include "../utils/d3d.h"
 #include "../ThomasCore.h"
-
+#include "../resource/Material.h"
+#include "../object/component/Camera.h"
+#include "../object/component/Transform.h"
 namespace thomas {
 	namespace graphics {
 
@@ -60,8 +62,16 @@ namespace thomas {
 			}
 
 			shader->BindVertexBuffers(vertexBuffers);
-			shader->BindIndexBuffer(m_data.indexBuffer);
-			thomas::ThomasCore::GetDeviceContext()->DrawIndexed(GetIndexCount(), 0, 0);
+			if (m_data.indexBuffer)
+			{
+				shader->BindIndexBuffer(m_data.indexBuffer);
+				thomas::ThomasCore::GetDeviceContext()->DrawIndexed(GetIndexCount(), 0, 0);
+			}
+			else
+			{
+				thomas::ThomasCore::GetDeviceContext()->Draw(m_data.vertices.positions.size(), 0);
+			}
+
 		}
 
 		Vertices* Mesh::GetVertices()
@@ -77,14 +87,21 @@ namespace thomas {
 
 		void Mesh::SetupMesh()
 		{
+			if(m_data.vertices.positions.size() > 0)
+				m_data.vertexBuffers[resource::Shader::Semantics::POSITION] = new utils::buffers::VertexBuffer(m_data.vertices.positions);
+			if (m_data.vertices.colors.size() > 0)
+				m_data.vertexBuffers[resource::Shader::Semantics::COLOR] = new utils::buffers::VertexBuffer(m_data.vertices.colors);
+			if (m_data.vertices.texCoord0.size() > 0)
+				m_data.vertexBuffers[resource::Shader::Semantics::TEXCOORD] = new utils::buffers::VertexBuffer(m_data.vertices.texCoord0);
+			if (m_data.vertices.normals.size() > 0)
+				m_data.vertexBuffers[resource::Shader::Semantics::NORMAL] = new utils::buffers::VertexBuffer(m_data.vertices.normals);
+			if (m_data.vertices.tangents.size() > 0)
+				m_data.vertexBuffers[resource::Shader::Semantics::TANGENT] = new utils::buffers::VertexBuffer(m_data.vertices.tangents);
+			if (m_data.vertices.bitangents.size() > 0)
+				m_data.vertexBuffers[resource::Shader::Semantics::BITANGENT] = new utils::buffers::VertexBuffer(m_data.vertices.bitangents);
 
-			m_data.vertexBuffers[resource::Shader::Semantics::POSITION] = new utils::buffers::VertexBuffer(m_data.vertices.positions);
-			m_data.vertexBuffers[resource::Shader::Semantics::TEXCOORD] = new utils::buffers::VertexBuffer(m_data.vertices.uvs);
-			m_data.vertexBuffers[resource::Shader::Semantics::NORMAL] = new utils::buffers::VertexBuffer(m_data.vertices.normals);
-			m_data.vertexBuffers[resource::Shader::Semantics::TANGENT] = new utils::buffers::VertexBuffer(m_data.vertices.tangents);
-			m_data.vertexBuffers[resource::Shader::Semantics::BITANGENT] = new utils::buffers::VertexBuffer(m_data.vertices.bitangents);
-
-			m_data.indexBuffer = new utils::buffers::IndexBuffer(m_data.indices);
+			if(!m_data.indices.empty())
+				m_data.indexBuffer = new utils::buffers::IndexBuffer(m_data.indices);
 			
 
 		}
@@ -94,7 +111,7 @@ namespace thomas {
 			std::vector<math::Vector3> points(m_data.vertices.positions.size());
 			for (int i = 0; i < m_data.vertices.positions.size(); i++)
 			{
-				points[i] = m_data.vertices.positions[i];
+				points[i] = math::Vector3(m_data.vertices.positions[i]);
 			}
 
 
