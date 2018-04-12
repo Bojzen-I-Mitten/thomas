@@ -4,13 +4,10 @@
 #include "../utils/Math.h"
 namespace thomas
 {
-	namespace graphics
-	{
-		class Texture;
-	}
 	namespace resource
 	{
-		
+
+		class Texture;
 		class THOMAS_API ShaderProperty
 		{
 		public:
@@ -66,8 +63,8 @@ namespace thomas
 			void SetInt(int& value);
 			void SetVector(math::Vector4& value);
 			void SetMatrix(math::Matrix& value);
-			void SetTexture(graphics::Texture& value);
-			void SetSampler(graphics::Texture& value);
+			void SetTexture(resource::Texture& value);
+			void SetSampler(resource::Texture& value);
 			void SetResource(ID3D11ShaderResourceView& value);
 			void SetBuffer(ID3D11Buffer& value);
 			void SetUAV(ID3D11UnorderedAccessView& value);
@@ -82,8 +79,8 @@ namespace thomas
 			int* GetInt();
 			math::Vector4* GetVector(); //TODO: Maybe not only vector4.
 			math::Matrix* GetMatrix();
-			graphics::Texture* GetTexture();
-			graphics::Texture* GetSampler();
+			resource::Texture* GetTexture();
+			resource::Texture* GetSampler();
 
 			ID3D11ShaderResourceView* GetResource();
 			ID3D11Buffer* GetBuffer();

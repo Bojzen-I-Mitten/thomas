@@ -1,6 +1,6 @@
 #include "AssimpLoader.h"
 
-#include "../graphics/Texture.h"
+#include "../resource/texture/Texture.h"
 #include "../graphics/Mesh.h"
 #include "../resource/Material.h"
 #include <assimp\Importer.hpp>
@@ -95,44 +95,44 @@ namespace thomas
 
 		std::vector<graphics::Texture*> AssimpLoader::GetMaterialTextures(aiMaterial * material)
 		{
-			struct TextureInfo {
+			/*struct TextureInfo {
 				aiString textureNameAiString;
 				graphics::Texture::TextureType textureType;
 				int mappingMode;
 			};
 			std::vector<TextureInfo> textureInfos;
-
+*/
 
 			//Get all textures information
 
 
-			TextureInfo texInfo;
-			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texInfo.textureNameAiString) == AI_SUCCESS)
-			{
-				texInfo.textureType = graphics::Texture::TextureType::DIFFUSE;
-				material->Get(_AI_MATKEY_MAPPING_BASE, aiTextureType_DIFFUSE, 0, texInfo.mappingMode);
-				textureInfos.push_back(texInfo);
-			}
-				
-			if (material->GetTexture(aiTextureType_SPECULAR, 0, &texInfo.textureNameAiString) == AI_SUCCESS)
-			{
-				texInfo.textureType = graphics::Texture::TextureType::SPECULAR;
-				material->Get(_AI_MATKEY_MAPPING_BASE, aiTextureType_SPECULAR, 0, texInfo.mappingMode);
-				textureInfos.push_back(texInfo);
-			}
-				
-			if (material->GetTexture(aiTextureType_NORMALS, 0, &texInfo.textureNameAiString) == AI_SUCCESS)
-			{
-				texInfo.textureType = graphics::Texture::TextureType::NORMAL;
-				material->Get(_AI_MATKEY_MAPPING_BASE, aiTextureType_NORMALS, 0, texInfo.mappingMode);
-				textureInfos.push_back(texInfo);
-			}
-			else if (material->GetTexture(aiTextureType_HEIGHT, 0, &texInfo.textureNameAiString) == AI_SUCCESS)
-			{
-				texInfo.textureType = graphics::Texture::TextureType::NORMAL;
-				material->Get(_AI_MATKEY_MAPPING_BASE, aiTextureType_NORMALS, 0, texInfo.mappingMode);
-				textureInfos.push_back(texInfo);
-			}
+			//TextureInfo texInfo;
+			//if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texInfo.textureNameAiString) == AI_SUCCESS)
+			//{
+			//	texInfo.textureType = graphics::Texture::TextureType::DIFFUSE;
+			//	material->Get(_AI_MATKEY_MAPPING_BASE, aiTextureType_DIFFUSE, 0, texInfo.mappingMode);
+			//	textureInfos.push_back(texInfo);
+			//}
+			//	
+			//if (material->GetTexture(aiTextureType_SPECULAR, 0, &texInfo.textureNameAiString) == AI_SUCCESS)
+			//{
+			//	texInfo.textureType = graphics::Texture::TextureType::SPECULAR;
+			//	material->Get(_AI_MATKEY_MAPPING_BASE, aiTextureType_SPECULAR, 0, texInfo.mappingMode);
+			//	textureInfos.push_back(texInfo);
+			//}
+			//	
+			//if (material->GetTexture(aiTextureType_NORMALS, 0, &texInfo.textureNameAiString) == AI_SUCCESS)
+			//{
+			//	texInfo.textureType = graphics::Texture::TextureType::NORMAL;
+			//	material->Get(_AI_MATKEY_MAPPING_BASE, aiTextureType_NORMALS, 0, texInfo.mappingMode);
+			//	textureInfos.push_back(texInfo);
+			//}
+			//else if (material->GetTexture(aiTextureType_HEIGHT, 0, &texInfo.textureNameAiString) == AI_SUCCESS)
+			//{
+			//	texInfo.textureType = graphics::Texture::TextureType::NORMAL;
+			//	material->Get(_AI_MATKEY_MAPPING_BASE, aiTextureType_NORMALS, 0, texInfo.mappingMode);
+			//	textureInfos.push_back(texInfo);
+			//}
 
 				
 

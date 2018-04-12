@@ -9,12 +9,9 @@
 #include "../utils/Buffers.h"
 namespace thomas
 {
-	namespace graphics
-	{
-		class Texture;
-	}
 	namespace resource
 	{
+		class Texture;
 		class ShaderProperty;
 		class THOMAS_API Shader : public Resource
 		{
@@ -78,7 +75,7 @@ namespace thomas
 
 			static void SetGlobalMatrix(const std::string& name, math::Matrix value);
 
-			static void SetGlobalTexture(const std::string& name, graphics::Texture& value);
+			static void SetGlobalTexture(const std::string& name, resource::Texture& value);
 
 			static void SetGlobalVector(const std::string& name, math::Vector4 value);
 
