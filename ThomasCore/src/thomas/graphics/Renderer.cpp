@@ -14,7 +14,6 @@
 #include "../ThomasTime.h"
 #include "../resource/Material.h"
 #include "../resource/Shader.h"
-#include "../resource/ShaderProperty.h"
 #include <algorithm>
 #include "../utils/DebugTools.h"
 #include "../Window.h"
@@ -73,14 +72,12 @@ namespace thomas
 
 		void Renderer::BindObject(thomas::resource::Material * material, thomas::math::Matrix& worldMatrix)
 		{
-			thomas::resource::ShaderProperty* prop;
+			thomas::resource::shaderProperty::ShaderProperty* prop;
+			material->SetMatrix("thomas_ObjectToWorld", worldMatrix.Transpose());
+			material->ApplyProperty("thomas_ObjectToWorld");
 
-			prop = material->GetProperty("thomas_ObjectToWorld");
-			prop->SetMatrix(worldMatrix.Transpose());
-			//prop->ApplyProperty(material->GetShader());
-
-			prop = material->GetProperty("thomas_WorldToObject");
-			prop->SetMatrix(worldMatrix.Invert());
+			material->SetMatrix("thomas_WorldToObject", worldMatrix.Invert());
+			material->ApplyProperty("thomas_WorldToObject");
 			//prop->ApplyProperty(material->GetShader());
 
 		}

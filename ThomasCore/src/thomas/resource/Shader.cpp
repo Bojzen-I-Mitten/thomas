@@ -3,7 +3,7 @@
 #include <atlconv.h>
 #include <d3dcompiler.h>
 #include "Shader.h"
-#include "ShaderProperty.h"
+#include "ShaderProperty\shaderProperties.h"
 #include <fstream>
 namespace thomas
 {
@@ -42,11 +42,10 @@ namespace thomas
 				{
 					if (m_properties.size() > i)
 					{
-						m_properties[i]->UpdateVariable(variable);
+						//m_properties[i]->UpdateVariable(variable);
 					}else
 					{ 
-						ShaderProperty* prop = new ShaderProperty(i, variable);
-						m_properties.push_back(prop);
+						AddProperty(variable);
 					}
 					
 				}
@@ -160,8 +159,6 @@ namespace thomas
 			for (auto pass : m_passes)
 				SAFE_RELEASE(pass.inputLayout);
 			m_passes.clear();
-			for (ShaderProperty* mProp : m_properties)
-				delete mProp;
 			m_properties.clear();
 		}
 
@@ -208,7 +205,7 @@ namespace thomas
 				if (errorBlob->GetBufferSize())
 				{
 					std::string error = (char*)errorBlob->GetBufferPointer();
-					LOG("Shader Compiler : " << error);
+					//LOG("Shader Compiler : " << error);
 					errorBlob->Release();
 				}
 				
@@ -284,8 +281,8 @@ namespace thomas
 		}
 		void Shader::Bind()
 		{
-			//for (auto prop : m_properties)
-			//	prop->ApplyProperty();
+			for (auto prop : m_properties)
+				prop.second->Apply(this);
 		}
 		std::vector<Shader::ShaderPass>* Shader::GetPasses()
 		{
@@ -318,7 +315,8 @@ namespace thomas
 			{
 				if (shader->HasProperty(name))
 				{
-					shader->GetProperty(name)->SetVector(value.ToVector4());
+					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
+					shader->m_properties[name]->SetName(name);
 				}
 			}
 		}
@@ -328,7 +326,8 @@ namespace thomas
 			{
 				if (shader->HasProperty(name))
 				{
-					shader->GetProperty(name)->SetFloat(value);
+					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyScalarFloat(value));
+					shader->m_properties[name]->SetName(name);
 				}
 			}
 		}
@@ -338,7 +337,8 @@ namespace thomas
 			{
 				if (shader->HasProperty(name))
 				{
-					shader->GetProperty(name)->SetInt(value);
+					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyScalarInt(value));
+					shader->m_properties[name]->SetName(name);
 				}
 			}
 		}
@@ -348,7 +348,8 @@ namespace thomas
 			{
 				if (shader->HasProperty(name))
 				{
-					shader->GetProperty(name)->SetMatrix(value);
+					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyMatrix(value));
+					shader->m_properties[name]->SetName(name);
 				}
 			}
 		}
@@ -358,7 +359,7 @@ namespace thomas
 			{
 				if (shader->HasProperty(name))
 				{
-					shader->GetProperty(name)->SetTexture(value);
+					//shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
 				}
 			}
 		}
@@ -368,7 +369,7 @@ namespace thomas
 			{
 				if (shader->HasProperty(name))
 				{
-					shader->GetProperty(name)->SetVector(value);
+					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
 				}
 			}
 		}
@@ -400,24 +401,19 @@ namespace thomas
 
 		bool Shader::HasProperty(const std::string & name)
 		{
-			for (ShaderProperty* prop : m_properties)
-			{
-				if (prop->GetName() == name)
-					return true;
-			}
-			return false;
+			return m_properties.find(name) != m_properties.end();
 		}
-		ShaderProperty * Shader::GetProperty(const std::string & name)
+		std::shared_ptr<shaderProperty::ShaderProperty> Shader::GetProperty(const std::string & name)
 		{
-			for (ShaderProperty* prop : m_properties)
+			for (auto& prop : m_properties)
 			{
-				if (prop->GetName() == name)
-					return prop;
+				if (prop.first == name)
+					return prop.second;
 			}
 			return nullptr;
 		}
 
-		std::vector<ShaderProperty*> Shader::GetProperties()
+		std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> Shader::GetProperties()
 		{
 			return m_properties;
 		}
@@ -514,6 +510,69 @@ namespace thomas
 			else
 			{
 				return Semantics::UNKNOWN;
+			}
+			
+		}
+		void Shader::AddProperty(ID3DX11EffectVariable * prop)
+		{
+			D3DX11_EFFECT_TYPE_DESC typeDesc;
+			D3DX11_EFFECT_VARIABLE_DESC variableDesc;
+
+			prop->GetType()->GetDesc(&typeDesc);
+			prop->GetDesc(&variableDesc);
+			ID3DX11EffectConstantBuffer* cBuffer = prop->GetParentConstantBuffer();
+			
+			shaderProperty::ShaderProperty* newProperty = nullptr;
+			
+			switch (typeDesc.Class)
+			{
+			case D3D_SVC_SCALAR:
+			{
+				switch (typeDesc.Type)
+				{
+				case D3D_SVT_BOOL:
+					newProperty = shaderProperty::ShaderPropertyScalarBool::GetDefault();
+					break;
+				case D3D_SVT_INT:
+				case D3D_SVT_UINT:
+					newProperty = shaderProperty::ShaderPropertyScalarInt::GetDefault();
+					break;
+				case D3D_SVT_FLOAT:
+					newProperty = shaderProperty::ShaderPropertyScalarFloat::GetDefault();
+					break;
+				default:
+					break;
+				}
+				break;
+			}
+			case D3D_SVC_VECTOR:
+				newProperty = shaderProperty::ShaderPropertyVector::GetDefault();
+				break;
+			case D3D_SVC_MATRIX_COLUMNS:
+			case D3D_SVC_MATRIX_ROWS:
+				newProperty = shaderProperty::ShaderPropertyMatrix::GetDefault();
+				break;
+			/*case D3D_SVC_OBJECT:
+				tempClass = GetObjectPropClass(type);*/
+			default:
+				break;
+			}
+			
+			std::string name = variableDesc.Name;
+			bool isMaterialProperty = false;
+			if (cBuffer->IsValid())
+			{
+				D3DX11_EFFECT_VARIABLE_DESC bufferDesc;
+				cBuffer->GetDesc(&bufferDesc);
+				std::string bufferName = bufferDesc.Name;
+				if (bufferName == "MATERIAL_PROPERTIES")
+					isMaterialProperty = true;
+			}
+			if (newProperty != nullptr)
+			{
+				newProperty->SetName(name);
+				newProperty->isMaterialProperty = isMaterialProperty;
+				m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(newProperty);
 			}
 			
 		}

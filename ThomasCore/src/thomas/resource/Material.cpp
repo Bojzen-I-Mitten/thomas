@@ -2,7 +2,7 @@
 #include "Shader.h"
 #include "../resource/texture/Texture.h"
 #include "../graphics/Mesh.h"
-#include "ShaderProperty.h"
+#include "ShaderProperty\shaderProperties.h"
 namespace thomas
 {
 	namespace resource
@@ -14,25 +14,23 @@ namespace thomas
 		{
 			if (m_shader->HasProperty(name))
 			{
-				GetProperty(name)->SetSampler(value);
+				//GetProperty(name)->SetSampler(value);
 			}
 		}
 
-		void Material::CreateProperties()
+		void Material::FetchPropertiesFromShader()
 		{
-			for (ShaderProperty* mProp : m_properties)
-			{
-				delete mProp;
-			}
-			m_properties.clear();
-
 			if (m_shader)
 			{
-				for (ShaderProperty* prop : m_shader->GetProperties())
+				for (auto& prop : m_shader->GetProperties())
 				{
-					m_properties.push_back(new resource::ShaderProperty(prop));
+					if (prop.second->isMaterialProperty)
+					{
+						m_properties[prop.first] = prop.second;
+					}
 				}
 			}
+
 		}
 
 		void Material::OnChanged()
@@ -70,8 +68,8 @@ namespace thomas
 				pass.index = m_passes.size();
 				m_passes.push_back(pass);
 			}
+			FetchPropertiesFromShader();
 
-			CreateProperties();
 		}
 
 
@@ -83,13 +81,11 @@ namespace thomas
 			m_renderQueue = original->m_renderQueue;
 			m_topology = original->m_topology;
 			m_passes = original->m_passes;
-			for (ShaderProperty* prop : original->m_properties)
-			{
-				m_properties.push_back(new ShaderProperty(prop));
-			}
 
 			m_id = s_idCounter;
 			s_idCounter++;
+
+			FetchPropertiesFromShader();
 		}
 
 		Material::Material(std::string path) : Resource(path)
@@ -103,10 +99,6 @@ namespace thomas
 
 		Material::~Material()
 		{
-			for (ShaderProperty* mProp : m_properties)
-			{
-				delete mProp;
-			}
 			m_properties.clear();
 		}
 
@@ -123,7 +115,7 @@ namespace thomas
 				pass.index = m_passes.size();
 				m_passes.push_back(pass);
 			}
-			CreateProperties();
+			FetchPropertiesFromShader();
 		}
 
 		resource::Shader * Material::GetShader()
@@ -131,127 +123,111 @@ namespace thomas
 			return m_shader;
 		}
 
-		bool Material::HasProperty(const std::string & name)
-		{
-			for (ShaderProperty* prop : m_properties)
-			{
-				if (prop->GetName() == name)
-					return true;
-			}
-			return false;
-		}
-
-		ShaderProperty* Material::GetProperty(const std::string & name)
+		void Material::ApplyProperty(const std::string & name)
 		{
 			if (HasProperty(name))
 			{
-				for (ShaderProperty* prop : m_properties)
-				{
-					if (prop->GetName() == name)
-						return prop;
-				}
+				m_properties[name]->Apply(m_shader);
+			}
+				
+		}
+		
+
+		bool Material::HasProperty(const std::string & name)
+		{
+			return m_shader->HasProperty(name);
+		}
+
+		std::shared_ptr<shaderProperty::ShaderProperty> Material::GetProperty(const std::string & name)
+		{
+			if (HasProperty(name))
+			{
+				return m_properties[name];
 			}
 			return nullptr;
 		}
-		math::Color* Material::GetColor(const std::string& name)
+		math::Color Material::GetColor(const std::string& name)
 		{
-			if (HasProperty(name))
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::VECTOR)
 			{
-				return (math::Color*)GetProperty(name)->GetVector();
+				
+				return ((shaderProperty::ShaderPropertyVector*)m_properties[name].get())->GetValue();
+				
 			}
 			else
 			{
 				//LOG("Property " << name << " does not exist for material");
-				return nullptr;
+				return math::Color();
 			}
 		}
 		void Material::SetColor(const std::string& name, const math::Color& value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetVector(value.ToVector4());
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+	
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
+			m_properties[name]->SetName(name);
+
 		}
-		float* Material::GetFloat(const std::string& name)
+		float Material::GetFloat(const std::string& name)
 		{
-			if (HasProperty(name))
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::SCALAR_FLOAT)
 			{
-				return GetProperty(name)->GetFloat();
+				return ((shaderProperty::ShaderPropertyScalarFloat*)m_properties[name].get())->GetValue();
 			}
 			else
 			{
 				//LOG("Property " << name << " does not exist for material");
-				return nullptr;
+				return 0;
 			}
 		}
 		void Material::SetFloat(const std::string& name, float& value)
 		{
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyScalarFloat(value));
+			m_properties[name]->SetName(name);
 			
-			if (m_shader->HasProperty(name))
-			{
-				GetProperty(name)->SetFloat(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
-
 		}
-		int* Material::GetInt(const std::string& name)
+		int Material::GetInt(const std::string& name)
 		{
-			if (HasProperty(name))
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::SCALAR_INT)
 			{
-				return GetProperty(name)->GetInt();
+				return ((shaderProperty::ShaderPropertyScalarInt*)m_properties[name].get())->GetValue();
 			}
 			else
 			{
 				//LOG("Property " << name << " does not exist for material" );
-				return nullptr;
+				return 0;
 			}
 		}
 		void Material::SetInt(const std::string& name, int& value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetInt(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+			
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyScalarInt(value));
+			m_properties[name]->SetName(name);
+			
 		}
-		math::Matrix* Material::GetMatrix(const std::string& name)
+		math::Matrix Material::GetMatrix(const std::string& name)
 		{
-			if (HasProperty(name))
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::MATRIX)
 			{
-				return GetProperty(name)->GetMatrix();
+				((shaderProperty::ShaderPropertyMatrix*)m_properties[name].get())->GetValue();
 			}
 			else
 			{
 				//LOG("Property " << name << " does not exist for material");
-				return nullptr;
+				return math::Matrix();
 			}
 		}
 		void Material::SetMatrix(const std::string& name, math::Matrix& value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetMatrix(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+			
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyMatrix(value));
+			m_properties[name]->SetName(name);
+			
 		}
 		resource::Texture* Material::GetTexture(const std::string& name)
 		{
-			if (HasProperty(name))
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::TEXTURE2D)
 			{
-				return GetProperty(name)->GetTexture();
+				((shaderProperty::ShaderPropertyVector*)m_properties[name].get())->GetValue();
 			}
 			else
 			{
@@ -261,9 +237,9 @@ namespace thomas
 		}
 		void Material::SetTexture(const std::string& name, resource::Texture& value)
 		{
-			if (HasProperty(name))
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::VECTOR)
 			{
-				GetProperty(name)->SetTexture(value);
+				//m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
 				//SetSampler("sampler" + name, value);
 			}
 			else
@@ -271,74 +247,82 @@ namespace thomas
 				//LOG("Property " << name << " does not exist for material");
 			}
 		}
-		math::Vector4* Material::GetVector(const std::string& name)
+		math::Vector4 Material::GetVector(const std::string& name)
 		{
-			if (HasProperty(name))
+			if(HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::VECTOR)
 			{
-				return GetProperty(name)->GetVector();
+				return ((shaderProperty::ShaderPropertyVector*)m_properties[name].get())->GetValue();
 			}
 			else
 			{
 				//LOG("Property " << name << " does not exist for material");
-				return nullptr;
+				return math::Vector4();
 			}
 		}
 		void Material::SetVector(const std::string& name, math::Vector4& value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetVector(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+			
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
+			m_properties[name]->SetName(name);
+			
 		}
 		void Material::SetResource(const std::string & name, ID3D11ShaderResourceView & value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetResource(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
 		}
 		void Material::SetBuffer(const std::string & name, ID3D11Buffer & value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetBuffer(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material" );
-			}
 		}
 		void Material::SetRaw(const std::string & name, void * value, size_t size, UINT count)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetRaw(value, size, count);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
 		}
-
 		void Material::SetRaw(const std::string & name, void * value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetRaw(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
 		}
+		//void Material::SetResource(const std::string & name, ID3D11ShaderResourceView & value)
+		//{
+		//	if (HasProperty(name))
+		//	{
+		//		GetProperty(name)->SetResource(value);
+		//	}
+		//	else
+		//	{
+		//		//LOG("Property " << name << " does not exist for material");
+		//	}
+		//}
+		//void Material::SetBuffer(const std::string & name, ID3D11Buffer & value)
+		//{
+		//	if (HasProperty(name))
+		//	{
+		//		GetProperty(name)->SetBuffer(value);
+		//	}
+		//	else
+		//	{
+		//		//LOG("Property " << name << " does not exist for material" );
+		//	}
+		//}
+		//void Material::SetRaw(const std::string & name, void * value, size_t size, UINT count)
+		//{
+		//	if (HasProperty(name))
+		//	{
+		//		GetProperty(name)->SetRaw(value, size, count);
+		//	}
+		//	else
+		//	{
+		//		//LOG("Property " << name << " does not exist for material");
+		//	}
+		//}
+
+		//void Material::SetRaw(const std::string & name, void * value)
+		//{
+		//	if (HasProperty(name))
+		//	{
+		//		GetProperty(name)->SetRaw(value, 1);
+		//	}
+		//	else
+		//	{
+		//		//LOG("Property " << name << " does not exist for material");
+		//	}
+		//}
 
 
 		void Material::SetShaderPassEnabled(int index, bool enabled)
@@ -385,10 +369,10 @@ namespace thomas
 		void Material::Bind()
 		{
 			m_shader->Bind();
-			/*for (auto prop : m_properties)
+			for (auto prop : m_properties)
 			{
-				prop->ApplyProperty(m_shader);
-			}*/
+				prop.second->Apply(m_shader);
+			}
 			ThomasCore::GetDeviceContext()->IASetPrimitiveTopology(m_topology);
 		}
 		void Material::Draw(graphics::Mesh * mesh)
@@ -414,16 +398,19 @@ namespace thomas
 				}
 			}
 		}
-		std::vector<ShaderProperty*> Material::GetEditorProperties()
+		std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> Material::GetEditorProperties()
 		{
-			//optimize maybe?
-			std::vector<ShaderProperty*> editorProperties;
-			for (ShaderProperty* matProp : m_properties)
-				if (matProp->GetBufferName() == "MATERIAL_PROPERTIES")
-					editorProperties.push_back(matProp);
+			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> editorProperties;
+			for (auto& prop : m_properties)
+			{
+				if (prop.second->isMaterialProperty)
+				{
+					editorProperties[prop.first] = prop.second;
+				}
+			}
 			return editorProperties;
 		}
-		std::vector<ShaderProperty*> Material::GetAllProperties()
+		std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> Material::GetAllProperties()
 		{
 			return m_properties;
 		}

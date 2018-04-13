@@ -1,7 +1,7 @@
 #pragma once
 #pragma unmanaged
 #include <thomas\resource\Material.h>
-#include <thomas\resource\ShaderProperty.h>
+#include <thomas\resource\ShaderProperty\shaderProperties.h>
 #pragma managed
 #include "Shader.h"
 #include "../math/Math.h"
@@ -39,19 +39,19 @@ namespace ThomasEditor
 		void SetShaderPassEnabled(int index, bool enabled) { ((thomas::resource::Material*)m_nativePtr)->SetShaderPassEnabled(index, enabled); }
 		void SetShaderPassEnabled(std::string name, bool enabled) { ((thomas::resource::Material*)m_nativePtr)->SetShaderPassEnabled(name, enabled); }
 
-		Color GetColor(String^ name) { return Color(*((thomas::resource::Material*)m_nativePtr)->GetColor(Utility::ConvertString(name))); }
+		Color GetColor(String^ name) { return Color(((thomas::resource::Material*)m_nativePtr)->GetColor(Utility::ConvertString(name))); }
 		void SetColor(String^ name, Color value) { ((thomas::resource::Material*)m_nativePtr)->SetColor(Utility::ConvertString(name), thomas::math::Color(value.r, value.g, value.b, value.a)); }
 
-		float GetFloat(String^ name) { return *((thomas::resource::Material*)m_nativePtr)->GetFloat(Utility::ConvertString(name)); }
+		float GetFloat(String^ name) { return ((thomas::resource::Material*)m_nativePtr)->GetFloat(Utility::ConvertString(name)); }
 		void SetFloat(String^ name, float& value) { ((thomas::resource::Material*)m_nativePtr)->SetFloat(Utility::ConvertString(name), value); };
 
-		int GetInt(String^ name) { return *((thomas::resource::Material*)m_nativePtr)->GetInt(Utility::ConvertString(name)); };
+		int GetInt(String^ name) { return ((thomas::resource::Material*)m_nativePtr)->GetInt(Utility::ConvertString(name)); };
 		void SetInt(String^ name, int& value) { ((thomas::resource::Material*)m_nativePtr)->SetInt(Utility::ConvertString(name),value); }
 
-		Matrix4x4 GetMatrix(String^ name) { return Matrix4x4(*((thomas::resource::Material*)m_nativePtr)->GetMatrix(Utility::ConvertString(name))); }
+		Matrix4x4 GetMatrix(String^ name) { return Matrix4x4(((thomas::resource::Material*)m_nativePtr)->GetMatrix(Utility::ConvertString(name))); }
 		void SetMatrix(String^ name, Matrix4x4 value) { ((thomas::resource::Material*)m_nativePtr)->SetMatrix(Utility::ConvertString(name), value.ToThomas()); }
 
-		Vector4 GetVector(String^ name) { return Vector4(*((thomas::resource::Material*)m_nativePtr)->GetVector(Utility::ConvertString(name))); }
+		Vector4 GetVector(String^ name) { return Vector4(((thomas::resource::Material*)m_nativePtr)->GetVector(Utility::ConvertString(name))); }
 		void SetVector(String^ name, Vector4 value) { ((thomas::resource::Material*)m_nativePtr)->SetVector(Utility::ConvertString(name), thomas::math::Vector4(value.x, value.y, value.z, value.w)); }
 
 
@@ -76,58 +76,36 @@ namespace ThomasEditor
 		{
 			Dictionary<String^, System::Object^>^ get() {
 				Dictionary<String^, System::Object^>^ props = gcnew Dictionary<String^, System::Object^>();
-				for each(thomas::resource::ShaderProperty* prop in ((thomas::resource::Material*)m_nativePtr)->GetEditorProperties())
-				{
 
-					String^ name = Utility::ConvertString(prop->GetName());
-					Object^ obj;
-					switch (prop->GetPropClass())
+				for (auto& prop : ((thomas::resource::Material*)m_nativePtr)->GetEditorProperties())
+				{
+					
+					System::Object^ value;
+					switch (prop.second->GetType())
 					{
-					case thomas::resource::ShaderProperty::PropClass::Scalar:
-					{
-						switch (prop->GetPropType())
-						{
-						case thomas::resource::ShaderProperty::PropType::Bool:
-						{
-							obj = *prop->GetBool();
-							break;
-						}
-						case thomas::resource::ShaderProperty::PropType::Int:
-						{
-							obj = *prop->GetInt();
-							break;
-						}
-						case thomas::resource::ShaderProperty::PropType::Float:
-						{
-							obj = *prop->GetFloat();
-							break;
-						}
-						default:
-							break;
-						}
+					case thomas::resource::shaderProperty::ShaderProperty::Type::SCALAR_BOOL:
+						
 						break;
-					}
-					case thomas::resource::ShaderProperty::PropClass::Vector:
-					{
-						thomas::math::Vector4* v = prop->GetVector();
-						obj = Vector4(*v);
+					case thomas::resource::shaderProperty::ShaderProperty::Type::SCALAR_FLOAT:
+						value = ((thomas::resource::Material*)m_nativePtr)->GetFloat(prop.first);
 						break;
-					}
-					case thomas::resource::ShaderProperty::PropClass::Texture:
-					{
+					case thomas::resource::shaderProperty::ShaderProperty::Type::SCALAR_INT:
+						value = ((thomas::resource::Material*)m_nativePtr)->GetInt(prop.first);
 						break;
-					}
+					case thomas::resource::shaderProperty::ShaderProperty::Type::VECTOR:
+						value = Vector4(((thomas::resource::Material*)m_nativePtr)->GetVector(prop.first));
+						break;
+					case thomas::resource::shaderProperty::ShaderProperty::Type::MATRIX:
+						value = Matrix4x4(((thomas::resource::Material*)m_nativePtr)->GetMatrix(prop.first));
+						break;
 					default:
 						break;
 					}
-
-					if (obj != nullptr)
-					{
-						props->Add(name, obj);
-					}
+					props->Add(Utility::ConvertString(prop.first), value);
 				}
 				return props;
 			}
+				
 			void set(Dictionary<String^, System::Object^>^ value)
 			{
 				for each(String^ key in value->Keys)

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ThomasEditor"
+             xmlns:converters="clr-namespace:ThomasEditor.Converters"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:managed="clr-namespace:ThomasEditor;assembly=ThomasEngine"
              mc:Ignorable="d" 
@@ -11,9 +12,11 @@
 
     <UserControl.Resources>
         <local:ResourceImageConverter x:Key="resourceImageConverter"/>
-        <local:NullResourceConverter x:Key="nullResourceConverter"/>
-        
-        <local:Vector3Converter x:Key="convertVector3" x:Shared="False"/>
+        <converters:NullResourceConverter x:Key="nullResourceConverter"/>
+
+        <converters:Vector2Converter x:Key="convertVector2" x:Shared="False"/>
+        <converters:Vector3Converter x:Key="convertVector3" x:Shared="False"/>
+        <converters:Vector4Converter x:Key="convertVector4" x:Shared="False"/>
 
 
         <DataTemplate x:Key="ResourceEditor">
@@ -44,11 +47,9 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="Vector3Editor" x:Name="vector3Test">
+        <DataTemplate x:Key="Vector2Editor">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="auto"/>
@@ -58,17 +59,69 @@
                 <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}"  TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="1" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='x'}"/>
                 <Label Grid.Column="2" Content="Y"/>
                 <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="3" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='y'}"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Vector3Editor">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="X"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}"  TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="1" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='x'}"/>
+                <Label Grid.Column="2" Content="Y"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="3" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='y'}"/>
                 <Label Grid.Column="4" Content="Z"/>
                 <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="5" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='z'}"/>
             </Grid>
         </DataTemplate>
+
+        <DataTemplate x:Key="Vector4Editor">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="X"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}"  TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="1" Value="{Binding Value, Converter={StaticResource convertVector4}, ConverterParameter='x'}"/>
+                <Label Grid.Column="2" Content="Y"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="3" Value="{Binding Value, Converter={StaticResource convertVector4}, ConverterParameter='y'}"/>
+                <Label Grid.Column="4" Content="Z"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="5" Value="{Binding Value, Converter={StaticResource convertVector4}, ConverterParameter='z'}"/>
+                <Label Grid.Column="6" Content="W"/>
+                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="7" Value="{Binding Value, Converter={StaticResource convertVector4}, ConverterParameter='w'}"/>
+            </Grid>
+        </DataTemplate>
+
     </UserControl.Resources>
 
     <xctk:PropertyGrid NameColumnWidth="75" IsCategorized="False" UpdateTextBoxSourceOnEnterKey="True"  Background="Aqua" AutoGenerateProperties="True" SelectedObject="{Binding}" ShowAdvancedOptions="False" ShowSummary="False" ShowSortOptions="False" ShowTitle="False" ShowSearchBox="False" Loaded="PropertyGrid_Loaded">
         <xctk:PropertyGrid.EditorDefinitions>
+            <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource Vector2Editor}">
+                <xctk:EditorTemplateDefinition.TargetProperties>
+                    <xctk:TargetPropertyType Type="managed:Vector2"/>
+                </xctk:EditorTemplateDefinition.TargetProperties>
+            </xctk:EditorTemplateDefinition>
             <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource Vector3Editor}">
                 <xctk:EditorTemplateDefinition.TargetProperties>
                     <xctk:TargetPropertyType Type="managed:Vector3"/>
+                </xctk:EditorTemplateDefinition.TargetProperties>
+            </xctk:EditorTemplateDefinition>
+            <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource Vector4Editor}">
+                <xctk:EditorTemplateDefinition.TargetProperties>
+                    <xctk:TargetPropertyType Type="managed:Vector4"/>
                 </xctk:EditorTemplateDefinition.TargetProperties>
             </xctk:EditorTemplateDefinition>
             <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource ResourceEditor}">

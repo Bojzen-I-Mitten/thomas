@@ -1,0 +1,5 @@
+#include "ShaderPropertyMatrix.h"
+#include "ShaderPropertyScalarBool.h"
+#include "ShaderPropertyScalarFloat.h"
+#include "ShaderPropertyScalarInt.h"
+#include "ShaderPropertyVector.h"

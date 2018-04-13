@@ -2,6 +2,8 @@
 #include "../Common.h"
 #include "../utils/Math.h"
 #include "Resource.h"
+#include <memory>
+#include <map>
 namespace thomas
 {
 	namespace graphics
@@ -11,8 +13,8 @@ namespace thomas
 	}
 	namespace resource
 	{
+		namespace shaderProperty { class ShaderProperty; }
 		class Texture;
-		class ShaderProperty;
 		class Shader;
 		class THOMAS_API Material : public Resource
 		{
@@ -20,7 +22,7 @@ namespace thomas
 			void SetSampler(const std::string name, resource::Texture& value);
 			
 		private:
-			void CreateProperties();
+			void FetchPropertiesFromShader();
 			void OnChanged();
 		public:
 			static void Init();
@@ -33,28 +35,29 @@ namespace thomas
 			~Material();
 
 			void Bind();
-			ShaderProperty* GetProperty(const std::string& name);
+			std::shared_ptr<shaderProperty::ShaderProperty> GetProperty(const std::string& name);
 			void SetShader(resource::Shader* shader);
 			resource::Shader* GetShader();
 
-			bool HasProperty(const std::string& name);
 
-			math::Color* GetColor(const std::string& name);
+			void ApplyProperty(const std::string& name);
+			bool HasProperty(const std::string& name);
+			math::Color GetColor(const std::string& name);
 			void SetColor(const std::string& name, const math::Color& value);
 
-			float* GetFloat(const std::string& name);
+			float GetFloat(const std::string& name);
 			void SetFloat(const std::string& name, float& value);
 
-			int* GetInt(const std::string& name);
+			int GetInt(const std::string& name);
 			void SetInt(const std::string& name, int& value);
 
-			math::Matrix* GetMatrix(const std::string& name);
+			math::Matrix GetMatrix(const std::string& name);
 			void SetMatrix(const std::string& name, math::Matrix& value);
 
 			resource::Texture* GetTexture(const std::string& name);
 			void SetTexture(const std::string& name, resource::Texture& value);
 
-			math::Vector4* GetVector(const std::string& name);
+			math::Vector4 GetVector(const std::string& name);
 			void SetVector(const std::string& name, math::Vector4& value);
 
 			void SetResource(const std::string& name, ID3D11ShaderResourceView& value);
@@ -72,8 +75,8 @@ namespace thomas
 			void Draw(graphics::Mesh* mesh);
 			void Draw(UINT vertexCount, UINT startVertexLocation);
 
-			std::vector<ShaderProperty*> GetEditorProperties();
-			std::vector<ShaderProperty*> GetAllProperties();
+			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> GetEditorProperties();
+			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> GetAllProperties();
 
 			UINT GetId();
 
@@ -91,7 +94,7 @@ namespace thomas
 			Material* m_baseMaterial;
 			UINT m_id;
 			resource::Shader* m_shader;
-			std::vector<ShaderProperty*> m_properties;
+			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> m_properties;
 			std::vector<Pass> m_passes;
 			static Material* s_standardMaterial;
 

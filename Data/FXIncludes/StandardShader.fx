@@ -95,6 +95,7 @@ float4 frag(v2f i) : SV_TARGET
 		//specular = saturate(dot(reflectVec, viewDir)) * Fresnel(lightIntensity, 1.3f);
 	
 	//color = saturate(color + specular);
+	
 	return color;
 
 	

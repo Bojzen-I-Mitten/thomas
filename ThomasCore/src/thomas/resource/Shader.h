@@ -7,12 +7,13 @@
 #include "../utils/Math.h"
 #include "Resource.h"
 #include "../utils/Buffers.h"
+#include <memory>
 namespace thomas
 {
 	namespace resource
 	{
+		namespace shaderProperty { class ShaderProperty; }
 		class Texture;
-		class ShaderProperty;
 		class THOMAS_API Shader : public Resource
 		{
 		public:
@@ -45,6 +46,7 @@ namespace thomas
 			void OnChanged();
 
 			Semantics GetSemanticFromName(std::string semanticName);
+			void AddProperty(ID3DX11EffectVariable* prop);
 		public:
 			struct ShaderPass
 			{
@@ -84,14 +86,14 @@ namespace thomas
 
 			ID3DX11Effect* GetEffect();
 			bool HasProperty(const std::string& name);
-			ShaderProperty* GetProperty(const std::string& name);
-			std::vector<ShaderProperty*> GetProperties();
+			std::shared_ptr<shaderProperty::ShaderProperty> GetProperty(const std::string& name);
+			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> GetProperties();
 			static void Update();
 			void Recompile();
 			static void QueueRecompile();
 		private:
 			ID3DX11Effect* m_effect;
-			std::vector<ShaderProperty*> m_properties;
+			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> m_properties;
 			std::vector<ShaderPass> m_passes;
 			ShaderPass* m_currentPass;
 			static std::vector<Shader*> s_loadedShaders;

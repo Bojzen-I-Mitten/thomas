@@ -75,11 +75,11 @@ namespace ThomasEditor {
 					Window::ClearAllWindows();
 					Monitor::Enter(renderLock);
 					thomas::graphics::Renderer::TransferCommandList();
-					Monitor::Exit(renderLock);
+					
 					thomas::graphics::Renderer::ProcessCommands();
 					thomas::Window::PresentAllWindows();
 					readyToRender = false;
-					
+					Monitor::Exit(renderLock);
 				}
 				
 			}
