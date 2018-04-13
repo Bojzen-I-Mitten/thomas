@@ -17,8 +17,8 @@
 #include <algorithm>
 #include "../utils/DebugTools.h"
 #include "../Window.h"
-
-
+#include "../editor/gizmos/Gizmos.h"
+#include "../editor/EditorCamera.h"
 namespace thomas
 {
 	namespace graphics
@@ -98,11 +98,13 @@ namespace thomas
 						material->Draw(perMeshCommand.mesh);
 					}
 				}
-				
-				
-				
 			}
-
+			if (editor::EditorCamera::GetEditorCamera())
+			{
+				BindCamera(editor::EditorCamera::GetEditorCamera()->GetCamera());
+				editor::Gizmos::RenderGizmos();
+			}
+			
 		}
 
 	}

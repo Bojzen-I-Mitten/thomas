@@ -14,6 +14,7 @@ namespace thomas
 				ShaderPropertyScalarFloat(float value) : ShaderProperty(Type::SCALAR_FLOAT), m_value(value) {};
 				void Apply(std::string name, Shader* shader)
 				{
+			
 					shader->GetEffect()->GetVariableByName(name.c_str())->AsScalar()->SetFloat(m_value);
 				}
 				static ShaderProperty* GetDefault() { return new ShaderPropertyScalarFloat(0); }
