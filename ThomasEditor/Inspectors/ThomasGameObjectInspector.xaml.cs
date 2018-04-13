@@ -94,21 +94,34 @@ namespace ThomasEditor
             e.CanExecute = true;
         }
 
+        private void AddComponent(object sender, ExecutedRoutedEventArgs e)
+        {
+            addComponentList.SelectedItem = null;
+            addComponentsListContainer.Visibility = Visibility.Visible;
+            AddComponentsFilter.Focus();
+            addComponentList.ItemsSource = Component.GetAllAddableComponentTypes();
+            CollectionViewSource.GetDefaultView(addComponentList.ItemsSource).Filter = ComponentsFilter;
+        }
+
         private void AddComponentsListContainer_LostFocus(object sender, RoutedEventArgs e)
         {
             DockPanel panel = sender as DockPanel;
             panel.Visibility = Visibility.Hidden;
         }
 
+        int selected = 0; 
         private void AddComponentsFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
+
             CollectionViewSource.GetDefaultView(addComponentList.ItemsSource).Refresh();
+            //addComponentList.SelectedIndex = selected;
         }
 
 
 
         private void AddComponentList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            
             if(addComponentList.SelectedItem != null)
             {
                 lock(SelectedGameObject)
@@ -119,8 +132,6 @@ namespace ThomasEditor
                 }
 
             }
-               
-
         }
 
         private void RemoveComponentButton_Click(object sender, RoutedEventArgs e)
@@ -129,6 +140,33 @@ namespace ThomasEditor
             Component component = (Component)button.DataContext;
             if(component.GetType() != typeof(Transform))
                 component.Destroy();
+        }
+
+        //Add so that element 0 is selected from the start.
+        private void AddComponentList_KeyUp(object sender, KeyEventArgs e)
+        {
+            var list = addComponentList.Items;
+            switch (e.Key)
+            {
+                case Key.Down:
+                    if (selected >= list.Count - 1) selected = 0;
+                    else selected++;
+                    addComponentList.SelectedIndex = selected;
+                    break;
+
+                case Key.Up:
+                    if (selected == 0) selected = list.Count-1;
+                    else selected--;
+                    addComponentList.SelectedIndex = selected;
+                    break;
+                case Key.Enter:
+                    Type component = addComponentList.SelectedItem as Type;
+                    var method = typeof(GameObject).GetMethod("AddComponent").MakeGenericMethod(component);
+                    method.Invoke(SelectedGameObject, null);
+                    break;
+            }
+
+            
         }
     }
 
