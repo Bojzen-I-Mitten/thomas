@@ -133,7 +133,7 @@
 
                         <xcad:LayoutDocumentPaneGroup Orientation="Vertical" DockWidth="1*">
                             <xcad:LayoutDocumentPane>
-                                <xcad:LayoutAnchorable ContentId="Hiearchy" Title="Hiearchy" >
+                                <xcad:LayoutAnchorable ContentId="Hiearchy" Title="Hierarchy" >
                                     <local:GameObjectHierarchy/>
                                 </xcad:LayoutAnchorable>
                             </xcad:LayoutDocumentPane>
