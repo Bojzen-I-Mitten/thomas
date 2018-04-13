@@ -246,6 +246,7 @@ namespace thomas
 		static void ProcessKeyboard(UINT message, WPARAM wParam, LPARAM lParam);
 		static void ProcessMouse(UINT message, WPARAM wParam, LPARAM lParam, HWND handle);
 		static void ProcessGamePad(UINT message, WPARAM wParam, LPARAM lParam);
+		static void ResetScrollWheelValue();
 
 		//Mouse
 		static LONG GetMouseY();
@@ -254,6 +255,7 @@ namespace thomas
 		static bool GetMouseButtonDown(MouseButtons button);
 		static bool GetMouseButtonUp(MouseButtons button);
 		static bool GetMouseButton(MouseButtons button);
+		static int GetMouseScrollWheel();
 
 		//Keyboard
 		static bool GetKeyDown(Keys key);

@@ -144,14 +144,13 @@ namespace thomas
 		}
 		void EditorCamera::updateCamera()
 		{
+			Input::ResetScrollWheelValue();
 			m_manipulatorSnapping = false;
 			HWND focus = GetForegroundWindow();
 
 			if (!Window::GetEditorWindow())
 				return;
 
-				
-			
 			if (Input::GetMouseButtonDown(Input::MouseButtons::RIGHT))
 			{
 				Input::SetMouseMode(Input::MouseMode::POSITION_RELATIVE);
@@ -160,6 +159,11 @@ namespace thomas
 			if (Input::GetMouseButtonUp(Input::MouseButtons::RIGHT))
 				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
 			
+			if (Input::GetMouseScrollWheel() > 0)
+				m_transform->Translate(m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 3000.f);
+
+			if (Input::GetMouseScrollWheel() < 0)
+				m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 3000.f);
 
 			if	(Input::GetMouseButton(Input::MouseButtons::RIGHT))
 			{
@@ -172,20 +176,14 @@ namespace thomas
 					m_transform->Translate(-m_transform->Right()*ThomasTime::GetActualDeltaTime()*speed);
 				if (Input::GetKey(Input::Keys::D))
 					m_transform->Translate(m_transform->Right()*ThomasTime::GetActualDeltaTime()*speed);
-
 				if (Input::GetKey(Input::Keys::W))
 					m_transform->Translate(m_transform->Forward()*ThomasTime::GetActualDeltaTime()*speed);
-
 				if (Input::GetKey(Input::Keys::S))
 					m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime()*speed);
-
 				if (Input::GetKey(Input::Keys::Q))
 					m_transform->Translate(-m_transform->Up()*ThomasTime::GetActualDeltaTime()*speed);
-
 				if (Input::GetKey(Input::Keys::E))
 					m_transform->Translate(m_transform->Up()*ThomasTime::GetActualDeltaTime()*speed);
-
-
 
 				rotationX += Input::GetMouseX() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
 				rotationY += Input::GetMouseY() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
