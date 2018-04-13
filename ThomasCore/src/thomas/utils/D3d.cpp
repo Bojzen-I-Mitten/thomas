@@ -43,6 +43,36 @@ namespace thomas
 			
 			return true;
 		}
+
+		bool D3d::CreateTexture(int width, int height, DXGI_FORMAT format, ID3D11Texture2D *& tex, ID3D11ShaderResourceView *& SRV, bool mipMaps, int mipLevels=1)
+		{
+			D3D11_TEXTURE2D_DESC textureDesc;
+			ZeroMemory(&textureDesc, sizeof(textureDesc));
+			textureDesc.Width = width;
+			textureDesc.Height = height;
+			textureDesc.MipLevels = mipLevels;
+			textureDesc.ArraySize = 1;
+			textureDesc.Format = format;
+			textureDesc.SampleDesc.Count = 1;
+			textureDesc.SampleDesc.Quality = 0;
+			textureDesc.Usage = D3D11_USAGE_DEFAULT;
+			textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+			textureDesc.CPUAccessFlags = 0;
+			textureDesc.MiscFlags = mipMaps ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
+
+			D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc;
+			ZeroMemory(&viewDesc, sizeof(viewDesc));
+			viewDesc.Format = textureDesc.Format;
+			viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			viewDesc.Texture2D.MipLevels = mipLevels;
+			viewDesc.Texture2D.MostDetailedMip = 0;
+
+			ID3D11Texture2D* tex2D;
+
+			ThomasCore::GetDevice()->CreateTexture2D(&textureDesc, NULL, &tex2D);
+			ThomasCore::GetDevice()->CreateShaderResourceView(tex2D, &viewDesc, &SRV);
+			return true;
+		}
 		
 		bool D3d::CreateDeviceAndContext(ID3D11Device *& device, ID3D11DeviceContext *& context)
 		{
@@ -336,7 +366,7 @@ namespace thomas
 
 
 
-		bool D3d::LoadTextureFromFile(ID3D11Device* device, ID3D11DeviceContext* context, std::string fileName, 
+		bool D3d::LoadTextureFromFile(std::string fileName, 
 			ID3D11Resource*& texture, ID3D11ShaderResourceView*& textureView)
 		{
 			// Convert from string to char in order to split by token
@@ -354,11 +384,11 @@ namespace thomas
 			HRESULT hr;
 			if (extension_string == ".dds")
 			{
-				hr = DirectX::CreateDDSTextureFromFile(device, context, CA2W(fileName.c_str()), &texture, &textureView);
+				hr = DirectX::CreateDDSTextureFromFile(ThomasCore::GetDevice(), ThomasCore::GetDeviceContext(), CA2W(fileName.c_str()), &texture, &textureView);
 			}
 			else
 			{
-				hr = DirectX::CreateWICTextureFromFile(device, context, CA2W(fileName.c_str()), &texture, &textureView);
+				hr = DirectX::CreateWICTextureFromFile(ThomasCore::GetDevice(), ThomasCore::GetDeviceContext(), CA2W(fileName.c_str()), &texture, &textureView);
 			}
 			
 			if (FAILED(hr))
@@ -371,7 +401,7 @@ namespace thomas
 			return true;
 		}
 
-		bool D3d::LoadCubeTextureFromFile(ID3D11Device * device, ID3D11DeviceContext * context, std::string fileName, ID3D11Resource *& texture, ID3D11ShaderResourceView *& textureView)
+		bool D3d::LoadCubeTextureFromFile(std::string fileName, ID3D11Resource *& texture, ID3D11ShaderResourceView *& textureView)
 		{
 			char* filename_c = new char[fileName.length() + 1];
 			std::strcpy(filename_c, fileName.c_str());
@@ -384,7 +414,7 @@ namespace thomas
 			HRESULT hr;
 			if (extension_string == ".dds")
 			{
-				hr = DirectX::CreateDDSTextureFromFileEx(device, CA2W(fileName.c_str()), 0, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0,
+				hr = DirectX::CreateDDSTextureFromFileEx(ThomasCore::GetDevice(), CA2W(fileName.c_str()), 0, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0,
 					D3D11_RESOURCE_MISC_TEXTURECUBE, false, (ID3D11Resource**)&texture, &textureView, nullptr);
 			}
 	

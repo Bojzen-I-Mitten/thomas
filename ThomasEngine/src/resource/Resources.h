@@ -34,7 +34,8 @@ namespace ThomasEditor
 		enum class AssetTypes
 		{
 			MODEL,
-			TEXTURE,
+			TEXTURE2D,
+			TEXTURE3D,
 			SCENE,
 			SHADER,
 			MATERIAL,
@@ -86,6 +87,10 @@ namespace ThomasEditor
 			else if (extension == "mat")
 			{
 				return AssetTypes::MATERIAL;
+			}
+			else if (extension == "bmp" || extension == "jpg" || extension == "png" || extension == "gif" || extension == "tif")
+			{
+				return AssetTypes::TEXTURE2D;
 			}
 			else
 			{

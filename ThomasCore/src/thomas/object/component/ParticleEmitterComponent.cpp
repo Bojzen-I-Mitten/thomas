@@ -103,7 +103,7 @@ namespace thomas
 					tempStruct.minSize = 0;
 					tempStruct.maxSize = 0;
 					tempStruct.endSize = 0;
-					utils::D3d::FillDynamicBufferStruct(m_d3dData.particleBuffer, tempStruct);
+					//utils::D3d::FillDynamicBufferStruct(m_d3dData.particleBuffer, tempStruct);
 					graphics::ParticleSystem::SpawnParticles(this, m_maxNrOfParticles);
 					m_spawnedParticleCount = m_maxNrOfParticles;
 					graphics::ParticleSystem::UpdateParticles(this);
@@ -123,7 +123,7 @@ namespace thomas
 						m_particleBufferStruct.position = m_gameObject->m_transform->GetPosition() + math::Vector3::Transform(m_offset, math::Matrix::CreateFromQuaternion(m_gameObject->m_transform->GetRotation())) ;
 						SetDirection(m_directionVector);
 						m_particleBufferStruct.rand = (std::rand() % 1000) / 1000.f;
-						utils::D3d::FillDynamicBufferStruct(m_d3dData.particleBuffer, m_particleBufferStruct);
+						//utils::D3d::FillDynamicBufferStruct(m_d3dData.particleBuffer, m_particleBufferStruct);
 						graphics::ParticleSystem::SpawnParticles(this, numberOfParticlesToEmit);
 						m_particleBufferStruct.currentParticleStartIndex = (m_particleBufferStruct.currentParticleStartIndex + numberOfParticlesToEmit) % m_maxNrOfParticles;
 						m_spawnedParticleCount += numberOfParticlesToEmit;
@@ -292,7 +292,7 @@ namespace thomas
 					tempStruct.minSize = 0;
 					tempStruct.maxSize = 0;
 					tempStruct.endSize = 0;
-					utils::D3d::FillDynamicBufferStruct(m_d3dData.particleBuffer, tempStruct);
+					//utils::D3d::FillDynamicBufferStruct(m_d3dData.particleBuffer, tempStruct);
 					graphics::ParticleSystem::SpawnParticles(this, m_maxNrOfParticles);
 
 				}
@@ -345,7 +345,7 @@ namespace thomas
 
 			void ParticleEmitterComponent::CreateInitBuffer()
 			{
-				m_d3dData.particleBuffer = thomas::utils::D3d::CreateDynamicBufferFromStruct(m_particleBufferStruct, D3D11_BIND_CONSTANT_BUFFER);
+				//m_d3dData.particleBuffer = thomas::utils::D3d::CreateDynamicBufferFromStruct(m_particleBufferStruct, D3D11_BIND_CONSTANT_BUFFER);
 			}
 
 

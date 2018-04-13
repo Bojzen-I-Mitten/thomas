@@ -7,7 +7,7 @@
 #include "Renderer.h"
 #include "../utils/d3d.h"
 #include "../ThomasCore.h"
-#include "../graphics/Texture.h"
+#include "../resource/texture/Texture.h"
 #include "../ThomasTime.h"
 #include "Mesh.h"
 
@@ -102,7 +102,7 @@ namespace thomas
 			ThomasCore::GetDevice()->CreateDepthStencilState(&mirrorDesc, &s_depthStencilState);
 
 
-			s_cameraBuffer = thomas::utils::D3d::CreateDynamicBufferFromStruct(s_cameraBufferStruct, D3D11_BIND_CONSTANT_BUFFER);
+			//s_cameraBuffer = thomas::utils::D3d::CreateDynamicBufferFromStruct(s_cameraBufferStruct, D3D11_BIND_CONSTANT_BUFFER);
 			return;
 		}
 
@@ -129,7 +129,7 @@ namespace thomas
 			
 			s_viewProjMatrix = viewProjMatrix;
 
-			thomas::utils::D3d::FillDynamicBufferStruct(s_cameraBuffer, s_cameraBufferStruct);
+			//thomas::utils::D3d::FillDynamicBufferStruct(s_cameraBuffer, s_cameraBufferStruct);
 
 		}
 

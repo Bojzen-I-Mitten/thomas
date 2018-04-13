@@ -8,7 +8,6 @@
 #include "../object/GameObject.h"
 #include "../object/component/Camera.h"
 #include "../ThomasCore.h"
-#include "Texture.h"
 #include "../object/component/Transform.h"
 #include "../Input.h"
 
@@ -19,13 +18,14 @@
 #include <algorithm>
 #include "../utils/DebugTools.h"
 #include "../Window.h"
+
+
 namespace thomas
 {
 	namespace graphics
 	{
-		
-		std::vector<graphics::RenderPair> Renderer::s_renderQueue;
-		std::vector<graphics::RenderPair> Renderer::s_lastFramesRenderQueue;
+		CommandQueue Renderer::s_renderCommands;
+		CommandQueue Renderer::s_lastFramesCommands;
 		void Renderer::BindFrame()
 		{
 			//ThomasPerFrame
@@ -55,68 +55,58 @@ namespace thomas
 			resource::Shader::SetGlobalVector("_WorldSpaceCameraPos", (math::Vector4)camera->GetPosition());
 		}
 
-		void Renderer::ClearRenderQueue()
+		void Renderer::ClearCommands()
 		{
-			s_renderQueue.clear();
+			s_renderCommands.clear();
 		}
 
 
-		void Renderer::SubmitToRenderQueue(object::component::Transform * transform, Mesh * mesh, resource::Material * material)
+		void Renderer::SubmitCommand(RenderCommand command)
 		{
-			s_renderQueue.push_back(RenderPair(transform, mesh, material));
+			s_renderCommands[command.camera][command.material].push_back(command);
 		}
 
-		std::vector<graphics::RenderPair>& Renderer::GetRenderQueue()
+		void Renderer::TransferCommandList()
 		{
-			return s_renderQueue;
+			s_lastFramesCommands = s_renderCommands;
 		}
 
-		void Renderer::BindObject(thomas::resource::Material * material, thomas::object::component::Transform * transform)
+		void Renderer::BindObject(thomas::resource::Material * material, thomas::math::Matrix& worldMatrix)
 		{
 			thomas::resource::ShaderProperty* prop;
 
 			prop = material->GetProperty("thomas_ObjectToWorld");
-			prop->SetMatrix(transform->GetWorldMatrix().Transpose());
-			prop->ApplyProperty(material->GetShader());
+			prop->SetMatrix(worldMatrix.Transpose());
+			//prop->ApplyProperty(material->GetShader());
 
 			prop = material->GetProperty("thomas_WorldToObject");
-			prop->SetMatrix(transform->GetWorldMatrix().Invert());
-			prop->ApplyProperty(material->GetShader());
+			prop->SetMatrix(worldMatrix.Invert());
+			//prop->ApplyProperty(material->GetShader());
 
 		}
 
-		void Renderer::Begin()
+		void Renderer::ProcessCommands()
 		{
 			BindFrame();
-		}
-
-		void Renderer::Render()
-		{
-			RenderQueue(s_renderQueue);
-		}
-
-		void Renderer::RenderQueue(std::vector<RenderPair>& renderQueue)
-		{
-			std::sort(renderQueue.begin(), renderQueue.end(), SortPairs);
-
-			resource::Material* lastMaterial = nullptr;
-			for (RenderPair& renderPair : renderQueue)
+			for (auto& perCameraQueue : s_lastFramesCommands)
 			{
-				if (!lastMaterial || lastMaterial != renderPair.material)
+				object::component::Camera* camera = perCameraQueue.first;
+				BindCamera(camera);
+				for (auto& perMaterialQueue : perCameraQueue.second)
 				{
-					lastMaterial = renderPair.material;
-					lastMaterial->Bind();
+					resource::Material* material = perMaterialQueue.first;
+					material->Bind();
+					for (RenderCommand& perMeshCommand : perMaterialQueue.second)
+					{
+						BindObject(material, perMeshCommand.worldMatrix);
+						material->Draw(perMeshCommand.mesh);
+					}
 				}
-				BindObject(lastMaterial, renderPair.transform);
-
-				lastMaterial->Draw(renderPair.mesh);
+				
+				
+				
 			}
 
-		}
-
-		bool Renderer::SortPairs(RenderPair& a, RenderPair& b)
-		{
-			return a.material->GetId() < b.material->GetId();
 		}
 
 	}

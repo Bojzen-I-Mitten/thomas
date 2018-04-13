@@ -227,7 +227,13 @@ namespace ThomasEditor
                 stack.Orientation = Orientation.Horizontal;
                 stack.Height = 15;
 
-                Image image = new Image { Source = assetImages[assetType] };
+                ImageSource source;
+                if (assetType == ThomasEditor.Resources.AssetTypes.TEXTURE2D)
+                    source = new BitmapImage(new Uri(Path.GetFullPath(filePath)));
+                else
+                    source = assetImages[assetType];
+
+                Image image = new Image { Source = source };
 
                 TextBlock lbl = new TextBlock { Text = fileName };
                 stack.Children.Add(image);

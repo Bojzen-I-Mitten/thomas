@@ -10,6 +10,7 @@ namespace thomas {
 	namespace object {
 		namespace component {
 
+			std::vector<RenderComponent*> RenderComponent::s_renderComponents;
 			RenderComponent::RenderComponent()
 			{
 				m_model = nullptr;
@@ -17,8 +18,8 @@ namespace thomas {
 				m_bounds.Extents.x = 0;
 				m_bounds.Extents.y = 0;
 				m_bounds.Extents.z = 0;
+				s_renderComponents.push_back(this);
 			}
-
 			void RenderComponent::SetModel(resource::Model* model)
 			{
 				if (!model)
@@ -34,7 +35,6 @@ namespace thomas {
 					m_model = model;
 					
 				}
-					
 			}
 
 			void RenderComponent::Update()
@@ -46,18 +46,6 @@ namespace thomas {
 
 					if (m_model->GetMeshes().size() != m_materials.size())
 						m_materials.resize(m_model->GetMeshes().size());
-
-					std::vector<graphics::RenderPair*> setPairs;
-
-					for (int i = 0; i < m_model->GetMeshes().size(); i++)
-					{
-						resource::Material* material = m_materials[i];
-						if (material == nullptr)
-							material = resource::Material::GetStandardMaterial();
-
-						graphics::Mesh* mesh = m_model->GetMeshes()[i];
-						thomas::graphics::Renderer::SubmitToRenderQueue(m_gameObject->m_transform, mesh, material);
-					}
 				}		
 			}
 			void RenderComponent::SetMaterial(int meshIndex, resource::Material * material)
@@ -74,11 +62,47 @@ namespace thomas {
 					
 			}
 
-			void RenderComponent::OnDrawGizmos()
+
+			void RenderComponent::SubmitToRenderer(Camera* camera)
 			{
+				if (m_model)
+				{
+					for (int i = 0; i < m_model->GetMeshes().size(); i++)
+					{
+						resource::Material* material = m_materials[i];
+						if (material == nullptr)
+							material = resource::Material::GetStandardMaterial();
+
+						graphics::Mesh* mesh = m_model->GetMeshes()[i];
+						
+						thomas::graphics::Renderer::SubmitCommand(thomas::graphics::RenderCommand(m_gameObject->m_transform->GetWorldMatrix(), mesh, material, camera));
+					}
+				}
+				
+			}
+
+			void RenderComponent::OnDestroy()
+			{
+				for (int i = 0; i < s_renderComponents.size(); i++)
+				{
+					if (s_renderComponents[i] == this)
+					{
+						s_renderComponents.erase(s_renderComponents.begin() + i);
+						return;
+					}
+				}
+			}
+
+			std::vector<RenderComponent*> RenderComponent::GetAllRenderComponents()
+			{
+				return s_renderComponents;
+			}
+
+			void RenderComponent::OnDrawGizmos()
+			{/*
 				editor::Gizmos::SetMatrix(math::Matrix::CreateWorld(m_bounds.Center, math::Vector3::Forward, math::Vector3::Up));
 				editor::Gizmos::SetColor(math::Color(0, 0, 1));
-				editor::Gizmos::DrawBoundingOrientedBox(m_bounds);
+				editor::Gizmos::DrawBoundingOrientedBox(m_bounds);*/
 			}
 
 			resource::Model * RenderComponent::GetModel()
