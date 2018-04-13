@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\resource\Material.cpp" />
+    <ClCompile Include="src\math\Math.cpp" />
+    <ClCompile Include="src\object\Component.cpp" />
+    <ClCompile Include="src\object\component\RenderComponent.cpp" />
+    <ClCompile Include="src\object\component\Rigidbody.cpp" />
+    <ClCompile Include="src\object\component\ScriptComponent.cpp" />
+    <ClCompile Include="src\object\component\Transform.cpp" />
+    <ClCompile Include="src\object\GameObject.cpp" />
+    <ClCompile Include="src\object\Object.cpp" />
+    <ClCompile Include="src\resource\Model.cpp" />
+    <ClCompile Include="src\resource\Resource.cpp" />
+    <ClCompile Include="src\resource\Resources.cpp" />
+    <ClCompile Include="src\resource\texture\Texture.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
+    <ClCompile Include="src\ScriptingManager.cpp" />
+    <ClCompile Include="src\resource\Shader.cpp" />
+    <ClCompile Include="src\ThomasManaged.cpp" />
+    <ClCompile Include="src\resource\AudioClip.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\object\component\SoundComponent.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\object\component\Camera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\object\component\Rigidbody.h" />
+    <ClInclude Include="src\resource\Model.h" />
+    <ClInclude Include="src\resource\Resource.h" />
+    <ClInclude Include="src\resource\texture\Texture.h" />
+    <ClInclude Include="src\resource\texture\Texture2D.h" />
+    <ClInclude Include="src\ScriptingManager.h" />
+    <ClInclude Include="src\resource\Resources.h" />
+    <ClInclude Include="src\Scene.h" />
+    <ClInclude Include="src\attributes\CustomAttributes.h" />
+    <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\resource\Shader.h" />
+    <ClInclude Include="src\Utility.h" />
+    <ClInclude Include="src\resource\Material.h" />
+    <ClInclude Include="src\math\Math.h" />
+    <ClInclude Include="src\object\Component.h" />
+    <ClInclude Include="src\object\component\RenderComponent.h" />
+    <ClInclude Include="src\object\component\ScriptComponent.h" />
+    <ClInclude Include="src\object\component\Transform.h" />
+    <ClInclude Include="src\object\GameObject.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\object\Object.h" />
+    <ClInclude Include="src\ThomasManaged.h" />
+    <ClInclude Include="src\resource\AudioClip.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="src\object\component\SoundComponent.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="src\object\component\Camera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="app.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="app.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{54abc86a-2502-40c0-aef9-85fb8c29a31d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{5ef783a8-a685-45ca-90c1-bdd80ca0dce4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

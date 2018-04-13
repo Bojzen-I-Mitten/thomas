@@ -2,27 +2,27 @@
 #pragma unmanaged
 #include <thomas\object\component\Component.h>
 #pragma managed
+
 #include "../attributes/CustomAttributes.h"
 #include <string>
 #include <msclr\marshal_cppstd.h>
 #include "Object.h"
+
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::ComponentModel;
 
-namespace ThomasEditor {
-
-
-
+namespace ThomasEditor 
+{
 	ref class GameObject;
 	public ref class Component : public Object
 	{
 		Component();
+
 	internal:
 		Component(thomas::object::component::Component* ptr);
 		
 		void setGameObject(GameObject^ gObj);
-
 		virtual void Awake() { ((thomas::object::component::Component*)nativePtr)->Awake(); }
 		virtual void Start() {};
 		virtual void OnEnable() { ((thomas::object::component::Component*)nativePtr)->OnEnable(); }
@@ -41,9 +41,6 @@ namespace ThomasEditor {
 		}
 
 	public:
-
-		
-
 		static System::Reflection::Assembly^ editorAssembly;
 		bool enabled = true;
 

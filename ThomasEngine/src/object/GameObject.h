@@ -5,7 +5,6 @@
 #pragma managed
 #include <string>
 #include <msclr\marshal_cppstd.h>
-
 #include "../Scene.h"
 #include "Object.h"
 #include "Component.h"
@@ -13,25 +12,23 @@
 #include "component\ScriptComponent.h"
 #include "../attributes/CustomAttributes.h"
 #using "PresentationFramework.dll"
+
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::Collections::ObjectModel;
 using namespace System::Threading;
-
 using namespace System::Linq;
-namespace ThomasEditor {
 
+namespace ThomasEditor 
+{
 	public ref class GameObject : public Object
 	{
-
-		
 		ObservableCollection<Component^> m_components;
 		Transform^ m_transform;
 		Scene^ scene;
 
-		
-
-		GameObject() : Object(new thomas::object::GameObject("gameobject")) {
+		GameObject() : Object(new thomas::object::GameObject("gameobject")) 
+		{
 			s_lastObject = this;
 			m_name = "gameobject";
 
@@ -55,13 +52,10 @@ namespace ThomasEditor {
 				if (typ->IsDefined(ExecuteInEditor::typeid, false) && component->enabled && !component->initialized) {
 					editorComponents->Add(component);
 				}
-
 			}
 			
-			initComponents(editorComponents);
-			
+			initComponents(editorComponents);	
 		}
-
 
 		void initComponents(List<Component^>^ components)
 		{
@@ -79,7 +73,6 @@ namespace ThomasEditor {
 			for each(Component^ component in components)
 			{
 				component->Start();
-
 			}
 		}
 		
@@ -96,6 +89,7 @@ namespace ThomasEditor {
 			initComponents(uninitializedComponents);
 			Monitor::Exit(m_componentsLock);
 		}
+
 		void Update()
 		{
 			Monitor::Enter(m_componentsLock);
@@ -143,7 +137,8 @@ namespace ThomasEditor {
 	public:
 		static GameObject^ s_lastObject;
 
-		GameObject(String^ name) : Object(new thomas::object::GameObject(msclr::interop::marshal_as<std::string>(name))) {
+		GameObject(String^ name) : Object(new thomas::object::GameObject(msclr::interop::marshal_as<std::string>(name))) 
+		{
 			m_name = name;
 			m_transform = AddComponent<Transform^>();
 			((thomas::object::GameObject*)nativePtr)->m_transform = (thomas::object::component::Transform*)m_transform->nativePtr;
@@ -173,20 +168,18 @@ namespace ThomasEditor {
 			Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
 		}
 
-	
-
 		property bool activeSelf
 		{
 			bool get()
 			{
 				return ((thomas::object::GameObject*)nativePtr)->m_activeSelf;
 			}
+
 			void set(bool value)
 			{
 				((thomas::object::GameObject*)nativePtr)->m_activeSelf = value;
 			}
-		}
-		
+		}	
 
 		String^ ToString() override
 		{
@@ -195,48 +188,48 @@ namespace ThomasEditor {
 
 		[BrowsableAttribute(false)]
 		[Xml::Serialization::XmlIgnoreAttribute]
-		property Transform^ transform {
-			Transform^ get() {
+		property Transform^ transform 
+		{
+			Transform^ get() 
+			{
 				return m_transform;
 			}
-			void set(Transform^ value) {
+
+			void set(Transform^ value) 
+			{
 				if (value)
 				{
 					m_transform = value;
 					((thomas::object::GameObject*)nativePtr)->m_transform = (thomas::object::component::Transform*)m_transform->nativePtr;
 				}
-				
 			}
 		}
 
-		property ObservableCollection<Component^>^ Components {
-			ObservableCollection<Component^>^ get() {
+		property ObservableCollection<Component^>^ Components 
+		{
+			ObservableCollection<Component^>^ get() 
+			{
 				return %m_components;
 			}
 		}
 
-
-
 		generic<typename T>
 		where T : Component
-		T AddComponent() {
+		T AddComponent() 
+		{
 			Monitor::Enter(m_componentsLock);
 			Type^ typ = T::typeid;
 
 			T existingComponent = GetComponent<T>();
 			if (existingComponent && typ->IsDefined(DisallowMultipleComponent::typeid, false))
-			{
-				
+			{	
 				//LOG("Cannot add multiple instances of " << typ->Name);
 				return T();
 			}
 
 			T component = (T)Activator::CreateInstance(T::typeid);
 			((Component^)component)->setGameObject(this);
-
-			
 			m_components.Add((Component^)component);
-			
 			
 			if ((typ->IsDefined(ExecuteInEditor::typeid, false) || scene->IsPlaying()) && !component->initialized && component->enabled)
 			{
@@ -245,6 +238,7 @@ namespace ThomasEditor {
 				component->OnEnable();
 				component->Start();
 			}
+
 			Monitor::Exit(m_componentsLock);
 			return component;
 		}
@@ -294,8 +288,6 @@ namespace ThomasEditor {
 			}
 			return nullptr;
 		}
-
-
 
 		bool GetActive()
 		{
