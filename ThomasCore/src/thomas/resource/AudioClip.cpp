@@ -19,6 +19,10 @@ namespace thomas
 		{
 			return m_data->CreateInstance();
 		}
+		void AudioClip::Play()
+		{
+			m_data->Play();
+		}
 		AudioClip::~AudioClip()
 		{
 			m_data.release();

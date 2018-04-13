@@ -30,9 +30,10 @@ namespace thomas
 				bool SetVolume(float volume);
 				float GetVolume();
 				bool Play();
-				bool PlayOneShot(std::string name, float volume);
+				bool PlayOneShot(float volume);
 				void Pause();
 				void Resume();
+				void Stop();
 				void SetLooping(bool loop);
 				bool IsLooping();
 			private:

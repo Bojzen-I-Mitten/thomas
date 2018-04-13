@@ -18,6 +18,7 @@ namespace thomas
 		public:
 			AudioClip(std::string path);
 			std::unique_ptr<DirectX::SoundEffectInstance> CreateInstance();
+			void Play();
 			~AudioClip();
 
 		private:

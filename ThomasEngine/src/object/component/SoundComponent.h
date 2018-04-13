@@ -24,8 +24,11 @@ namespace ThomasEditor
 			}
 			void set(AudioClip^ value)
 			{
-				m_clip = value;
-				((thomas::object::component::SoundComponent*)nativePtr)->SetClip((thomas::resource::AudioClip*)value->m_nativePtr);
+				if (value)
+				{
+					m_clip = value;
+					((thomas::object::component::SoundComponent*)nativePtr)->SetClip((thomas::resource::AudioClip*)value->m_nativePtr);
+				}
 			}
 		}
 		property float Volume {
@@ -47,9 +50,10 @@ namespace ThomasEditor
 			}
 		}
 		bool Play() { return ((thomas::object::component::SoundComponent*)nativePtr)->Play(); }
-		bool PlayOneShot(String^ name, float volume) { return ((thomas::object::component::SoundComponent*)nativePtr)->PlayOneShot(Utility::ConvertString(name), volume); }
+		bool PlayOneShot(float volume) { return ((thomas::object::component::SoundComponent*)nativePtr)->PlayOneShot(volume); }
 		void Pause() { return ((thomas::object::component::SoundComponent*)nativePtr)->Pause(); }
 		void Resume() { return ((thomas::object::component::SoundComponent*)nativePtr)->Resume(); }
+		void Stop() { ((thomas::object::component::SoundComponent*)nativePtr)->Stop(); }
 
 		void Update() override
 		{
@@ -59,6 +63,14 @@ namespace ThomasEditor
 				Play();
 				//((thomas::object::component::SoundComponent*)nativePtr)->Play();
 			}
+			if (Input::GetKeyDown(Input::Keys::L))
+			{
+				PlayOneShot(((thomas::object::component::SoundComponent*)nativePtr)->GetVolume());
+			}
+		}
+		void OnDisable() override
+		{
+			Stop();
 		}
 	private:
 

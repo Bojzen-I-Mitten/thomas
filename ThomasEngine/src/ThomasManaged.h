@@ -12,6 +12,7 @@
 #include <thomas\utils\DebugTools.h>
 #include <thomas\resource\Shader.h>
 #include <thomas\graphics\Renderer.h>
+#include <thomas\object\component\SoundComponent.h>
 
 #pragma managed
 //#include <Sound.h>

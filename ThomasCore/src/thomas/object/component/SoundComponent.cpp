@@ -21,6 +21,7 @@ namespace thomas
 
 			bool SoundComponent::SetClip(resource::AudioClip* clip)
 			{
+				m_clip = clip;
 				m_instance = clip->CreateInstance();
 				if (m_instance)
 				{
@@ -67,6 +68,7 @@ namespace thomas
 
 			bool SoundComponent::Play()
 			{
+				m_instance = m_clip->CreateInstance();
 				if (m_instance)
 				{
 					m_instance->Play(m_looping);
@@ -77,10 +79,10 @@ namespace thomas
 				
 			}
 
-			bool SoundComponent::PlayOneShot(std::string name, float volume)
+			bool SoundComponent::PlayOneShot(float volume)
 			{
+				m_clip->Play();
 				return true;
-				return Sound::Play(name, volume);
 			}
 
 			void SoundComponent::Pause()
@@ -96,6 +98,14 @@ namespace thomas
 				if (m_instance)
 				{
 					m_instance->Resume();
+				}
+			}
+
+			void SoundComponent::Stop()
+			{
+				if (m_instance)
+				{
+					m_instance->Stop();
 				}
 			}
 
