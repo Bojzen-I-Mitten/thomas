@@ -16,7 +16,6 @@ The other Get function returns true while the button/key is pressed.
 
 namespace thomas
 {
-
 	class Input
 	{
 	public:
@@ -239,8 +238,6 @@ namespace thomas
 			BACK
 		};
 
-
-
 		static bool Init();
 		static void Update();
 		static void ProcessKeyboard(UINT message, WPARAM wParam, LPARAM lParam);
@@ -251,7 +248,6 @@ namespace thomas
 		//Mouse
 		static LONG GetMouseY();
 		static LONG GetMouseX();
-		static float GetMouseScroll();
 		static bool GetMouseButtonDown(MouseButtons button);
 		static bool GetMouseButtonUp(MouseButtons button);
 		static bool GetMouseButton(MouseButtons button);
@@ -263,7 +259,6 @@ namespace thomas
 		static bool GetKeyUp(Keys key);
 		static bool GetKey(Keys key);
 	
-
 		//Gamepad
 		static bool GetButtonDown(Buttons button);
 		static bool GetButtonUp(Buttons button);
@@ -278,9 +273,7 @@ namespace thomas
 		static float GetRightTriggerDelta();
 
 		static math::Vector2 GetMousePosition();
-
-		static void SetMouseMode(MouseMode mode);
-		
+		static void SetMouseMode(MouseMode mode);		
 
 	private:
 		static std::unique_ptr<DirectX::Keyboard> s_keyboard;
