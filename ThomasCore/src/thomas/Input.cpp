@@ -1,6 +1,7 @@
 #include "Input.h"
 #include "Window.h"
 #include "ThomasTime.h"
+
 namespace thomas
 {
 	std::unique_ptr<DirectX::Keyboard> Input::s_keyboard;
@@ -19,9 +20,7 @@ namespace thomas
 	Input::MouseMode Input::s_mouseMode;
 
 	bool Input::s_recordPosition = true;
-
 	bool Input::s_initialized;
-
 	float Input::s_vibrateTimeLeft = 0;
 
 	bool Input::Init()
@@ -293,12 +292,10 @@ namespace thomas
 		{
 			s_gamePad->SetVibration(0, left, right);
 			s_vibrateTimeLeft = time;
-		}
-			
+		}		
 	}
 
-	//mouse
-
+	//Mouse
 	LONG Input::GetMouseY()
 	{
 		return GetMousePosition().y;
@@ -307,11 +304,6 @@ namespace thomas
 	LONG Input::GetMouseX()
 	{
 		return GetMousePosition().x;
-	}
-
-	float Input::GetMouseScroll()
-	{
-		return s_mouseState.scrollWheelValue;
 	}
 
 	bool Input::GetMouseButtonDown(MouseButtons button)
@@ -361,8 +353,7 @@ namespace thomas
 		return s_mouseState.scrollWheelValue;
 	}
 
-	//keyboard
-
+	//Keyboard
 	bool Input::GetKeyDown(Keys key)
 	{
 		return s_keyboardTracker.IsKeyPressed((DirectX::Keyboard::Keys)key);
@@ -438,8 +429,4 @@ namespace thomas
 	{
 		return s_keyboardState.IsKeyDown((DirectX::Keyboard::Keys)key);
 	}
-
-
-
-
 }
