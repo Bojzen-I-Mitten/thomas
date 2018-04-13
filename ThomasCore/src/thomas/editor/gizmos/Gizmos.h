@@ -37,7 +37,7 @@ namespace thomas
 			static void DrawWireSphere(math::Vector3 center, float radius);
 			static void DrawRay(math::Vector3 from, math::Vector3 direction);
 			static void DrawRay(math::Ray ray);
-			static void DrawBillboard();
+			static void DrawBillboard(math::Vector3 centerPos, float width, float height);
 
 			static void DrawFrustum(math::Vector3 center, float fov, float maxRange, float minRange, float aspect);
 			static void DrawFrustum(math::BoundingFrustum& frustrum);

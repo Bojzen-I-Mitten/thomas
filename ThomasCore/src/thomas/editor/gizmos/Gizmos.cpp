@@ -258,9 +258,41 @@ namespace thomas
 			s_gizmoMaterial->Draw(lines.size(), 0);
 		}
 
-		void Gizmos::DrawBillboard()
+		void Gizmos::DrawBillboard(math::Vector3 centerPos, float width, float height)
 		{
+			std::vector<math::Vector3> positions(6);
+			positions[0] = centerPos;
+			positions[0].x -= width / 2;
+			positions[0].y += height / 2;
 
+			//Not done
+			positions[1] = centerPos;
+			positions[1].x -= width / 2;
+			positions[1].y += height / 2;
+
+			positions[2] = centerPos;
+			positions[2].x -= width / 2;
+			positions[2].y += height / 2;
+
+			positions[3] = centerPos;
+			positions[3].x -= width / 2;
+			positions[3].y += height / 2;
+
+			positions[4] = centerPos;
+			positions[4].x -= width / 2;
+			positions[4].y += height / 2;
+
+			positions[5] = centerPos;
+			positions[5].x -= width / 2;
+			positions[5].y += height / 2;
+
+
+			s_vertexBuffer->SetData(positions);
+			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
+
+			s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer);
+			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+			s_gizmoMaterial->Bind();
 		}
 
 		void Gizmos::Init()
