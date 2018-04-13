@@ -4,6 +4,7 @@
 #pragma managed
 #include "../Component.h"
 #include "../../resource/Model.h"
+#include "../../resource/Material.h"
 
 namespace ThomasEditor
 {
@@ -29,6 +30,15 @@ namespace ThomasEditor
 					((thomas::object::component::RenderComponent*)nativePtr)->SetModel(nullptr);
 				else
 					((thomas::object::component::RenderComponent*)nativePtr)->SetModel((thomas::resource::Model*)value->m_nativePtr);
+			}
+		}
+
+		property Material^ material {
+			Material^ get() {
+				return gcnew Material(((thomas::object::component::RenderComponent*)nativePtr)->GetMaterial(0));
+			}
+			void set(Material^ value) {
+				((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, (thomas::resource::Material*)value->m_nativePtr);
 			}
 		}
 
