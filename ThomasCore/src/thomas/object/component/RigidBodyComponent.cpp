@@ -114,10 +114,16 @@ namespace thomas
 			}
 			void RigidBodyComponent::SetMass(float mass)
 			{
-				Physics::s_world->removeRigidBody(this);
 				m_mass = mass;
-				UpdateRigidbodyMass();
-				Physics::s_world->addRigidBody(this);
+				if (initialized)
+				{
+					Physics::s_world->removeRigidBody(this);
+					UpdateRigidbodyMass();
+					Physics::s_world->addRigidBody(this);
+					
+				}
+					
+				
 			}
 			float RigidBodyComponent::GetMass()
 			{

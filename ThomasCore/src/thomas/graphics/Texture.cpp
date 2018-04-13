@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include "Shader.h"
+#include "../resource/Shader.h"
 #include "../ThomasCore.h"
 #include  "../utils/AssimpLoader.h"
 #include "../utils/d3d.h"

@@ -5,7 +5,7 @@
 #include <imgui\ImGuizmo.h>
 namespace thomas
 {
-	namespace graphics
+	namespace resource
 	{
 		class Material;
 	}
@@ -37,6 +37,11 @@ namespace thomas
 			static bool HasSelectionChanged();
 			static void SetHasSelectionChanged(bool selectionChanged);
 			object::component::Camera* GetCamera();
+
+			static void SetManipulatorOperation(ImGuizmo::OPERATION operation);
+			static ImGuizmo::OPERATION GetManipulatorOperation();
+
+			static void ToggleManipulatorMode();
 		private:
 			ImGuizmo::OPERATION m_manipulatorOperation;
 			ImGuizmo::MODE m_manipulatorMode;
@@ -49,7 +54,7 @@ namespace thomas
 			bool m_manipulatorSnapping = false;
 
 			object::component::Camera* m_cameraComponent;
-			graphics::Material* m_objectHighlighter;
+			resource::Material* m_objectHighlighter;
 			EditorGrid* m_grid;
 			bool m_hasSelectionChanged;
 			static EditorCamera* s_editorCamera;

@@ -13,6 +13,7 @@
 //#endif
 
 //#ifdef _DEBUG
+#define HR_TO_STRING(hr){std::string(_com_error(hr).ErrorMessage())}
 #define LOG_HR(hr){_com_error err(hr); std::string error = std::string(err.ErrorMessage()); LOG(error);}
 //#else
 //#define LOG_HR(hr) 

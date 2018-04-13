@@ -6,10 +6,10 @@
 #include "../Window.h"
 #include "../graphics/BulletDebugDraw.h"
 #include "EditorGrid.h"
-#include "../graphics/Shader.h"
-#include "../graphics/Material.h"
+#include "../resource/Shader.h"
+#include "../resource/Material.h"
 #include "../graphics/Renderer.h"
-#include "../graphics/Model.h"
+#include "../resource/Model.h"
 namespace thomas
 {
 	namespace editor
@@ -30,9 +30,9 @@ namespace thomas
 			m_speed = 2.0f;
 			m_hasSelectionChanged = false;
 			m_objectHighlighter = nullptr;
-			graphics::Shader* outliner = graphics::Shader::CreateShader("editorOutliner", "../Data/FXIncludes/EditorOutlineShader.fx");
+			resource::Shader* outliner = resource::Shader::CreateShader("../Data/FXIncludes/EditorOutlineShader.fx");
 			if (outliner)
-				m_objectHighlighter = new graphics::Material(outliner);
+				m_objectHighlighter = new resource::Material(outliner);
 
 			m_transform->SetPosition(math::Vector3(5, 5, 5));
 			m_transform->LookAt(math::Vector3(0, 0, 0));
@@ -120,6 +120,18 @@ namespace thomas
 		object::component::Camera * EditorCamera::GetCamera()
 		{
 			return m_cameraComponent;
+		}
+		void EditorCamera::SetManipulatorOperation(ImGuizmo::OPERATION operation)
+		{
+			s_editorCamera->m_manipulatorOperation = operation;
+		}
+		ImGuizmo::OPERATION EditorCamera::GetManipulatorOperation()
+		{
+			return s_editorCamera->m_manipulatorOperation;
+		}
+		void EditorCamera::ToggleManipulatorMode()
+		{
+			s_editorCamera->m_manipulatorMode = s_editorCamera->m_manipulatorMode == ImGuizmo::MODE::WORLD ? ImGuizmo::MODE::LOCAL : ImGuizmo::MODE::WORLD;
 		}
 		void EditorCamera::renderCamera()
 		{		
@@ -216,6 +228,8 @@ namespace thomas
 				return;
 			for(object::GameObject* gameObject : s_selectedObjects)
 			{
+				if (!gameObject->GetActive())
+					continue;
 				graphics::Renderer::BindObject(m_objectHighlighter, gameObject->m_transform);
 				math::Matrix test = math::Matrix::CreateScale(1.03f) * gameObject->m_transform->GetWorldMatrix();
 				m_objectHighlighter->SetMatrix("thomas_ObjectToWorld", test.Transpose());
@@ -223,7 +237,7 @@ namespace thomas
 				object::component::RenderComponent* renderComponent = gameObject->GetComponent<object::component::RenderComponent>();
 				if (renderComponent)
 				{
-					graphics::Model* model = gameObject->GetComponent<object::component::RenderComponent>()->GetModel();
+					resource::Model* model = gameObject->GetComponent<object::component::RenderComponent>()->GetModel();
 					if (model)
 					{
 						for (graphics::Mesh* mesh : model->GetMeshes())

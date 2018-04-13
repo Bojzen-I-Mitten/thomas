@@ -1,6 +1,5 @@
 #include "Light.h"
 #include "../utils/d3d.h"
-#include "../graphics/Shader.h"
 
 namespace thomas
 {

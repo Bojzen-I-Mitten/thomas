@@ -15,9 +15,13 @@ namespace thomas
 			
 		}
 	}
-	namespace graphics
+	namespace resource
 	{
 		class ComputeShader;
+	}
+	namespace graphics
+	{
+		
 		class Mesh;
 		class ParticleSystem
 		{
@@ -69,8 +73,8 @@ namespace thomas
 			static math::Matrix s_viewProjMatrix;
 			static ID3D11Buffer* s_cameraBuffer;
 			
-			static ComputeShader* s_updateParticlesCS;
-			static ComputeShader* s_emitParticlesCS;
+			static resource::ComputeShader* s_updateParticlesCS;
+			static resource::ComputeShader* s_emitParticlesCS;
 
 			static ID3D11UnorderedAccessView* s_activeParticleUAV;
 			static ID3D11ShaderResourceView* s_activeParticleSRV;

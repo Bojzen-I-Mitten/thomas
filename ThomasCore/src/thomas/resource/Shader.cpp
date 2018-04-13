@@ -3,19 +3,18 @@
 #include <atlconv.h>
 #include <d3dcompiler.h>
 #include "Shader.h"
-#include "MaterialProperty.h"
+#include "ShaderProperty.h"
+#include <fstream>
 namespace thomas
 {
-	namespace graphics
+	namespace resource
 	{
 		std::vector<Shader*> Shader::s_loadedShaders;
 		Shader* Shader::s_standardShader;
 		bool Shader::s_shouldRecompile = false;
-		Shader::Shader(std::string name, ID3DX11Effect* effect, std::string filePath)
+		Shader::Shader(ID3DX11Effect* effect, std::string path) : Resource(path)
 		{
-			m_name = name;
 			m_effect = effect;
-			m_filePath = filePath;
 			SetupReflection();
 		}
 
@@ -39,8 +38,15 @@ namespace thomas
 				ID3DX11EffectVariable* variable = m_effect->GetVariableByIndex(i);
 				if (variable->IsValid())
 				{
-					MaterialProperty* prop = new MaterialProperty(i, variable);
-					m_properties.push_back(prop);
+					if (m_properties.size() > i)
+					{
+						m_properties[i]->UpdateVariable(variable);
+					}else
+					{ 
+						ShaderProperty* prop = new ShaderProperty(i, variable);
+						m_properties.push_back(prop);
+					}
+					
 				}
 				
 
@@ -96,7 +102,7 @@ namespace thomas
 
 						if (result != S_OK)
 						{
-							LOG("Failed to create input layout for shader: " << m_name << " Error: " << result);
+							LOG("Failed to create input layout for shader: " << m_path << " Error: " << result);
 						}
 					}
 					m_passes.push_back(pass);
@@ -137,7 +143,7 @@ namespace thomas
 			else
 			{
 				format = DXGI_FORMAT_UNKNOWN;
-				LOG("Unable to determine DXGI_FORMAT for shader: " << m_name);
+				LOG("Unable to determine DXGI_FORMAT for shader: " << m_path);
 			}
 				
 
@@ -150,19 +156,24 @@ namespace thomas
 			for (auto pass : m_passes)
 				SAFE_RELEASE(pass.inputLayout);
 			m_passes.clear();
-			for (MaterialProperty* mProp : m_properties)
+			for (ShaderProperty* mProp : m_properties)
 				delete mProp;
 			m_properties.clear();
 		}
 
 		bool Shader::Compile(std::string filePath, ID3DX11Effect** effect)
 		{
+			size_t found = filePath.find_last_of("/\\");
+			std::string dir = filePath.substr(0, found);
+			
+			Shader::ShaderInclude include(dir.c_str(), "..\\Data\\FxIncludes");
+
 			ID3DX11Effect* tempEffect = nullptr;
 			ID3DBlob* errorBlob = nullptr;
 			HRESULT result = D3DX11CompileEffectFromFile(
 				CA2W(filePath.c_str()),
 				nullptr,
-				D3D_COMPILE_STANDARD_FILE_INCLUDE,
+				&include,
 				D3DCOMPILE_DEBUG,
 				0,
 				ThomasCore::GetDevice(),
@@ -182,8 +193,8 @@ namespace thomas
 				}
 				else
 				{
-					LOG("Error compiling shader: " << filePath << " error:");
-					LOG_HR(result);
+					std::string error = HR_TO_STRING(result);
+					LOG("Error compiling shader: " << filePath << " error: " << error);
 				}
 				
 				return false;
@@ -203,7 +214,7 @@ namespace thomas
 
 		bool Shader::Init()
 		{
-			s_standardShader = CreateShader("Standard", "../Data/FXIncludes/StandardShader.fx");
+			s_standardShader = CreateShader("../Data/FXIncludes/StandardShader.fx");
 			if (!s_standardShader)
 				return false;
 			return true;
@@ -214,12 +225,16 @@ namespace thomas
 			return s_standardShader;
 		}
 
-		Shader * Shader::CreateShader(std::string name, std::string filePath)
+		Shader * Shader::CreateShader(std::string path)
 		{
+			Shader* foundShader = FindByName(PathToName(path));
+			if (foundShader)
+				return foundShader;
+
 			ID3DX11Effect* effect = NULL;
-			if (Compile(filePath, &effect))
+			if (Compile(path, &effect))
 			{
-				Shader* shader = new Shader(name, effect, filePath);
+				Shader* shader = new Shader(effect, path);
 				if (!shader->m_passes.empty())
 				{
 					s_loadedShaders.push_back(shader);
@@ -227,8 +242,9 @@ namespace thomas
 				}
 				else
 				{
+					SAFE_RELEASE(effect);
 					return nullptr;
-					LOG("Can't create shader: " << name << " because it contains no techniques or passes");
+					LOG("Can't create shader: " << path << " because it contains no techniques or passes");
 				}	
 			}
 			return nullptr;
@@ -249,10 +265,6 @@ namespace thomas
 		{
 			for (auto prop : m_properties)
 				prop->ApplyProperty(this);
-		}
-		std::string Shader::GetName()
-		{
-			return m_name;
 		}
 		std::vector<Shader::ShaderPass>* Shader::GetPasses()
 		{
@@ -314,7 +326,7 @@ namespace thomas
 				}
 			}
 		}
-		void Shader::SetGlobalTexture(const std::string & name, Texture & value)
+		void Shader::SetGlobalTexture(const std::string & name, graphics::Texture & value)
 		{
 			for (auto shader : s_loadedShaders)
 			{
@@ -335,11 +347,21 @@ namespace thomas
 			}
 		}
 
-		Shader * Shader::Find(const std::string & name)
+		Shader * Shader::FindByName(const std::string & name)
 		{
 			for (Shader* shader : s_loadedShaders)
 			{
-				if (shader->m_name == name)
+				if (shader->GetName() == name)
+					return shader;
+			}
+			return nullptr;
+		}
+
+		Shader * Shader::FindByPath(const std::string& path)
+		{
+			for (Shader* shader : s_loadedShaders)
+			{
+				if (shader->m_path == path)
 					return shader;
 			}
 			return nullptr;
@@ -352,21 +374,26 @@ namespace thomas
 
 		bool Shader::HasProperty(const std::string & name)
 		{
-			for (MaterialProperty* prop : m_properties)
+			for (ShaderProperty* prop : m_properties)
 			{
 				if (prop->GetName() == name)
 					return true;
 			}
 			return false;
 		}
-		MaterialProperty * Shader::GetProperty(const std::string & name)
+		ShaderProperty * Shader::GetProperty(const std::string & name)
 		{
-			for (MaterialProperty* prop : m_properties)
+			for (ShaderProperty* prop : m_properties)
 			{
 				if (prop->GetName() == name)
 					return prop;
 			}
 			return nullptr;
+		}
+
+		std::vector<ShaderProperty*> Shader::GetProperties()
+		{
+			return m_properties;
 		}
 
 		void Shader::Update()
@@ -384,15 +411,19 @@ namespace thomas
 		{
 			ID3DX11Effect* tempEffect;
 			
-			if (Compile(m_filePath, &tempEffect))
+			if (Compile(m_path, &tempEffect))
 			{
-				Destroy();
+				SAFE_RELEASE(m_effect);
+				for (auto pass : m_passes)
+					SAFE_RELEASE(pass.inputLayout);
+
+				m_passes.clear();
 				m_effect = tempEffect;
 				SetupReflection();
 			}
 			else
 			{
-				LOG("Could not recompile shader " << m_name);
+				LOG("Could not recompile shader " << m_path);
 			}
 
 		}
@@ -404,9 +435,87 @@ namespace thomas
 				shader->Recompile();
 			}
 		}
+		void Shader::OnChanged()
+		{
+			Recompile();
+		}
 		void Shader::QueueRecompile()
 		{
 			s_shouldRecompile = true;
+		}
+
+
+		Shader::ShaderInclude::ShaderInclude(const char * shaderDir, const char * systemDir) : m_shaderDir(shaderDir), m_systemDir(systemDir)
+		{
+		}
+
+		HRESULT Shader::ShaderInclude::Open(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID * ppData, UINT * pBytes)
+		{
+			try
+			{
+				
+				std::string finalPath;
+				std::string dir;
+				switch (IncludeType)
+				{
+				case D3D_INCLUDE_LOCAL: // #include "FILE"
+					dir = m_shaderDir;
+					break;
+				case D3D_INCLUDE_SYSTEM: // #include <FILE>
+					dir = m_systemDir;
+					break;
+				default:
+					assert(0);
+				}
+
+				/*
+				If pFileName is absolute: finalPath = pFileName.
+				If pFileName is relative: finalPath = dir + "\\" + pFileName
+				*/
+				if (PathIsRelative(pFileName))
+				{
+					finalPath = dir + "\\" + pFileName;
+				}
+				else
+				{
+					finalPath = pFileName;
+				}
+				
+				std::ifstream fileStream(finalPath, std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
+				if (fileStream.fail())
+				{
+					LOG("Failed to find shader: " << finalPath);
+					return E_FAIL;
+				}
+				uint32_t fileSize = fileStream.tellg();
+
+				if (fileSize)
+				{
+					char* buffer = new char[fileSize];
+					fileStream.seekg(0, std::ifstream::beg);
+					fileStream.read(buffer, fileSize);
+
+					*ppData = buffer;
+					*pBytes = fileSize;
+				}
+				else
+				{
+					*ppData = nullptr;
+					*pBytes = 0;
+				}
+				return S_OK;
+			}
+			catch (std::exception e)
+			{
+				LOG("Failed to read shader include: " << pFileName << " error: " << e.what());
+				return E_FAIL;
+			}
+		}
+		HRESULT Shader::ShaderInclude::Close(LPCVOID pData)
+		{
+			char* bufffer = (char*)pData;
+			delete[] bufffer;
+			return S_OK;
 		}
 	}
 }

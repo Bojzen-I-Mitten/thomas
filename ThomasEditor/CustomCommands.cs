@@ -17,6 +17,7 @@ namespace ThomasEditor.Commands
         private static Key addComponent = Key.A;
         private static Key save = Key.S;
 
+
         public static Key GetOpenOptionsMenuKey() { return openOptionsMenu; }
         public static void SetOpenOptionsMenuKey(Key set) { openOptionsMenu = set; }
 
@@ -111,6 +112,8 @@ namespace ThomasEditor.Commands
                     new KeyGesture(save, ModifierKeys.Control)
                 }
             );
+
+
 
         public static RoutedUICommand GetNewEmptyObject { get { return NewGameObjectCmd; } }
         public static RoutedUICommand GetDeleteGameObject { get { return DeleteGameObjectCmd; } }

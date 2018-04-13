@@ -19,7 +19,7 @@
 #define PROPERTIES_START cbuffer MATERIAL_PROPERTIES : register(b0) {
 #define PROPERTIES_END };
 
-#include "ThomasShaderVariables.fx"
+#include <ThomasShaderVariables.fx>
 //#include "ThomasShaderUtilities.fx"
 
 #ifdef THOMAS_COLORSPACE_GAMMA

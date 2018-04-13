@@ -1,10 +1,10 @@
-﻿<UserControl    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿ <UserControl    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                 xmlns:local="clr-namespace:ThomasEditor"
                 xmlns:commands="clr-namespace:ThomasEditor.Commands"
-                xmlns:managed="clr-namespace:ThomasEditor;assembly=ThomasEngine"
+               
                 xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
                 x:Class="ThomasEditor.ThomasGameObjectInspector"
                 mc:Ignorable="d" 
@@ -16,31 +16,13 @@
         <CommandBinding Command="commands:CustomCommands.GetAddCompenent" CanExecute="AddComponent_CanExecute" Executed="AddComponentButton_Click"/>
     </UserControl.CommandBindings>
 
+
     <UserControl.Resources>
 
-        <local:ComponentToNameConverter x:Key="converter"/>
-        <local:Vector3Converter x:Key="convertVector3" x:Shared="False"/>
-
-        <DataTemplate x:Key="Vector3Editor" x:Name="vector3Test">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="X"/>
-                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}"  TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="1" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='x'}"/>
-                <Label Grid.Column="2" Content="Y"/>
-                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="3" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='y'}"/>
-                <Label Grid.Column="4" Content="Z"/>
-                <xctk:PropertyGridEditorDoubleUpDown Increment=".1" FormatString="{}{0:0.###}" TextAlignment="Left" ShowButtonSpinner="False" Grid.Column="5" Value="{Binding Value, Converter={StaticResource convertVector3}, ConverterParameter='z'}"/>
-            </Grid>
-        </DataTemplate>
+        <local:ComponentToNameConverter x:Key="componentToNameConverter"/>
     </UserControl.Resources>
 
+    
     <Grid x:Name="gameObjectGrid" Background="#444444" Visibility="Hidden">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -60,25 +42,18 @@
 
 
         </Grid>
+
         <ItemsControl ItemsSource="{Binding Components}" Grid.Row="1" Background="#333333">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Expander IsExpanded="True">
                         <Expander.Header>
                             <DockPanel HorizontalAlignment="Stretch" LastChildFill="False">
-                                <Label DockPanel.Dock="Left" Content="{Binding Converter={StaticResource converter}}"/>
+                                <Label DockPanel.Dock="Left" Content="{Binding Converter={StaticResource componentToNameConverter}}"/>
                                 <Button DockPanel.Dock="Right" Content="X" Click="RemoveComponentButton_Click"/>
                             </DockPanel>
                         </Expander.Header>
-                        <xctk:PropertyGrid NameColumnWidth="75" IsCategorized="False" UpdateTextBoxSourceOnEnterKey="True"  Background="Aqua" AutoGenerateProperties="True" SelectedObject="{Binding}" ShowAdvancedOptions="False" ShowSummary="False" ShowSortOptions="False" ShowTitle="False" ShowSearchBox="False" Loaded="PropertyGrid_Loaded">
-                            <xctk:PropertyGrid.EditorDefinitions>
-                                <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource Vector3Editor}">
-                                    <xctk:EditorTemplateDefinition.TargetProperties>
-                                        <xctk:TargetPropertyType Type="managed:Vector3"/>
-                                    </xctk:EditorTemplateDefinition.TargetProperties>
-                                </xctk:EditorTemplateDefinition>
-                            </xctk:PropertyGrid.EditorDefinitions>
-                        </xctk:PropertyGrid>
+                        <local:ExtendedPropertyGrid DataContext="{Binding}"/>
                     </Expander>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

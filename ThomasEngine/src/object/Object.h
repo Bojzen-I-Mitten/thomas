@@ -70,5 +70,10 @@ namespace ThomasEditor {
 		{
 			return %s_objects;
 		}
+
+		static operator bool(Object^ object)
+		{
+			return object != nullptr;
+		}
 	};
 }

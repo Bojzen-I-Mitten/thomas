@@ -40,6 +40,10 @@ namespace ThomasEditor {
 		}
 
 	public:
+
+		
+
+		static System::Reflection::Assembly^ editorAssembly;
 		bool enabled = true;
 
 		[BrowsableAttribute(false)]

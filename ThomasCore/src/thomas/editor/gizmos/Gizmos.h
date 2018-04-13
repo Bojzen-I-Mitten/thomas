@@ -3,7 +3,7 @@
 #include "../../utils/Math.h"
 namespace thomas
 {
-	namespace graphics { class Model; class Material; }
+	namespace resource { class Model; class Material; }
 	namespace utils { struct Ray; }
 	namespace editor
 	{
@@ -21,11 +21,11 @@ namespace thomas
 
 			static void Init();
 
-			static void DrawModel(graphics::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
-			static void DrawModel(graphics::Model* model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
+			static void DrawModel(resource::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
+			static void DrawModel(resource::Model* model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
 
-			static void DrawWireModel(graphics::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
-			static void DrawWireModel(graphics::Model* model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
+			static void DrawWireModel(resource::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
+			static void DrawWireModel(resource::Model* model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
 
 			static void DrawCube(math::Vector3 center, math::Vector3 size);
 			static void DrawWireCube(math::Vector3 center, math::Vector3 size);
@@ -44,7 +44,7 @@ namespace thomas
 			static void SetColor(math::Color color);
 			static void SetMatrix(math::Matrix matrix);
 		private:
-			static graphics::Material* s_gizmoMaterial;
+			static resource::Material* s_gizmoMaterial;
 		};
 	}
 }
