@@ -14,12 +14,11 @@ namespace thomas
 	namespace resource
 	{
 		namespace shaderProperty { class ShaderProperty; }
-		class Texture;
+		class Texture2D;
 		class Shader;
 		class THOMAS_API Material : public Resource
 		{
 		protected:
-			void SetSampler(const std::string name, resource::Texture& value);
 			
 		private:
 			void FetchPropertiesFromShader();
@@ -54,17 +53,15 @@ namespace thomas
 			math::Matrix GetMatrix(const std::string& name);
 			void SetMatrix(const std::string& name, math::Matrix& value);
 
-			resource::Texture* GetTexture(const std::string& name);
-			void SetTexture(const std::string& name, resource::Texture& value);
+			resource::Texture2D* GetTexture2D(const std::string& name);
+			void SetTexture2D(const std::string& name, resource::Texture2D* value);
 
 			math::Vector4 GetVector(const std::string& name);
 			void SetVector(const std::string& name, math::Vector4& value);
 
-			void SetResource(const std::string& name, ID3D11ShaderResourceView& value);
-			void SetBuffer(const std::string& name, ID3D11Buffer& value);
+			void SetResource(const std::string& name, ID3D11ShaderResourceView* value);
+			void SetConstantBuffer(const std::string& name, ID3D11Buffer* value);
 
-			void SetRaw(const std::string& name, void* value, size_t size, UINT count);
-			void SetRaw(const std::string& name, void* value);
 			void SetShaderPassEnabled(int index, bool enabled);
 			void SetShaderPassEnabled(std::string name, bool enabled);
 

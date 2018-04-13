@@ -78,7 +78,6 @@ namespace thomas
 
 			material->SetMatrix("thomas_WorldToObject", worldMatrix.Invert());
 			material->ApplyProperty("thomas_WorldToObject");
-			//prop->ApplyProperty(material->GetShader());
 
 		}
 

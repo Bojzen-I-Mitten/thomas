@@ -353,16 +353,40 @@ namespace thomas
 				}
 			}
 		}
-		void Shader::SetGlobalTexture(const std::string & name, resource::Texture & value)
+		void Shader::SetGlobalTexture2D(const std::string & name, resource::Texture2D* value)
 		{
 			for (auto shader : s_loadedShaders)
 			{
 				if (shader->HasProperty(name))
 				{
-					//shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
+					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyTexture2D(value));
+					shader->m_properties[name]->SetName(name);
 				}
 			}
 		}
+		void Shader::SetGlobalResource(const std::string & name, ID3D11ShaderResourceView * value)
+		{
+			for (auto shader : s_loadedShaders)
+			{
+				if (shader->HasProperty(name))
+				{
+					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyShaderResource(value));
+					shader->m_properties[name]->SetName(name);
+				}
+			}
+		}
+		void Shader::SetGlobalConstantBuffer(const std::string & name, ID3D11Buffer * value)
+		{
+			for (auto shader : s_loadedShaders)
+			{
+				if (shader->HasProperty(name))
+				{
+					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyConstantBuffer(value));
+					shader->m_properties[name]->SetName(name);
+				}
+			}
+		}
+		
 		void Shader::SetGlobalVector(const std::string & name, math::Vector4 value)
 		{
 			for (auto shader : s_loadedShaders)
@@ -552,8 +576,32 @@ namespace thomas
 			case D3D_SVC_MATRIX_ROWS:
 				newProperty = shaderProperty::ShaderPropertyMatrix::GetDefault();
 				break;
-			/*case D3D_SVC_OBJECT:
-				tempClass = GetObjectPropClass(type);*/
+			case D3D_SVC_OBJECT:
+			{
+				switch (typeDesc.Type)
+				{
+				case D3D_SVT_CBUFFER:
+					newProperty = shaderProperty::ShaderPropertyConstantBuffer::GetDefault();
+					break;
+				//case D3D_SVT_TEXTURE:
+				//case D3D_SVT_TEXTURE1D:
+				//case D3D_SVT_RWTEXTURE1D:
+				case D3D_SVT_TEXTURE2DMS:
+				case D3D_SVT_RWTEXTURE2D:
+				case D3D_SVT_TEXTURE2D:
+				//case D3D_SVT_RWTEXTURE3D:
+				//case D3D_SVT_TEXTURE3D:
+				//case D3D_SVT_TEXTURECUBE:
+					newProperty = shaderProperty::ShaderPropertyTexture2D::GetDefault();
+					break;
+				case D3D_SVT_STRUCTURED_BUFFER:
+				case D3D_SVT_RWSTRUCTURED_BUFFER:
+				case D3D_SVT_APPEND_STRUCTURED_BUFFER:
+				case D3D_SVT_CONSUME_STRUCTURED_BUFFER:
+					newProperty = shaderProperty::ShaderPropertyShaderResource::GetDefault();
+				}
+				break;
+			}
 			default:
 				break;
 			}

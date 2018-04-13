@@ -10,14 +10,6 @@ namespace thomas
 		Material* Material::s_standardMaterial;
 		UINT Material::s_idCounter = 0;
 
-		void Material::SetSampler(const std::string name, resource::Texture & value)
-		{
-			if (m_shader->HasProperty(name))
-			{
-				//GetProperty(name)->SetSampler(value);
-			}
-		}
-
 		void Material::FetchPropertiesFromShader()
 		{
 			if (m_shader)
@@ -129,7 +121,6 @@ namespace thomas
 			{
 				m_properties[name]->Apply(m_shader);
 			}
-				
 		}
 		
 
@@ -223,30 +214,23 @@ namespace thomas
 			m_properties[name]->SetName(name);
 			
 		}
-		resource::Texture* Material::GetTexture(const std::string& name)
+		resource::Texture2D * Material::GetTexture2D(const std::string & name)
 		{
 			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::TEXTURE2D)
 			{
-				((shaderProperty::ShaderPropertyVector*)m_properties[name].get())->GetValue();
+				return ((shaderProperty::ShaderPropertyTexture2D*)m_properties[name].get())->GetValue();
 			}
 			else
 			{
-				//LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
-		void Material::SetTexture(const std::string& name, resource::Texture& value)
+		void Material::SetTexture2D(const std::string & name, resource::Texture2D* value)
 		{
-			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::VECTOR)
-			{
-				//m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
-				//SetSampler("sampler" + name, value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyTexture2D(value));
+			m_properties[name]->SetName(name);
 		}
+
 		math::Vector4 Material::GetVector(const std::string& name)
 		{
 			if(HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::VECTOR)
@@ -266,63 +250,16 @@ namespace thomas
 			m_properties[name]->SetName(name);
 			
 		}
-		void Material::SetResource(const std::string & name, ID3D11ShaderResourceView & value)
+		void Material::SetResource(const std::string & name, ID3D11ShaderResourceView* value)
 		{
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyShaderResource(value));
+			m_properties[name]->SetName(name);
 		}
-		void Material::SetBuffer(const std::string & name, ID3D11Buffer & value)
+		void Material::SetConstantBuffer(const std::string & name, ID3D11Buffer* value)
 		{
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyConstantBuffer(value));
+			m_properties[name]->SetName(name);
 		}
-		void Material::SetRaw(const std::string & name, void * value, size_t size, UINT count)
-		{
-		}
-		void Material::SetRaw(const std::string & name, void * value)
-		{
-		}
-		//void Material::SetResource(const std::string & name, ID3D11ShaderResourceView & value)
-		//{
-		//	if (HasProperty(name))
-		//	{
-		//		GetProperty(name)->SetResource(value);
-		//	}
-		//	else
-		//	{
-		//		//LOG("Property " << name << " does not exist for material");
-		//	}
-		//}
-		//void Material::SetBuffer(const std::string & name, ID3D11Buffer & value)
-		//{
-		//	if (HasProperty(name))
-		//	{
-		//		GetProperty(name)->SetBuffer(value);
-		//	}
-		//	else
-		//	{
-		//		//LOG("Property " << name << " does not exist for material" );
-		//	}
-		//}
-		//void Material::SetRaw(const std::string & name, void * value, size_t size, UINT count)
-		//{
-		//	if (HasProperty(name))
-		//	{
-		//		GetProperty(name)->SetRaw(value, size, count);
-		//	}
-		//	else
-		//	{
-		//		//LOG("Property " << name << " does not exist for material");
-		//	}
-		//}
-
-		//void Material::SetRaw(const std::string & name, void * value)
-		//{
-		//	if (HasProperty(name))
-		//	{
-		//		GetProperty(name)->SetRaw(value, 1);
-		//	}
-		//	else
-		//	{
-		//		//LOG("Property " << name << " does not exist for material");
-		//	}
-		//}
 
 
 		void Material::SetShaderPassEnabled(int index, bool enabled)
