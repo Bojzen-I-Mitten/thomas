@@ -18,8 +18,8 @@ namespace thomas
 					SCALAR_INT,
 					VECTOR,
 					MATRIX,
-					UAV,
-					BUFFER,
+					SHADER_RESOURCE,
+					CONSTANT_BUFFER,
 					TEXTURE2D
 				};
 

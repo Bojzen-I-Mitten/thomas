@@ -13,7 +13,7 @@ namespace thomas
 	namespace resource
 	{
 		namespace shaderProperty { class ShaderProperty; }
-		class Texture;
+		class Texture2D;
 		class THOMAS_API Shader : public Resource
 		{
 		public:
@@ -76,8 +76,10 @@ namespace thomas
 			static void SetGlobalInt(const std::string& name, int value);
 
 			static void SetGlobalMatrix(const std::string& name, math::Matrix value);
-
-			static void SetGlobalTexture(const std::string& name, resource::Texture& value);
+			
+			static void SetGlobalTexture2D(const std::string& name, resource::Texture2D* value);
+			static void SetGlobalResource(const std::string& name, ID3D11ShaderResourceView* value);
+			static void SetGlobalConstantBuffer(const std::string& name, ID3D11Buffer* value);
 
 			static void SetGlobalVector(const std::string& name, math::Vector4 value);
 

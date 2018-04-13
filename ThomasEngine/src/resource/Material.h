@@ -16,7 +16,6 @@ namespace ThomasEditor
 	internal:
 		Material(thomas::resource::Material* ptr) : Resource("", ptr) {};
 
-		void SetRaw(String^ name, void* value) { ((thomas::resource::Material*)m_nativePtr)->SetRaw(Utility::ConvertString(name), value); }
 	public:
 
 		~Material()
@@ -119,7 +118,7 @@ namespace ThomasEditor
 					}
 					else if (t == System::Single::typeid)
 					{
-						SetRaw(key, &prop);
+						//SetRaw(key, &prop);
 					}
 				}
 			}

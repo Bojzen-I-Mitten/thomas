@@ -71,7 +71,6 @@ namespace ThomasEditor {
 			{
 				if (readyToRender)
 				{
-										
 					Window::ClearAllWindows();
 					Monitor::Enter(renderLock);
 					thomas::graphics::Renderer::TransferCommandList();
