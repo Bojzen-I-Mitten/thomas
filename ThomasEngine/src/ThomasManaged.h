@@ -12,7 +12,7 @@
 #include <thomas\utils\DebugTools.h>
 #include <thomas\resource\Shader.h>
 #include <thomas\graphics\Renderer.h>
-
+#include <thomas\editor\gizmos\Gizmos.h>
 #pragma managed
 //#include <Sound.h>
 #include "resource\Resources.h"
@@ -74,11 +74,12 @@ namespace ThomasEditor {
 					Window::ClearAllWindows();
 					Monitor::Enter(renderLock);
 					thomas::graphics::Renderer::TransferCommandList();
-					
+					thomas::editor::Gizmos::TransferGizmoCommands();
+					Monitor::Exit(renderLock);
 					thomas::graphics::Renderer::ProcessCommands();
 					thomas::Window::PresentAllWindows();
 					readyToRender = false;
-					Monitor::Exit(renderLock);
+					
 				}
 				
 			}
@@ -125,6 +126,7 @@ namespace ThomasEditor {
 					//Rendering
 					Monitor::Enter(renderLock);
 					graphics::Renderer::ClearCommands();
+					editor::Gizmos::ClearGizmos();
 					if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
 					{
 						

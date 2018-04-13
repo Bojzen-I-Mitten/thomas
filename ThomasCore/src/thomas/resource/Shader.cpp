@@ -394,6 +394,7 @@ namespace thomas
 				if (shader->HasProperty(name))
 				{
 					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
+					shader->m_properties[name]->SetName(name);
 				}
 			}
 		}
