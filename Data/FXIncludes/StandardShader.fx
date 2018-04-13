@@ -1,6 +1,6 @@
 #pragma warning(disable: 4717) // removes effect deprecation warning.
 
-#include "ThomasCG.fx"
+#include <ThomasCG.hlsl>
 
 cbuffer MATERIAL_PROPERTIES
 {
@@ -67,7 +67,7 @@ v2f vert(appdata_thomas v)
 	return o;
 }
 
-struct Light
+/*struct Light
 {
     float4  color;
     float4  position;
@@ -78,8 +78,39 @@ struct Light
     float   spotOuterAngle;
     float3  attenuation;
     uint    type;
+};*/
+
+struct Light
+{
+	float3  color;
+	float   intensity;
+	float3  position;
+	float   spotOuterAngle;
+	float3  direction;
+	float   spotInnerAngle;
+	float3  attenuation;
+	uint    type;
 };
 
+float CalculatePointLightContribution(float4 lightColor, float lightIntensity, float lightDistance, float3 lightAttenuation)
+{
+	return lightColor * lightIntensity / (lightAttenuation.x + lightAttenuation.y * lightDistance + lightAttenuation.z * lightDistance * lightDistance);
+}
+
+/*float CalculateSpotLightFactor()
+{
+	float angle = degrees(acos(dot(-tempLight.direction, lightDir)));
+	float spotFactor = 0.0f;
+	if (angle < tempLight.spotInnerAngle)
+	{
+		spotFactor = 1.0f;
+	}
+	else if (angle < tempLight.spotOuterAngle)
+	{
+		spotFactor = 1.0f - smoothstep(tempLight.spotInnerAngle, tempLight.spotOuterAngle, angle);
+	}
+	return spotFactor;
+}*/
 
 float4 frag(v2f input) : SV_TARGET
 {
@@ -90,7 +121,6 @@ float4 frag(v2f input) : SV_TARGET
     tempLight.intensity = 1;
     tempLight.direction = -normalize(float4(1, 1, 1, 0));
     tempLight.type = 0;
-    tempLight.smoothness = 16.0f;
     tempLight.spotInnerAngle = 10.0f;
     tempLight.spotOuterAngle = 30.0f;
     tempLight.attenuation = float3(0.4f, 0.02f, 0.1f);
@@ -99,6 +129,7 @@ float4 frag(v2f input) : SV_TARGET
     float4 ambient = float4(0.1f, 0.1f, 0.1f, 1.0f);
     float4 diffuse = float4(0.4f, 0.4f, 0.4f, 1.0f);
     float4 specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	float smoothness = 16.0f;
     
     float4 viewDir = normalize(float4(_WorldSpaceCameraPos - input.worldPos.xyz, 0.0f));
 	float4 lightDir = float4(0, 0, 0, 0);
@@ -115,7 +146,7 @@ float4 frag(v2f input) : SV_TARGET
         float lightDistance = length(lightDir);
         lightDir = normalize(lightDir);
 
-        lightMultiplyer = tempLight.color * tempLight.intensity / (tempLight.attenuation.x + tempLight.attenuation.y * lightDistance + tempLight.attenuation.z * lightDistance * lightDistance);
+		lightMultiplyer = CalculatePointLightContribution(tempLight.color, tempLight.intensity, lightDistance, tempLight.attenuation);
     }
     else if (2 == tempLight.type)//spot
     {

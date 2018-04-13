@@ -1,25 +1,24 @@
 #include "EditorGrid.h"
 #include "../utils/d3d.h"
 #include "../resource/Material.h"
+#include "../utils/Buffers.h"
 #include "../resource/Shader.h"
+#include "../object/component/Camera.h"
+#include "../graphics/Renderer.h"
 namespace thomas
 {
 	namespace editor
 	{
 		void EditorGrid::AddLine(math::Vector3 from, math::Vector3 to, math::Vector4 color, float viewDistance)
 		{
-			LineVertex fromLine;
-			LineVertex toLine;
 
+
+			m_lines.positions.push_back(math::Vector4(from.x, from.y, from.z, viewDistance));
+			m_lines.colors.push_back(color);
 	
-			fromLine.pos = from;
-			fromLine.color = color;
-			fromLine.viewDistance = viewDistance;
-			toLine.pos = to;
-			toLine.color = color;
-			toLine.viewDistance = viewDistance;
-			m_lines.push_back(fromLine);
-			m_lines.push_back(toLine);
+			m_lines.positions.push_back(math::Vector4(to.x, to.y, to.z, viewDistance));
+			m_lines.colors.push_back(color);
+
 		}
 
 		EditorGrid::EditorGrid(int gridSize, float cellSize, int internalGridSize)
@@ -27,7 +26,10 @@ namespace thomas
 			m_gridSize = gridSize;
 			m_cellSize = cellSize;
 			m_internalGridSize = internalGridSize;
-			m_lines.reserve(gridSize*gridSize * 2 * 3);
+
+			m_lines.positions.reserve(gridSize*gridSize * 2 * 3);
+			m_lines.colors.reserve(gridSize*gridSize * 2 * 3);
+
 			for (int x = -m_gridSize / 2; x <= m_gridSize / 2; x++)
 			{
 				for (int z = -m_gridSize / 2; z <= m_gridSize / 2; z++)
@@ -69,17 +71,17 @@ namespace thomas
 			{
 				m_material = new resource::Material(shader);
 				m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
-				m_vertexBuffer = utils::D3d::CreateDynamicBufferFromVector(m_lines, D3D11_BIND_VERTEX_BUFFER);
+				m_mesh = new graphics::Mesh(m_lines, {}, "grid");
 			}
+				
 			
 		}
 
-		void EditorGrid::Draw(math::Vector3 cameraPos)
+		void EditorGrid::Draw(object::component::Camera* camera)
 		{
-			UINT stride = sizeof(LineVertex);
-			UINT offset = 0;
 			if (m_material)
 			{
+				math::Vector3 cameraPos = camera->GetPosition();
 				int scale = (int)log10(((abs(cameraPos.y/2)+1) / m_cellSize)*m_cellSize);
 				scale = pow(10.0f,scale);
 				math::Matrix worldMatrix = math::Matrix::CreateScale((scale)*m_cellSize) * math::Matrix::CreateTranslation(
@@ -89,19 +91,17 @@ namespace thomas
 				);
 				scale *= m_cellSize;
 				math::Vector4 cameraScaleMatrix(cameraPos.x, cameraPos.y, cameraPos.z, 0);
-				m_material->SetMatrix("thomas_ObjectToWorld", worldMatrix.Transpose());
 				m_material->SetVector("cameraPos", math::Vector4(cameraScaleMatrix));
 				m_material->SetInt("gridScale", scale);
-				m_material->GetShader()->BindVertexBuffer(m_vertexBuffer, stride, offset);
-				m_material->Bind();
-				m_material->Draw(m_lines.size(), 0);
+
+				graphics::Renderer::SubmitCommand(graphics::RenderCommand(worldMatrix, m_mesh, m_material, camera));
 			}
 			
 		}
 
 		EditorGrid::~EditorGrid()
 		{
-			SAFE_RELEASE(m_vertexBuffer);
+			delete m_mesh;
 		}
 
 	}

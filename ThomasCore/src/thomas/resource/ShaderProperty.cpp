@@ -1,5 +1,5 @@
 #include "ShaderProperty.h"
-#include "../graphics/Texture.h"
+#include "texture\Texture.h"
 
 namespace thomas
 {
@@ -176,6 +176,7 @@ namespace thomas
 			m_isSet = false;
 			m_index = index;
 			m_rawCount = 1;
+			m_variable = variable;
 
 			D3DX11_EFFECT_TYPE_DESC typeDesc;
 			D3DX11_EFFECT_VARIABLE_DESC variableDesc;
@@ -219,6 +220,7 @@ namespace thomas
 
 			ShaderProperty::ShaderProperty(const ShaderProperty* otherProperty)
 			{
+				m_variable = otherProperty->m_variable;
 				m_name = otherProperty->m_name;
 				m_bufferName = otherProperty->m_bufferName;
 				m_value = nullptr;
@@ -262,11 +264,11 @@ namespace thomas
 				}
 			}
 
-			void ShaderProperty::ApplyProperty(resource::Shader * shader)
+			void ShaderProperty::ApplyProperty()
 		{
 			if (!m_isSet)
 				return;
-			ID3DX11EffectVariable* variable = shader->GetEffect()->GetVariableByIndex(m_index);
+			ID3DX11EffectVariable* variable = m_variable;
 			if (!variable->IsValid())
 			{
 				LOG("Failed to Apply property to variable: " << GetName());
@@ -318,7 +320,7 @@ namespace thomas
 				ID3DX11EffectShaderResourceVariable* texture = variable->AsShaderResource();
 				switch (m_class)
 				{
-				case PropClass::Texture: result = texture->SetResource(GetTexture()->GetTextureView()); break;
+				case PropClass::Texture: result = texture->SetResource(GetTexture()->GetResourceView()); break;
 				case PropClass::Resource: result = texture->SetResource(GetResource()); break;
 				default:
 					break;
@@ -329,7 +331,8 @@ namespace thomas
 			case PropClass::TextureSampler:
 			{
 				ID3DX11EffectSamplerVariable* sampler = variable->AsSampler();
-				result = sampler->SetSampler(0, GetSampler()->GetSamplerState());
+				
+				//result = sampler->SetSampler(0, GetSampler()->GetSamplerState());
 				break;
 			}
 				
@@ -360,7 +363,7 @@ namespace thomas
 			}
 			if (result != S_OK)
 			{
-				LOG("Failed to apply material property to shader: " << shader->GetName());
+				LOG("Failed to apply shader property: " << m_name);
 			}
 		}
 
@@ -395,6 +398,7 @@ namespace thomas
 				SAFE_DELETE(m_value);
 				m_value = new float(value);
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -409,6 +413,7 @@ namespace thomas
 				SAFE_DELETE(m_value);
 				m_value = new int(value);
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -423,6 +428,7 @@ namespace thomas
 				SAFE_DELETE(m_value);
 				m_value = new math::Vector4(value);
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -437,6 +443,7 @@ namespace thomas
 				SAFE_DELETE(m_value);
 				m_value = new math::Matrix(value);
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -444,12 +451,13 @@ namespace thomas
 			}
 		}
 
-		void ShaderProperty::SetTexture(graphics::Texture & value)
+		void ShaderProperty::SetTexture(resource::Texture & value)
 		{
 			if (m_class == PropClass::Texture)
 			{
 				m_value = (void*)&value;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -457,17 +465,18 @@ namespace thomas
 			}
 		}
 
-		void ShaderProperty::SetSampler(graphics::Texture & value)
+		void ShaderProperty::SetSampler(resource::Texture & value)
 		{
-			if (m_class == PropClass::TextureSampler)
+			/*if (m_class == PropClass::TextureSampler)
 			{
 				m_value = (void*)&value;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
 				LOG("Material property: " << GetName() << " is not of type: texture sampler");
-			}
+			}*/
 		}
 
 		void ShaderProperty::SetResource(ID3D11ShaderResourceView & value)
@@ -476,6 +485,7 @@ namespace thomas
 			{
 				m_value = (void*)&value;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -489,6 +499,7 @@ namespace thomas
 			{
 				m_value = (void*)&value;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -502,6 +513,7 @@ namespace thomas
 			{
 				m_value = (void*)&value;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -517,6 +529,7 @@ namespace thomas
 				m_rawSize = size;
 				m_rawCount = count;
 				m_isSet = true;
+				ApplyProperty();
 			}
 			else
 			{
@@ -611,11 +624,11 @@ namespace thomas
 			}
 		}
 
-		graphics::Texture* ShaderProperty::GetTexture()
+		resource::Texture* ShaderProperty::GetTexture()
 		{
 			if (m_class == PropClass::Texture)
 			{
-				return (graphics::Texture*)m_value;
+				return (resource::Texture*)m_value;
 			}
 			else
 			{
@@ -624,17 +637,18 @@ namespace thomas
 			}
 		}
 
-		graphics::Texture * ShaderProperty::GetSampler()
+		resource::Texture * ShaderProperty::GetSampler()
 		{
-			if (m_class == PropClass::TextureSampler)
+			return nullptr;
+			/*if (m_class == PropClass::TextureSampler)
 			{
-				return (graphics::Texture*)m_value;
+				return (resource::Texture*)m_value;
 			}
 			else
 			{
 				LOG("Material property: " << GetName() << " is not of type: texture sampler");
 				return nullptr;
-			}
+			}*/
 		}
 
 		ID3D11ShaderResourceView * ShaderProperty::GetResource()

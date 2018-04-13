@@ -96,7 +96,7 @@ namespace ThomasEditor {
 			initComponents(uninitializedComponents);
 			Monitor::Exit(m_componentsLock);
 		}
-		void UpdateComponents()
+		void Update()
 		{
 			Monitor::Enter(m_componentsLock);
 			for (int i = 0; i < m_components.Count; i++)
@@ -104,6 +104,18 @@ namespace ThomasEditor {
 				Component^ component = m_components[i];
 				if (component->initialized && component->enabled)
 					component->Update();
+			}
+			Monitor::Exit(m_componentsLock);
+		}
+
+		void FixedUpdate()
+		{
+			Monitor::Enter(m_componentsLock);
+			for (int i = 0; i < m_components.Count; i++)
+			{
+				Component^ component = m_components[i];
+				if (component->initialized && component->enabled)
+					component->FixedUpdate();
 			}
 			Monitor::Exit(m_componentsLock);
 		}

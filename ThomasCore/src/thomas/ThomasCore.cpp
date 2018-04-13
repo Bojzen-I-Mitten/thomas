@@ -2,7 +2,7 @@
 #include "Sound.h"
 #include "Input.h"
 #include "object\Object.h"
-#include "graphics\Texture.h"
+#include "resource\texture\Texture2D.h"
 #include "graphics\Renderer.h"
 #include "resource\Shader.h"
 #include "resource\Material.h"
@@ -45,7 +45,8 @@ namespace thomas {
 		init = Input::Init();
 
 		if (init)
-			init = graphics::Texture::Init();
+		//	init = graphics::Texture2D::Init();
+
 
 
 		//utils::DebugTools::Init();
@@ -109,7 +110,6 @@ namespace thomas {
 		editor::EditorCamera::Update();
 
 		Window::Update();
-		graphics::Renderer::ClearRenderQueue();
 		resource::Shader::Update();
 		thomas::ThomasTime::Update();
 		Input::Update();
@@ -126,15 +126,6 @@ namespace thomas {
 		Sound::Update();
 	}
 		
-
-
-
-
-	void ThomasCore::Render()
-	{
-		graphics::Renderer::Render();
-	}
-
 	void ThomasCore::Stop()
 	{
 		s_initialized = false;
@@ -156,13 +147,14 @@ namespace thomas {
 		graphics::ParticleSystem::Destroy();
 		//graphics::Sprite::Destroy();
 		//graphics::TextRender::Destroy();
-		graphics::Texture::ReleaseSamplers();
-		graphics::Texture::Destroy();
+		//graphics::Texture::ReleaseSamplers();
+		//graphics::Texture::Destroy();
 		resource::Shader::DestroyAllShaders();
 		resource::Material::Destroy();
 		//utils::DebugTools::Destroy();
 		object::Object::Destroy();
 		editor::EditorCamera::Destroy();
+		editor::Gizmos::Destroy();
 		Physics::Destroy();
 		ImGui::DestroyContext(s_imGuiContext);
 
@@ -183,9 +175,7 @@ namespace thomas {
 			s_debug = nullptr;
 		#endif // _DEBUG
 
-		
-
-		//Sound::Destroy();
+		Sound::Destroy();
 
 		return true;
 	}

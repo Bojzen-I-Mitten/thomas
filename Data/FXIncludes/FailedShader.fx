@@ -2,13 +2,6 @@
 
 #include <ThomasCG.hlsl>
 
-
-cbuffer GizmoBuffer
-{
-	matrix gizmoMatrix;
-	float4 gizmoColor;
-};
-
 DepthStencilState EnableDepth
 {
 	DepthEnable = TRUE;
@@ -16,13 +9,14 @@ DepthStencilState EnableDepth
 	DepthFunc = LESS_EQUAL;
 };
 
-RasterizerState SolidRasterizer
+RasterizerState TestRasterizer
 {
 	FillMode = SOLID;
 	CullMode = BACK;
 	FrontCounterClockWise = TRUE;
 	DepthClipEnable = FALSE;
 };
+
 
 BlendState AlphaBlendingOn
 {
@@ -37,51 +31,36 @@ BlendState AlphaBlendingOn
 
 };
 
-RasterizerState WireframeRasterizer
+struct appdata
 {
-	FillMode = WIREFRAME;
-	CullMode = NONE;
-	FrontCounterClockWise = TRUE;
-	DepthClipEnable = FALSE;
+	float3 vertex : POSITION;
 };
 
 struct v2f {
 	float4 vertex : SV_POSITION;
 };
 
-v2f vert(appdata_thomas v)
+v2f vert(appdata v)
 {
 	v2f o;
-	o.vertex = mul(gizmoMatrix, v.vertex);
-	o.vertex = ThomasWorldToClipPos(o.vertex);
+	o.vertex = ThomasObjectToClipPos(v.vertex);
 	return o;
 }
 
 float4 frag(v2f i) : SV_TARGET
 {
-	return gizmoColor;
+	return float4(1, 1, 0, 1);
 }
 
 
 technique11 Standard {
-
-	pass SOLID {
+	pass P0 {
 		VERT(vert());
 		SetGeometryShader(NULL);
 		FRAG(frag());
 		SetDepthStencilState(EnableDepth, 0);
-		SetRasterizerState(SolidRasterizer);
+		SetRasterizerState(TestRasterizer);
 		SetBlendState(AlphaBlendingOn, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
-
-	pass WIREFRAME {
-		VERT(vert());
-		SetGeometryShader(NULL);
-		FRAG(frag());
-		SetDepthStencilState(EnableDepth, 0);
-		SetRasterizerState(WireframeRasterizer);
-		SetBlendState(AlphaBlendingOn, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
-	}
-
 
 }

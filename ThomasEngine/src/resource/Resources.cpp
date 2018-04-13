@@ -3,6 +3,7 @@
 #include "AudioClip.h"
 #include "Material.h"
 #include "Shader.h"
+#include "texture\Texture2D.h"
 #include "Resources.h"
 #include "../Scene.h"
 namespace ThomasEditor
@@ -24,7 +25,8 @@ namespace ThomasEditor
 				case AssetTypes::MODEL:
 					obj = gcnew Model(path);
 					break;
-				case AssetTypes::TEXTURE:
+				case AssetTypes::TEXTURE2D:
+					obj = gcnew Texture2D(path);
 					break;
 				case AssetTypes::SCENE:
 					break;
@@ -70,6 +72,10 @@ namespace ThomasEditor
 		else if (type == Shader::typeid)
 		{
 			return AssetTypes::SHADER;
+		}
+		else if (type == Texture2D::typeid)
+		{
+			return AssetTypes::TEXTURE2D;
 		}
 		else
 		{

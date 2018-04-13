@@ -6,19 +6,31 @@
 #include <map>
 #include "../utils/Math.h"
 #include "Resource.h"
+#include "../utils/Buffers.h"
 namespace thomas
 {
-	namespace graphics
-	{
-		class Texture;
-	}
 	namespace resource
 	{
+		class Texture;
 		class ShaderProperty;
 		class THOMAS_API Shader : public Resource
 		{
 		public:
-
+			enum class Semantics
+			{
+				POSITION = 0,
+				TEXCOORD = 1,
+				NORMAL = 2,
+				TANGENT = 3,
+				BITANGENT = 4, //Remove?
+				BINORMAL = 5,
+				BLENDINDICES = 6,
+				BLENDWEIGHT = 7,
+				COLOR = 8,
+				POSITIONT = 9,
+				PSIZE = 10,
+				UNKNOWN = 11
+			};
 		private:
 			static bool Compile(std::string path, ID3DX11Effect** effect);
 
@@ -31,11 +43,14 @@ namespace thomas
 			static void RecompileShaders();
 
 			void OnChanged();
+
+			Semantics GetSemanticFromName(std::string semanticName);
 		public:
 			struct ShaderPass
 			{
 				std::string name;
 				ID3D11InputLayout* inputLayout;
+				std::vector<Semantics> inputSemantics;
 			};
 
 			static bool Init();
@@ -43,12 +58,13 @@ namespace thomas
 
 			static Shader* CreateShader(std::string path);
 			void BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY type);
-			void BindVertexBuffer(ID3D11Buffer * vertexBuffer, UINT stride, UINT offset = 0);
-			void BindIndexBuffer(ID3D11Buffer * indexBuffer);
+			void BindVertexBuffer(utils::buffers::VertexBuffer* buffer);
+			void BindVertexBuffers(std::vector<utils::buffers::VertexBuffer*> buffers);
+			void BindIndexBuffer(utils::buffers::IndexBuffer* indexBuffer);
 			void Bind();
 			std::vector<ShaderPass>* GetPasses();
 			void SetPass(int passIndex);
-
+			ShaderPass& GetCurrentPass();
 			static void DestroyAllShaders();
 
 			static void SetGlobalColor(const std::string& name, math::Color value);
@@ -59,7 +75,7 @@ namespace thomas
 
 			static void SetGlobalMatrix(const std::string& name, math::Matrix value);
 
-			static void SetGlobalTexture(const std::string& name, graphics::Texture& value);
+			static void SetGlobalTexture(const std::string& name, resource::Texture& value);
 
 			static void SetGlobalVector(const std::string& name, math::Vector4 value);
 
@@ -77,9 +93,10 @@ namespace thomas
 			ID3DX11Effect* m_effect;
 			std::vector<ShaderProperty*> m_properties;
 			std::vector<ShaderPass> m_passes;
-			
+			ShaderPass* m_currentPass;
 			static std::vector<Shader*> s_loadedShaders;
 			static Shader* s_standardShader;
+			static Shader* s_failedShader;
 			static bool s_shouldRecompile;
 
 

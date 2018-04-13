@@ -1,6 +1,6 @@
 #include "Material.h"
 #include "Shader.h"
-#include "../graphics/Texture.h"
+#include "../resource/texture/Texture.h"
 #include "../graphics/Mesh.h"
 #include "ShaderProperty.h"
 namespace thomas
@@ -10,7 +10,7 @@ namespace thomas
 		Material* Material::s_standardMaterial;
 		UINT Material::s_idCounter = 0;
 
-		void Material::SetSampler(const std::string name, graphics::Texture & value)
+		void Material::SetSampler(const std::string name, resource::Texture & value)
 		{
 			if (m_shader->HasProperty(name))
 			{
@@ -161,7 +161,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
@@ -173,7 +173,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 			}
 		}
 		float* Material::GetFloat(const std::string& name)
@@ -184,7 +184,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
@@ -197,7 +197,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 			}
 
 		}
@@ -209,7 +209,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material" );
+				//LOG("Property " << name << " does not exist for material" );
 				return nullptr;
 			}
 		}
@@ -221,7 +221,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 			}
 		}
 		math::Matrix* Material::GetMatrix(const std::string& name)
@@ -232,7 +232,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
@@ -244,10 +244,10 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 			}
 		}
-		graphics::Texture* Material::GetTexture(const std::string& name)
+		resource::Texture* Material::GetTexture(const std::string& name)
 		{
 			if (HasProperty(name))
 			{
@@ -255,20 +255,20 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
-		void Material::SetTexture(const std::string& name, graphics::Texture& value)
+		void Material::SetTexture(const std::string& name, resource::Texture& value)
 		{
 			if (HasProperty(name))
 			{
 				GetProperty(name)->SetTexture(value);
-				SetSampler("sampler" + name, value);
+				//SetSampler("sampler" + name, value);
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 			}
 		}
 		math::Vector4* Material::GetVector(const std::string& name)
@@ -279,7 +279,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
@@ -291,7 +291,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 			}
 		}
 		void Material::SetResource(const std::string & name, ID3D11ShaderResourceView & value)
@@ -302,7 +302,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 			}
 		}
 		void Material::SetBuffer(const std::string & name, ID3D11Buffer & value)
@@ -313,7 +313,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material" );
+				//LOG("Property " << name << " does not exist for material" );
 			}
 		}
 		void Material::SetRaw(const std::string & name, void * value, size_t size, UINT count)
@@ -324,7 +324,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 			}
 		}
 
@@ -336,7 +336,7 @@ namespace thomas
 			}
 			else
 			{
-				LOG("Property " << name << " does not exist for material");
+				//LOG("Property " << name << " does not exist for material");
 			}
 		}
 
@@ -385,10 +385,10 @@ namespace thomas
 		void Material::Bind()
 		{
 			m_shader->Bind();
-			for (auto prop : m_properties)
+			/*for (auto prop : m_properties)
 			{
 				prop->ApplyProperty(m_shader);
-			}
+			}*/
 			ThomasCore::GetDeviceContext()->IASetPrimitiveTopology(m_topology);
 		}
 		void Material::Draw(graphics::Mesh * mesh)
