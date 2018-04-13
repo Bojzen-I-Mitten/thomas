@@ -97,6 +97,10 @@ namespace thomas
 
 	}
 
+	void Input::ResetScrollWheelValue()
+	{
+		s_mouse->ResetScrollWheelValue();
+	}
 
 	//gamePad
 	float Input::GetLeftStickY()
@@ -352,6 +356,10 @@ namespace thomas
 		return false;
 	}
 
+	int Input::GetMouseScrollWheel()
+	{
+		return s_mouseState.scrollWheelValue;
+	}
 
 	//keyboard
 
