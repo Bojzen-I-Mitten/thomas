@@ -2,6 +2,7 @@
 #pragma unmanaged
 #include <thomas\object\component\RenderComponent.h>
 #pragma managed
+
 #include "../Component.h"
 #include "../../resource/Model.h"
 
@@ -13,15 +14,16 @@ namespace ThomasEditor
 	{
 	private:
 		Model^ m_model;
+
 	public:
-		RenderComponent() : Component(new thomas::object::component::RenderComponent()) {
-		}
+		RenderComponent() : Component(new thomas::object::component::RenderComponent()) {}
 
 		property Model^ model {
-			Model^ get() {
+			Model^ get() 
+			{
 				return m_model;
-				
 			}
+
 			void set(Model^ value)
 			{
 				m_model = value;

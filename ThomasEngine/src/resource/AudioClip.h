@@ -16,7 +16,6 @@ namespace ThomasEditor
 		[OnDeserializedAttribute]
 		void OnDeserialized(StreamingContext c)
 		{
-			
 			m_nativePtr = new thomas::resource::AudioClip(Utility::ConvertString(m_path));
 		}
 	};

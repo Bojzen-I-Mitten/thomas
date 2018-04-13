@@ -1,27 +1,27 @@
 #pragma once
-
 #pragma unmanaged
 #include <thomas\utils\Math.h>
 #pragma managed
 #include <math.h>
+
 using namespace System::ComponentModel;
 using namespace System::Runtime::Serialization;
 using namespace System;
 
 namespace ThomasEditor
 {
-	
 	[TypeConverter(ExpandableObjectConverter::typeid)]
 	public value class Vector4
 	{
 	public:
-
-		Vector4(float x, float y, float z, float w) {
+		Vector4(float x, float y, float z, float w) 
+		{
 			this->x = x;
 			this->y = y;
 			this->z = z;
 			this->w = w;
 		}
+
 		Vector4(thomas::math::Vector4& V)
 		{
 			this->x = V.x;
@@ -35,11 +35,13 @@ namespace ThomasEditor
 		property float z;
 		property float w;
 	};
+
 	[SerializableAttribute]
 	public value class Color
 	{
 	public:
-		Color(float r, float g, float b, float a) {
+		Color(float r, float g, float b, float a) 
+		{
 			this->r = r;
 			this->g = g;
 			this->b = b;
@@ -48,7 +50,6 @@ namespace ThomasEditor
 
 		Color(thomas::math::Color& C)
 		{
-			
 			this->r = C.R();
 			this->g = C.G();
 			this->b = C.B();
@@ -60,12 +61,13 @@ namespace ThomasEditor
 		property float b;
 		property float a;
 	};
+
 	public value class Vector3
 	{
 	private:
-	public:
-		
-		Vector3(float x, float y, float z) {
+	public:	
+		Vector3(float x, float y, float z) 
+		{
 			this->x = x;
 			this->y = y;
 			this->z = z;
@@ -86,11 +88,12 @@ namespace ThomasEditor
 	public value class Vector2
 	{
 	public:
-
-		Vector2(float x, float y) {
+		Vector2(float x, float y) 
+		{
 			this->x = x;
 			this->y = y;
 		}
+
 		Vector2(thomas::math::Vector2& V)
 		{
 			this->x = V.x;
@@ -114,8 +117,8 @@ namespace ThomasEditor
 		}
 	private:
 		array<float, 2>^ values;
-	public:
 
+	public:
 		Matrix4x4(thomas::math::Matrix& M)
 		{
 			values[0,0] = M._11; values[0, 1] = M._12; values[0, 2] = M._13; values[0, 3] = M._14;
@@ -129,12 +132,13 @@ namespace ThomasEditor
 			void set(int row, int column, float value){values[row, column] = value;}
 		}
 	};
+
 	public value class Quaternion
 	{
 	private:
 		static Quaternion identityQuaternion = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
-	public:
 
+	public:
 		Quaternion(float x, float y, float z, float w) {
 			this->x = x;
 			this->y = y;
@@ -151,9 +155,10 @@ namespace ThomasEditor
 			
 		}
 
-		property Vector3 eulerAngles {
-			Vector3 get() {
-
+		property Vector3 eulerAngles 
+		{
+			Vector3 get() 
+			{
 				return Vector3(thomas::math::ToEuler(thomas::math::Quaternion(x, y, z, w)));
 			}
 		}
@@ -163,5 +168,4 @@ namespace ThomasEditor
 		property float z;
 		property float w;
 	};
-
 }

@@ -15,37 +15,50 @@ namespace ThomasEditor
 	{
 	private:
 		AudioClip ^ m_clip;
+
 	public:
 		SoundComponent() : Component(new thomas::object::component::SoundComponent()) {}
 		
-		property AudioClip^ clip {
-			AudioClip^ get() {
+		property AudioClip^ clip 
+		{
+			AudioClip^ get() 
+			{
 				return m_clip;
 			}
+
 			void set(AudioClip^ value)
 			{
 				m_clip = value;
 				((thomas::object::component::SoundComponent*)nativePtr)->SetClip((thomas::resource::AudioClip*)value->m_nativePtr);
 			}
 		}
-		property float Volume {
-			float get() {
+
+		property float Volume 
+		{
+			float get() 
+			{
 				return ((thomas::object::component::SoundComponent*)nativePtr)->GetVolume();
 			}
+
 			void set(float value)
 			{
 				((thomas::object::component::SoundComponent*)nativePtr)->SetVolume(value);
 			}
 		}
 		
-		property bool Looping {
-			bool get() {
+		property bool Looping 
+		{
+			bool get() 
+			{
 				return ((thomas::object::component::SoundComponent*)nativePtr)->IsLooping();
 			}
-			void set(bool value) {
+
+			void set(bool value) 
+			{
 				return ((thomas::object::component::SoundComponent*)nativePtr)->SetLooping(value);
 			}
 		}
+
 		bool Play() { return ((thomas::object::component::SoundComponent*)nativePtr)->Play(); }
 		bool PlayOneShot(String^ name, float volume) { return ((thomas::object::component::SoundComponent*)nativePtr)->PlayOneShot(Utility::ConvertString(name), volume); }
 		void Pause() { return ((thomas::object::component::SoundComponent*)nativePtr)->Pause(); }
@@ -55,7 +68,6 @@ namespace ThomasEditor
 		{
 			if (Input::GetKeyDown(Input::Keys::P))
 			{
-				
 				Play();
 				//((thomas::object::component::SoundComponent*)nativePtr)->Play();
 			}
@@ -63,5 +75,4 @@ namespace ThomasEditor
 	private:
 
 	};
-
 }
