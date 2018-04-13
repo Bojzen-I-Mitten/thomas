@@ -4,9 +4,8 @@
 #include "object\Object.h"
 #include "graphics\Texture.h"
 #include "graphics\Renderer.h"
-#include "graphics\Shader.h"
-#include "graphics\Model.h"
-#include "graphics\Material.h"
+#include "resource\Shader.h"
+#include "resource\Material.h"
 #include "graphics\LightManager.h"
 #include "graphics\TextRender.h"
 #include <assimp\Importer.hpp>
@@ -66,9 +65,9 @@ namespace thomas {
 
 		//graphics::ParticleSystem::Init();
 		if(init)
-			init = graphics::Shader::Init();
+			init = resource::Shader::Init();
 		if(init)
-			graphics::Material::Init();
+			resource::Material::Init();
 		if (init)
 			init = Physics::Init();
 		if(init)
@@ -111,7 +110,7 @@ namespace thomas {
 
 		Window::Update();
 		graphics::Renderer::ClearRenderQueue();
-		graphics::Shader::Update();
+		resource::Shader::Update();
 		thomas::ThomasTime::Update();
 		Input::Update();
 		
@@ -159,9 +158,8 @@ namespace thomas {
 		//graphics::TextRender::Destroy();
 		graphics::Texture::ReleaseSamplers();
 		graphics::Texture::Destroy();
-		graphics::Model::Destroy();
-		graphics::Shader::DestroyAllShaders();
-		graphics::Material::Destroy();
+		resource::Shader::DestroyAllShaders();
+		resource::Material::Destroy();
 		//utils::DebugTools::Destroy();
 		object::Object::Destroy();
 		editor::EditorCamera::Destroy();
@@ -180,7 +178,7 @@ namespace thomas {
 
 		#ifdef _DEBUG_DX
 
-			//s_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+			s_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 			s_debug->Release();
 			s_debug = nullptr;
 		#endif // _DEBUG

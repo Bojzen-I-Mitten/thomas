@@ -6,8 +6,16 @@
 namespace DirectX {
 	class SoundEffectInstance;
 }
+
+
+
 namespace thomas
 {
+	namespace resource
+	{
+		class AudioClip;
+	}
+
 	namespace object
 	{
 		namespace component
@@ -17,8 +25,8 @@ namespace thomas
 			public:
 				SoundComponent();
 				~SoundComponent();
-				bool SetClip(std::string name);
-				std::string GetName();
+				bool SetClip(resource::AudioClip* clip);
+				resource::AudioClip* GetClip();
 				bool SetVolume(float volume);
 				float GetVolume();
 				bool Play();
@@ -31,6 +39,7 @@ namespace thomas
 				std::string m_name;
 				float m_volume;
 				bool m_looping;
+				resource::AudioClip* m_clip;
 				std::unique_ptr<DirectX::SoundEffectInstance> m_instance;
 			};
 		}

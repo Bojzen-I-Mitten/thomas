@@ -14,39 +14,45 @@ namespace thomas {
 		class RenderComponent;
 	} }
 
+	namespace resource
+	{
+		class Material;
+	}
+
 	namespace graphics
 	{
 		class Mesh;
-		class Material;
 		struct RenderPair
 		{
 			object::component::Transform* transform;
 			Mesh* mesh;
-			Material* material;
+			resource::Material* material;
+
+			RenderPair(object::component::Transform* trans, Mesh* m, resource::Material* mat) : transform(trans), mesh(m), material(mat) {};
 		};
 
 		class THOMAS_API Renderer {
 		private:
-			static void RenderQueue(std::vector<RenderPair*> renderQueue);
+			static void RenderQueue(std::vector<RenderPair>& renderQueue);
 
-			static bool SortPairs(RenderPair* a, RenderPair* b);
+			static bool SortPairs(RenderPair &a, RenderPair &b);
 			
 			static void BindFrame();
 			
 		public:
 			static void Begin();
 			static void Render();
-			static void BindObject(thomas::graphics::Material* material, thomas::object::component::Transform* transform);
+			static void BindObject(thomas::resource::Material* material, thomas::object::component::Transform* transform);
 			static void BindCamera(thomas::object::component::Camera* camera);
 			static void ClearRenderQueue();
 
-			static void AddToRenderQueue(graphics::RenderPair* renderPair);
-			static std::vector<graphics::RenderPair*> GetRenderQueue();
+			static void SubmitToRenderQueue(object::component::Transform* transform, Mesh* mesh, resource::Material* material);
+			static std::vector<graphics::RenderPair>& GetRenderQueue();
 		private:
 			
 			
-			static std::vector<graphics::RenderPair*> s_renderQueue;
-			static std::vector<graphics::RenderPair*> s_lastFramesRenederQueue;
+			static std::vector<graphics::RenderPair> s_renderQueue;
+			static std::vector<graphics::RenderPair> s_lastFramesRenderQueue;
 		};
 	}
 }

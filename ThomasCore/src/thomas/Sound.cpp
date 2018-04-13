@@ -107,18 +107,17 @@ namespace thomas
 		return true;
 	}
 
-	bool Sound::LoadWave(std::string name)
+	DirectX::SoundEffect* Sound::LoadWave(std::string path)
 	{
 		try
 		{
-			s_waves.emplace(name, std::unique_ptr<DirectX::SoundEffect>(new DirectX::SoundEffect(s_audioEngine.get(), CA2W(name.c_str()))));
+			return new DirectX::SoundEffect(s_audioEngine.get(), CA2W(path.c_str()));
 		}
 		catch (std::exception ex)
 		{
-			LOG("Unable to load wave: " << name << ". Probably invalid path and/or name");
-			return false;
+			LOG("Unable to load wave: " << path << ". Probably invalid path and/or name");
+			return nullptr;
 		}
-		return true;
 	}
 
 	void Sound::Destroy()

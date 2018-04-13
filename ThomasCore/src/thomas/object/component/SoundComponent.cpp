@@ -1,6 +1,6 @@
 #include "SoundComponent.h"
 #include "../../Sound.h"
-
+#include "../../resource/AudioClip.h"
 namespace thomas
 {
 	namespace object
@@ -19,31 +19,32 @@ namespace thomas
 
 			}
 
-			bool SoundComponent::SetClip(std::string name)
+			bool SoundComponent::SetClip(resource::AudioClip* clip)
 			{
-				m_instance = Sound::CreateInstance(name);
+				m_instance = clip->CreateInstance();
 				if (m_instance)
 				{
 					m_instance->SetVolume(m_volume);
-					m_name = name;
+					//m_name = name;
 					return true;
 				}
 				else
 				{
-					Sound::LoadWaveBank(name);
-					Sound::LoadWave(name);
+					////Sound::LoadWaveBank(name);
+					//Sound::LoadWave(name);
 
-					m_instance = Sound::CreateInstance(name);
-					m_instance->SetVolume(m_volume);
-					m_name = name;
-					return true;
+					//m_instance = Sound::CreateInstance(name);
+					//m_instance->SetVolume(m_volume);
+					//m_name = name;
+					//return true;
 					//return false;
 				}
+				return false;
 			}
 
-			std::string SoundComponent::GetName()
+			resource::AudioClip* SoundComponent::GetClip()
 			{
-				return m_name;
+				return m_clip;
 			}
 
 			bool SoundComponent::SetVolume(float volume)

@@ -10,13 +10,12 @@
 #include <thomas\ThomasTime.h>
 #include <thomas\Input.h>
 #include <thomas\utils\DebugTools.h>
-#include <thomas\graphics\Shader.h>
+#include <thomas\resource\Shader.h>
 #include <thomas\graphics\Renderer.h>
-#include <thomas\utils\AssimpLoader.h>
 
 #pragma managed
 //#include <Sound.h>
-
+#include "resource\Resources.h"
 #include "object\GameObject.h"
 #include "object\component\Transform.h"
 #include "Scene.h"
@@ -30,6 +29,7 @@ using namespace thomas;
 
 namespace ThomasEditor {
 
+
 	public ref class ThomasWrapper
 	{
 	private:
@@ -39,14 +39,17 @@ namespace ThomasEditor {
 
 	public:
 
+		enum class ManipulatorOperation {
+			TRANSLATE,
+			ROTATE,
+			SCALE
+		};
+
 		static void Start() {
 			thomas::ThomasCore::Init();
 			if (ThomasCore::Initialized())
 			{
 				ScriptingManger::Init();
-				thomas::utils::AssimpLoader::LoadModel("testModel", "../Data/box.obj", "box");
-				thomas::utils::AssimpLoader::LoadModel("o", "../Data/sphere.obj", "sphere");
-				thomas::utils::AssimpLoader::LoadModel("t", "../Data/teapot.fbx", "teapot");
 				Scene::CurrentScene = gcnew Scene("test");
 				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
 				testThread = gcnew Thread(gcnew ThreadStart(StartEngine));
@@ -69,13 +72,15 @@ namespace ThomasEditor {
 
 
 				{
+					Object^ lock = Scene::CurrentScene->GetGameObjectsLock();
 					ThomasCore::Update();
 					if(playing)
 						thomas::Physics::Update();
-					Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
+					Monitor::Enter(lock);
 					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 					{
-						gameObject->UpdateComponents();
+						if(gameObject->GetActive())
+							gameObject->UpdateComponents();
 					}
 
 					if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
@@ -87,14 +92,15 @@ namespace ThomasEditor {
 						editor::EditorCamera::Render();
 						for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 						{
-							gameObject->RenderGizmos();
+							if(gameObject->GetActive())
+								gameObject->RenderGizmos();
 						}
 
 						Monitor::Enter(SelectedGameObjects);
 						for each(ThomasEditor::GameObject^ gameObject in SelectedGameObjects)
 						{
-
-							gameObject->RenderSelectedGizmos();
+							if(gameObject->GetActive())
+								gameObject->RenderSelectedGizmos();
 						}
 						Monitor::Exit(SelectedGameObjects);
 						//end editor rendering
@@ -107,9 +113,10 @@ namespace ThomasEditor {
 					}
 
 					//ThomasCore::Render();
-					Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
+					Monitor::Exit(lock);
 				}
 			}
+			Resources::UnloadAll();
 			ThomasCore::Destroy();
 				
 		}
@@ -152,28 +159,6 @@ namespace ThomasEditor {
 		static float timeSinceLastUpdate = 100000;
 		static void Update() 
 		{
-			/*if (thomas::ThomasCore::Initialized() && thomas::Scene::GetCurrentScene() != NULL)
-			{
-				timeSinceLastUpdate += thomas::ThomasTime::GetActualDeltaTime();
-				if (timeSinceLastUpdate > 1.0f / 120.0f)
-				{
-					thomas::Scene::ClearRenderQueue();
-					thomas::ThomasCore::Update();
-					thomas::Scene::UpdateCurrentScene();
-					for each(ThomasEditor::GameObject^ gameObject in ThomasEditor::GameObject::GameObjects)
-					{
-						gameObject->UpdateComponents();
-					}
-					thomas::Physics::Update();
-
-					UpdateLog();
-					timeSinceLastUpdate = 0.0f;
-				}
-				thomas::ThomasCore::Render();
-				if (thomas::editor::EditorCamera::HasSelectionChanged())
-					UpdateSelectedObjects();
-				
-			}*/
 			Window::UpdateFocus();
 			UpdateLog();
 			if (thomas::editor::EditorCamera::HasSelectionChanged())
@@ -182,8 +167,8 @@ namespace ThomasEditor {
 
 		static void Play()
 		{
-			playing = true;
 			Scene::CurrentScene->Play();
+			playing = true;
 		}
 
 		static bool IsPlaying()
@@ -194,6 +179,7 @@ namespace ThomasEditor {
 		static void Stop()
 		{
 			playing = false;
+			Scene::RestartCurrentScene();
 		}
 
 		static void SelectGameObject(GameObject^ gObj)
@@ -204,6 +190,14 @@ namespace ThomasEditor {
 			thomas::editor::EditorCamera::SelectObject((thomas::object::GameObject*)gObj->nativePtr);
 			Monitor::Exit(SelectedGameObjects);
 
+		}
+
+		static void UnselectGameObjects()
+		{
+			Monitor::Enter(SelectedGameObjects);
+			SelectedGameObjects->Clear();
+			thomas::editor::EditorCamera::SelectObject(nullptr);
+			Monitor::Exit(SelectedGameObjects);
 		}
 
 		static void UpdateSelectedObjects() {
@@ -233,6 +227,21 @@ namespace ThomasEditor {
 			}
 			Monitor::Exit(SelectedGameObjects);
 			thomas::editor::EditorCamera::SetHasSelectionChanged(false);
+		}
+
+		static void SetEditorGizmoManipulatorOperation(ManipulatorOperation op)
+		{
+			thomas::editor::EditorCamera::SetManipulatorOperation((ImGuizmo::OPERATION)op);
+		}
+
+		static ManipulatorOperation GetEditorGizmoManipulatorOperation()
+		{
+			return (ManipulatorOperation)thomas::editor::EditorCamera::GetManipulatorOperation();
+		}
+
+		static void ToggleEditorGizmoManipulatorMode()
+		{
+			thomas::editor::EditorCamera::ToggleManipulatorMode();
 		}
 
 		static void UpdateLog() {

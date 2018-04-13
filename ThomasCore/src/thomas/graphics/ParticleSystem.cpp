@@ -3,7 +3,7 @@
 #include "../object/component/Transform.h"
 #include "../object/component/Camera.h"
 #include "../object/GameObject.h"
-#include "ComputeShader.h"
+#include "../resource/ComputeShader.h"
 #include "Renderer.h"
 #include "../utils/d3d.h"
 #include "../ThomasCore.h"
@@ -19,8 +19,8 @@ namespace thomas
 		math::Matrix ParticleSystem::s_viewProjMatrix;
 		ID3D11Buffer* ParticleSystem::s_cameraBuffer;
 
-		ComputeShader* ParticleSystem::s_updateParticlesCS;
-		ComputeShader* ParticleSystem::s_emitParticlesCS;
+		resource::ComputeShader* ParticleSystem::s_updateParticlesCS;
+		resource::ComputeShader* ParticleSystem::s_emitParticlesCS;
 
 		ID3D11UnorderedAccessView* ParticleSystem::s_activeParticleUAV; //ping
 		ID3D11ShaderResourceView* ParticleSystem::s_activeParticleSRV; //pong
@@ -49,8 +49,8 @@ namespace thomas
 			s_maxNumberOfBillboardsSupported = 1000000;
 			s_cameraBuffer = nullptr;
 			
-			s_emitParticlesCS = new ComputeShader(Shader::CreateShader("EmitParticlesCS", "../Data/oldShaders/emitParticlesCS.hlsl"));
-			s_updateParticlesCS = new ComputeShader(Shader::CreateShader("UpdateParticlesCS", "../Data/oldShaders/updateParticlesCS.hlsl"));
+			//s_emitParticlesCS = new resource::ComputeShader(resource::Shader::CreateShader("../Data/oldShaders/emitParticlesCS.hlsl"));
+			//s_updateParticlesCS = new resource::ComputeShader(resource::Shader::CreateShader("../Data/oldShaders/updateParticlesCS.hlsl"));
 
 
 			D3D11_BLEND_DESC blendDesc;
@@ -164,7 +164,7 @@ namespace thomas
 		{
 			object::component::ParticleEmitterComponent::D3DData* emitterD3D = emitter->GetD3DData();
 			
-			s_emitParticlesCS->SetBuffer("InitBuffer", *emitterD3D->particleBuffer);
+			//s_emitParticlesCS->SetBuffer("InitBuffer", *emitterD3D->particleBuffer);
 			s_emitParticlesCS->SetUAV("particlesWrite", *emitterD3D->particleUAV2);
 			s_emitParticlesCS->SetUAV("particlesWrite2", *emitterD3D->particleUAV1);
 
@@ -180,8 +180,8 @@ namespace thomas
 			//bind CS
 			s_updateParticlesCS->SetUAV("particlesWrite", *s_activeParticleUAV);
 			s_updateParticlesCS->SetUAV("billboards", *emitter->GetD3DData()->billboardsUAV);
-			s_updateParticlesCS->SetResource("particlesRead", *s_activeParticleSRV);
-			s_updateParticlesCS->SetBuffer("cameraBuffer", *s_cameraBuffer);
+		//	s_updateParticlesCS->SetResource("particlesRead", *s_activeParticleSRV);
+		//	s_updateParticlesCS->SetBuffer("cameraBuffer", *s_cameraBuffer);
 
 			s_updateParticlesCS->Dispatch(emitter->GetSpawnedParticleCount() / 256 + 1, 1, 1);
 
@@ -212,7 +212,7 @@ namespace thomas
 			emitter->GetMaterial()->SetResource("particle", *emitter->GetD3DData()->billboardsSRV);
 			emitter->GetMaterial()->SetMatrix("matrixBuffer", s_viewProjMatrix);
 			emitter->GetMaterial()->m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			emitter->GetMaterial()->GetShader()->BindVertexBuffer(NULL, 0, 0);
+			//emitter->GetMaterial()->GetShader()->BindVertexBuffer(NULL, 0, 0);
 
 			emitter->GetMaterial()->Draw(emitter->GetNrOfMaxParticles() * 6, 0);
 

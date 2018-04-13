@@ -1,0 +1,33 @@
+﻿<Window x:Class="ThomasEditor.ResourceListPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ThomasEditor"
+        mc:Ignorable="d"
+        Title="Select Resource" Height="450" Width="438" TextBlock.TextAlignment="Center" ResizeMode="CanResizeWithGrip" WindowStyle="ToolWindow">
+
+    <Window.Resources>
+        <local:ResourceImageConverter x:Key="resourceImageConverter"/>
+    </Window.Resources>
+
+    <DockPanel Background="#3D3D3D">
+        <TextBox x:Name="ResourceFilter" DockPanel.Dock="Top" TextAlignment="Left" TextChanged="ResourceFilter_TextChanged" Background="White" BorderThickness="5" BorderBrush="#3D3D3D" CaretBrush="White"/>
+        <ListView x:Name="ResourceList" SelectionMode="Single" SelectionChanged="ResourceList_SelectionChanged" MouseDoubleClick="ResourceList_MouseDoubleClick">
+            <ListView.ItemTemplate>
+                <DataTemplate x:Name="ResourceTemplate">
+                    <Border Padding="10,0,0,0">
+                        <StackPanel Orientation="Horizontal" Height="20">
+                            <Image Source="{Binding Converter={StaticResource resourceImageConverter}, Mode=OneWay}" VerticalAlignment="Center" />
+                            <Viewbox>
+                                <TextBlock Text="{Binding}" Padding="10,0,0,0" HorizontalAlignment="Center"/>
+                            </Viewbox>
+                            
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+                
+            </ListView.ItemTemplate>
+        </ListView>
+    </DockPanel>
+</Window>

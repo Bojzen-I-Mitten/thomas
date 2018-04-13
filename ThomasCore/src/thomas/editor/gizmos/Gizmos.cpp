@@ -1,21 +1,21 @@
 #include "Gizmos.h"
-#include "../../graphics/Model.h"
-#include "../../graphics/Material.h"
-#include "../../graphics/Shader.h"
+#include "../../resource/Model.h"
+#include "../../resource/Material.h"
+#include "../../resource/Shader.h"
 #include "../../graphics/Mesh.h"
 #include "../../utils/d3d.h"
 namespace thomas
 {
 	namespace editor
 	{
-		graphics::Material* Gizmos::s_gizmoMaterial;
-		void Gizmos::DrawModel(graphics::Model * model, math::Vector3 position = math::Vector3::Zero, math::Quaternion rotation = math::Quaternion::Identity, math::Vector3 scale = math::Vector3::One)
+		resource::Material* Gizmos::s_gizmoMaterial;
+		void Gizmos::DrawModel(resource::Model * model, math::Vector3 position = math::Vector3::Zero, math::Quaternion rotation = math::Quaternion::Identity, math::Vector3 scale = math::Vector3::One)
 		{
 			DrawModel(model, -1, position, rotation, scale);
 		}
 
 
-		void Gizmos::DrawModel(graphics::Model * model, int meshIndex, math::Vector3 position = math::Vector3::Zero, math::Quaternion rotation = math::Quaternion::Identity, math::Vector3 scale = math::Vector3::One)
+		void Gizmos::DrawModel(resource::Model * model, int meshIndex, math::Vector3 position = math::Vector3::Zero, math::Quaternion rotation = math::Quaternion::Identity, math::Vector3 scale = math::Vector3::One)
 		{
 			
 			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
@@ -34,12 +34,12 @@ namespace thomas
 			}
 		}
 
-		void Gizmos::DrawWireModel(graphics::Model * model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale)
+		void Gizmos::DrawWireModel(resource::Model * model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale)
 		{
 			DrawWireModel(model, -1, position, rotation, scale);
 		}
 
-		void Gizmos::DrawWireModel(graphics::Model * model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale)
+		void Gizmos::DrawWireModel(resource::Model * model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale)
 		{
 			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::WIREFRAME);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
@@ -293,10 +293,10 @@ namespace thomas
 
 		void Gizmos::Init()
 		{
-			graphics::Shader* shader = graphics::Shader::CreateShader("gizmoShader", "../Data/FXIncludes/GizmoShader.fx");
+			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/GizmoShader.fx");
 			if (shader)
 			{
-				s_gizmoMaterial = new graphics::Material(shader);
+				s_gizmoMaterial = new resource::Material(shader);
 				SetColor(math::Color(1, 1, 1));
 				SetMatrix(math::Matrix::Identity);
 			}

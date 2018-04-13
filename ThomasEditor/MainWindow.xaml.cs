@@ -41,7 +41,9 @@ namespace ThomasEditor
 
             InitializeComponent();
 
-            
+            playPauseButton.DataContext = false;
+            Component.editorAssembly = Assembly.GetAssembly(this.GetType());
+
             //Changeds decimals to . instead of ,
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
@@ -91,7 +93,8 @@ namespace ThomasEditor
             {
                 ThomasWrapper.Update();
                 editorWindow.Title = ThomasWrapper.FrameRate.ToString();
-               lastRender = args.RenderingTime;
+                lastRender = args.RenderingTime;
+                transformGizmo.UpdateTransformGizmo();
              }
             
         }
@@ -179,15 +182,6 @@ namespace ThomasEditor
             Shader.RecompileShaders();
         }
 
-        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
-        {
-            if(ThomasWrapper.IsPlaying())
-            {
-                
-            }
-            ThomasWrapper.Play();
-        }
-
         private void Play_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -196,7 +190,7 @@ namespace ThomasEditor
         private void SaveScene_Click(object sender, RoutedEventArgs e)
         {
 
-            if(Scene.CurrentScene.HasFile)
+            if(Scene.CurrentScene.SavePath != null)
             {
                 Scene sceneToSave = Scene.CurrentScene;
                 Scene.SaveScene(sceneToSave);
@@ -253,21 +247,6 @@ namespace ThomasEditor
 
                 Scene.CurrentScene = newScene;
                                          
-
-                //Refresh tree
-                //thomasObjects.Items.Clear();
-
-                //foreach (GameObject newItem in Scene.CurrentScene.GameObjects)
-                //{
-                //    if (newItem.transform.parent == null)
-                //    {
-                //        TreeViewItem node = new TreeViewItem { DataContext = newItem };
-                //        node.MouseRightButtonUp += Node_MouseRightButtonUp;
-                //        node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
-                //        BuildTree(newItem.transform, node);
-                //        thomasObjects.Items.Add(node);
-                //    }
-                //}
                 Scene.CurrentScene.PostLoad();
 
             }
@@ -275,6 +254,16 @@ namespace ThomasEditor
 
 
            
+        }
+
+        private void PlayPauseButton_Click(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (ThomasWrapper.IsPlaying())
+                ThomasWrapper.Stop();
+            else
+                ThomasWrapper.Play();
+
+            playPauseButton.DataContext = ThomasWrapper.IsPlaying();
         }
     }
 

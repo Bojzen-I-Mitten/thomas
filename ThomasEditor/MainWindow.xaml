@@ -23,7 +23,7 @@
         <CommandBinding Command="commands:CustomCommands.GetPlay" CanExecute="Play_CanExecute" Executed="PlayPauseButton_Click" />
         <CommandBinding Command="commands:CustomCommands.Save" Executed="SaveScene_Click" />
     </Window.CommandBindings>
-    
+
     <Window.Resources>
         <ResourceDictionary>
             <ContextMenu x:Key="gameObjectContext">
@@ -80,12 +80,25 @@
                     <MenuItem Command="{x:Static commands:CustomCommands.GetOpenOptionsWindow}"/>
                 </MenuItem>
             </Menu>
-            <WrapPanel Grid.Row="1" Width="100">
-                <Button  Width="50" Height="50" x:Name="playPauseButton" Command="commands:CustomCommands.GetPlay" >
-                    <Button.Content>
-                        <Image Source="icons/play.png"/>
-                    </Button.Content>
+            <WrapPanel Grid.Row="1" Height="40">
+                <local:TransformGizmo x:Name="transformGizmo"/>
+                <Button Margin="250,0,0,0" Height="30" x:Name="playPauseButton" Command="commands:CustomCommands.GetPlay"  Cursor="Hand">
+                    <Image>
+                        <Image.Style>
+                            <Style TargetType="{x:Type Image}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding}" Value="True">
+                                        <Setter Property="Source" Value="icons/stop.png" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding}" Value="False">
+                                        <Setter Property="Source" Value="icons/play.png" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
                 </Button>
+
                 <!--<Button  Width="50" Height="50">
                     <Button.Content>
                         <Image Source="icons/pause.png"/>
@@ -126,7 +139,7 @@
                             </xcad:LayoutDocumentPane>
                             <xcad:LayoutDocumentPane>
                                 <xcad:LayoutAnchorable ContentId="Project" Title="Project" >
-                                    <TreeView Focusable="True" x:Name="thomasProjectView" Background="#444444"/>
+                                    <local:AssetBrowser/>
                                 </xcad:LayoutAnchorable>
                                 <xcad:LayoutAnchorable ContentId="Console" Title="Console">
                                     <ListBox Name="console" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.ScrollChanged="Console_ScrollChanged">
@@ -138,6 +151,11 @@
                         <xcad:LayoutDocumentPane DockWidth="2*">
                             <xcad:LayoutAnchorable ContentId="Inspector" Title="Inspector">
                                 <local:ThomasGameObjectInspector x:Name="__inspector" x:FieldModifier="public" Background="#444444"/>
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutDocumentPane>
+                        <xcad:LayoutDocumentPane DockWidth="2*">
+                            <xcad:LayoutAnchorable ContentId="MaterialEditor" Title="Material Editor">
+                                <ContentControl Content="{StaticResource materialEditor}"/>
                             </xcad:LayoutAnchorable>
                         </xcad:LayoutDocumentPane>
                     </xcad:LayoutDocumentPaneGroup>

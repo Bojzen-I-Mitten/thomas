@@ -5,11 +5,12 @@
 #pragma managed
 #include <math.h>
 using namespace System::ComponentModel;
-
+using namespace System::Runtime::Serialization;
 using namespace System;
 
 namespace ThomasEditor
 {
+	
 	[TypeConverter(ExpandableObjectConverter::typeid)]
 	public value class Vector4
 	{
@@ -34,7 +35,7 @@ namespace ThomasEditor
 		property float z;
 		property float w;
 	};
-
+	[SerializableAttribute]
 	public value class Color
 	{
 	public:
@@ -59,7 +60,6 @@ namespace ThomasEditor
 		property float b;
 		property float a;
 	};
-
 	public value class Vector3
 	{
 	private:
@@ -81,7 +81,7 @@ namespace ThomasEditor
 		property float y;
 		property float z;
 	};
-
+	
 	[TypeConverter(ExpandableObjectConverter::typeid)]
 	public value class Vector2
 	{
@@ -100,7 +100,6 @@ namespace ThomasEditor
 		property float x;
 		property float y;
 	};
-
 
 	public value class Matrix4x4
 	{
@@ -130,7 +129,6 @@ namespace ThomasEditor
 			void set(int row, int column, float value){values[row, column] = value;}
 		}
 	};
-
 	public value class Quaternion
 	{
 	private:

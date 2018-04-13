@@ -11,10 +11,10 @@
 namespace thomas
 {
 	namespace object { namespace component { class Camera; } }
-
+	namespace resource { class Material; }
 	namespace graphics
 	{
-		class Material;
+		
 		class THOMAS_API BulletDebugDraw : public btIDebugDraw
 		{
 		private:
@@ -55,7 +55,7 @@ namespace thomas
 			{
 				LineVertex lines[2];
 			};
-			Material* m_material;
+			resource::Material* m_material;
 			int m_debugMode;
 			std::vector<LineVertex> m_lines;
 			ID3D11Buffer* m_vertexBuffer;

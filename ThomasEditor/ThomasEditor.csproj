@@ -86,12 +86,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AssetBrowser.xaml.cs">
+      <DependentUpon>AssetBrowser.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomCommands.cs" />
+    <Compile Include="DictionaryPropertyGridAdapter.cs" />
+    <Compile Include="ExtendedPropertyGrid.xaml.cs">
+      <DependentUpon>ExtendedPropertyGrid.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GameObjectHierarchy.xaml.cs">
       <DependentUpon>GameObjectHierarchy.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MaterialEditor.xaml.cs">
+      <DependentUpon>MaterialEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ResourceListPopup.xaml.cs">
+      <DependentUpon>ResourceListPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="scriptComponent test\TestComponent.cs" />
     <Compile Include="Themes\LeftMarginMultiplierConverter.cs" />
@@ -100,6 +113,17 @@
       <DependentUpon>ThomasGameObjectInspector.xaml</DependentUpon>
     </Compile>
     <Compile Include="ThomasWindow.cs" />
+    <Compile Include="TransformGizmo.xaml.cs">
+      <DependentUpon>TransformGizmo.xaml</DependentUpon>
+    </Compile>
+    <Page Include="AssetBrowser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExtendedPropertyGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GameObjectHierarchy.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -116,7 +140,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MaterialEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="OptionsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceListPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -129,6 +161,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ThomasGameObjectInspector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TransformGizmo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -176,15 +212,53 @@
     <Resource Include="icons\pause.png" />
   </ItemGroup>
   <ItemGroup>
+    <SplashScreen Include="splash.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </SplashScreen>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\rotate-selected.png" />
+    <Resource Include="icons\rotate-unselected.png" />
+    <Resource Include="icons\scale-selected.png" />
+    <Resource Include="icons\scale-unselected.png" />
+    <Resource Include="icons\stop.png" />
+    <Resource Include="icons\translate-selected.png" />
+    <Resource Include="icons\translate-unselected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\global-transform.png" />
+    <Resource Include="icons\local-transform.png" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ThomasEngine\ThomasEngine.vcxproj">
       <Project>{64d247ed-db4d-4ea3-b8ae-680bf66a8f2e}</Project>
       <Name>ThomasEngine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="splash.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </SplashScreen>
+    <Resource Include="icons\assets\dir.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\assets\unknown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\assets\scene.png" />
+    <Resource Include="icons\assets\shader.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\assets\audio.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\assets\model.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\resourceList.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\null.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\assets\material.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
