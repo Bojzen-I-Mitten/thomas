@@ -258,6 +258,11 @@ namespace thomas
 			s_gizmoMaterial->Draw(lines.size(), 0);
 		}
 
+		void Gizmos::DrawBillboard()
+		{
+
+		}
+
 		void Gizmos::Init()
 		{
 			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/GizmoShader.fx");
