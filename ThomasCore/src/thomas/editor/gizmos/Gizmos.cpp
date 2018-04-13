@@ -261,30 +261,35 @@ namespace thomas
 		void Gizmos::DrawBillboard(math::Vector3 centerPos, float width, float height)
 		{
 			std::vector<math::Vector3> positions(6);
+			//Top left
 			positions[0] = centerPos;
 			positions[0].x -= width / 2;
 			positions[0].y += height / 2;
 
-			//Not done
+			//Bottom right
 			positions[1] = centerPos;
-			positions[1].x -= width / 2;
-			positions[1].y += height / 2;
+			positions[1].x += width / 2;
+			positions[1].y -= height / 2;
 
+			//Bottom left
 			positions[2] = centerPos;
 			positions[2].x -= width / 2;
-			positions[2].y += height / 2;
+			positions[2].y -= height / 2;
 
+			//Top left
 			positions[3] = centerPos;
 			positions[3].x -= width / 2;
 			positions[3].y += height / 2;
 
+			//Top right
 			positions[4] = centerPos;
-			positions[4].x -= width / 2;
+			positions[4].x += width / 2;
 			positions[4].y += height / 2;
 
+			//Bottom right
 			positions[5] = centerPos;
-			positions[5].x -= width / 2;
-			positions[5].y += height / 2;
+			positions[5].x += width / 2;
+			positions[5].y -= height / 2;
 
 
 			s_vertexBuffer->SetData(positions);
