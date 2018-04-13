@@ -36,7 +36,6 @@
     <ClCompile Include="src\thomas\graphics\Light.cpp" />
     <ClCompile Include="src\thomas\graphics\LightManager.cpp" />
     <ClCompile Include="src\thomas\resource\Material.cpp" />
-    <ClCompile Include="src\thomas\resource\ShaderProperty.cpp" />
     <ClCompile Include="src\thomas\graphics\Mesh.cpp" />
     <ClCompile Include="src\thomas\resource\Model.cpp" />
     <ClCompile Include="src\thomas\graphics\ParticleSystem.cpp" />
@@ -83,6 +82,13 @@
     <ClInclude Include="src\thomas\editor\EditorCamera.h" />
     <ClInclude Include="src\thomas\editor\EditorGrid.h" />
     <ClInclude Include="src\thomas\editor\gizmos\Gizmos.h" />
+    <ClInclude Include="src\thomas\resource\ShaderProperty\shaderProperties.h" />
+    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderProperty.h" />
+    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyMatrix.h" />
+    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyScalarBool.h" />
+    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyScalarFloat.h" />
+    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyScalarInt.h" />
+    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyVector.h" />
     <ClInclude Include="src\thomas\resource\texture\Texture2D.h" />
     <ClInclude Include="src\thomas\utils\Buffers.h" />
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />
@@ -90,7 +96,6 @@
     <ClInclude Include="src\thomas\graphics\Light.h" />
     <ClInclude Include="src\thomas\graphics\LightManager.h" />
     <ClInclude Include="src\thomas\resource\Material.h" />
-    <ClInclude Include="src\thomas\resource\ShaderProperty.h" />
     <ClInclude Include="src\thomas\graphics\Mesh.h" />
     <ClInclude Include="src\thomas\resource\Model.h" />
     <ClInclude Include="src\thomas\graphics\ParticleSystem.h" />
