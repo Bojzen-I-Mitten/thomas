@@ -78,7 +78,6 @@ struct Light
     float   spotOuterAngle;
     float3  attenuation;
     uint    type;
-    //bool drawHalo;
 };
 
 
@@ -89,8 +88,8 @@ float4 frag(v2f input) : SV_TARGET
     tempLight.color = float4(0.5f, 0.5f, 0.1f, 1.0f);
     tempLight.position = float4(3, 3, 3, 1);
     tempLight.intensity = 1;
-    tempLight.direction = normalize(float4(1, 1, 1, 0));
-    tempLight.type = 2;
+    tempLight.direction = -normalize(float4(1, 1, 1, 0));
+    tempLight.type = 0;
     tempLight.smoothness = 16.0f;
     tempLight.spotInnerAngle = 10.0f;
     tempLight.spotOuterAngle = 30.0f;
@@ -108,7 +107,7 @@ float4 frag(v2f input) : SV_TARGET
     if (0 == tempLight.type)//directional
     {
         lightDir = -tempLight.direction;
-        lightMultiplyer = tempLight.color * 2.2f;
+        lightMultiplyer = tempLight.color * tempLight.intensity;
     }
     else if (1 == tempLight.type)//point
     {
@@ -124,7 +123,7 @@ float4 frag(v2f input) : SV_TARGET
         float lightDistance = length(lightDir);
         lightDir = normalize(lightDir);
 
-        float angle = degrees(acos(dot(tempLight.direction, lightDir)));
+        float angle = degrees(acos(dot(-tempLight.direction, lightDir)));
         float spotFactor = 0.0f;
         if (angle < tempLight.spotInnerAngle)
         {
