@@ -7,12 +7,13 @@
 #include "../utils/Math.h"
 #include "Resource.h"
 #include "../utils/Buffers.h"
+#include <memory>
 namespace thomas
 {
 	namespace resource
 	{
-		class Texture;
-		class ShaderProperty;
+		namespace shaderProperty { class ShaderProperty; }
+		class Texture2D;
 		class THOMAS_API Shader : public Resource
 		{
 		public:
@@ -45,6 +46,7 @@ namespace thomas
 			void OnChanged();
 
 			Semantics GetSemanticFromName(std::string semanticName);
+			void AddProperty(ID3DX11EffectVariable* prop);
 		public:
 			struct ShaderPass
 			{
@@ -74,8 +76,10 @@ namespace thomas
 			static void SetGlobalInt(const std::string& name, int value);
 
 			static void SetGlobalMatrix(const std::string& name, math::Matrix value);
-
-			static void SetGlobalTexture(const std::string& name, resource::Texture& value);
+			
+			static void SetGlobalTexture2D(const std::string& name, resource::Texture2D* value);
+			static void SetGlobalResource(const std::string& name, ID3D11ShaderResourceView* value);
+			static void SetGlobalConstantBuffer(const std::string& name, ID3D11Buffer* value);
 
 			static void SetGlobalVector(const std::string& name, math::Vector4 value);
 
@@ -84,14 +88,14 @@ namespace thomas
 
 			ID3DX11Effect* GetEffect();
 			bool HasProperty(const std::string& name);
-			ShaderProperty* GetProperty(const std::string& name);
-			std::vector<ShaderProperty*> GetProperties();
+			std::shared_ptr<shaderProperty::ShaderProperty> GetProperty(const std::string& name);
+			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> GetProperties();
 			static void Update();
 			void Recompile();
 			static void QueueRecompile();
 		private:
 			ID3DX11Effect* m_effect;
-			std::vector<ShaderProperty*> m_properties;
+			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> m_properties;
 			std::vector<ShaderPass> m_passes;
 			ShaderPass* m_currentPass;
 			static std::vector<Shader*> s_loadedShaders;

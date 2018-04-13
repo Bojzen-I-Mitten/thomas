@@ -11,7 +11,6 @@ using namespace System;
 namespace ThomasEditor
 {
 	
-	[TypeConverter(ExpandableObjectConverter::typeid)]
 	public value class Vector4
 	{
 	public:
@@ -46,7 +45,7 @@ namespace ThomasEditor
 			this->a = a;
 		}
 
-		Color(thomas::math::Color& C)
+		Color(thomas::math::Color C)
 		{
 			
 			this->r = C.R();
@@ -71,7 +70,7 @@ namespace ThomasEditor
 			this->z = z;
 		}
 
-		Vector3(thomas::math::Vector3& V)
+		Vector3(thomas::math::Vector3 V)
 		{
 			this->x = V.x;
 			this->y = V.y;
@@ -82,7 +81,6 @@ namespace ThomasEditor
 		property float z;
 	};
 	
-	[TypeConverter(ExpandableObjectConverter::typeid)]
 	public value class Vector2
 	{
 	public:
@@ -91,7 +89,7 @@ namespace ThomasEditor
 			this->x = x;
 			this->y = y;
 		}
-		Vector2(thomas::math::Vector2& V)
+		Vector2(thomas::math::Vector2 V)
 		{
 			this->x = V.x;
 			this->y = V.y;
@@ -116,7 +114,7 @@ namespace ThomasEditor
 		array<float, 2>^ values;
 	public:
 
-		Matrix4x4(thomas::math::Matrix& M)
+		Matrix4x4(thomas::math::Matrix M)
 		{
 			values[0,0] = M._11; values[0, 1] = M._12; values[0, 2] = M._13; values[0, 3] = M._14;
 			values[1, 0] = M._21; values[1, 1] = M._22; values[1, 2] = M._23; values[1, 3] = M._24;
@@ -142,7 +140,7 @@ namespace ThomasEditor
 			this->w = w;
 		}
 
-		Quaternion(thomas::math::Quaternion& Q)
+		Quaternion(thomas::math::Quaternion Q)
 		{
 			this->x = Q.x;
 			this->y = Q.y;
