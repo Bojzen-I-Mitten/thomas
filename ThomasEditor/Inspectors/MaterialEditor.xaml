@@ -8,8 +8,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <!--<local:ExtendedPropertyGrid x:Name="propertyGrid"/>-->
-        <xctk:PropertyGrid x:Name="test"/>
-        <Button Height="30" Content="Update" Click="Button_Click" Margin="0,344,0,76"/>
+        <local:ExtendedPropertyGrid x:Name="propertyGrid"/>
     </Grid>
 </UserControl>

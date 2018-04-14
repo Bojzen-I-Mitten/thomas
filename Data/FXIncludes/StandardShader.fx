@@ -5,7 +5,7 @@
 cbuffer MATERIAL_PROPERTIES
 {
 	float testMat;
-	float4 wow;
+	float4 wow : COLOR;
 };
 
 DepthStencilState EnableDepth
@@ -95,7 +95,7 @@ float4 frag(v2f i) : SV_TARGET
 		//specular = saturate(dot(reflectVec, viewDir)) * Fresnel(lightIntensity, 1.3f);
 	
 	//color = saturate(color + specular);
-	
+	return wow;
 	return color;
 
 	

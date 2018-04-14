@@ -113,6 +113,31 @@ namespace ThomasEditor.Converters
         }
     }
 
+    public class ColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+
+            if (value == null)
+                return System.Drawing.Color.Black;
+            Color color = (Color)value;
+            return System.Drawing.Color.FromArgb((int)color.a*255, (int)color.r * 255, (int)color.g * 255, (int)color.b * 255);
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return new Color(0, 0, 0, 1);
+            }
+            System.Windows.Media.Color color = (System.Windows.Media.Color)value;
+            //System.Drawing.Color color = System.Drawing.ColorTranslator.FromHtml(value as string);
+            return new Color(color.ScR, color.ScG, color.ScB, color.ScA);
+
+        }
+    }
+
     public class NullResourceConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
