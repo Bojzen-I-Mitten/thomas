@@ -23,6 +23,7 @@ namespace thomas
 				math::Matrix matrix;
 				std::vector<math::Vector3> vertexData;
 				math::Color color;
+				//Add texture
 				D3D_PRIMITIVE_TOPOLOGY topology;
 				GizmoPasses pass;
 

@@ -261,7 +261,7 @@ namespace thomas
 			//s_gizmoMaterial->Bind();
 			//s_gizmoMaterial->Draw(lines.size(), 0);
 
-			s_gizmoCommands.push_back(GizmoRenderCommand(lines, s_matrix, s_color, D3D10_PRIMITIVE_TOPOLOGY_LINELIST, GizmoPasses::SOLID));
+			s_gizmoCommands.push_back(GizmoRenderCommand(lines, s_matrix, s_color, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, GizmoPasses::SOLID));
 		}
 
 		void Gizmos::TransferGizmoCommands()
@@ -326,12 +326,14 @@ namespace thomas
 			positions[5].y -= height / 2;
 
 
-			s_vertexBuffer->SetData(positions);
+			/*s_vertexBuffer->SetData(positions);
 			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
 
 			s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-			s_gizmoMaterial->Bind();
+			s_gizmoMaterial->Bind();*/
+
+			s_gizmoCommands.push_back(GizmoRenderCommand(positions, s_matrix, s_color, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, GizmoPasses::SOLID));
 		}
 
 		void Gizmos::Init()
