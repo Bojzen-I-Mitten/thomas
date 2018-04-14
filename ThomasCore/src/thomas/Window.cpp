@@ -521,6 +521,23 @@ namespace thomas
 		}
 	}
 
+	bool Window::WaitingForUpdate()
+	{
+		if (s_editorWindow && s_editorWindow->m_shouldResize)
+		{
+			return true;
+		}
+		for (Window* window : s_windows)
+		{
+			if (window->m_shouldResize)
+			{
+				return true;
+			}
+		}
+		return false;
+
+	}
+
 	void Window::Update()
 	{
 		if (s_editorWindow)
