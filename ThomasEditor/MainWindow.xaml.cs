@@ -248,34 +248,21 @@ namespace ThomasEditor
         }
 
         private void AddNewCubePrimitive(object sender, RoutedEventArgs e)
-        {
-            
-            var x = GameObject.CreateNewPrimitive(0);
+        {            
+            var x = GameObject.CreateNewPrimitive(Primitive.ID.Cube);
             ThomasWrapper.SelectGameObject(x);
-
-            //var x = new GameObject("Cube");
-            //ThomasWrapper.SelectGameObject(x);
-
-            ////Add render component with default cube model
-            //x.AddComponent<RenderComponent>().model = ThomasEditor.Resources.Load<Model>("..\\Data\\box.obj");
         }
 
         private void AddNewSpherePrimitive(object sender, RoutedEventArgs e)
         {
-            var x = new GameObject("Sphere");
+            var x = GameObject.CreateNewPrimitive(Primitive.ID.Sphere);
             ThomasWrapper.SelectGameObject(x);
-
-            //Add render component with default sphere model
-            x.AddComponent<RenderComponent>().model = ThomasEditor.Resources.Load<Model>("..\\Data\\sphere.obj");
         }
 
         private void AddNewConePrimitive(object sender, RoutedEventArgs e)
         {
-            var x = new GameObject("Cone");
+            var x = GameObject.CreateNewPrimitive(Primitive.ID.Cone);
             ThomasWrapper.SelectGameObject(x);
-
-            //Add render component with default cone model
-            x.AddComponent<RenderComponent>().model = ThomasEditor.Resources.Load<Model>("..\\Data\\cone.obj");
         }
     }
 

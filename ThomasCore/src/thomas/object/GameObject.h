@@ -2,6 +2,7 @@
 #include "Object.h"
 #include "component\Components.h"
 #include <vector>
+
 namespace thomas
 {
 	class Scene;

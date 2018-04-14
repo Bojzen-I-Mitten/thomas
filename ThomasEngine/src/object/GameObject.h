@@ -26,7 +26,7 @@ namespace ThomasEditor
 {
 	namespace Primitive
 	{
-		enum class ID
+		public enum class ID
 		{
 			Cube,
 			Sphere,
@@ -304,7 +304,7 @@ namespace ThomasEditor
 		}
 
 		static GameObject^ CreateNewPrimitive(ThomasEditor::Primitive::ID id) 
-		{		
+		{
 			GameObject^ gameObject = gcnew GameObject("gameobject");
 
 			if (id == ThomasEditor::Primitive::ID::Cube)
@@ -313,11 +313,11 @@ namespace ThomasEditor
 			}
 			else if (id == ThomasEditor::Primitive::ID::Sphere)
 			{
-
+				gameObject->AddComponent<RenderComponent^>()->model = ThomasEditor::Resources().Load<Model^>("..\\Data\\sphere.obj");
 			}
 			else if (id == ThomasEditor::Primitive::ID::Cone)
 			{
-
+				gameObject->AddComponent<RenderComponent^>()->model = ThomasEditor::Resources().Load<Model^>("..\\Data\\cone.obj");
 			}
 				
 			return gameObject;
