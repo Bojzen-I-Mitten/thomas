@@ -38,7 +38,9 @@ namespace ThomasEditor
     /// </summary>
     public partial class ThomasGameObjectInspector : UserControl
     {
-        
+        //For selecting the firt element in the components list
+        int selectedComponent = 0;
+
         private GameObject _gameObject;
         //public Collection<EditorDefinitionBase> customEditors;
         public ThomasGameObjectInspector()
@@ -101,6 +103,8 @@ namespace ThomasEditor
             AddComponentsFilter.Focus();
             addComponentList.ItemsSource = Component.GetAllAddableComponentTypes();
             CollectionViewSource.GetDefaultView(addComponentList.ItemsSource).Filter = ComponentsFilter;
+            selectedComponent = 0;
+            addComponentList.SelectedIndex = selectedComponent;
         }
 
         private void AddComponentsListContainer_LostFocus(object sender, RoutedEventArgs e)
@@ -109,12 +113,13 @@ namespace ThomasEditor
             panel.Visibility = Visibility.Hidden;
         }
 
-        int selected = 0; 
+        
         private void AddComponentsFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
 
             CollectionViewSource.GetDefaultView(addComponentList.ItemsSource).Refresh();
-            //addComponentList.SelectedIndex = selected;
+            selectedComponent = 0;
+            addComponentList.SelectedIndex = selectedComponent;
         }
 
 
@@ -149,15 +154,15 @@ namespace ThomasEditor
             switch (e.Key)
             {
                 case Key.Down:
-                    if (selected >= list.Count - 1) selected = 0;
-                    else selected++;
-                    addComponentList.SelectedIndex = selected;
+                    if (selectedComponent >= list.Count - 1) selectedComponent = 0;
+                    else selectedComponent++;
+                    addComponentList.SelectedIndex = selectedComponent;
                     break;
 
                 case Key.Up:
-                    if (selected == 0) selected = list.Count-1;
-                    else selected--;
-                    addComponentList.SelectedIndex = selected;
+                    if (selectedComponent == 0) selectedComponent = list.Count-1;
+                    else selectedComponent--;
+                    addComponentList.SelectedIndex = selectedComponent;
                     break;
                 case Key.Enter:
                     Type component = addComponentList.SelectedItem as Type;
