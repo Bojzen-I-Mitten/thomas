@@ -84,6 +84,7 @@
     <ClInclude Include="src\thomas\editor\gizmos\Gizmos.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\shaderProperties.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderProperty.h" />
+    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyColor.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyMatrix.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyScalarBool.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyScalarFloat.h" />
@@ -91,7 +92,7 @@
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyShaderResource.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyTexture2D.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyVector.h" />
-    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderProperyConstantBuffer.h" />
+    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyConstantBuffer.h" />
     <ClInclude Include="src\thomas\resource\texture\Texture2D.h" />
     <ClInclude Include="src\thomas\utils\Buffers.h" />
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />

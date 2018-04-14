@@ -66,7 +66,6 @@ namespace ThomasEditor
 				{
 					m_nativePtr = new thomas::resource::Material(Utility::ConvertString(m_path));
 					((thomas::resource::Material*)m_nativePtr)->SetShader((thomas::resource::Shader*)value->m_nativePtr);
-					SetVector("wow", Vector4(1, 3, 3, 7));
 					
 				}
 			}
@@ -96,6 +95,9 @@ namespace ThomasEditor
 					case thomas::resource::shaderProperty::ShaderProperty::Type::VECTOR:
 						value = Vector4(((thomas::resource::Material*)m_nativePtr)->GetVector(prop.first));
 						break;
+					case thomas::resource::shaderProperty::ShaderProperty::Type::COLOR:
+						value = Color(((thomas::resource::Material*)m_nativePtr)->GetColor(prop.first));
+						break;
 					case thomas::resource::shaderProperty::ShaderProperty::Type::MATRIX:
 						value = Matrix4x4(((thomas::resource::Material*)m_nativePtr)->GetMatrix(prop.first));
 						break;
@@ -109,21 +111,25 @@ namespace ThomasEditor
 				
 			void set(Dictionary<String^, System::Object^>^ value)
 			{
-				int x = 0;
-				//for each(String^ key in value->Keys)
-				//{
-				//	System::Object^ prop = value[key];
-				//	Type^ t = prop->GetType();
-				//	if (t == Vector4::typeid)
-				//	{
-				//		Vector4 v = (Vector4)prop;
-				//		SetVector(key, v);
-				//	}
-				//	else if (t == System::Single::typeid)
-				//	{
-				//		//SetRaw(key, &prop);
-				//	}
-				//}
+				for each(String^ key in value->Keys)
+				{
+					System::Object^ prop = value[key];
+					Type^ t = prop->GetType();
+					if (t == Vector4::typeid)
+					{
+						Vector4 v = (Vector4)prop;
+						SetVector(key, v);
+					}
+					else if (t == Color::typeid)
+					{
+						Color v = (Color)prop;
+						SetColor(key, v);
+					}
+					else if (t == System::Single::typeid)
+					{
+						//SetRaw(key, &prop);
+					}
+				}
 			}
 		}
 	internal:

@@ -17,6 +17,7 @@ namespace thomas
 					SCALAR_BOOL,
 					SCALAR_INT,
 					VECTOR,
+					COLOR,
 					MATRIX,
 					SHADER_RESOURCE,
 					CONSTANT_BUFFER,

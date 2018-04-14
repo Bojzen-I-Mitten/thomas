@@ -161,10 +161,10 @@ namespace thomas
 		}
 		math::Color Material::GetColor(const std::string& name)
 		{
-			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::VECTOR)
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::COLOR)
 			{
 				
-				return ((shaderProperty::ShaderPropertyVector*)m_properties[name].get())->GetValue();
+				return ((shaderProperty::ShaderPropertyColor*)m_properties[name].get())->GetValue();
 				
 			}
 			else
@@ -177,7 +177,7 @@ namespace thomas
 		{
 	
 			Lock();
-			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyColor(value));
 			m_properties[name]->SetName(name);
 			Unlock();
 

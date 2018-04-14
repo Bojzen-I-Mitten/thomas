@@ -10,8 +10,9 @@ namespace ThomasEditor
 {
     class DictionaryPropertyGridAdapter : ICustomTypeDescriptor
     {
-        IDictionary _dictionary;
-
+        public IDictionary _dictionary;
+        public delegate void PropertyChanged();
+        public event PropertyChanged OnPropertyChanged;
         public DictionaryPropertyGridAdapter(IDictionary d)
         {
             _dictionary = d;
@@ -49,7 +50,7 @@ namespace ThomasEditor
 
         public object GetPropertyOwner(PropertyDescriptor pd)
         {
-            return _dictionary;
+            return this;
         }
 
         public AttributeCollection GetAttributes()
@@ -78,7 +79,9 @@ namespace ThomasEditor
             ArrayList properties = new ArrayList();
             foreach (DictionaryEntry e in _dictionary)
             {
-                properties.Add(new DictionaryPropertyDescriptor(_dictionary, e.Key));
+                DictionaryPropertyDescriptor desc = new DictionaryPropertyDescriptor(_dictionary, e.Key);
+                desc.OnPropertyChanged += Desc_OnPropertyChanged;
+                properties.Add(desc);
             }
 
             PropertyDescriptor[] props =
@@ -87,12 +90,18 @@ namespace ThomasEditor
             return new PropertyDescriptorCollection(props);
         }
 
+        private void Desc_OnPropertyChanged()
+        {
+            OnPropertyChanged();
+        }
     }
 
     class DictionaryPropertyDescriptor : PropertyDescriptor
     {
         IDictionary _dictionary;
         object _key;
+        public delegate void PropertyChanged();
+        public event PropertyChanged OnPropertyChanged;
 
         internal DictionaryPropertyDescriptor(IDictionary d, object key)
             : base(key.ToString(), null)
@@ -109,6 +118,7 @@ namespace ThomasEditor
         public override void SetValue(object component, object value)
         {
             _dictionary[_key] = value;
+            OnPropertyChanged();
         }
 
         public override object GetValue(object component)
