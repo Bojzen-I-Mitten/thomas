@@ -264,34 +264,6 @@ namespace thomas
 			s_gizmoCommands.push_back(GizmoRenderCommand(lines, s_matrix, s_color, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, GizmoPasses::SOLID));
 		}
 
-		void Gizmos::TransferGizmoCommands()
-		{
-			
-			s_prevGizmoCommands = s_gizmoCommands;
-		}
-
-		void Gizmos::RenderGizmos()
-		{
-			for (GizmoRenderCommand& command : s_prevGizmoCommands)
-			{
-				
-				s_gizmoMaterial->SetShaderPass((int)command.pass);
-				s_gizmoMaterial->SetMatrix("gizmoMatrix", command.matrix);
-				s_gizmoMaterial->SetColor("gizmoColor", command.color);
-				s_gizmoMaterial->m_topology = command.topology;
-
-				s_vertexBuffer->SetData(command.vertexData);
-				s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer);
-				s_gizmoMaterial->Bind();
-				s_gizmoMaterial->Draw(command.vertexData.size(), 0);
-			}
-		}
-
-		void Gizmos::ClearGizmos()
-		{
-			s_gizmoCommands.clear();
-		}
-
 		void Gizmos::DrawBillboard(math::Vector3 centerPos, float width, float height)
 		{
 			std::vector<math::Vector3> positions(6);
@@ -325,16 +297,37 @@ namespace thomas
 			positions[5].x += width / 2;
 			positions[5].y -= height / 2;
 
-
-			/*s_vertexBuffer->SetData(positions);
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
-
-			s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer);
-			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-			s_gizmoMaterial->Bind();*/
-
-			s_gizmoCommands.push_back(GizmoRenderCommand(positions, s_matrix, s_color, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, GizmoPasses::SOLID));
+			s_gizmoCommands.push_back(GizmoRenderCommand(positions, s_matrix, s_color, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, GizmoPasses::BILLBOARD));
 		}
+
+		void Gizmos::TransferGizmoCommands()
+		{
+			
+			s_prevGizmoCommands = s_gizmoCommands;
+		}
+
+		void Gizmos::RenderGizmos()
+		{
+			for (GizmoRenderCommand& command : s_prevGizmoCommands)
+			{
+				
+				s_gizmoMaterial->SetShaderPass((int)command.pass);
+				s_gizmoMaterial->SetMatrix("gizmoMatrix", command.matrix);
+				s_gizmoMaterial->SetColor("gizmoColor", command.color);
+				s_gizmoMaterial->m_topology = command.topology;
+
+				s_vertexBuffer->SetData(command.vertexData);
+				s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer);
+				s_gizmoMaterial->Bind();
+				s_gizmoMaterial->Draw(command.vertexData.size(), 0);
+			}
+		}
+
+		void Gizmos::ClearGizmos()
+		{
+			s_gizmoCommands.clear();
+		}
+
 
 		void Gizmos::Init()
 		{

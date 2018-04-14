@@ -16,6 +16,7 @@ namespace thomas
 			{
 				SOLID = 0,
 				WIREFRAME = 1,
+				BILLBOARD = 2
 			};
 
 			struct GizmoRenderCommand
