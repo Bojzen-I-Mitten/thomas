@@ -40,7 +40,7 @@ BlendState AlphaBlendingOn
 RasterizerState WireframeRasterizer
 {
 	FillMode = WIREFRAME;
-	CullMode = NONE;
+	CullMode = BACK;
 	FrontCounterClockWise = TRUE;
 	DepthClipEnable = FALSE;
 };
@@ -74,9 +74,10 @@ v2f billVert(appdata_thomas v)
 	// Thrid colunm.
 	mv._m02 = 0.0f;
 	mv._m12 = 0.0f;
-	mv._m22 = 1.0f;
+	mv._m22 = -1.0f;
 	o.vertex = mul(THOMAS_MATRIX_P, mul(mv, v.vertex));
 	//o.vertex = ThomasWorldToClipPos(o.vertex);
+
 	return o;
 }
 

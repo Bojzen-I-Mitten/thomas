@@ -184,7 +184,7 @@ namespace thomas
 				//editor::Gizmos::SetMatrix(m_gameObject->m_transform->GetWorldMatrix().Transpose());
 				editor::Gizmos::SetColor(math::Color(0.6, 0.6, 0.6));
 				editor::Gizmos::DrawFrustum(GetFrustrum());
-				editor::Gizmos::DrawBillboard(math::Vector3(0.0, 0.0, 2.0), 2.0f, 2.0f);
+				editor::Gizmos::DrawBillboard(math::Vector3(0.0, 0.0, 2.0), 1.0f, 1.0f);
 			
 			}
 
