@@ -131,9 +131,11 @@ namespace ThomasEditor.Converters
             {
                 return new Color(0, 0, 0, 1);
             }
-            System.Windows.Media.Color color = (System.Windows.Media.Color)value;
+            System.Windows.Media.Color mediaColor = (System.Windows.Media.Color)value;
+
+            System.Drawing.Color color = System.Drawing.ColorTranslator.FromHtml(mediaColor.ToString());
             //System.Drawing.Color color = System.Drawing.ColorTranslator.FromHtml(value as string);
-            return new Color(color.ScR, color.ScG, color.ScB, color.ScA);
+            return new Color(color.R/255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
 
         }
     }

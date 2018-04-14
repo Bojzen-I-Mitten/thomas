@@ -5,7 +5,7 @@
 #pragma managed
 #include "Shader.h"
 #include "../math/Math.h"
-
+#include "Resources.h"
 
 using namespace System::Collections::Generic;
 namespace ThomasEditor
@@ -15,7 +15,7 @@ namespace ThomasEditor
 	{
 	internal:
 		Material(thomas::resource::Material* ptr) : Resource("", ptr) {};
-
+		bool m_loaded = false;
 	public:
 
 		~Material()
@@ -25,9 +25,11 @@ namespace ThomasEditor
 
 		Material(Shader^ shader) : Resource("", new thomas::resource::Material((thomas::resource::Shader*)shader->m_nativePtr))
 		{
+			m_loaded = true;
 		}
 		Material(Material^ original) : Resource("", new thomas::resource::Material((thomas::resource::Material*)original->m_nativePtr))
 		{
+			m_loaded = true;
 		}
 		
 		static property Material^ StandardMaterial
@@ -99,7 +101,7 @@ namespace ThomasEditor
 						value = Color(((thomas::resource::Material*)m_nativePtr)->GetColor(prop.first));
 						break;
 					case thomas::resource::shaderProperty::ShaderProperty::Type::MATRIX:
-						value = Matrix4x4(((thomas::resource::Material*)m_nativePtr)->GetMatrix(prop.first));
+						//value = Matrix4x4(((thomas::resource::Material*)m_nativePtr)->GetMatrix(prop.first));
 						break;
 					default:
 						break;
@@ -130,10 +132,17 @@ namespace ThomasEditor
 						//SetRaw(key, &prop);
 					}
 				}
+				if(m_loaded)
+					ThomasEditor::Resources::SaveResource(this, m_path);
 			}
 		}
+
 	internal:
-		
+		[OnDeserializedAttribute]
+		void OnDeserialized(StreamingContext c)
+		{
+			m_loaded = true;
+		}
 				
 	/*	Texture* GetTexture(String^ name);
 		void SetTexture(String^ name, Texture& value);*/
