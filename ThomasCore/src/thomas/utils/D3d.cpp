@@ -7,6 +7,7 @@
 #include "DirectXTK/WICTextureLoader.h"
 #include "DirectXTK/DDSTextureLoader.h"
 #include <dxgi.h>
+#include <D3d11_4.h>
 namespace thomas
 {
 	namespace utils
@@ -99,8 +100,8 @@ namespace thomas
 				return false;
 			}
 
-			ID3D10Multithread *multi;
-			hr = device->QueryInterface(__uuidof(ID3D10Multithread), (void**)&multi);
+			ID3D11Multithread *multi;
+			hr = device->QueryInterface(__uuidof(ID3D11Multithread), (void**)&multi);
 			if (SUCCEEDED(hr) && multi != NULL)
 			{
 				multi->SetMultithreadProtected(TRUE);
