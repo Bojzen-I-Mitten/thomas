@@ -109,6 +109,7 @@ namespace ThomasEditor
 				
 			void set(Dictionary<String^, System::Object^>^ value)
 			{
+				int x = 0;
 				//for each(String^ key in value->Keys)
 				//{
 				//	System::Object^ prop = value[key];
