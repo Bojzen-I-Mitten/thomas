@@ -95,6 +95,7 @@ namespace thomas
 			UINT m_id;
 			resource::Shader* m_shader;
 			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> m_properties;
+			std::vector<std::string> m_materialProperties;
 			std::vector<Pass> m_passes;
 			static Material* s_standardMaterial;
 
