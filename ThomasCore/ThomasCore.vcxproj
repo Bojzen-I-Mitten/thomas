@@ -46,7 +46,6 @@
     <ClCompile Include="src\thomas\Input.cpp" />
     <ClCompile Include="src\thomas\object\component\Camera.cpp" />
     <ClCompile Include="src\thomas\object\component\Component.cpp" />
-    <ClCompile Include="src\thomas\object\component\FrustumCullingComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\Light.cpp" />
     <ClCompile Include="src\thomas\object\component\ParticleEmitterComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\RenderComponent.cpp" />
@@ -66,7 +65,6 @@
     <ClCompile Include="src\thomas\utils\AssimpLoader.cpp" />
     <ClCompile Include="src\thomas\utils\D3d.cpp" />
     <ClCompile Include="src\thomas\utils\DebugTools.cpp" />
-    <ClCompile Include="src\thomas\utils\FrustumCulling.cpp" />
     <ClCompile Include="src\thomas\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -112,7 +110,6 @@
     <ClInclude Include="src\thomas\object\component\Camera.h" />
     <ClInclude Include="src\thomas\object\component\Component.h" />
     <ClInclude Include="src\thomas\object\component\Components.h" />
-    <ClInclude Include="src\thomas\object\component\FrustumCullingComponent.h" />
     <ClInclude Include="src\thomas\object\component\ScriptComponent.h" />
     <ClInclude Include="src\thomas\object\component\Light.h" />
     <ClInclude Include="src\thomas\object\component\ParticleEmitterComponent.h" />
@@ -133,7 +130,6 @@
     <ClInclude Include="src\thomas\utils\AssimpLoader.h" />
     <ClInclude Include="src\thomas\utils\d3d.h" />
     <ClInclude Include="src\thomas\utils\DebugTools.h" />
-    <ClInclude Include="src\thomas\utils\FrustumCulling.h" />
     <ClInclude Include="src\thomas\utils\Math.h" />
     <ClInclude Include="src\thomas\Window.h" />
   </ItemGroup>
