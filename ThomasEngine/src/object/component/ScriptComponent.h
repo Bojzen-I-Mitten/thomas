@@ -3,7 +3,6 @@
 #include <thomas\object\component\ScriptComponent.h>
 #pragma managed
 
-
 #include "../Component.h"
 
 namespace ThomasEditor

@@ -28,19 +28,26 @@ namespace thomas
 
 			struct LightStruct
 			{
-				math::Vector4			position;
-				math::Vector4			direction;
-
-				int						type;
+				math::Vector3	color;
+				float			intensity;
+				math::Vector3	position;
+				float			spotOuterAngle;
+				math::Vector3	direction;
+				float			spotInnerAngle;
+				math::Vector3	attenuation;
+				float   pad;
 			} m_data;
 			
 		private:
 			LightType						m_type;
 
-			static const int				s_maxNrOfLights = 2;
+			static const int				s_maxNrOfPointLights = 32;
+			static const int				s_maxNrOfSpotLights = 32;
+			static const int				s_maxNrOfDirectionalLights = 5;
+			static const int				s_maxNrOfLights = s_maxNrOfDirectionalLights + s_maxNrOfPointLights + s_maxNrOfSpotLights;
+
 			static int						s_nrOfLights;
 			static std::vector<Light>		s_lights;
-			static std::vector<Light*>		s_pointers;
 			static ID3D11Buffer*			s_lightBuffer;
 		};
 

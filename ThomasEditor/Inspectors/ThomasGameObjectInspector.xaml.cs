@@ -30,9 +30,6 @@ namespace ThomasEditor
         }
     }
 
-
-    
-
     /// <summary>
     /// Interaction logic for ThomasGameObjectInspector.xaml
     /// </summary>
@@ -45,11 +42,10 @@ namespace ThomasEditor
         //public Collection<EditorDefinitionBase> customEditors;
         public ThomasGameObjectInspector()
         {
-
             InitializeComponent();
             // propertyGrid.Editors.Add(editor);
-
         }
+
         public GameObject SelectedGameObject
         {
             get
@@ -72,7 +68,6 @@ namespace ThomasEditor
             }
         }
 
-        
 
         private bool ComponentsFilter(object item)
         {

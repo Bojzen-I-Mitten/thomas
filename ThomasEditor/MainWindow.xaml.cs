@@ -31,14 +31,11 @@ namespace ThomasEditor
 
     public partial class MainWindow : Window
     {
-
         double scrollRatio = 0;
         TimeSpan lastRender;
 
-
         public MainWindow()
         {
-
             InitializeComponent();
 
             playPauseButton.DataContext = false;
@@ -49,13 +46,10 @@ namespace ThomasEditor
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
 
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
-
-
             CompositionTarget.Rendering += DoUpdates;
-
-      
             ThomasWrapper.OutputLog.CollectionChanged += OutputLog_CollectionChanged;
         }
+
         private void OutputLog_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -75,18 +69,15 @@ namespace ThomasEditor
             }
         }
 
-
         private void Node_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             ContextMenu cm = this.FindResource("gameObjectContext") as ContextMenu;
             cm.PlacementTarget = sender as TreeViewItem;
             cm.IsOpen = true;
         }
-
                 
         private void DoUpdates(object sender, EventArgs e)
-        {
-                        
+        {                       
             RenderingEventArgs args = (RenderingEventArgs)e;
             
             if(this.lastRender != args.RenderingTime)
@@ -225,7 +216,6 @@ namespace ThomasEditor
                 Scene.SaveSceneAs(sceneToSave, saveFileDialog.FileName);
                 sceneToSave.Name = System.IO.Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
             }
-
         }
 
         private void LoadScene_Click(object sender, RoutedEventArgs e)
@@ -240,20 +230,11 @@ namespace ThomasEditor
             openFileDialog.RestoreDirectory = true;
             if (openFileDialog.ShowDialog() == true)
             {
-
-                Scene newScene = Scene.LoadScene(openFileDialog.FileName);
-                
+                Scene newScene = Scene.LoadScene(openFileDialog.FileName);               
                 Scene.CurrentScene.UnLoad();
-
-                Scene.CurrentScene = newScene;
-                                         
+                Scene.CurrentScene = newScene;                                         
                 Scene.CurrentScene.PostLoad();
-
-            }
-
-
-
-           
+            }     
         }
 
         private void PlayPauseButton_Click(object sender, ExecutedRoutedEventArgs e)
@@ -264,6 +245,24 @@ namespace ThomasEditor
                 ThomasWrapper.Play();
 
             playPauseButton.DataContext = ThomasWrapper.IsPlaying();
+        }
+
+        private void AddNewCubePrimitive(object sender, RoutedEventArgs e)
+        {            
+            var x = GameObject.CreateNewPrimitive(Primitive.ID.Cube);
+            ThomasWrapper.SelectGameObject(x);
+        }
+
+        private void AddNewSpherePrimitive(object sender, RoutedEventArgs e)
+        {
+            var x = GameObject.CreateNewPrimitive(Primitive.ID.Sphere);
+            ThomasWrapper.SelectGameObject(x);
+        }
+
+        private void AddNewConePrimitive(object sender, RoutedEventArgs e)
+        {
+            var x = GameObject.CreateNewPrimitive(Primitive.ID.Cone);
+            ThomasWrapper.SelectGameObject(x);
         }
     }
 

@@ -1,6 +1,4 @@
-
 #include "Component.h"
-
 #include "GameObject.h"
 #include <thomas\object\GameObject.h>
 #include "../ScriptingManager.h"

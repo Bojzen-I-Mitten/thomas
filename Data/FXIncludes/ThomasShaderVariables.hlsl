@@ -32,6 +32,7 @@ cbuffer ThomasPerCamera
 	float4x4 thomas_MatrixVP;
 
 	float3 _WorldSpaceCameraPos;
+	float3 _WorldSpaceCameraDir;
 };
 
 
