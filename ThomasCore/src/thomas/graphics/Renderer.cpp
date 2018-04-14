@@ -1,5 +1,4 @@
 #include "Renderer.h"
-#include "../object/component/Light.h"
 #include "LightManager.h"
 #include "TextRender.h"
 #include "Sprite.h"

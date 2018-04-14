@@ -28,12 +28,12 @@
     <ClCompile Include="src\thomas\editor\EditorCamera.cpp" />
     <ClCompile Include="src\thomas\editor\EditorGrid.cpp" />
     <ClCompile Include="src\thomas\editor\gizmos\Gizmos.cpp" />
+    <ClCompile Include="src\thomas\object\component\LightComponent.cpp" />
     <ClCompile Include="src\thomas\resource\texture\Texture.cpp" />
     <ClCompile Include="src\thomas\resource\texture\Texture2D.cpp" />
     <ClCompile Include="src\thomas\utils\Buffers.cpp" />
     <ClCompile Include="src\thomas\graphics\BulletDebugDraw.cpp" />
     <ClCompile Include="src\thomas\resource\ComputeShader.cpp" />
-    <ClCompile Include="src\thomas\graphics\Light.cpp" />
     <ClCompile Include="src\thomas\graphics\LightManager.cpp" />
     <ClCompile Include="src\thomas\resource\Material.cpp" />
     <ClCompile Include="src\thomas\graphics\Mesh.cpp" />
@@ -47,7 +47,6 @@
     <ClCompile Include="src\thomas\object\component\Camera.cpp" />
     <ClCompile Include="src\thomas\object\component\Component.cpp" />
     <ClCompile Include="src\thomas\object\component\FrustumCullingComponent.cpp" />
-    <ClCompile Include="src\thomas\object\component\Light.cpp" />
     <ClCompile Include="src\thomas\object\component\ParticleEmitterComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\RenderComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\RigidBodyComponent.cpp" />
@@ -82,6 +81,7 @@
     <ClInclude Include="src\thomas\editor\EditorCamera.h" />
     <ClInclude Include="src\thomas\editor\EditorGrid.h" />
     <ClInclude Include="src\thomas\editor\gizmos\Gizmos.h" />
+    <ClInclude Include="src\thomas\object\component\LightComponent.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\shaderProperties.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderProperty.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyMatrix.h" />
@@ -96,7 +96,6 @@
     <ClInclude Include="src\thomas\utils\Buffers.h" />
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />
     <ClInclude Include="src\thomas\resource\ComputeShader.h" />
-    <ClInclude Include="src\thomas\graphics\Light.h" />
     <ClInclude Include="src\thomas\graphics\LightManager.h" />
     <ClInclude Include="src\thomas\resource\Material.h" />
     <ClInclude Include="src\thomas\graphics\Mesh.h" />
@@ -113,7 +112,6 @@
     <ClInclude Include="src\thomas\object\component\Components.h" />
     <ClInclude Include="src\thomas\object\component\FrustumCullingComponent.h" />
     <ClInclude Include="src\thomas\object\component\ScriptComponent.h" />
-    <ClInclude Include="src\thomas\object\component\Light.h" />
     <ClInclude Include="src\thomas\object\component\ParticleEmitterComponent.h" />
     <ClInclude Include="src\thomas\object\component\RenderComponent.h" />
     <ClInclude Include="src\thomas\object\component\RigidBodyComponent.h" />

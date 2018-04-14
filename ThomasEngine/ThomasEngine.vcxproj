@@ -146,6 +146,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\object\component\LightComponent.h" />
     <ClInclude Include="src\object\component\Rigidbody.h" />
     <ClInclude Include="src\resource\Model.h" />
     <ClInclude Include="src\resource\Resource.h" />
@@ -175,6 +176,7 @@
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\object\component\LightComponent.cpp" />
     <ClCompile Include="src\resource\Material.cpp" />
     <ClCompile Include="src\math\Math.cpp" />
     <ClCompile Include="src\object\Component.cpp" />
