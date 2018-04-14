@@ -8,6 +8,7 @@ cbuffer MATERIAL_PROPERTIES
 	float4 wow;
 };
 
+
 DepthStencilState EnableDepth
 {
 	DepthEnable = TRUE;
@@ -37,16 +38,6 @@ BlendState AlphaBlendingOn
 
 };
 
-float3 GetReflectVec(float3 inVec, float3 normal)
-{
-	return 2 * dot(normal, inVec)*normal - inVec;
-}
-
-float4 GetReflectVec(float4 inVec, float4 normal)
-{
-	return 2 * dot(normal, inVec)*normal - inVec;
-}
-
 float3 GetHalfwayVec(float3 lightDir, float3 viewDir)
 {
     return normalize(viewDir + lightDir);
@@ -54,7 +45,7 @@ float3 GetHalfwayVec(float3 lightDir, float3 viewDir)
 
 struct v2f {
 	float4 vertex : SV_POSITION;
-	float3 worldPos : POSITIONWS;
+	float4 worldPos : POSITIONWS;
 	float3 normal : NORMAL;
 };
 
@@ -80,6 +71,14 @@ v2f vert(appdata_thomas v)
     uint    type;
 };*/
 
+struct ConstantBufferForLights
+{
+    uint nrOfPointLights;
+    uint nrOfSpotLights;
+    uint nrOfDirectionalLights;
+    uint pad;
+};
+
 struct Light
 {
 	float3  color;
@@ -89,12 +88,11 @@ struct Light
 	float3  direction;
 	float   spotInnerAngle;
 	float3  attenuation;
-    float pad;
-	uint    type;
-    uint nrOfPointLights;
-    uint nrOfSpotLights;
-    uint nrOfDirectionalLights;
+    float   pad;
+
+    
 };
+
 
 float CalculatePointLightContribution(float4 lightColor, float lightIntensity, float lightDistance, float3 lightAttenuation)
 {
@@ -116,43 +114,67 @@ float CalculatePointLightContribution(float4 lightColor, float lightIntensity, f
 	return spotFactor;
 }*/
 
+void Apply(inout float4 colorAcculmulator, float3 lightMultiplyer, float3 normal, float3 lightDir, float3 viewDir)//should take material properties later
+{
+    float4 ambient = float4(0.1f, 0.1f, 0.1f, 1.0f);
+    float4 diffuse = float4(0.4f, 0.4f, 0.4f, 1.0f);
+    float4 specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float smoothness = 16.0f;
+
+    float lambertian = saturate(dot(normal, lightDir));
+    float specularIntensity = 0.0f;
+    if (lambertian > 0.0f)
+    {
+        specularIntensity = pow(saturate(dot(normal, GetHalfwayVec(viewDir, lightDir))), smoothness); //blinn-phong
+    }
+    
+    colorAcculmulator += ambient + (diffuse * lambertian + specular * specularIntensity) * float4(lightMultiplyer, 1);
+}
+
 float4 frag(v2f input) : SV_TARGET
 {
 
     Light tempLight;
-    tempLight.color = float3(0.5f, 0.5f, 0.1f);
+    tempLight.color = float3(0.5f, 0.5f, 0.5f);
     tempLight.position = float3(3, 3, 3);
-    tempLight.intensity = 1;
+    tempLight.intensity = 3;
     tempLight.direction = -normalize(float3(1, 1, 1));
-    tempLight.type = 0;
     tempLight.spotInnerAngle = 10.0f;
     tempLight.spotOuterAngle = 30.0f;
     tempLight.attenuation = float3(0.4f, 0.02f, 0.1f);
+
+    ConstantBufferForLights testCBuffer;
+    testCBuffer.nrOfDirectionalLights = 0;
+    testCBuffer.nrOfPointLights = 1;
+    testCBuffer.nrOfSpotLights = 0;
     
-    float4 finalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    float4 ambient = float4(0.1f, 0.1f, 0.1f, 1.0f);
-    float4 diffuse = float4(0.4f, 0.4f, 0.4f, 1.0f);
-    float4 specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
-	float smoothness = 16.0f;
+    
+    float4 finalColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
     
     float3 viewDir = normalize(_WorldSpaceCameraPos - input.worldPos.xyz);
 	float3 lightDir = float3(0, 0, 0);
-    float lightMultiplyer = 1.0f;
-
-    if (0 == tempLight.type)//directional
+    float3 lightMultiplyer = float3(0.0f, 0.0f, 0.0f);
+    
+    int i = 0;
+    int roof = testCBuffer.nrOfDirectionalLights;
+    for (; i < 1; ++i) //directional
     {
         lightDir = -tempLight.direction;
         lightMultiplyer = tempLight.color * tempLight.intensity;
+        Apply(finalColor, lightMultiplyer, input.normal, lightDir, viewDir);
     }
-    else if (1 == tempLight.type)//point
+    roof += testCBuffer.nrOfPointLights;
+    for (; i < roof; ++i) //point
     {
         lightDir = tempLight.position - input.worldPos.xyz;
         float lightDistance = length(lightDir);
         lightDir = normalize(lightDir);
 
         lightMultiplyer = tempLight.color * tempLight.intensity / (tempLight.attenuation.x + tempLight.attenuation.y * lightDistance + tempLight.attenuation.z * lightDistance * lightDistance);
+        Apply(finalColor, lightMultiplyer, input.normal, lightDir, viewDir);
     }
-    else if (2 == tempLight.type)//spot
+    roof += testCBuffer.nrOfSpotLights;
+    for (; i < roof; ++i) //spot
     {
         lightDir = tempLight.position - input.worldPos.xyz;
         float lightDistance = length(lightDir);
@@ -170,17 +192,11 @@ float4 frag(v2f input) : SV_TARGET
         }
 
         lightMultiplyer = spotFactor * tempLight.color * tempLight.intensity / (tempLight.attenuation.x + tempLight.attenuation.y * lightDistance + tempLight.attenuation.z * lightDistance * lightDistance);
+        Apply(finalColor, lightMultiplyer, input.normal, lightDir, viewDir);
     }
     
-	
-    float lambertian = saturate(dot(input.normal.xyz, lightDir));
-    float specularIntensity = 0.0f;
-    if (lambertian > 0.0f)
-    {
-        specularIntensity = pow(saturate(dot(input.normal, GetHalfwayVec(viewDir, lightDir))), smoothness); //blinn-phong
-    }
-    
-    return saturate(ambient + (diffuse * lambertian + specular * specularIntensity) * lightMultiplyer);
+    return saturate(finalColor);
+
 }
 
 
