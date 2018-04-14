@@ -36,7 +36,7 @@ namespace ThomasEditor
             properties = material.EditorProperties;
             
             DictionaryPropertyGridAdapter adapter = new DictionaryPropertyGridAdapter(d);
-            adapter.PropertyChanged += Adapter_PropertyChanged;
+
             //propertyGrid.DataContext = adapter;
             test.SelectedObject = adapter;
         }
