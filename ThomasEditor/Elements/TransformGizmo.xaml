@@ -14,14 +14,14 @@
                     <Style TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content">
                             <Setter.Value>
-                                <Image Source="icons/translate-unselected.png"/>
+                                <Image Source="../icons/translate-unselected.png"/>
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter Property="Content">
                                     <Setter.Value>
-                                        <Image Source="icons/translate-selected.png"/>
+                                        <Image Source="../icons/translate-selected.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
@@ -36,14 +36,14 @@
                     <Style TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content">
                             <Setter.Value>
-                                <Image Source="icons/scale-unselected.png"/>
+                                <Image Source="../icons/scale-unselected.png"/>
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter Property="Content">
                                     <Setter.Value>
-                                        <Image Source="icons/scale-selected.png"/>
+                                        <Image Source="../icons/scale-selected.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
@@ -57,14 +57,14 @@
                     <Style TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content">
                             <Setter.Value>
-                                <Image Source="icons/rotate-unselected.png"/>
+                                <Image Source="../icons/rotate-unselected.png"/>
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter Property="Content">
                                     <Setter.Value>
-                                        <Image Source="icons/rotate-selected.png"/>
+                                        <Image Source="../icons/rotate-selected.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
@@ -78,14 +78,14 @@
                     <Style TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content">
                             <Setter.Value>
-                                <Image Source="icons/local-transform.png"/>
+                                <Image Source="../icons/local-transform.png"/>
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter Property="Content">
                                     <Setter.Value>
-                                        <Image Source="icons/global-transform.png"/>
+                                        <Image Source="../icons/global-transform.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>

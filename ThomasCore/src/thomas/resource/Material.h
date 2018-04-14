@@ -23,6 +23,8 @@ namespace thomas
 		private:
 			void FetchPropertiesFromShader();
 			void OnChanged();
+			void Lock();
+			void Unlock();
 		public:
 			static void Init();
 			static void Destroy();
@@ -87,6 +89,7 @@ namespace thomas
 				bool enabled;
 				int index;
 			};
+			void* m_lock;
 			bool m_isInstance;
 			Material* m_baseMaterial;
 			UINT m_id;

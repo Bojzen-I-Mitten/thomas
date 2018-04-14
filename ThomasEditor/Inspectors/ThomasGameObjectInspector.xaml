@@ -1,4 +1,4 @@
-﻿ <UserControl    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<UserControl    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
@@ -13,7 +13,7 @@
 
 
     <UserControl.CommandBindings>
-        <CommandBinding Command="commands:CustomCommands.GetAddCompenent" CanExecute="AddComponent_CanExecute" Executed="AddComponentButton_Click"/>
+        <CommandBinding Command="commands:CustomCommands.GetAddCompenent" CanExecute="AddComponent_CanExecute" Executed="AddComponent"/>
     </UserControl.CommandBindings>
 
 
@@ -58,13 +58,14 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Button Grid.Row="2" Panel.ZIndex="0" ClickMode="Release" Content="Add Component" 
+        <Button Grid.Row="2" Panel.ZIndex="0" ClickMode="Press" Content="Add Component" 
                 HorizontalAlignment="Center" HorizontalContentAlignment="Center" 
-                x:Name="addComponentButton" Command="commands:CustomCommands.GetAddCompenent"
+                x:Name="addComponentButton" Command="{x:Static commands:CustomCommands.GetAddCompenent}" 
                 />
         <DockPanel Grid.Row="3" Panel.ZIndex="1" x:Name="addComponentsListContainer" LostFocus="AddComponentsListContainer_LostFocus" Visibility="Hidden" Width="200" Height="300" Margin="10">
-            <TextBox x:Name="AddComponentsFilter" DockPanel.Dock="Top" TextChanged="AddComponentsFilter_TextChanged"/>
-            <ListView x:Name="addComponentList" Background="#333333" SelectionChanged="AddComponentList_SelectionChanged">
+            <TextBox x:Name="AddComponentsFilter" DockPanel.Dock="Top" TextChanged="AddComponentsFilter_TextChanged" KeyUp="AddComponentList_KeyUp"/>
+            <ListView x:Name="addComponentList" Background="#333333" >
+                <!--SelectionChanged="AddComponentList_SelectionChanged"-->
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}"/>
