@@ -13,6 +13,7 @@ namespace thomas
 			m_name = name;
 			m_selected = false;
 		}
+
 		GameObject::~GameObject()
 		{
 			for (unsigned int i = 0; i < this->m_components.size(); i++)
@@ -35,6 +36,7 @@ namespace thomas
 			editor::EditorCamera::UnselectObject(this);
 			Object::Destroy(this);
 		}
+
 		GameObject * GameObject::Find(std::string type)
 		{
 			for (unsigned int i = 0; i < s_gameObjects.size(); i++)
@@ -52,7 +54,6 @@ namespace thomas
 
 		bool GameObject::Destroy(GameObject * gameObject)
 		{
-
 			for (unsigned int i = 0; i < gameObject->m_components.size(); i++)
 			{
 				if (gameObject->m_components[i])
@@ -77,6 +78,7 @@ namespace thomas
 
 			return true;
 		}
+
 		void GameObject::Destroy()
 		{
 			for (unsigned int i = 0; i < s_gameObjects.size(); ++i)
@@ -85,6 +87,7 @@ namespace thomas
 			}
 			s_gameObjects.clear();
 		}
+
 		bool GameObject::GetActive()
 		{
 			if (m_transform && m_transform->GetParent())
@@ -112,6 +115,5 @@ namespace thomas
 		{
 			return m_selected;
 		}
-
 	}
 }

@@ -68,9 +68,9 @@
                     <!--Using custom command. Only need to set the command.-->
                     <MenuItem Command="{x:Static commands:CustomCommands.GetNewEmptyObject}"/>
                     <MenuItem Header="_3D Object">
-                        <MenuItem Header="_Cube"/>
-                        <MenuItem Header="_Sphere"/>
-                        <MenuItem Header="_Cone"/>
+                        <MenuItem Header="_Cube" Click="AddNewCubePrimitive"/>
+                        <MenuItem Header="_Sphere" Click="AddNewSpherePrimitive"/>
+                        <MenuItem Header="_Cone" Click="AddNewConePrimitive"/>
                     </MenuItem>
                 </MenuItem>
 

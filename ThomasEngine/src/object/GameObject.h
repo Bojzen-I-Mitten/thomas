@@ -2,6 +2,8 @@
 #pragma unmanaged
 #include <thomas\object\GameObject.h>
 #include <thomas\editor\EditorCamera.h>
+#include <..\..\ThomasEngine\src\resource\Resources.h>
+
 #pragma managed
 #include <string>
 #include <msclr\marshal_cppstd.h>
@@ -9,6 +11,7 @@
 #include "Object.h"
 #include "Component.h"
 #include "component\Transform.h"
+#include "component\RenderComponent.h"
 #include "component\ScriptComponent.h"
 #include "../attributes/CustomAttributes.h"
 #using "PresentationFramework.dll"
@@ -21,6 +24,16 @@ using namespace System::Linq;
 
 namespace ThomasEditor 
 {
+	namespace Primitive
+	{
+		enum class ID
+		{
+			Cube,
+			Sphere,
+			Cone
+		};
+	}
+
 	public ref class GameObject : public Object
 	{
 		ObservableCollection<Component^> m_components;
@@ -280,13 +293,34 @@ namespace ThomasEditor
 		//}
 		//
 
-		static GameObject^ Find(String^ name) {
+		static GameObject^ Find(String^ name) 
+		{
 			for each(GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 			{
 				if (gameObject->Name == name)
 					return gameObject;
 			}
 			return nullptr;
+		}
+
+		static GameObject^ CreateNewPrimitive(ThomasEditor::Primitive::ID id) 
+		{		
+			GameObject^ gameObject = gcnew GameObject("gameobject");
+
+			if (id == ThomasEditor::Primitive::ID::Cube)
+			{	
+				gameObject->AddComponent<RenderComponent^>()->model = ThomasEditor::Resources().Load<Model^>("..\\Data\\box.obj");
+			}
+			else if (id == ThomasEditor::Primitive::ID::Sphere)
+			{
+
+			}
+			else if (id == ThomasEditor::Primitive::ID::Cone)
+			{
+
+			}
+				
+			return gameObject;
 		}
 
 		bool GetActive()

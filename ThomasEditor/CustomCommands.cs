@@ -37,15 +37,13 @@ namespace ThomasEditor.Commands
         public static void SetSaveKey(Key set) { save = set; }
 
 
-
-
         //Include xmlns:commands="clr-namespace:ThomasEditor.Commands" in the file you want access to the custome commands
         //Check MainWindow.xaml for an example on how to add.
 
         //This is a custom command object.
         public static readonly RoutedUICommand NewGameObjectCmd = new RoutedUICommand
             (
-                "New Game Object",     //The text that will show on the item that the command is bound to.
+                "Empty Game Object",     //The text that will show on the item that the command is bound to.
                 "NewGameObject",       //Name of the command
                 typeof(CustomCommands), //Owner of command
                 new InputGestureCollection()
@@ -112,8 +110,6 @@ namespace ThomasEditor.Commands
                     new KeyGesture(save, ModifierKeys.Control)
                 }
             );
-
-
 
         public static RoutedUICommand GetNewEmptyObject { get { return NewGameObjectCmd; } }
         public static RoutedUICommand GetDeleteGameObject { get { return DeleteGameObjectCmd; } }
