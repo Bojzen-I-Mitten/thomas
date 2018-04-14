@@ -153,7 +153,7 @@ namespace thomas
 
 		void EditorCamera::updateCamera()
 		{
-			Input::ResetScrollWheelValue();
+			//Input::ResetScrollWheelValue();
 			m_manipulatorSnapping = false;
 			HWND focus = GetForegroundWindow();
 
@@ -167,11 +167,11 @@ namespace thomas
 			if (Input::GetMouseButtonUp(Input::MouseButtons::RIGHT))
 				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
 			
-			if (Input::GetMouseScrollWheel() > 0)
-				m_transform->Translate(m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 3000.f);
+			/*if (Input::GetMouseScrollWheel() > 0)
+				m_transform->Translate(m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 1000.f);
 
 			if (Input::GetMouseScrollWheel() < 0)
-				m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 3000.f);
+				m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 1000.f);*/
 
 			if(Input::GetMouseButton(Input::MouseButtons::RIGHT))
 			{

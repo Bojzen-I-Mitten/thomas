@@ -4,6 +4,7 @@
 #include "../resource/Material.h"
 #include "../object/component/Camera.h"
 #include "../object/component/Transform.h"
+
 namespace thomas {
 	namespace graphics {
 
@@ -102,9 +103,8 @@ namespace thomas {
 
 			if(!m_data.indices.empty())
 				m_data.indexBuffer = new utils::buffers::IndexBuffer(m_data.indices);
-			
-
 		}
+
 		math::BoundingBox Mesh::GenerateBounds()
 		{
 			math::BoundingBox bounds;
