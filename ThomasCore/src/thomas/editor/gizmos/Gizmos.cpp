@@ -9,8 +9,12 @@ namespace thomas
 {
 	namespace editor
 	{
-		utils::buffers::VertexBuffer* Gizmos::s_vertexBuffer;
+		std::vector<Gizmos::GizmoRenderCommand> Gizmos::s_gizmoCommands;
+		std::vector<Gizmos::GizmoRenderCommand> Gizmos::s_prevGizmoCommands;
 		resource::Material* Gizmos::s_gizmoMaterial;
+		utils::buffers::VertexBuffer* Gizmos::s_vertexBuffer;
+		math::Matrix Gizmos::s_matrix;
+		math::Color Gizmos::s_color;
 		void Gizmos::DrawModel(resource::Model * model, math::Vector3 position = math::Vector3::Zero, math::Quaternion rotation = math::Quaternion::Identity, math::Vector3 scale = math::Vector3::One)
 		{
 			DrawModel(model, -1, position, rotation, scale);
@@ -20,7 +24,7 @@ namespace thomas
 		void Gizmos::DrawModel(resource::Model * model, int meshIndex, math::Vector3 position = math::Vector3::Zero, math::Quaternion rotation = math::Quaternion::Identity, math::Vector3 scale = math::Vector3::One)
 		{
 			
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
+			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
 			s_gizmoMaterial->SetMatrix("gizmoMatrix", math::CreateMatrix(position, rotation, scale));
 			s_gizmoMaterial->Bind();
@@ -33,7 +37,7 @@ namespace thomas
 			else
 			{
 				s_gizmoMaterial->Draw(meshes[meshIndex]);
-			}
+			}*/
 		}
 
 		void Gizmos::DrawWireModel(resource::Model * model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale)
@@ -43,7 +47,7 @@ namespace thomas
 
 		void Gizmos::DrawWireModel(resource::Model * model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale)
 		{
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::WIREFRAME);
+			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::WIREFRAME);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
 			s_gizmoMaterial->SetMatrix("gizmoMatrix", math::CreateMatrix(position, rotation, scale));
 			s_gizmoMaterial->Bind();
@@ -56,23 +60,23 @@ namespace thomas
 			else
 			{
 				s_gizmoMaterial->Draw(meshes[meshIndex]);
-			}
+			}*/
 		}
 		
 
 		void Gizmos::DrawCube(math::Vector3 center, math::Vector3 size)
 		{
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
+			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-			s_gizmoMaterial->Bind();
+			s_gizmoMaterial->Bind();*/
 			//s_gizmoMaterial->Draw(graphics::Model::GetPrimitive(graphics::PrimitiveType::Cube))
 		}
 
 		void Gizmos::DrawWireCube(math::Vector3 center, math::Vector3 size)
 		{
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
+			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-			s_gizmoMaterial->Bind();
+			s_gizmoMaterial->Bind();*/
 			//s_gizmoMaterial->Draw(graphics::Model::GetPrimitive(graphics::PrimitiveType::Cube))
 		}
 
@@ -168,17 +172,17 @@ namespace thomas
 
 		void Gizmos::DrawSphere(math::Vector3 center, float radius)
 		{
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
+			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-			s_gizmoMaterial->Bind();
+			s_gizmoMaterial->Bind();*/
 			//s_gizmoMaterial->Draw(graphics::Model::GetPrimitive(graphics::PrimitiveType::Cube))
 		}
 
 		void Gizmos::DrawWireSphere(math::Vector3 center, float radius)
 		{
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::WIREFRAME);
+			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::WIREFRAME);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-			s_gizmoMaterial->Bind();
+			s_gizmoMaterial->Bind();*/
 			//s_gizmoMaterial->Draw(graphics::Model::GetPrimitive(graphics::PrimitiveType::Cube))
 		}
 
@@ -248,14 +252,44 @@ namespace thomas
 
 		void Gizmos::DrawLines(std::vector<math::Vector3> lines)
 		{
-			s_vertexBuffer->SetData(lines);
+			//s_vertexBuffer->SetData(lines);
 
-			s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
+			//s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
 
-			s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer);
-			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_LINELIST;
-			s_gizmoMaterial->Bind();
-			s_gizmoMaterial->Draw(lines.size(), 0);
+			//s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer);
+			//s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_LINELIST;
+			//s_gizmoMaterial->Bind();
+			//s_gizmoMaterial->Draw(lines.size(), 0);
+
+			s_gizmoCommands.push_back(GizmoRenderCommand(lines, s_matrix, s_color, D3D10_PRIMITIVE_TOPOLOGY_LINELIST, GizmoPasses::SOLID));
+		}
+
+		void Gizmos::TransferGizmoCommands()
+		{
+			
+			s_prevGizmoCommands = s_gizmoCommands;
+		}
+
+		void Gizmos::RenderGizmos()
+		{
+			for (GizmoRenderCommand& command : s_prevGizmoCommands)
+			{
+				
+				s_gizmoMaterial->SetShaderPass((int)command.pass);
+				s_gizmoMaterial->SetMatrix("gizmoMatrix", command.matrix);
+				s_gizmoMaterial->SetColor("gizmoColor", command.color);
+				s_gizmoMaterial->m_topology = command.topology;
+
+				s_vertexBuffer->SetData(command.vertexData);
+				s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer);
+				s_gizmoMaterial->Bind();
+				s_gizmoMaterial->Draw(command.vertexData.size(), 0);
+			}
+		}
+
+		void Gizmos::ClearGizmos()
+		{
+			s_gizmoCommands.clear();
 		}
 
 		void Gizmos::DrawBillboard(math::Vector3 centerPos, float width, float height)
@@ -320,16 +354,17 @@ namespace thomas
 			delete s_vertexBuffer;
 		}
 
-		//TODO: Needs destroy
 		
 		void Gizmos::SetColor(math::Color color)
 		{
-			s_gizmoMaterial->SetColor("gizmoColor", color);
+			s_color = color;
+			//s_gizmoMaterial->SetColor("gizmoColor", color);
 		}
 
 		void Gizmos::SetMatrix(math::Matrix matrix)
 		{
-			s_gizmoMaterial->SetMatrix("gizmoMatrix", matrix);
+			s_matrix = matrix;
+			//s_gizmoMaterial->SetMatrix("gizmoMatrix", matrix);
 		}
 
 	}

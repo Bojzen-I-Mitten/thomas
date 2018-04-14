@@ -2,7 +2,8 @@
 #include "Shader.h"
 #include "../resource/texture/Texture.h"
 #include "../graphics/Mesh.h"
-#include "ShaderProperty.h"
+#include "ShaderProperty\shaderProperties.h"
+#include <mutex>
 namespace thomas
 {
 	namespace resource
@@ -10,33 +11,33 @@ namespace thomas
 		Material* Material::s_standardMaterial;
 		UINT Material::s_idCounter = 0;
 
-		void Material::SetSampler(const std::string name, resource::Texture & value)
+		void Material::FetchPropertiesFromShader()
 		{
-			if (m_shader->HasProperty(name))
-			{
-				GetProperty(name)->SetSampler(value);
-			}
-		}
-
-		void Material::CreateProperties()
-		{
-			for (ShaderProperty* mProp : m_properties)
-			{
-				delete mProp;
-			}
-			m_properties.clear();
-
 			if (m_shader)
 			{
-				for (ShaderProperty* prop : m_shader->GetProperties())
+				for (auto& prop : m_shader->GetProperties())
 				{
-					m_properties.push_back(new resource::ShaderProperty(prop));
+					if (prop.second->isMaterialProperty)
+					{
+						m_properties[prop.first] = prop.second;
+					}
 				}
 			}
+
 		}
 
 		void Material::OnChanged()
 		{
+		}
+
+		void Material::Lock()
+		{
+			((std::mutex*)m_lock)->lock();
+		}
+
+		void Material::Unlock()
+		{
+			((std::mutex*)m_lock)->unlock();
 		}
 
 		void Material::Init()
@@ -56,6 +57,7 @@ namespace thomas
 
 		Material::Material(resource::Shader * shader) : Resource("")
 		{
+			m_lock = new std::mutex();
 			m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			m_shader = shader;
 			m_isInstance = false;
@@ -70,30 +72,30 @@ namespace thomas
 				pass.index = m_passes.size();
 				m_passes.push_back(pass);
 			}
+			FetchPropertiesFromShader();
 
-			CreateProperties();
 		}
 
 
 		Material::Material(Material * original) : Resource("")
 		{
+			m_lock = new std::mutex();
 			m_baseMaterial = original->m_baseMaterial;
 			m_isInstance = true;
 			m_shader = original->m_shader;
 			m_renderQueue = original->m_renderQueue;
 			m_topology = original->m_topology;
 			m_passes = original->m_passes;
-			for (ShaderProperty* prop : original->m_properties)
-			{
-				m_properties.push_back(new ShaderProperty(prop));
-			}
 
 			m_id = s_idCounter;
 			s_idCounter++;
+
+			FetchPropertiesFromShader();
 		}
 
 		Material::Material(std::string path) : Resource(path)
 		{
+			m_lock = new std::mutex();
 			m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			m_shader = nullptr;
 			m_isInstance = false;
@@ -103,15 +105,14 @@ namespace thomas
 
 		Material::~Material()
 		{
-			for (ShaderProperty* mProp : m_properties)
-			{
-				delete mProp;
-			}
+			Lock();
 			m_properties.clear();
+			Unlock();
 		}
 
 		void Material::SetShader(resource::Shader * shader)
 		{
+			Lock();
 			m_shader = shader;
 			m_renderQueue = -1;
 			m_passes.clear();
@@ -123,7 +124,8 @@ namespace thomas
 				pass.index = m_passes.size();
 				m_passes.push_back(pass);
 			}
-			CreateProperties();
+			FetchPropertiesFromShader();
+			Unlock();
 		}
 
 		resource::Shader * Material::GetShader()
@@ -131,223 +133,180 @@ namespace thomas
 			return m_shader;
 		}
 
+		void Material::ApplyProperty(const std::string & name)
+		{
+			if (HasProperty(name))
+			{
+				Lock();
+				m_properties[name]->Apply(m_shader);
+				Unlock();
+			}
+		}
+		
+
 		bool Material::HasProperty(const std::string & name)
 		{
-			for (ShaderProperty* prop : m_properties)
-			{
-				if (prop->GetName() == name)
-					return true;
-			}
-			return false;
+			return m_shader->HasProperty(name);
 		}
 
-		ShaderProperty* Material::GetProperty(const std::string & name)
+		std::shared_ptr<shaderProperty::ShaderProperty> Material::GetProperty(const std::string & name)
 		{
+			Lock();
 			if (HasProperty(name))
 			{
-				for (ShaderProperty* prop : m_properties)
-				{
-					if (prop->GetName() == name)
-						return prop;
-				}
+				return m_properties[name];
 			}
+			Unlock();
 			return nullptr;
 		}
-		math::Color* Material::GetColor(const std::string& name)
+		math::Color Material::GetColor(const std::string& name)
 		{
-			if (HasProperty(name))
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::VECTOR)
 			{
-				return (math::Color*)GetProperty(name)->GetVector();
+				
+				return ((shaderProperty::ShaderPropertyVector*)m_properties[name].get())->GetValue();
+				
 			}
 			else
 			{
 				//LOG("Property " << name << " does not exist for material");
-				return nullptr;
+				return math::Color();
 			}
 		}
 		void Material::SetColor(const std::string& name, const math::Color& value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetVector(value.ToVector4());
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+	
+			Lock();
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
+			m_properties[name]->SetName(name);
+			Unlock();
+
 		}
-		float* Material::GetFloat(const std::string& name)
+		float Material::GetFloat(const std::string& name)
 		{
-			if (HasProperty(name))
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::SCALAR_FLOAT)
 			{
-				return GetProperty(name)->GetFloat();
+				return ((shaderProperty::ShaderPropertyScalarFloat*)m_properties[name].get())->GetValue();
 			}
 			else
 			{
 				//LOG("Property " << name << " does not exist for material");
-				return nullptr;
+				return 0;
 			}
 		}
 		void Material::SetFloat(const std::string& name, float& value)
 		{
+			Lock();
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyScalarFloat(value));
+			m_properties[name]->SetName(name);
+			Unlock();
 			
-			if (m_shader->HasProperty(name))
-			{
-				GetProperty(name)->SetFloat(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
-
 		}
-		int* Material::GetInt(const std::string& name)
+		int Material::GetInt(const std::string& name)
 		{
-			if (HasProperty(name))
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::SCALAR_INT)
 			{
-				return GetProperty(name)->GetInt();
+				return ((shaderProperty::ShaderPropertyScalarInt*)m_properties[name].get())->GetValue();
 			}
 			else
 			{
 				//LOG("Property " << name << " does not exist for material" );
-				return nullptr;
+				return 0;
 			}
 		}
 		void Material::SetInt(const std::string& name, int& value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetInt(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+			Lock();
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyScalarInt(value));
+			m_properties[name]->SetName(name);
+			Unlock();
+			
 		}
-		math::Matrix* Material::GetMatrix(const std::string& name)
+		math::Matrix Material::GetMatrix(const std::string& name)
 		{
-			if (HasProperty(name))
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::MATRIX)
 			{
-				return GetProperty(name)->GetMatrix();
+				((shaderProperty::ShaderPropertyMatrix*)m_properties[name].get())->GetValue();
 			}
 			else
 			{
 				//LOG("Property " << name << " does not exist for material");
-				return nullptr;
+				return math::Matrix();
 			}
 		}
 		void Material::SetMatrix(const std::string& name, math::Matrix& value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetMatrix(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+			Lock();
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyMatrix(value));
+			m_properties[name]->SetName(name);
+			Unlock();
+			
 		}
-		resource::Texture* Material::GetTexture(const std::string& name)
+		resource::Texture2D * Material::GetTexture2D(const std::string & name)
 		{
-			if (HasProperty(name))
+			if (HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::TEXTURE2D)
 			{
-				return GetProperty(name)->GetTexture();
+				return ((shaderProperty::ShaderPropertyTexture2D*)m_properties[name].get())->GetValue();
 			}
 			else
 			{
-				//LOG("Property " << name << " does not exist for material");
 				return nullptr;
 			}
 		}
-		void Material::SetTexture(const std::string& name, resource::Texture& value)
+		void Material::SetTexture2D(const std::string & name, resource::Texture2D* value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetTexture(value);
-				//SetSampler("sampler" + name, value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+			Lock();
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyTexture2D(value));
+			m_properties[name]->SetName(name);
+			Unlock();
 		}
-		math::Vector4* Material::GetVector(const std::string& name)
+
+		math::Vector4 Material::GetVector(const std::string& name)
 		{
-			if (HasProperty(name))
+			if(HasProperty(name) && m_properties[name]->GetType() == shaderProperty::ShaderProperty::Type::VECTOR)
 			{
-				return GetProperty(name)->GetVector();
+				return ((shaderProperty::ShaderPropertyVector*)m_properties[name].get())->GetValue();
 			}
 			else
 			{
 				//LOG("Property " << name << " does not exist for material");
-				return nullptr;
+				return math::Vector4();
 			}
 		}
 		void Material::SetVector(const std::string& name, math::Vector4& value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetVector(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+			Lock();
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
+			m_properties[name]->SetName(name);
+			Unlock();
+			
 		}
-		void Material::SetResource(const std::string & name, ID3D11ShaderResourceView & value)
+		void Material::SetResource(const std::string & name, ID3D11ShaderResourceView* value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetResource(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+			Lock();
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyShaderResource(value));
+			m_properties[name]->SetName(name);
+			Unlock();
 		}
-		void Material::SetBuffer(const std::string & name, ID3D11Buffer & value)
+		void Material::SetConstantBuffer(const std::string & name, ID3D11Buffer* value)
 		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetBuffer(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material" );
-			}
-		}
-		void Material::SetRaw(const std::string & name, void * value, size_t size, UINT count)
-		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetRaw(value, size, count);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
-		}
-
-		void Material::SetRaw(const std::string & name, void * value)
-		{
-			if (HasProperty(name))
-			{
-				GetProperty(name)->SetRaw(value);
-			}
-			else
-			{
-				//LOG("Property " << name << " does not exist for material");
-			}
+			Lock();
+			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyConstantBuffer(value));
+			m_properties[name]->SetName(name);
+			Unlock();
 		}
 
 
 		void Material::SetShaderPassEnabled(int index, bool enabled)
 		{
+			Lock();
 			if (m_passes.size() > index)
 				m_passes[index].enabled = enabled;
+			Unlock();
 		}
 		void Material::SetShaderPassEnabled(std::string name, bool enabled)
 		{
+			Lock();
 			for (int i = 0; i < m_passes.size(); i++)
 			{
 				if (m_passes[i].name == name)
@@ -357,10 +316,12 @@ namespace thomas
 				}
 
 			}
+			Unlock();
 		}
 
 		void Material::SetShaderPass(int index)
 		{
+			Lock();
 			for (int i = 0; i < m_passes.size(); i++)
 			{
 				if (i == index)
@@ -368,10 +329,12 @@ namespace thomas
 				else
 					m_passes[i].enabled = false;
 			}
+			Unlock();
 		}
 
 		void Material::SetShaderPass(std::string name)
 		{
+			Lock();
 			for (int i = 0; i < m_passes.size(); i++)
 			{
 				if (m_passes[i].name == name)
@@ -380,19 +343,23 @@ namespace thomas
 					m_passes[i].enabled = false;
 
 			}
+			Unlock();
 		}
 
 		void Material::Bind()
 		{
+			Lock();
 			m_shader->Bind();
-			/*for (auto prop : m_properties)
+			for (auto prop : m_properties)
 			{
-				prop->ApplyProperty(m_shader);
-			}*/
+				prop.second->Apply(m_shader);
+			}
 			ThomasCore::GetDeviceContext()->IASetPrimitiveTopology(m_topology);
+			Unlock();
 		}
 		void Material::Draw(graphics::Mesh * mesh)
 		{
+			Lock();
 			for (Pass p : m_passes)
 			{
 				if (p.enabled)
@@ -401,10 +368,11 @@ namespace thomas
 					mesh->Draw(m_shader);
 				}
 			}
-			
+			Unlock();
 		}
 		void Material::Draw(UINT vertexCount, UINT startVertexLocation)
 		{
+			Lock();
 			for (Pass p : m_passes)
 			{
 				if (p.enabled)
@@ -413,17 +381,23 @@ namespace thomas
 					ThomasCore::GetDeviceContext()->Draw(vertexCount, startVertexLocation);
 				}
 			}
+			Unlock();
 		}
-		std::vector<ShaderProperty*> Material::GetEditorProperties()
+		std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> Material::GetEditorProperties()
 		{
-			//optimize maybe?
-			std::vector<ShaderProperty*> editorProperties;
-			for (ShaderProperty* matProp : m_properties)
-				if (matProp->GetBufferName() == "MATERIAL_PROPERTIES")
-					editorProperties.push_back(matProp);
+			Lock();
+			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> editorProperties;
+			for (auto& prop : m_properties)
+			{
+				if (prop.second->isMaterialProperty)
+				{
+					editorProperties[prop.first] = prop.second;
+				}
+			}
+			Unlock();
 			return editorProperties;
 		}
-		std::vector<ShaderProperty*> Material::GetAllProperties()
+		std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> Material::GetAllProperties()
 		{
 			return m_properties;
 		}

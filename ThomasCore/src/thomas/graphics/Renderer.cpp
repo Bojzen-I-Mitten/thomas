@@ -14,12 +14,11 @@
 #include "../ThomasTime.h"
 #include "../resource/Material.h"
 #include "../resource/Shader.h"
-#include "../resource/ShaderProperty.h"
 #include <algorithm>
 #include "../utils/DebugTools.h"
 #include "../Window.h"
-
-
+#include "../editor/gizmos/Gizmos.h"
+#include "../editor/EditorCamera.h"
 namespace thomas
 {
 	namespace graphics
@@ -73,15 +72,12 @@ namespace thomas
 
 		void Renderer::BindObject(thomas::resource::Material * material, thomas::math::Matrix& worldMatrix)
 		{
-			thomas::resource::ShaderProperty* prop;
+			thomas::resource::shaderProperty::ShaderProperty* prop;
+			material->SetMatrix("thomas_ObjectToWorld", worldMatrix.Transpose());
+			material->ApplyProperty("thomas_ObjectToWorld");
 
-			prop = material->GetProperty("thomas_ObjectToWorld");
-			prop->SetMatrix(worldMatrix.Transpose());
-			//prop->ApplyProperty(material->GetShader());
-
-			prop = material->GetProperty("thomas_WorldToObject");
-			prop->SetMatrix(worldMatrix.Invert());
-			//prop->ApplyProperty(material->GetShader());
+			material->SetMatrix("thomas_WorldToObject", worldMatrix.Invert());
+			material->ApplyProperty("thomas_WorldToObject");
 
 		}
 
@@ -102,11 +98,13 @@ namespace thomas
 						material->Draw(perMeshCommand.mesh);
 					}
 				}
-				
-				
-				
 			}
-
+			if (editor::EditorCamera::GetEditorCamera())
+			{
+				BindCamera(editor::EditorCamera::GetEditorCamera()->GetCamera());
+				editor::Gizmos::RenderGizmos();
+			}
+			
 		}
 
 	}

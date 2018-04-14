@@ -19,58 +19,13 @@ using Xceed.Wpf.Toolkit.PropertyGrid;
 namespace ThomasEditor
 {
 
-    public class Vector3Converter : IValueConverter
-    {
-        Vector3 vector;
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            vector = (Vector3)value;
-            String type = (String)parameter;
-            switch (type)
-            {
-                case "x": return vector.x;
-                case "y": return vector.y;
-                case "z": return vector.z;
-                default: return vector.x;
-            }
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            String type = (String)parameter;
-            if (value != null)
-            {
-                switch (type)
-                {
-                    case "x": vector.x = (float)(double)value; break;
-                    case "y": vector.y = (float)(double)value; break;
-                    case "z": vector.z = (float)(double)value; break;
-                }
-            }
-
-            return vector;
-        }
-    }
-
-    public class NullResourceConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return "None (" + (value as String) + ")";
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
+   
     /// <summary>
     /// Interaction logic for ExtendedPropertyGrid.xaml
     /// </summary>
     public partial class ExtendedPropertyGrid : UserControl
     {
+
         public ExtendedPropertyGrid()
         {
             InitializeComponent();
@@ -137,5 +92,6 @@ namespace ThomasEditor
 
             ResourceListPopup.instance = new ResourceListPopup(pi, resourceType);
         }
+
     }
 }
