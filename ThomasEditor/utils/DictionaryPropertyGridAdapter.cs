@@ -70,7 +70,7 @@ namespace ThomasEditor
         PropertyDescriptorCollection
             System.ComponentModel.ICustomTypeDescriptor.GetProperties()
         {
-            return ((ICustomTypeDescriptor)this).GetProperties(new Attribute[0]);
+            return ((ICustomTypeDescriptor)this).GetProperties(new Attribute[1]);
         }
 
         public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
@@ -86,6 +86,7 @@ namespace ThomasEditor
 
             return new PropertyDescriptorCollection(props);
         }
+
     }
 
     class DictionaryPropertyDescriptor : PropertyDescriptor
@@ -139,4 +140,5 @@ namespace ThomasEditor
             return false;
         }
     }
+
 }

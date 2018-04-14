@@ -8,6 +8,7 @@ cbuffer MATERIAL_PROPERTIES
 	float4 wow;
 };
 
+
 DepthStencilState EnableDepth
 {
 	DepthEnable = TRUE;
@@ -37,35 +38,15 @@ BlendState AlphaBlendingOn
 
 };
 
-float3 GetReflectVec(float3 inVec, float3 normal)
+float3 GetHalfwayVec(float3 lightDir, float3 viewDir)
 {
-	return 2 * dot(normal, inVec)*normal - inVec;
-}
-
-float4 GetReflectVec(float4 inVec, float4 normal)
-{
-	return 2 * dot(normal, inVec)*normal - inVec;
-}
-
-
-float Fresnel(float lightAngle, float mediumRefractionIndex)
-{
-	float mediumTheta = 1.0f / mediumRefractionIndex;
-	float refractAngle = sqrt(1 - mediumTheta * mediumTheta);
-
-	float mediumLightAngleFactor = mediumRefractionIndex * lightAngle;
-	float mediumRefractAngleFactor = mediumRefractionIndex* refractAngle;
-
-	float Rparl = (mediumLightAngleFactor - refractAngle) / (mediumLightAngleFactor + refractAngle);
-	float Rperp = (lightAngle - mediumRefractAngleFactor) / (lightAngle + mediumRefractAngleFactor);
-
-	return (Rparl * Rparl + Rperp * Rperp) / 2;
+    return normalize(viewDir + lightDir);
 }
 
 struct v2f {
 	float4 vertex : SV_POSITION;
 	float4 worldPos : POSITIONWS;
-	float4 normal : NORMAL;
+	float3 normal : NORMAL;
 };
 
 v2f vert(appdata_thomas v)
@@ -73,31 +54,149 @@ v2f vert(appdata_thomas v)
 	v2f o;
 	o.vertex = ThomasObjectToClipPos(v.vertex);
 	o.worldPos = ThomasObjectToWorldPos(v.vertex);
-	o.normal = float4(ThomasWorldToObjectDir(v.normal), 0);
+	o.normal = ThomasWorldToObjectDir(v.normal);
 	return o;
 }
 
-float4 frag(v2f i) : SV_TARGET
+/*struct Light
 {
-	float4 testLightDir = normalize(float4(1, -1, -1, 0));
-	float4 tempLightColorWith = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4  color;
+    float4  position;
+    float4  direction;
+    float   intensity;
+    float   smoothness; //specularIntensity
+    float   spotInnerAngle;
+    float   spotOuterAngle;
+    float3  attenuation;
+    uint    type;
+};*/
 
-	float4 specular = float4(0, 0, 0, 0);
-	float4 color = float4(0.2, 0.2, 0.2, 1.0f);
-	
-	float3 viewDir = i.worldPos - _WorldSpaceCameraPos;
-	float lightIntensity = saturate(dot(-i.normal, testLightDir));
-	
+struct ConstantBufferForLights
+{
+    uint nrOfPointLights;
+    uint nrOfSpotLights;
+    uint nrOfDirectionalLights;
+    uint pad;
+};
 
-	
-	color += saturate(tempLightColorWith * lightIntensity);
-		//float4 reflectVec = dot(GetReflectVec(testLightDir, -i.normal), i.normal);
-		//specular = saturate(dot(reflectVec, viewDir)) * Fresnel(lightIntensity, 1.3f);
-	
-	//color = saturate(color + specular);
-	return color;
+struct Light
+{
+	float3  color;
+	float   intensity;
+	float3  position;
+	float   spotOuterAngle;
+	float3  direction;
+	float   spotInnerAngle;
+	float3  attenuation;
+    float   pad;
 
-	
+    
+};
+
+
+float CalculatePointLightContribution(float4 lightColor, float lightIntensity, float lightDistance, float3 lightAttenuation)
+{
+	return lightColor * lightIntensity / (lightAttenuation.x + lightAttenuation.y * lightDistance + lightAttenuation.z * lightDistance * lightDistance);
+}
+
+/*float CalculateSpotLightFactor()
+{
+	float angle = degrees(acos(dot(-tempLight.direction, lightDir)));
+	float spotFactor = 0.0f;
+	if (angle < tempLight.spotInnerAngle)
+	{
+		spotFactor = 1.0f;
+	}
+	else if (angle < tempLight.spotOuterAngle)
+	{
+		spotFactor = 1.0f - smoothstep(tempLight.spotInnerAngle, tempLight.spotOuterAngle, angle);
+	}
+	return spotFactor;
+}*/
+
+void Apply(inout float4 colorAcculmulator, float3 lightMultiplyer, float3 normal, float3 lightDir, float3 viewDir)//should take material properties later
+{
+    float4 ambient = float4(0.1f, 0.1f, 0.1f, 1.0f);
+    float4 diffuse = float4(0.4f, 0.4f, 0.4f, 1.0f);
+    float4 specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float smoothness = 16.0f;
+
+    float lambertian = saturate(dot(normal, lightDir));
+    float specularIntensity = 0.0f;
+    if (lambertian > 0.0f)
+    {
+        specularIntensity = pow(saturate(dot(normal, GetHalfwayVec(viewDir, lightDir))), smoothness); //blinn-phong
+    }
+    
+    colorAcculmulator += ambient + (diffuse * lambertian + specular * specularIntensity) * float4(lightMultiplyer, 1);
+}
+
+float4 frag(v2f input) : SV_TARGET
+{
+
+    Light tempLight;
+    tempLight.color = float3(0.5f, 0.5f, 0.5f);
+    tempLight.position = float3(3, 3, 3);
+    tempLight.intensity = 1;
+    tempLight.direction = -normalize(float3(1, 1, 1));
+    tempLight.spotInnerAngle = 10.0f;
+    tempLight.spotOuterAngle = 30.0f;
+    tempLight.attenuation = float3(0.4f, 0.02f, 0.1f);
+
+    ConstantBufferForLights testCBuffer;
+    testCBuffer.nrOfDirectionalLights = 1;
+    testCBuffer.nrOfPointLights = 0;
+    testCBuffer.nrOfSpotLights = 0;
+    
+    
+    float4 finalColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    
+    float3 viewDir = normalize(_WorldSpaceCameraPos - input.worldPos.xyz);
+	float3 lightDir = float3(0, 0, 0);
+    float3 lightMultiplyer = float3(0.0f, 0.0f, 0.0f);
+    
+    int i = 0;
+    int roof = testCBuffer.nrOfDirectionalLights;
+    for (; i < roof; ++i) //directional
+    {
+        lightDir = -tempLight.direction;
+        lightMultiplyer = tempLight.color * tempLight.intensity;
+        Apply(finalColor, lightMultiplyer, input.normal, lightDir, viewDir);
+    }
+    roof += testCBuffer.nrOfPointLights;
+    for (; i < roof; ++i) //point
+    {
+        lightDir = tempLight.position - input.worldPos.xyz;
+        float lightDistance = length(lightDir);
+        lightDir = normalize(lightDir);
+
+        lightMultiplyer = tempLight.color * tempLight.intensity / (tempLight.attenuation.x + tempLight.attenuation.y * lightDistance + tempLight.attenuation.z * lightDistance * lightDistance);
+        Apply(finalColor, lightMultiplyer, input.normal, lightDir, viewDir);
+    }
+    roof += testCBuffer.nrOfSpotLights;
+    for (; i < roof; ++i) //spot
+    {
+        lightDir = tempLight.position - input.worldPos.xyz;
+        float lightDistance = length(lightDir);
+        lightDir = normalize(lightDir);
+
+        float angle = degrees(acos(dot(-tempLight.direction, lightDir)));
+        float spotFactor = 0.0f;
+        if (angle < tempLight.spotInnerAngle)
+        {
+            spotFactor = 1.0f;
+        }
+        else if (angle < tempLight.spotOuterAngle)
+        {
+            spotFactor = 1.0f - smoothstep(tempLight.spotInnerAngle, tempLight.spotOuterAngle, angle);
+        }
+
+        lightMultiplyer = spotFactor * tempLight.color * tempLight.intensity / (tempLight.attenuation.x + tempLight.attenuation.y * lightDistance + tempLight.attenuation.z * lightDistance * lightDistance);
+        Apply(finalColor, lightMultiplyer, input.normal, lightDir, viewDir);
+    }
+    
+    return saturate(finalColor);
+
 }
 
 

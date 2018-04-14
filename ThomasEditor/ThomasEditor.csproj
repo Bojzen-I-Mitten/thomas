@@ -38,7 +38,7 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>thomas.ico</ApplicationIcon>
+    <ApplicationIcon>icons\thomas.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -87,45 +87,46 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AssetBrowser.xaml.cs">
+    <Compile Include="Elements\AssetBrowser.xaml.cs">
       <DependentUpon>AssetBrowser.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomCommands.cs" />
-    <Compile Include="DictionaryPropertyGridAdapter.cs" />
-    <Compile Include="ExtendedPropertyGrid.xaml.cs">
+    <Compile Include="Inspectors\Converters.cs" />
+    <Compile Include="utils\CustomCommands.cs" />
+    <Compile Include="utils\DictionaryPropertyGridAdapter.cs" />
+    <Compile Include="Inspectors\ExtendedPropertyGrid.xaml.cs">
       <DependentUpon>ExtendedPropertyGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GameObjectHierarchy.xaml.cs">
+    <Compile Include="Elements\GameObjectHierarchy.xaml.cs">
       <DependentUpon>GameObjectHierarchy.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MaterialEditor.xaml.cs">
+    <Compile Include="Inspectors\MaterialEditor.xaml.cs">
       <DependentUpon>MaterialEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="OptionsWindow.xaml.cs">
+    <Compile Include="Elements\OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ResourceListPopup.xaml.cs">
+    <Compile Include="Inspectors\ResourceListPopup.xaml.cs">
       <DependentUpon>ResourceListPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="scriptComponent test\TestComponent.cs" />
     <Compile Include="Themes\LeftMarginMultiplierConverter.cs" />
     <Compile Include="Themes\TreeViewItemExtensions.cs" />
-    <Compile Include="ThomasGameObjectInspector.xaml.cs">
+    <Compile Include="Inspectors\ThomasGameObjectInspector.xaml.cs">
       <DependentUpon>ThomasGameObjectInspector.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ThomasWindow.cs" />
-    <Compile Include="TransformGizmo.xaml.cs">
+    <Compile Include="utils\ThomasWindow.cs" />
+    <Compile Include="Elements\TransformGizmo.xaml.cs">
       <DependentUpon>TransformGizmo.xaml</DependentUpon>
     </Compile>
-    <Page Include="AssetBrowser.xaml">
+    <Page Include="Elements\AssetBrowser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ExtendedPropertyGrid.xaml">
+    <Page Include="Inspectors\ExtendedPropertyGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GameObjectHierarchy.xaml">
+    <Page Include="Elements\GameObjectHierarchy.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -141,15 +142,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MaterialEditor.xaml">
+    <Page Include="Inspectors\MaterialEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="OptionsWindow.xaml">
+    <Page Include="Elements\OptionsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ResourceListPopup.xaml">
+    <Page Include="Inspectors\ResourceListPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -161,11 +162,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ThomasGameObjectInspector.xaml">
+    <Page Include="Inspectors\ThomasGameObjectInspector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TransformGizmo.xaml">
+    <Page Include="Elements\TransformGizmo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -204,7 +205,7 @@
     <Folder Include="bin\Data\FXIncludes\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="thomas.ico" />
+    <Resource Include="icons\thomas.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icons\play.png" />
@@ -213,7 +214,7 @@
     <Resource Include="icons\pause.png" />
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="splash.png">
+    <SplashScreen Include="icons\splash.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </SplashScreen>
   </ItemGroup>

@@ -11,14 +11,29 @@ namespace thomas
 		{
 
 		private:
+
 			enum class GizmoPasses
 			{
 				SOLID = 0,
 				WIREFRAME = 1,
 			};
+
+			struct GizmoRenderCommand
+			{
+				math::Matrix matrix;
+				std::vector<math::Vector3> vertexData;
+				math::Color color;
+				D3D_PRIMITIVE_TOPOLOGY topology;
+				GizmoPasses pass;
+
+				GizmoRenderCommand(std::vector<math::Vector3> v, math::Matrix m, math::Color c, D3D_PRIMITIVE_TOPOLOGY t, GizmoPasses p) :
+					vertexData(v), matrix(m), color(c), topology(t), pass(p) {};
+			};
 			static void DrawLines(std::vector<math::Vector3> lines);
 		public:
-
+			static void TransferGizmoCommands();
+			static void RenderGizmos();
+			static void ClearGizmos();
 			static void Init();
 			static void Destroy();
 			static void DrawModel(resource::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
@@ -44,8 +59,12 @@ namespace thomas
 			static void SetColor(math::Color color);
 			static void SetMatrix(math::Matrix matrix);
 		private:
+			static std::vector<GizmoRenderCommand> s_gizmoCommands;
+			static std::vector<GizmoRenderCommand> s_prevGizmoCommands;
 			static resource::Material* s_gizmoMaterial;
 			static utils::buffers::VertexBuffer* s_vertexBuffer;
+			static math::Matrix s_matrix;
+			static math::Color s_color;
 		};
 	}
 }

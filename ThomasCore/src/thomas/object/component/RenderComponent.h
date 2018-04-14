@@ -22,6 +22,7 @@ namespace thomas
 				void Update();
 
 				void SetMaterial(int meshIndex, resource::Material* material);
+				resource::Material* GetMaterial(int meshIndex);
 
 				void OnDrawGizmos();
 				void SubmitToRenderer(Camera* camera);

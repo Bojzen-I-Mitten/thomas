@@ -64,7 +64,15 @@ namespace thomas
 				IndexBuffer(std::vector<T>& data, D3D11_USAGE usageFlag = STATIC_BUFFER) : IndexBuffer(data.data(), data.size(), usageFlag) {};
 			};
 
-
+			class StructuredBuffer : public Buffer
+			{
+			public:
+				StructuredBuffer(void* data, size_t stride, size_t count, D3D11_USAGE usageFlag);
+				template <typename T>
+				StructuredBuffer(std::vector<T>& data, D3D11_USAGE usageFlag = STATIC_BUFFER) : StructuredBuffer(data.data(), sizeof(data[0]), data.size(), usageFlag) {};
+			private:
+				ID3D11ShaderResourceView* m_resource;
+			};
 		}
 	}
 }
