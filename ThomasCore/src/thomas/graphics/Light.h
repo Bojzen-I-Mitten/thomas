@@ -28,15 +28,14 @@ namespace thomas
 
 			struct LightStruct
 			{
-				thomas::math::Vector4  color;
-				thomas::math::Vector4 position;
-				thomas::math::Vector4 direction;
-				float   intensity;
-				float   smoothness; 
-				float   spotInnerAngle;
-				float   spotOuterAngle;
-				thomas::math::Vector3 attenuation;
-				unsigned int    type;
+				math::Vector3	color;
+				float			intensity;
+				math::Vector3	position;
+				float			spotOuterAngle;
+				math::Vector3	direction;
+				float			spotInnerAngle;
+				math::Vector3	attenuation;
+				float   pad;
 			} m_data;
 			
 		private:
