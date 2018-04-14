@@ -70,6 +70,21 @@ namespace thomas
 			IndexBuffer::IndexBuffer(void * data, size_t count, D3D11_USAGE usageFlag = STATIC_BUFFER) : Buffer(data, sizeof(UINT) * count, D3D11_BIND_INDEX_BUFFER, usageFlag)
 			{
 			}
+			
+			
+			StructuredBuffer::StructuredBuffer(void * data, size_t stride, size_t count, D3D11_USAGE usageFlag = STATIC_BUFFER) : Buffer(data, count, D3D11_BIND_SHADER_RESOURCE, usageFlag)
+			{
+				D3D11_SHADER_RESOURCE_VIEW_DESC desc;
+				desc.Buffer.ElementWidth = stride;
+				desc.Buffer.ElementOffset = 0;
+				desc.Buffer.FirstElement = 0;
+				desc.Buffer.NumElements = count;
+				desc.Format = DXGI_FORMAT_UNKNOWN;
+				desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+				
+				ThomasCore::GetDevice()->CreateShaderResourceView(m_buffer, &desc, &m_resource);
+			}
+
 		}
 	}
 }

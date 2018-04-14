@@ -12,8 +12,8 @@
 
     <!--
     This is for custom commands
-    Command is fetched from CustomeCommands.cs
-    CanExecute and Executed are fuctions implemented in .cs file where they are wanted. NewEmptyObject_CanExecute is needed so that the item can be clicked.
+    Command is fetched from CustomCommands.cs
+    CanExecute and Executed are functions implemented in .cs file where they are wanted. NewEmptyObject_CanExecute is needed so that the item can be clicked.
     AddEmptyGameObject is executed when the item is clicked.
     -->
     <Window.CommandBindings>
@@ -138,7 +138,7 @@
 
                         <xcad:LayoutDocumentPaneGroup Orientation="Vertical" DockWidth="1*">
                             <xcad:LayoutDocumentPane>
-                                <xcad:LayoutAnchorable ContentId="Hiearchy" Title="Hiearchy" >
+                                <xcad:LayoutAnchorable ContentId="Hiearchy" Title="Hierarchy" >
                                     <local:GameObjectHierarchy/>
                                 </xcad:LayoutAnchorable>
                             </xcad:LayoutDocumentPane>

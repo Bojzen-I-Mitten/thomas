@@ -234,7 +234,7 @@ namespace ThomasEditor
 
         private void hierarchy_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!_isDragging && e.LeftButton == MouseButtonState.Pressed)
+            if (!_isDragging && e.LeftButton == MouseButtonState.Pressed && hierarchy.SelectedValue != null)
             {
                 _isDragging = true;
                 DragDrop.DoDragDrop(hierarchy, hierarchy.SelectedValue,

@@ -12,7 +12,7 @@
 #include <thomas\utils\DebugTools.h>
 #include <thomas\resource\Shader.h>
 #include <thomas\graphics\Renderer.h>
-
+#include <thomas\editor\gizmos\Gizmos.h>
 #pragma managed
 //#include <Sound.h>
 #include "resource\Resources.h"
@@ -37,8 +37,8 @@ namespace ThomasEditor {
 		static Thread^ mainThread;
 		static Thread^ renderThread;
 		static bool playing = false;	
-		static bool readyToRender = false;
-		static Object^ renderLock = gcnew Object();
+		static AutoResetEvent^ RenderFinished;
+		static AutoResetEvent^ UpdateFinished;
 	public:
 
 		enum class ManipulatorOperation {
@@ -51,6 +51,8 @@ namespace ThomasEditor {
 			thomas::ThomasCore::Init();
 			if (ThomasCore::Initialized())
 			{
+				RenderFinished = gcnew AutoResetEvent(true);
+				UpdateFinished = gcnew AutoResetEvent(false);
 				ScriptingManger::Init();
 				Scene::CurrentScene = gcnew Scene("test");
 				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
@@ -67,27 +69,29 @@ namespace ThomasEditor {
 
 		static void StartRenderer()
 		{
+						
 			while (ThomasCore::Initialized())
 			{
-				if (readyToRender)
-				{
-										
-					Window::ClearAllWindows();
-					Monitor::Enter(renderLock);
-					thomas::graphics::Renderer::TransferCommandList();
-					Monitor::Exit(renderLock);
-					thomas::graphics::Renderer::ProcessCommands();
-					thomas::Window::PresentAllWindows();
-					readyToRender = false;
+				UpdateFinished->WaitOne();
+				Window::ClearAllWindows();
+				//Monitor::Enter(renderLock);
 					
-				}
-				
+				//Monitor::Enter(renderLock);
+				thomas::graphics::Renderer::ProcessCommands();
+				thomas::Window::PresentAllWindows();
+				RenderFinished->Set();
 			}
+		}
+
+		static void CopyCommandList()
+		{
+			thomas::Window::EndFrame(true);
+			thomas::graphics::Renderer::TransferCommandList();
+			thomas::editor::Gizmos::TransferGizmoCommands();
 		}
 
 		static void StartEngine()
 		{
-
 			while (ThomasCore::Initialized())
 			{
 				if (Scene::IsLoading())
@@ -95,70 +99,63 @@ namespace ThomasEditor {
 					Thread::Sleep(1000);
 					continue;
 				}
-
-
-				{
-					Object^ lock = Scene::CurrentScene->GetGameObjectsLock();
-					ThomasCore::Update();
-					Monitor::Enter(lock);
+				Object^ lock = Scene::CurrentScene->GetGameObjectsLock();
+				ThomasCore::Update();
+				Monitor::Enter(lock);
 					
-					if (playing)
+				if (playing)
+				{
+					//Physics
+					thomas::Physics::UpdateRigidbodies();
+					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 					{
-						//Physics
-						thomas::Physics::UpdateRigidbodies();
-						for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
-						{
-							if (gameObject->GetActive())
-								gameObject->FixedUpdate(); //Should only be ran at fixed timeSteps.
-						}
-						thomas::Physics::Simulate();
+						if (gameObject->GetActive())
+							gameObject->FixedUpdate(); //Should only be ran at fixed timeSteps.
 					}
+					thomas::Physics::Simulate();
+				}
 
-					//Logic
+				//Logic
+				for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
+				{
+					if(gameObject->GetActive())
+						gameObject->Update();
+				}
+
+
+
+				//Rendering
+					
+				graphics::Renderer::ClearCommands();
+				editor::Gizmos::ClearGizmos();
+				if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
+				{
+						
+					editor::EditorCamera::Render();
 					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
 					{
 						if(gameObject->GetActive())
-							gameObject->Update();
+							gameObject->RenderGizmos();
 					}
 
-
-
-					//Rendering
-					Monitor::Enter(renderLock);
-					graphics::Renderer::ClearCommands();
-					if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
+					Monitor::Enter(SelectedGameObjects);
+					for each(ThomasEditor::GameObject^ gameObject in SelectedGameObjects)
 					{
-						
-						editor::EditorCamera::Render();
-						for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
-						{
-							if(gameObject->GetActive())
-								gameObject->RenderGizmos();
-						}
-
-						Monitor::Enter(SelectedGameObjects);
-						for each(ThomasEditor::GameObject^ gameObject in SelectedGameObjects)
-						{
-							if(gameObject->GetActive())
-								gameObject->RenderSelectedGizmos();
-						}
-						Monitor::Exit(SelectedGameObjects);
-						//end editor rendering
-
-						for (object::component::Camera* camera : object::component::Camera::s_allCameras)
-						{
-							camera->Render();
-						}
-						thomas::Window::EndFrame(!readyToRender);
-						readyToRender = true;
-						
+						if(gameObject->GetActive())
+							gameObject->RenderSelectedGizmos();
 					}
-					
-					Monitor::Exit(renderLock);
-					
-					//ThomasCore::Render();
-					Monitor::Exit(lock);
+					Monitor::Exit(SelectedGameObjects);
+					//end editor rendering
+
+					for (object::component::Camera* camera : object::component::Camera::s_allCameras)
+					{
+						camera->Render();
+					}
+					RenderFinished->WaitOne();
+					CopyCommandList();
+					UpdateFinished->Set();
 				}
+				Monitor::Exit(lock);
 			}
 			Resources::UnloadAll();
 			ThomasCore::Destroy();

@@ -209,14 +209,13 @@ namespace thomas
 
 			//bind Emitter
 
-			emitter->GetMaterial()->SetResource("particle", *emitter->GetD3DData()->billboardsSRV);
+			//emitter->GetMaterial()->SetResource("particle", *emitter->GetD3DData()->billboardsSRV);
 			emitter->GetMaterial()->SetMatrix("matrixBuffer", s_viewProjMatrix);
 			emitter->GetMaterial()->m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			//emitter->GetMaterial()->GetShader()->BindVertexBuffer(NULL, 0, 0);
 
 			emitter->GetMaterial()->Draw(emitter->GetNrOfMaxParticles() * 6, 0);
-
-			
+						
 
 			ThomasCore::GetDeviceContext()->OMSetBlendState(NULL, NULL, 0xffffffff);
 

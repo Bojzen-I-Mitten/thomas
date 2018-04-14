@@ -44,8 +44,12 @@ namespace thomas {
 					math::BoundingOrientedBox::CreateFromBoundingBox(m_bounds, m_model->m_bounds);
 					m_bounds.Transform(m_bounds, m_gameObject->m_transform->GetWorldMatrix());
 
-					if (m_model->GetMeshes().size() != m_materials.size())
+					if (m_model->GetMeshes().size() < m_materials.size())
 						m_materials.resize(m_model->GetMeshes().size());
+
+					while (m_model->GetMeshes().size() > m_materials.size())
+						m_materials.push_back(resource::Material::GetStandardMaterial());
+				
 				}		
 			}
 			void RenderComponent::SetMaterial(int meshIndex, resource::Material * material)
@@ -55,11 +59,19 @@ namespace thomas {
 					LOG("Material is NULL");
 					return;
 				}
-				if (meshIndex < m_model->GetMeshes().size() && meshIndex >= 0)
+				if (meshIndex < m_materials.size() && meshIndex >= 0)
 				{
 					m_materials[meshIndex] = material;
 				}
 					
+			}
+
+			resource::Material * RenderComponent::GetMaterial(int meshIndex)
+			{
+				if (m_materials.size() > meshIndex && meshIndex >= 0)
+					return m_materials[meshIndex];
+				else
+					return nullptr;
 			}
 
 
