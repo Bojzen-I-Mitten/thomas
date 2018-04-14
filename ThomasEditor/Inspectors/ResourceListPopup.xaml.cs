@@ -37,7 +37,7 @@ namespace ThomasEditor
                 return AssetBrowser.assetImages[type].UriSource.LocalPath;
             }
             else
-                return "icons/null.png";
+                return "../icons/null.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

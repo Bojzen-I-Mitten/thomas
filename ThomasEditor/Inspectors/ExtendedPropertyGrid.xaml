@@ -42,7 +42,7 @@
                     </Label.Style>
                 </Label>
                 <Button Background="Transparent" BorderThickness="0" Height="20" Grid.Column="2" Cursor="Hand" Click="ResourceList_Open">
-                    <Image Source="icons/resourceList.png"/>
+                    <Image Source="../icons/resourceList.png"/>
                 </Button>
             </Grid>
         </DataTemplate>
