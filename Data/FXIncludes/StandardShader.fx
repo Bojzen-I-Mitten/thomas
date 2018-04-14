@@ -137,15 +137,15 @@ float4 frag(v2f input) : SV_TARGET
     Light tempLight;
     tempLight.color = float3(0.5f, 0.5f, 0.5f);
     tempLight.position = float3(3, 3, 3);
-    tempLight.intensity = 3;
+    tempLight.intensity = 1;
     tempLight.direction = -normalize(float3(1, 1, 1));
     tempLight.spotInnerAngle = 10.0f;
     tempLight.spotOuterAngle = 30.0f;
     tempLight.attenuation = float3(0.4f, 0.02f, 0.1f);
 
     ConstantBufferForLights testCBuffer;
-    testCBuffer.nrOfDirectionalLights = 0;
-    testCBuffer.nrOfPointLights = 1;
+    testCBuffer.nrOfDirectionalLights = 1;
+    testCBuffer.nrOfPointLights = 0;
     testCBuffer.nrOfSpotLights = 0;
     
     
@@ -157,7 +157,7 @@ float4 frag(v2f input) : SV_TARGET
     
     int i = 0;
     int roof = testCBuffer.nrOfDirectionalLights;
-    for (; i < 1; ++i) //directional
+    for (; i < roof; ++i) //directional
     {
         lightDir = -tempLight.direction;
         lightMultiplyer = tempLight.color * tempLight.intensity;

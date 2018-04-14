@@ -12,14 +12,13 @@ namespace thomas
 
 			
 			m_data.attenuation = math::Vector3(1.0f, 0.2f, 0.0f);
-			m_data.color = math::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-			m_data.direction = math::Vector4(0, 0, 0, 0);
+			m_data.color = math::Vector3(1.0f, 1.0f, 1.0f);
+			m_data.direction = math::Vector3(0, 0, 0);
 			m_data.intensity = 1.0f;
-			m_data.position = math::Vector4(0, 0, 0, 1);
-			m_data.smoothness = 16.0f;
+			m_data.position = math::Vector3(0, 0, 0);
 			m_data.spotInnerAngle = 0.0f;
 			m_data.spotOuterAngle = 20.0f;
-			m_data.type = (int)LightType::UNKNOWN;
+			m_data.pad = 0;
 			
 			//thomas::utils::D3d::FillDynamicBufferVector(s_lightBuffer, s_lights);
 
