@@ -5,6 +5,7 @@
 #include "../../graphics/Mesh.h"
 #include "../../utils/d3d.h"
 #include "../../utils/Buffers.h"
+#include "../EditorCamera.h"
 namespace thomas
 {
 	namespace editor
@@ -264,8 +265,12 @@ namespace thomas
 			s_gizmoCommands.push_back(GizmoRenderCommand(lines, s_matrix, s_color, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, GizmoPasses::SOLID));
 		}
 
-		void Gizmos::DrawBillboard(math::Vector3 centerPos, float width, float height)
+		void Gizmos::DrawBillboard(float width, float height)
 		{
+			//math::Vector3 centerPos = s_matrix.Translation();
+			//math::Vector3 centerPos = math::Vector3(-s_matrix._14, s_matrix._24, -s_matrix._34);
+			math::Vector3 centerPos = math::Vector3(-s_matrix._14, s_matrix._24, -s_matrix._34);
+
 			std::vector<math::Vector3> positions(6);
 			//Top left
 			positions[0] = centerPos;
@@ -312,6 +317,11 @@ namespace thomas
 			{
 				
 				s_gizmoMaterial->SetShaderPass((int)command.pass);
+				if (command.pass == GizmoPasses::BILLBOARD)
+				{
+					math::Vector3 target = EditorCamera::GetEditorCamera()->GetCamera()->GetPosition();
+					command.matrix = math::Matrix::CreateLookAt(math::Vector3(), target, math::Vector3::Up) * command.matrix;
+				}
 				s_gizmoMaterial->SetMatrix("gizmoMatrix", command.matrix);
 				s_gizmoMaterial->SetColor("gizmoColor", command.color);
 				s_gizmoMaterial->m_topology = command.topology;

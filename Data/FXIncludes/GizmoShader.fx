@@ -60,23 +60,8 @@ v2f vert(appdata_thomas v)
 v2f billVert(appdata_thomas v)
 {
 	v2f o;
-	//o.vertex = mul(gizmoMatrix, v.vertex);
-	matrix mv = mul(thomas_MatrixV, gizmoMatrix);
-	mv._m00 = 1.0f;
-	mv._m10 = 0.0f;
-	mv._m20 = 0.0f;
-
-	// Second colunm.
-	mv._m01 = 0.0f;
-	mv._m11 = 1.0f;
-	mv._m21 = 0.0f;
-
-	// Thrid colunm.
-	mv._m02 = 0.0f;
-	mv._m12 = 0.0f;
-	mv._m22 = -1.0f;
-	o.vertex = mul(THOMAS_MATRIX_P, mul(mv, v.vertex));
-	//o.vertex = ThomasWorldToClipPos(o.vertex);
+	o.vertex = mul(gizmoMatrix, v.vertex);
+	o.vertex = ThomasWorldToClipPos(o.vertex);
 
 	return o;
 }
