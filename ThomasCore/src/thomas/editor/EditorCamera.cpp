@@ -259,9 +259,10 @@ namespace thomas
 				if (m_manipulatorOperation == ImGuizmo::OPERATION::ROTATE)
 					snap[0] = 15;
 
+				math::Matrix deltaMatrix;
 				ImGuizmo::Manipulate(
 					*(m_cameraComponent->GetViewMatrix() * math::Matrix::CreateScale(m_manipulatorScale)).m, *m_cameraComponent->GetProjMatrix().m,
-					m_manipulatorOperation, m_manipulatorMode, *worldMatrix.m, 0, m_manipulatorSnapping ? snap : 0);
+					m_manipulatorOperation, m_manipulatorMode, *worldMatrix.m, *deltaMatrix.m, m_manipulatorSnapping ? snap : 0);
 
 				if (worldMatrix != gameObject->m_transform->GetLocalWorldMatrix())
 				{

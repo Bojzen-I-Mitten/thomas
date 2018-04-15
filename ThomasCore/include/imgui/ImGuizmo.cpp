@@ -866,6 +866,8 @@ namespace ImGuizmo
       perpendicularVector.Cross(gContext.mRotationVectorSource, gContext.mTranslationPlan);
       perpendicularVector.Normalize();
       float acosAngle = Clamp(Dot(localPos, gContext.mRotationVectorSource), -0.9999f, 0.9999f);
+	  if (acosAngle > 0.999)acosAngle = 1.0f;
+	  if (acosAngle < -0.999)acosAngle = -1.0f;
       float angle = acosf(acosAngle);
       angle *= (Dot(localPos, perpendicularVector) < 0.f) ? 1.f : -1.f;
       return angle;

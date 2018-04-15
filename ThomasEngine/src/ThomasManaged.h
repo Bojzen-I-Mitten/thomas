@@ -78,6 +78,7 @@ namespace ThomasEditor {
 				thomas::graphics::Renderer::ProcessCommands();
 				thomas::Window::PresentAllWindows();
 				RenderFinished->Set();
+				thomas::ThomasTime::Update();
 			}
 		}
 
@@ -204,7 +205,6 @@ namespace ThomasEditor {
 				window->QueueResize();
 		}
 
-		static float timeSinceLastUpdate = 100000;
 		static void Update() 
 		{
 			Window::UpdateFocus();

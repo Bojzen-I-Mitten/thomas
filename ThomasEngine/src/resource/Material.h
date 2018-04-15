@@ -25,15 +25,25 @@ namespace ThomasEditor
 			delete m_nativePtr;
 		}
 
-		Material(Shader^ shader) : Resource("", new thomas::resource::Material((thomas::resource::Shader*)shader->m_nativePtr))
+		Material(Shader^ shader) : Resource(shader->ToString() + " Material.mat", new thomas::resource::Material((thomas::resource::Shader*)shader->m_nativePtr))
 		{
 			m_loaded = true;
 			UpdateEditorProperties();
 		}
-		Material(Material^ original) : Resource("", new thomas::resource::Material((thomas::resource::Material*)original->m_nativePtr))
+		Material(Material^ original) : Resource(original->ToString() + " (instance).mat", new thomas::resource::Material((thomas::resource::Material*)original->m_nativePtr))
 		{
 			m_loaded = true;
 			UpdateEditorProperties();
+		}
+
+		String^ ToString() override
+		{
+			if(m_path->Length > 0)
+				return System::IO::Path::GetFileNameWithoutExtension(m_path);
+			else
+			{
+				return "Default";
+			}
 		}
 		
 		static property Material^ StandardMaterial

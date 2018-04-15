@@ -48,7 +48,7 @@ namespace ThomasEditor
 			return m_path;
 		}
 
-		String^ ToString() override
+		virtual String^ ToString() override
 		{
 			return System::IO::Path::GetFileNameWithoutExtension(m_path);
 		}
