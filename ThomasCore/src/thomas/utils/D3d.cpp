@@ -142,7 +142,7 @@ namespace thomas
 						scd.OutputWindow = handle;
 						scd.Flags = 0;
 
-						scd.SampleDesc.Count = THOMAS_AA_COUNT; // AA times 1
+						scd.SampleDesc.Count = THOMAS_AA_COUNT; //Make this costomizable!!!
 						scd.SampleDesc.Quality = THOMAS_AA_QUALITY;
 						scd.Windowed = TRUE;
 						scd.BufferDesc.RefreshRate.Numerator = 0; // change 0 to numerator for vsync

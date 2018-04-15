@@ -14,6 +14,8 @@ namespace thomas
 	float ThomasTime::s_timescale;
 	float ThomasTime::s_FpsUpdateFreq;
 	float ThomasTime::s_TimeLeftToUpdateFPS;
+	float ThomasTime::s_StackedDeltaTime;
+	int ThomasTime::s_framesPassedSinceFPSUpdate;
 
 	bool ThomasTime::Init()
 	{
@@ -41,9 +43,16 @@ namespace thomas
 		s_TimeLeftToUpdateFPS -= s_DeltaTime;
 		if (s_TimeLeftToUpdateFPS <= 0)
 		{
-			s_FPS = 1.0 / s_DeltaTime;
+			float avgDelta = s_StackedDeltaTime / s_framesPassedSinceFPSUpdate;
+			s_FPS = 1.0 / avgDelta;
 			s_FrameTime = 1000.0 / s_FPS;
 			s_TimeLeftToUpdateFPS = s_FpsUpdateFreq;
+			s_StackedDeltaTime = 0;
+			s_framesPassedSinceFPSUpdate = 0;
+		}else
+		{
+			s_StackedDeltaTime += s_DeltaTime;
+			s_framesPassedSinceFPSUpdate++;
 		}
 	
 	}

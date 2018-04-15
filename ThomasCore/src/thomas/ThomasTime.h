@@ -37,6 +37,8 @@ namespace thomas
 		static float s_timescale;
 		static float s_FpsUpdateFreq;
 		static float s_TimeLeftToUpdateFPS;
+		static float s_StackedDeltaTime;
+		static int s_framesPassedSinceFPSUpdate;
 	public:
 
 	};
