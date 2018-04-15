@@ -315,7 +315,7 @@ namespace thomas
 			{
 				if (shader->HasProperty(name))
 				{
-					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
+					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyColor(value));
 					shader->m_properties[name]->SetName(name);
 				}
 			}
@@ -548,7 +548,9 @@ namespace thomas
 			ID3DX11EffectConstantBuffer* cBuffer = prop->GetParentConstantBuffer();
 			
 			shaderProperty::ShaderProperty* newProperty = nullptr;
-			
+			std::string semantic;
+			if (variableDesc.Semantic != NULL)
+				semantic = variableDesc.Semantic;
 			switch (typeDesc.Class)
 			{
 			case D3D_SVC_SCALAR:
@@ -571,7 +573,10 @@ namespace thomas
 				break;
 			}
 			case D3D_SVC_VECTOR:
-				newProperty = shaderProperty::ShaderPropertyVector::GetDefault();
+				if(semantic == "COLOR")
+					newProperty = shaderProperty::ShaderPropertyColor::GetDefault();
+				else
+					newProperty = shaderProperty::ShaderPropertyVector::GetDefault();
 				break;
 			case D3D_SVC_MATRIX_COLUMNS:
 			case D3D_SVC_MATRIX_ROWS:

@@ -11,6 +11,7 @@ namespace ThomasEditor
         public int testVar { get; set; }
         public AudioClip audioClip { get; set; }
         public Material mat { get; set; }
+
         public override void Start()
         {
 
@@ -21,8 +22,9 @@ namespace ThomasEditor
 
             if (Input.GetKeyDown(Input.Keys.K))
             {
-
-                RenderComponent r = gameObject.AddComponent<RenderComponent>();
+                Material mat = Material.StandardMaterial;
+                ThomasEditor.Resources.SaveResource(mat, "testMat.mat");
+                //RenderComponent r = gameObject.AddComponent<RenderComponent>();
                 
             }
             if (Input.GetKeyDown(Input.Keys.Space))
