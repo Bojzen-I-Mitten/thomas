@@ -38,6 +38,7 @@ namespace ThomasEditor
                 fileTree.Items.Add(item);
             }
 
+            assetBrowserContextMenu.DataContext = false;
             watcher = new FileSystemWatcher(path);
             watcher.IncludeSubdirectories = true;
 
@@ -238,7 +239,6 @@ namespace ThomasEditor
                 TextBlock lbl = new TextBlock { Text = fileName };
                 stack.Children.Add(image);
                 stack.Children.Add(lbl);
-                stack.MouseDown += Asset_MouseDown;
                 stack.DataContext = filePath;
 
                 return new TreeViewItem { Header = stack, DataContext = ThomasEditor.Resources.Load(filePath) };
@@ -267,35 +267,6 @@ namespace ThomasEditor
             return nodes;
         }
 
-        private void Asset_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            StackPanel stack = sender as StackPanel;
-            String file = stack.DataContext as String;
-            ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(file);
-            if(e.ClickCount == 2)
-            {
-
-                if(assetType == ThomasEditor.Resources.AssetTypes.SCENE)
-                {
-                    SplashScreen splash = new SplashScreen("splash.png");
-                    splash.Show(false, true);
-                    Scene.CurrentScene.UnLoad();
-                    Scene.CurrentScene = Scene.LoadScene(file);
-                    splash.Close(TimeSpan.FromSeconds(0.2));
-
-                }else if(assetType == ThomasEditor.Resources.AssetTypes.SHADER)
-                {
-                    System.Diagnostics.Process.Start(file);
-                }else if(assetType == ThomasEditor.Resources.AssetTypes.MATERIAL)
-                {
-
-                    MaterialEditor matEdit = FindResource("materialEditor") as MaterialEditor;
-                    matEdit.SetMaterial(ThomasEditor.Resources.Load(file) as Material);
-                }
-            }
-        }
-
-
 
       
         private void AssetBrowser_MouseMove(object sender, MouseEventArgs e)
@@ -314,16 +285,22 @@ namespace ThomasEditor
             }
 
         }
+        bool hasSelection { get { return true; } }
 
-        private void fileTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void AssetBrowser_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (fileTree.SelectedItem == null)
-                return;
-            TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
-            StackPanel stack = item.Header as StackPanel;
-            if(item.DataContext is Resource)
+            TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
+            if(treeViewItem == null)
             {
-                Resource resource = item.DataContext as Resource;
+                TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+                if (item != null)
+                    item.IsSelected = false;
+                return;
+            }
+            StackPanel stack = treeViewItem.Header as StackPanel;
+            if(treeViewItem.DataContext is Resource)
+            {
+                Resource resource = treeViewItem.DataContext as Resource;
                 if(resource is Material)
                 {
                     MaterialEditor matEdit = FindResource("materialEditor") as MaterialEditor;
@@ -331,6 +308,144 @@ namespace ThomasEditor
                 }
             }
         }
+
+        private void AssetBrowser_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
+
+            if (treeViewItem != null)
+            {
+                treeViewItem.Focus();
+                //assetBrowserContextMenu.DataContext = true;
+                //e.Handled = true;
+            }
+            else
+            {
+                TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+                if(item != null)
+                    item.IsSelected = false;
+                assetBrowserContextMenu.DataContext = false;
+            }
+        }
+
+        private TreeViewItem VisualUpwardSearch(DependencyObject source)
+        {
+            while (source != null && !(source is TreeViewItem))
+                source = VisualTreeHelper.GetParent(source);
+
+            return source as TreeViewItem;
+        }
+
+        private void AssetBrowser_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (fileTree.SelectedItem == null)
+                return;
+            TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+            StackPanel stack = item.Header as StackPanel;
+
+            String file = stack.DataContext as String;
+            ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(file);
+            if (e.ClickCount == 2)
+            {
+
+                if (assetType == ThomasEditor.Resources.AssetTypes.SCENE)
+                {
+                    SplashScreen splash = new SplashScreen("splash.png");
+                    splash.Show(false, true);
+                    Scene.CurrentScene.UnLoad();
+                    Scene.CurrentScene = Scene.LoadScene(file);
+                    splash.Close(TimeSpan.FromSeconds(0.2));
+
+                }
+                else if (assetType == ThomasEditor.Resources.AssetTypes.SHADER)
+                {
+                    System.Diagnostics.Process.Start(file);
+                }
+                else if (assetType == ThomasEditor.Resources.AssetTypes.MATERIAL)
+                {
+                    MaterialEditor matEdit = FindResource("materialEditor") as MaterialEditor;
+                    matEdit.SetMaterial(ThomasEditor.Resources.Load(file) as Material);
+                }
+            }
+        }
+
+        #region MenuItems
+
+        private void Menu_CreateFolder(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_CreateCSharpScript(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_CreateShader(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_CreateScene(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_CreatePrefab(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_CreateMaterial(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_CreateCurve(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_ShowInExplorer(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_OpenAsset(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_DeleteAsset(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_ImportAsset(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_Refresh(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_Reimport(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_ReimportAll(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_OpenCSharpProject(object sender, RoutedEventArgs e)
+        {
+
+        }
+        #endregion
     }
 
 
