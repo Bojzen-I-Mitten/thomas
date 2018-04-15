@@ -17,6 +17,7 @@
         <converters:Vector2Converter x:Key="convertVector2" x:Shared="False"/>
         <converters:Vector3Converter x:Key="convertVector3" x:Shared="False"/>
         <converters:Vector4Converter x:Key="convertVector4" x:Shared="False"/>
+        <converters:ColorConverter x:Key="convertColor" x:Shared="False"/>
 
 
         <DataTemplate x:Key="ResourceEditor">
@@ -105,6 +106,10 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="ColorEditor">
+            <xctk:PropertyGridEditorColorPicker SelectedColor="{Binding Value, Converter={StaticResource convertColor}}" />
+        </DataTemplate>
+
     </UserControl.Resources>
 
     <xctk:PropertyGrid NameColumnWidth="75" IsCategorized="False" UpdateTextBoxSourceOnEnterKey="True"  Background="Aqua" AutoGenerateProperties="True" SelectedObject="{Binding}" ShowAdvancedOptions="False" ShowSummary="False" ShowSortOptions="False" ShowTitle="False" ShowSearchBox="False" Loaded="PropertyGrid_Loaded">
@@ -122,6 +127,11 @@
             <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource Vector4Editor}">
                 <xctk:EditorTemplateDefinition.TargetProperties>
                     <xctk:TargetPropertyType Type="managed:Vector4"/>
+                </xctk:EditorTemplateDefinition.TargetProperties>
+            </xctk:EditorTemplateDefinition>
+            <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource ColorEditor}">
+                <xctk:EditorTemplateDefinition.TargetProperties>
+                    <xctk:TargetPropertyType Type="managed:Color"/>
                 </xctk:EditorTemplateDefinition.TargetProperties>
             </xctk:EditorTemplateDefinition>
             <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource ResourceEditor}">

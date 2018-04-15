@@ -57,12 +57,12 @@ VS_OUT VSMain(VS_IN input)
 	VS_OUT output = (VS_OUT)0;
 
 	output.Pos = ThomasObjectToClipPos(pos);
-	float4 positionW = ThomasObjectToWorldPos(pos);
-	float2 dist = distance(positionW.xz, cameraPos.xz) * 1 / viewDistance;
-	dist -= pow(cameraPos.y + 1, 1.5f);
-	dist /= gridScale;
+	//float4 positionW = ThomasObjectToWorldPos(pos);
+	//float2 dist = distance(positionW.xz, cameraPos.xz) * 1 / viewDistance;
+	//dist -= pow(cameraPos.y + 1, 1.5f);
+	//dist /= gridScale;
 	output.Color = input.Color;
-	output.Color.w = 1.0f - (dist / 10.0f);
+	//output.Color.w = 1.0f - (dist / 10.0f);
 	return output;
 }
 
