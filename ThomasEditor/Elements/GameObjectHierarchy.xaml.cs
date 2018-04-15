@@ -92,19 +92,34 @@ namespace ThomasEditor
             {
                 foreach (GameObject oldItem in e.OldItems)
                 {
-                    //oldItem.Destroy();
-                    foreach (TreeViewItem node in hierarchy.Items)
-                    {
-                        if (node.DataContext == oldItem)
-                        {
-                            //node.MouseRightButtonUp -= Node_MouseRightButtonUp;
-                            hierarchy.Items.Remove(node);
-                            break;
-                        }
-                    }
+                    oldItem.Destroy();
+                    DeleteObjectInTree(hierarchy.Items, oldItem);
+                    ////oldItem.Destroy();
+                    //foreach (TreeViewItem node in hierarchy.Items)
+                    //{
+                    //    if (node.DataContext == oldItem)
+                    //    {
+                    //        //node.MouseRightButtonUp -= Node_MouseRightButtonUp;
+                    //        hierarchy.Items.Remove(node);
+                    //        break;
+                    //    }
+                    //}
                 }
             }
 
+        }
+
+        private void DeleteObjectInTree(ItemCollection nodes, GameObject item)
+        {
+            foreach (TreeViewItem node in nodes)
+            {
+                if (node.DataContext == item)
+                {
+                    nodes.Remove(node);
+                    break;
+                }
+                DeleteObjectInTree(node.Items, item);
+            }
         }
 
 
@@ -138,7 +153,7 @@ namespace ThomasEditor
             }
             if (e.OldItems != null)
             {
-                SelectOrDeselectInTree(hierarchy.Items, e.NewItems, false);
+                SelectOrDeselectInTree(hierarchy.Items, e.OldItems, false);
             }
 
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
@@ -210,23 +225,26 @@ namespace ThomasEditor
                 
                 TreeViewItem source = (TreeViewItem)e.Data.GetData(typeof(TreeViewItem));
                 TreeViewItem target = GetItemAtLocation(e.GetPosition(hierarchy));
-
-                if(target != null && source != null && target != source)
+                if(source.DataContext is GameObject)
                 {
-                    GameObject parent = target.DataContext as GameObject;
-                    GameObject child = source.DataContext as GameObject;
-                    if(!parent.transform.IsChildOf(child.transform))
+                    if (target != null && source != null && target != source)
                     {
-                        child.transform.parent = parent.transform;
+                        GameObject parent = target.DataContext as GameObject;
+                        GameObject child = source.DataContext as GameObject;
+                        if (!parent.transform.IsChildOf(child.transform))
+                        {
+                            child.transform.parent = parent.transform;
+                            ResetTreeView();
+                        }
+                    }
+                    else if (source != null && target == null)
+                    {
+                        GameObject child = source.DataContext as GameObject;
+                        child.transform.parent = null;
                         ResetTreeView();
                     }
                 }
-                else if(source != null && target == null)
-                {
-                    GameObject child = source.DataContext as GameObject;
-                    child.transform.parent = null;
-                    ResetTreeView();
-                }
+               
 
                 // Code to move the item in the model is placed here...
             }
