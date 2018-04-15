@@ -315,6 +315,22 @@ namespace ThomasEditor
 
         }
 
+        private void fileTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (fileTree.SelectedItem == null)
+                return;
+            TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+            StackPanel stack = item.Header as StackPanel;
+            if(item.DataContext is Resource)
+            {
+                Resource resource = item.DataContext as Resource;
+                if(resource is Material)
+                {
+                    MaterialEditor matEdit = FindResource("materialEditor") as MaterialEditor;
+                    matEdit.SetMaterial(resource as Material);
+                }
+            }
+        }
     }
 
 

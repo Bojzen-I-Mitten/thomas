@@ -165,21 +165,7 @@ namespace ThomasEditor
 			Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
 		}
 
-		virtual void Destroy() override
-		{
-			Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
-			Monitor::Enter(m_componentsLock);
-			for (int i = 0; i < m_components.Count; i++) {
-				m_components[i]->Destroy();
-				i--;
-			}
-			thomas::object::Object::Destroy(nativePtr);
-			m_components.Clear();
-			Monitor::Exit(m_componentsLock);
-			
-			Scene::CurrentScene->GameObjects->Remove(this);
-			Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
-		}
+		virtual void Destroy() override;
 
 		property bool activeSelf
 		{

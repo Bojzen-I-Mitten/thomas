@@ -130,7 +130,7 @@ namespace ThomasEditor
             {
                 GameObject gObj = ThomasWrapper.SelectedGameObjects[i];
                 gObj.Destroy();
-                ThomasWrapper.SelectedGameObjects.RemoveAt(i);
+                //ThomasWrapper.SelectedGameObjects.RemoveAt(i);
                i--;
             }
         }
