@@ -73,7 +73,10 @@ namespace ThomasEditor
 
 		static AssetTypes GetResourceAssetType(String^ path)
 		{
-			String^ extension = System::IO::Path::GetExtension(path)->Remove(0, 1);
+			String^ extension = System::IO::Path::GetExtension(path);
+			if (extension->Length == 0)
+				return AssetTypes::UNKNOWN;
+			extension = extension->Remove(0, 1);
 			if (extension == "fx")
 			{
 				return AssetTypes::SHADER;

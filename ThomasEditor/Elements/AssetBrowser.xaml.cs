@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.IO;
+using ThomasEditor.utils;
+
 namespace ThomasEditor
 {
     /// <summary>
@@ -71,7 +73,7 @@ namespace ThomasEditor
 
                     String visibleName = Path.GetFileNameWithoutExtension(newPath);
 
-                    stack.Children.OfType<TextBlock>().First().Text = visibleName;
+                   (stack.Children[1] as EditableTextBlock).Text = visibleName;
                 }
                 else
                 {
@@ -204,10 +206,10 @@ namespace ThomasEditor
 
                 StackPanel stack = new StackPanel();
                 stack.Orientation = Orientation.Horizontal;
-                stack.Height = 15;
+                stack.Height = 18;
                 Image image = new Image();
                 image.Source = new BitmapImage(new Uri("pack://application:,,/icons/assets/dir.png"));
-                TextBlock lbl = new TextBlock { Text = dirName };
+                EditableTextBlock lbl = new EditableTextBlock { Text = dirName };
                 stack.Children.Add(image);
                 stack.Children.Add(lbl);
                 stack.DataContext = filePath;
@@ -226,7 +228,7 @@ namespace ThomasEditor
                     return null;
                 StackPanel stack = new StackPanel();
                 stack.Orientation = Orientation.Horizontal;
-                stack.Height = 15;
+                stack.Height = 18;
 
                 ImageSource source;
                 if (assetType == ThomasEditor.Resources.AssetTypes.TEXTURE2D)
@@ -236,7 +238,7 @@ namespace ThomasEditor
 
                 Image image = new Image { Source = source };
 
-                TextBlock lbl = new TextBlock { Text = fileName };
+                EditableTextBlock lbl = new EditableTextBlock { Text = fileName };
                 stack.Children.Add(image);
                 stack.Children.Add(lbl);
                 stack.DataContext = filePath;
@@ -287,8 +289,9 @@ namespace ThomasEditor
         }
         bool hasSelection { get { return true; } }
 
-        private void AssetBrowser_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void AssetBrowser_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            
             TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
             if(treeViewItem == null)
             {
@@ -307,6 +310,37 @@ namespace ThomasEditor
                     matEdit.SetMaterial(resource as Material);
                 }
             }
+            //rename on click. Refactor
+            if (fileTree.SelectedItem == treeViewItem && e.ClickCount == 1)
+            {
+                //EditableTextBlock lbl = stack.Children[1] as EditableTextBlock;
+                //treeViewItem.IsSelected = false;
+                //lbl.IsInEditMode = true;
+                //lbl.OnTextChanged += Lbl_OnTextChanged;
+            }
+        }
+
+        private void Lbl_OnTextChanged(object sender)
+        {
+            EditableTextBlock lbl = sender as EditableTextBlock;
+            lbl.OnTextChanged -= Lbl_OnTextChanged;
+            StackPanel stack = lbl.Parent as StackPanel;
+            String fullPath = stack.DataContext as String;
+            String oldName = Path.GetFileNameWithoutExtension(fullPath);
+            String newFullPath = fullPath.Replace(oldName, lbl.Text);
+
+            //Rename if file/dir does not exist
+
+            if(File.Exists(fullPath) && !File.Exists(newFullPath))
+                File.Move(fullPath, newFullPath);
+            else if(Directory.Exists(fullPath) && !Directory.Exists(newFullPath))
+                Directory.Move(fullPath, newFullPath);
+            else
+            {
+                lbl.Text = oldName;
+            }
+            TreeViewItem item = stack.Parent as TreeViewItem;
+            item.Focus();
         }
 
         private void AssetBrowser_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -316,7 +350,7 @@ namespace ThomasEditor
             if (treeViewItem != null)
             {
                 treeViewItem.Focus();
-                //assetBrowserContextMenu.DataContext = true;
+                assetBrowserContextMenu.DataContext = true;
                 //e.Handled = true;
             }
             else
@@ -366,6 +400,27 @@ namespace ThomasEditor
                     MaterialEditor matEdit = FindResource("materialEditor") as MaterialEditor;
                     matEdit.SetMaterial(ThomasEditor.Resources.Load(file) as Material);
                 }
+            }
+        }
+
+        private void StartRename()
+        {
+            if (fileTree.SelectedItem != null)
+            {
+                TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+                StackPanel stack = item.Header as StackPanel;
+                EditableTextBlock lbl = stack.Children[1] as EditableTextBlock;
+                item.IsSelected = false;
+                lbl.IsInEditMode = true;
+                lbl.OnTextChanged += Lbl_OnTextChanged;
+            }
+        }
+
+        private void AssetBrowser_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F2)
+            {
+                StartRename();
             }
         }
 
@@ -419,6 +474,12 @@ namespace ThomasEditor
         private void Menu_DeleteAsset(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void MenuItem_Rename(object sender, RoutedEventArgs e)
+        {
+            StartRename();
+            e.Handled = true;
         }
 
         private void Menu_ImportAsset(object sender, RoutedEventArgs e)

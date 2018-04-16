@@ -22,10 +22,6 @@ namespace thomas {
 
 		void Model::OnChanged()
 		{
-			for (unsigned int i = 0; i < m_meshes.size(); i++)
-			{
-				delete m_meshes[i];
-			}
 			m_meshes.clear();
 			m_meshes = utils::AssimpLoader::LoadModel(m_path);
 			m_bounds = GenerateBounds();
@@ -36,9 +32,7 @@ namespace thomas {
 			m_meshes = utils::AssimpLoader::LoadModel(path);
 			m_bounds = GenerateBounds();
 		}
-				
-
-		std::vector<graphics::Mesh*> Model::GetMeshes()
+		std::vector<std::shared_ptr<graphics::Mesh>> Model::GetMeshes()
 		{
 			return m_meshes;
 		}
@@ -46,10 +40,6 @@ namespace thomas {
 
 		Model::~Model()
 		{
-			for (unsigned int i = 0; i < m_meshes.size(); i++)
-			{
-				delete m_meshes[i];
-			}
 			m_meshes.clear();
 		}
 

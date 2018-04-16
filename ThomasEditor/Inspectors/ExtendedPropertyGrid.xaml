@@ -33,9 +33,9 @@
                 <Label Height="20" Foreground="White" FontSize="10" Grid.Column="1" Background="#333333" AllowDrop="True" Drop="ResourceEditor_Drop" PreviewDragOver="ResourceEditor_PreviewDragOver">
                     <Label.Style>
                         <Style TargetType="Label">
-                            <Setter Property="Content" Value="{Binding Value}"/>
+                            <Setter Property="Content" Value="{Binding Value.name}"/>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
+                                <DataTrigger Binding="{Binding Value.name}" Value="{x:Null}">
                                     <Setter Property="Content" Value="{Binding PropertyType.Name, Converter={StaticResource nullResourceConverter}, Mode=OneWay}"/>
                                 </DataTrigger>
                             </Style.Triggers>

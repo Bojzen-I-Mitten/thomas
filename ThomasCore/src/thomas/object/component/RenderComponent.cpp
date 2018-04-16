@@ -85,7 +85,7 @@ namespace thomas {
 						if (material == nullptr)
 							material = resource::Material::GetStandardMaterial();
 
-						graphics::Mesh* mesh = m_model->GetMeshes()[i];
+						std::shared_ptr<graphics::Mesh> mesh = m_model->GetMeshes()[i];
 						
 						thomas::graphics::Renderer::SubmitCommand(thomas::graphics::RenderCommand(m_gameObject->m_transform->GetWorldMatrix(), mesh, material, camera));
 					}

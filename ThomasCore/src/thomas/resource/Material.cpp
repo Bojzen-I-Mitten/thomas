@@ -360,7 +360,7 @@ namespace thomas
 			ThomasCore::GetDeviceContext()->IASetPrimitiveTopology(m_topology);
 			Unlock();
 		}
-		void Material::Draw(graphics::Mesh * mesh)
+		void Material::Draw(std::shared_ptr<graphics::Mesh> mesh)
 		{
 			Lock();
 			for (Pass p : m_passes)

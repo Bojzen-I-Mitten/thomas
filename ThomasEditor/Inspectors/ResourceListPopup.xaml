@@ -20,7 +20,7 @@
                         <StackPanel Orientation="Horizontal" Height="20">
                             <Image Source="{Binding Converter={StaticResource resourceImageConverter}, Mode=OneWay}" VerticalAlignment="Center" />
                             <Viewbox>
-                                <TextBlock Text="{Binding}" Padding="10,0,0,0" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding name}" Padding="10,0,0,0" HorizontalAlignment="Center"/>
                             </Viewbox>
                             
                         </StackPanel>
