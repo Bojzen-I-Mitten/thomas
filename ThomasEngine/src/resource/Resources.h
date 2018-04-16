@@ -29,6 +29,7 @@ namespace ThomasEditor
 			Xml::XmlReader^ file = Xml::XmlReader::Create(path);
 			T resource = (T)serializer->ReadObject(file);
 			file->Close();
+			resource->Rename(path);
 			Monitor::Exit(resourceLock);
 			return resource;
 		}

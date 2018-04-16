@@ -54,14 +54,18 @@ namespace thomas {
 			}
 			void RenderComponent::SetMaterial(int meshIndex, resource::Material * material)
 			{
-				if (!material)
+				
+				if (meshIndex >= 0)
 				{
-					LOG("Material is NULL");
-					return;
-				}
-				if (meshIndex < m_materials.size() && meshIndex >= 0)
-				{
-					m_materials[meshIndex] = material;
+					if (!material)
+					{
+						m_materials[meshIndex] = resource::Material::GetStandardMaterial();
+					}
+					else if (meshIndex >= m_materials.size())
+					{
+						m_materials.push_back(material);
+					}
+					else m_materials[meshIndex] = material;
 				}
 					
 			}
@@ -71,7 +75,7 @@ namespace thomas {
 				if (m_materials.size() > meshIndex && meshIndex >= 0)
 					return m_materials[meshIndex];
 				else
-					return nullptr;
+					return resource::Material::GetStandardMaterial();
 			}
 
 

@@ -86,6 +86,8 @@ namespace thomas
 			static Shader* FindByName(const std::string& name);
 			static Shader* FindByPath(const std::string& path);
 
+
+			std::vector<std::string> GetMaterialProperties();
 			ID3DX11Effect* GetEffect();
 			bool HasProperty(const std::string& name);
 			std::shared_ptr<shaderProperty::ShaderProperty> GetProperty(const std::string& name);
@@ -98,6 +100,7 @@ namespace thomas
 			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> m_properties;
 			std::vector<ShaderPass> m_passes;
 			ShaderPass* m_currentPass;
+			std::vector<std::string> m_materialProperties;
 			static std::vector<Shader*> s_loadedShaders;
 			static Shader* s_standardShader;
 			static Shader* s_failedShader;

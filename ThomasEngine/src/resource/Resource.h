@@ -19,7 +19,7 @@ namespace ThomasEditor
 	internal:
 		thomas::resource::Resource* m_nativePtr;
 
-		[DataMemberAttribute]
+		[DataMemberAttribute(Order = 0)]
 		String^ m_path;
 
 		Resource(String^ path, thomas::resource::Resource* ptr)

@@ -14,9 +14,9 @@ namespace ThomasEditor
 	public ref class Material : public Resource
 	{
 	private:
-		Dictionary<String^, System::Object^>^ m_editorProperties = gcnew Dictionary<String^, System::Object^>();
+		
 	internal:
-		Material(thomas::resource::Material* ptr) : Resource("", ptr) {};
+		Material(thomas::resource::Material* ptr) : Resource(Utility::ConvertString(ptr->GetName()), ptr) {};
 		bool m_loaded = false;
 	public:
 
@@ -25,26 +25,27 @@ namespace ThomasEditor
 			delete m_nativePtr;
 		}
 
-		Material(Shader^ shader) : Resource(shader->ToString() + " Material.mat", new thomas::resource::Material((thomas::resource::Shader*)shader->m_nativePtr))
+
+		Material(Shader^ shader) : Resource(shader->name + " Material.mat", new thomas::resource::Material((thomas::resource::Shader*)shader->m_nativePtr))
 		{
 			m_loaded = true;
-			UpdateEditorProperties();
 		}
 		Material(Material^ original) : Resource(original->ToString() + " (instance).mat", new thomas::resource::Material((thomas::resource::Material*)original->m_nativePtr))
 		{
 			m_loaded = true;
-			UpdateEditorProperties();
 		}
 
-		String^ ToString() override
+		property String^ name
 		{
-			if(m_path->Length > 0)
-				return System::IO::Path::GetFileNameWithoutExtension(m_path);
-			else
-			{
-				return "Default";
+			String^ get() override { 
+				if (m_path->Length > 0)
+					return System::IO::Path::GetFileNameWithoutExtension(m_path);
+				else
+				{
+					return "Default Material";
+				}
 			}
-		}
+		};
 		
 		static property Material^ StandardMaterial
 		{
@@ -82,8 +83,6 @@ namespace ThomasEditor
 					m_nativePtr = new thomas::resource::Material(Utility::ConvertString(m_path));
 					((thomas::resource::Material*)m_nativePtr)->SetShader((thomas::resource::Shader*)value->m_nativePtr);
 				}
-				if(m_loaded)
-					UpdateEditorProperties();
 			}
 		}
 
@@ -93,7 +92,7 @@ namespace ThomasEditor
 		property Dictionary<String^, System::Object^>^ EditorProperties
 		{
 			Dictionary<String^, System::Object^>^ get() {
-				return m_editorProperties;
+				return GetEditorProperties();
 			}
 				
 			void set(Dictionary<String^, System::Object^>^ value)
@@ -118,7 +117,6 @@ namespace ThomasEditor
 						//SetRaw(key, &prop);
 					}
 				}
-				m_editorProperties = value;
 				if(m_loaded)
 				{ }
 					//ThomasEditor::Resources::SaveResource(this, m_path);
@@ -127,9 +125,9 @@ namespace ThomasEditor
 			}
 		}
 	private:
-		void UpdateEditorProperties()
+		Dictionary<String^, System::Object^>^ GetEditorProperties()
 		{
-			m_editorProperties->Clear();
+			Dictionary<String^, System::Object^>^ properties = gcnew Dictionary<String^, System::Object^>();
 			for (auto& prop : ((thomas::resource::Material*)m_nativePtr)->GetEditorProperties())
 			{
 
@@ -157,8 +155,9 @@ namespace ThomasEditor
 				default:
 					break;
 				}
-				m_editorProperties->Add(Utility::ConvertString(prop.first), value);
+				properties->Add(Utility::ConvertString(prop.first), value);
 			}
+			return properties;
 		}
 
 		

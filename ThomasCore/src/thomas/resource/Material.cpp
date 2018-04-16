@@ -15,13 +15,9 @@ namespace thomas
 		{
 			if (m_shader)
 			{
-				for (auto& prop : m_shader->GetProperties())
+				for (std::string prop : m_shader->GetMaterialProperties())
 				{
-					if (prop.second->isMaterialProperty)
-					{
-						m_properties[prop.first] = prop.second;
-						m_materialProperties.push_back(prop.first);
-					}
+					m_properties[prop] = m_shader->GetProperty(prop);
 				}
 			}
 
@@ -147,7 +143,15 @@ namespace thomas
 
 		bool Material::HasProperty(const std::string & name)
 		{
-			return m_shader->HasProperty(name);
+			if (m_properties.find(name) == m_properties.end())
+			{
+				if (m_shader->HasProperty(name))
+				{
+					m_properties[name] = m_shader->GetProperty(name);
+					return true;
+				}
+			}
+			return false;
 		}
 
 		std::shared_ptr<shaderProperty::ShaderProperty> Material::GetProperty(const std::string & name)
@@ -176,7 +180,6 @@ namespace thomas
 		}
 		void Material::SetColor(const std::string& name, const math::Color& value)
 		{
-	
 			Lock();
 			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyColor(value));
 			m_properties[name]->SetName(name);
@@ -198,10 +201,8 @@ namespace thomas
 		void Material::SetFloat(const std::string& name, float& value)
 		{
 			Lock();
-			bool isProperty = m_properties[name]->isMaterialProperty;
 			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyScalarFloat(value));
 			m_properties[name]->SetName(name);
-			m_properties[name]->isMaterialProperty = isProperty;
 			Unlock();
 			
 		}
@@ -390,7 +391,7 @@ namespace thomas
 		{
 			Lock();
 			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> editorProperties;
-			for (std::string prop : m_materialProperties)
+			for (std::string prop : m_shader->GetMaterialProperties())
 			{
 				editorProperties[prop] = m_properties[prop];
 
