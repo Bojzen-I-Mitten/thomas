@@ -118,7 +118,7 @@ namespace thomas {
 
 		//std::string title = "FPS: " + std::to_string(ThomasTime::GetFPS()) + " FrameTime: " + std::to_string(ThomasTime::GetFrameTime());
 
-		//if (Input::GetKeyDown(Input::Keys::F1))
+		//if (Input::GetKeyDown(Keyboard::Keys::F1))
 		//	utils::DebugTools::ToggleVisibility();
 
 		Sound::Update();

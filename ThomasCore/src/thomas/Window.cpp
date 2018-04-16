@@ -24,23 +24,18 @@ namespace thomas
 		utils::DebugTools::ProcessMessages(hWnd, message, wParam, lParam);
 		Window* window = GetWindow(hWnd);
 
-	
-
 		//If one case is hit the code will execute everything down until a break;
 		switch (message)
 		{
 		case WM_SIZE:
 			{
 				if (window)
-				{
-					window->QueueResize();
-				}
-					
+					window->QueueResize();		
 			}
 			break;
 		case WM_SETFOCUS:
-		case WM_KILLFOCUS:
-			Input::ProcessGamePad(message, wParam, lParam);
+		case WM_KILLFOCUS:			
+			//Input::ProcessGamePad(message, wParam, lParam);
 			break;
 		case WM_ACTIVATEAPP:
 			Input::ProcessKeyboard(message, wParam, lParam);
@@ -82,8 +77,7 @@ namespace thomas
 		{
 			s_editorWindow = window;
 			ImGui_ImplDX11_Init(hWnd, ThomasCore::GetDevice(), ThomasCore::GetDeviceContext());
-		}
-		
+		}	
 	}
 
 	Window* Window::Create(HWND hWnd)

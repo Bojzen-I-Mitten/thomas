@@ -162,40 +162,41 @@ namespace thomas
 			
 			//Toggle editor mode on scene camera
 			if (Input::GetMouseButtonDown(Input::MouseButtons::RIGHT))
-				Input::SetMouseMode(Input::MouseMode::POSITION_RELATIVE);
+				Input::SetMouseMode(Mouse::Mode::MODE_RELATIVE);
 			
 			if (Input::GetMouseButtonUp(Input::MouseButtons::RIGHT))
-				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
+				Input::SetMouseMode(Mouse::Mode::MODE_ABSOLUTE);
 			
-			if (Input::GetMouseScrollWheel() > 0)
+			//Not working for some reason?
+			/*if (Input::GetMouseScrollWheel() > 0)
 				m_transform->Translate(m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 3000.f);
 
 			if (Input::GetMouseScrollWheel() < 0)
-				m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 3000.f);
+				m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 3000.f);*/
 
 			if(Input::GetMouseButton(Input::MouseButtons::RIGHT))
 			{
 				float speed = m_speed;
 
 				//Increase camera speed
-				if (Input::GetKey(Input::Keys::LeftShift))
+				if (Input::GetKey(Keyboard::Keys::LeftShift))
 					speed *= 4.0f;
 
-				if (Input::GetKey(Input::Keys::A))
+				if (Input::GetKey(Keyboard::Keys::A))
 					m_transform->Translate(-m_transform->Right()*ThomasTime::GetActualDeltaTime()*speed);
-				if (Input::GetKey(Input::Keys::D))
+				if (Input::GetKey(Keyboard::Keys::D))
 					m_transform->Translate(m_transform->Right()*ThomasTime::GetActualDeltaTime()*speed);
-				if (Input::GetKey(Input::Keys::W))
+				if (Input::GetKey(Keyboard::Keys::W))
 					m_transform->Translate(m_transform->Forward()*ThomasTime::GetActualDeltaTime()*speed);
-				if (Input::GetKey(Input::Keys::S))
+				if (Input::GetKey(Keyboard::Keys::S))
 					m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime()*speed);
-				if (Input::GetKey(Input::Keys::Q))
+				if (Input::GetKey(Keyboard::Keys::Q))
 					m_transform->Translate(-m_transform->Up()*ThomasTime::GetActualDeltaTime()*speed);
-				if (Input::GetKey(Input::Keys::E))
+				if (Input::GetKey(Keyboard::Keys::E))
 					m_transform->Translate(m_transform->Up()*ThomasTime::GetActualDeltaTime()*speed);
 
-				rotationX += Input::GetMouseX() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
-				rotationY += Input::GetMouseY() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
+				rotationX += Input::GetMousePosition().x * ThomasTime::GetActualDeltaTime() * m_sensitivity;
+				rotationY += Input::GetMousePosition().y * ThomasTime::GetActualDeltaTime() * m_sensitivity;
 				
 				m_transform->SetRotation(-rotationX, -rotationY, 0);
 			}
@@ -209,15 +210,15 @@ namespace thomas
 			}
 			else
 			{
-				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
+				Input::SetMouseMode(Mouse::Mode::MODE_ABSOLUTE);
 				
-				if (Input::GetKeyDown(Input::Keys::W))
+				if (Input::GetKeyDown(Keyboard::Keys::W))
 					m_manipulatorOperation = ImGuizmo::OPERATION::TRANSLATE;
-				if (Input::GetKeyDown(Input::Keys::R))
+				if (Input::GetKeyDown(Keyboard::Keys::R))
 					m_manipulatorOperation = ImGuizmo::OPERATION::ROTATE;
-				if (Input::GetKeyDown(Input::Keys::E))
+				if (Input::GetKeyDown(Keyboard::Keys::E))
 					m_manipulatorOperation = ImGuizmo::OPERATION::SCALE;
-				if (Input::GetKey(Input::Keys::LeftShift))
+				if (Input::GetKey(Keyboard::Keys::LeftShift))
 					m_manipulatorSnapping = true;
 			}			
 		}

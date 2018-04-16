@@ -6,9 +6,11 @@
 #include "DirectXTK/SimpleMath.h"
 #include <cmath>
 #include <string>
-namespace DirectX {
-	namespace SimpleMath {
 
+namespace DirectX 
+{
+	namespace SimpleMath 
+	{
 		using DirectX::BoundingBox;
 		using DirectX::BoundingSphere;
 		using DirectX::BoundingFrustum;

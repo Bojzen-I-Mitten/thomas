@@ -66,7 +66,7 @@ namespace ThomasEditor
 
 		void Update() override
 		{
-			if (Input::GetKeyDown(Input::Keys::P))
+			if (Input::GetKeyDown(Keyboard::Keys::P))
 			{
 				Play();
 				//((thomas::object::component::SoundComponent*)nativePtr)->Play();

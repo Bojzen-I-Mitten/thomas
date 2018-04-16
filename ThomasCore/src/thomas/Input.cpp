@@ -17,20 +17,19 @@ namespace thomas
 	DirectX::GamePad::ButtonStateTracker Input::s_gamePadTracker;
 
 	math::Vector2 Input::s_mousePosition;
-	Input::MouseMode Input::s_mouseMode;
+	Mouse::Mode Input::s_mouseMode;
 
 	bool Input::s_recordPosition = true;
-	bool Input::s_initialized;
-	float Input::s_vibrateTimeLeft = 0;
+	bool Input::s_initialized = false;
+	float Input::s_vibrateTimeLeft = 0.f;
 
 	bool Input::Init()
 	{
-		s_keyboard = std::make_unique<DirectX::Keyboard>();
-		s_mouse = std::make_unique<DirectX::Mouse>();
-		s_gamePad = std::make_unique<DirectX::GamePad>();
-		
-		
-		s_mouseMode = MouseMode::POSITION_ABSOLUTE;
+		s_keyboard = std::make_unique<Keyboard>();
+		s_mouse = std::make_unique<Mouse>();
+		s_gamePad = std::make_unique<GamePad>();
+			
+		s_mouseMode = Mouse::MODE_ABSOLUTE;
 		s_initialized = true;
 		LOG("Initiating Input");
 		return s_initialized;
@@ -41,24 +40,24 @@ namespace thomas
 		if (s_initialized)
 		{
 			s_keyboardState = s_keyboard->GetState();
-			s_gamePadState = s_gamePad->GetState(0);
-			
+			s_gamePadState = s_gamePad->GetState(0);	
 			s_mouseState = s_mouse->GetState();
 			s_vibrateTimeLeft -= ThomasTime::GetDeltaTime();
-			if(s_vibrateTimeLeft < 0.0f)
-				s_gamePad->SetVibration(0, 0, 0);
 
 			s_keyboardTracker.Update(s_keyboardState);
 			s_mouseTracker.Update(s_mouseState);
 			s_gamePadTracker.Update(s_gamePadState);
 			s_mousePosition = math::Vector2(s_mouseState.x, s_mouseState.y);
+
+			if(s_vibrateTimeLeft < 0.0f)
+				s_gamePad->SetVibration(0, 0.f, 0.f);
 						
-			if (s_mousePosition == math::Vector2(0, 0))
+			if (s_mousePosition == math::Vector2(0.f, 0.f));
 				s_recordPosition = true;
 		}
-
 	}
 
+	//These can be removed as well
 	void Input::ProcessKeyboard(UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		if (s_initialized)
@@ -71,8 +70,7 @@ namespace thomas
 		{
 			s_mouse->SetWindow(handle);
 			s_mouse->ProcessMessage(message, wParam, lParam);
-		}
-			
+		}			
 	}
 
 	void Input::ProcessGamePad(UINT message, WPARAM wParam, LPARAM lParam)
@@ -93,15 +91,15 @@ namespace thomas
 				break;
 			}*/
 		}
-
 	}
+	//
 
 	void Input::ResetScrollWheelValue()
 	{
 		s_mouse->ResetScrollWheelValue();
 	}
 
-	//gamePad
+	//Gamepad
 	float Input::GetLeftStickY()
 	{
 		return s_gamePadState.thumbSticks.leftY;
@@ -137,23 +135,17 @@ namespace thomas
 		if (s_recordPosition)
 			return s_mousePosition;
 		else
-			return math::Vector2(0, 0);
+			return math::Vector2(0.f, 0.f);
 	}
 
-	void Input::SetMouseMode(MouseMode mode)
+	void Input::SetMouseMode(Mouse::Mode mode)
 	{
 		if (s_mouseMode == mode)
 			return;
-		s_mouse->SetMode((DirectX::Mouse::Mode)mode);
-		s_mouseMode = mode;
-		if (mode == MouseMode::POSITION_RELATIVE)
-		{
-			s_recordPosition = false;
-		}
-		else
-			s_recordPosition = true;
-		Update();
-			
+
+		s_mouse->SetMode(mode); s_mouseMode = mode;
+		mode == Mouse::Mode::MODE_RELATIVE ? s_recordPosition = false : s_recordPosition = true;
+		Update(); //This is not needed?			
 	}
 
 	bool Input::GetButtonDown(Buttons button)
@@ -194,7 +186,6 @@ namespace thomas
 			return (s_gamePadTracker.start == s_gamePadTracker.PRESSED);
 		case Buttons::BACK:
 			return (s_gamePadTracker.back == s_gamePadTracker.PRESSED);
-
 		}
 		return false;
 	}
@@ -296,16 +287,6 @@ namespace thomas
 	}
 
 	//Mouse
-	LONG Input::GetMouseY()
-	{
-		return GetMousePosition().y;
-	}
-
-	LONG Input::GetMouseX()
-	{
-		return GetMousePosition().x;
-	}
-
 	bool Input::GetMouseButtonDown(MouseButtons button)
 	{
 		switch (button)
@@ -354,79 +335,18 @@ namespace thomas
 	}
 
 	//Keyboard
-	bool Input::GetKeyDown(Keys key)
+	bool Input::GetKeyDown(Keyboard::Keys key)
 	{
-		return s_keyboardTracker.IsKeyPressed((DirectX::Keyboard::Keys)key);
+		return s_keyboardTracker.IsKeyPressed(key);
+	}	
+
+	bool Input::GetKeyUp(Keyboard::Keys key)
+	{
+		return s_keyboardTracker.IsKeyReleased(key);
 	}
 
-	std::string Input::GetKeyDown()
+	bool Input::GetKey(Keyboard::Keys key)
 	{
-		if (GetKeyDown(Keys::Q))
-			return "Q";
-		if (GetKeyDown(Keys::W))
-			return "W";
-		if (GetKeyDown(Keys::E))
-			return "E";
-		if (GetKeyDown(Keys::R))
-			return "R";
-		if (GetKeyDown(Keys::T))
-			return "T";
-		if (GetKeyDown(Keys::Y))
-			return "Y";
-		if (GetKeyDown(Keys::U))
-			return "U";
-		if (GetKeyDown(Keys::I))
-			return "I";
-		if (GetKeyDown(Keys::P))
-			return "P";
-		if (GetKeyDown(Keys::O))
-			return "O";
-		if (GetKeyDown(Keys::A))
-			return "A";
-		if (GetKeyDown(Keys::D))
-			return "D";
-		if (GetKeyDown(Keys::S))
-			return "S";
-		if (GetKeyDown(Keys::F))
-			return "F";
-		if (GetKeyDown(Keys::G))
-			return "G";
-		if (GetKeyDown(Keys::H))
-			return "H";
-		if (GetKeyDown(Keys::J))
-			return "J";
-		if (GetKeyDown(Keys::K))
-			return "K";
-		if (GetKeyDown(Keys::L))
-			return "L";
-		if (GetKeyDown(Keys::Z))
-			return "Z";
-		if (GetKeyDown(Keys::X))
-			return "X";
-		if (GetKeyDown(Keys::C))
-			return "C";
-		if (GetKeyDown(Keys::V))
-			return "V";
-		if (GetKeyDown(Keys::B))
-			return "B";
-		if (GetKeyDown(Keys::N))
-			return "N";
-		if (GetKeyDown(Keys::M))
-			return "M";
-		if (GetKeyDown(Keys::Space))
-			return " ";
-		if (GetKeyDown(Keys::Back))
-			return "-1";
-		return "0";
-	}
-
-	bool Input::GetKeyUp(Keys key)
-	{
-		return s_keyboardTracker.IsKeyReleased((DirectX::Keyboard::Keys)key);
-	}
-
-	bool Input::GetKey(Keys key)
-	{
-		return s_keyboardState.IsKeyDown((DirectX::Keyboard::Keys)key);
+		return s_keyboardState.IsKeyDown(key);
 	}
 }

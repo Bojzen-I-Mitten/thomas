@@ -19,21 +19,20 @@ namespace ThomasEditor
 
         public override void Update()
         {
+            //if (Input.GetKeyDown(Input.Keys.K))
+            //{
+            //    Material mat = Material.StandardMaterial;
+            //    ThomasEditor.Resources.SaveResource(mat, "testMat.mat");
+            //    //RenderComponent r = gameObject.AddComponent<RenderComponent>();                
+            //}
 
-            if (Input.GetKeyDown(Input.Keys.K))
-            {
-                Material mat = Material.StandardMaterial;
-                ThomasEditor.Resources.SaveResource(mat, "testMat.mat");
-                //RenderComponent r = gameObject.AddComponent<RenderComponent>();
-                
-            }
-            if (Input.GetKeyDown(Input.Keys.Space))
-            {
-                testVar = 10;
-                //gameObject.GetComponent<SoundComponent>().Play();
+            //if (Input.GetKeyDown(Input.Keys.Space))
+            //{
+            //    testVar = 10;
+            //    //gameObject.GetComponent<SoundComponent>().Play();
                 
                 
-            }
+            //}
         }
     }
 }
