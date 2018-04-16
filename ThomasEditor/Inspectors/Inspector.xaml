@@ -13,7 +13,7 @@
         <converters:ObjectToTypeConverter x:Key="ObjectToTypeConverter" />
 
         <DataTemplate x:Key="GameObjectInspector">
-            <local:GameObjectInspector DataContext="{Binding}"/>
+            <local:GameObjectInspector SelectedGameObject="{Binding ElementName=inspector, Path=SelectedObject}"/>
         </DataTemplate>
         <DataTemplate x:Key="MaterialInspector">
             <local:MaterialInspector Material="{Binding ElementName=inspector, Path=SelectedObject}"/>
@@ -23,6 +23,9 @@
             <Style.Triggers>
                 <Trigger Property="SelectedObjectType" Value="{x:Type managed:Material}">
                     <Setter Property="ContentTemplate" Value="{StaticResource MaterialInspector}"/>
+                </Trigger>
+                <Trigger Property="SelectedObjectType" Value="{x:Type managed:GameObject}">
+                    <Setter Property="ContentTemplate" Value="{StaticResource GameObjectInspector}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>

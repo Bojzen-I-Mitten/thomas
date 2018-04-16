@@ -40,32 +40,53 @@ namespace ThomasEditor
         /// </summary>
         public partial class GameObjectInspector : UserControl
         {
+            public static readonly DependencyProperty SelectedGameObjectProperty =
+               DependencyProperty.Register(
+               "SelectedGameObject",
+               typeof(GameObject),
+               typeof(GameObjectInspector),
+               new PropertyMetadata(null));
+
+
             //For selecting the firt element in the components list
            // int selectedComponent = 0;
 
-            private GameObject _gameObject;
             //public Collection<EditorDefinitionBase> customEditors;
             public GameObjectInspector()
             {
 
                 InitializeComponent();
+                Loaded += GameObjectInspector_Loaded;
                 // propertyGrid.Editors.Add(editor);
 
             }
+
+            private void GameObjectInspector_Loaded(object sender, RoutedEventArgs e)
+            {
+                gameObjectGrid.Visibility = Visibility.Hidden;
+                if (SelectedGameObject != null)
+                {
+                    gameObjectGrid.DataContext = SelectedGameObject;
+                    gameObjectGrid.Visibility = Visibility.Visible;
+                    //Expand();
+                    //CreatePropertyGrids();
+                }
+            }
+
             public GameObject SelectedGameObject
             {
                 get
                 {
-                    return _gameObject;
+                    return (GameObject)GetValue(SelectedGameObjectProperty);
                 }
                 set
                 {
-                    _gameObject = value;
+                    SetValue(SelectedGameObjectProperty, value);
                     gameObjectGrid.DataContext = null;
                     gameObjectGrid.Visibility = Visibility.Hidden;
-                    if(_gameObject != null)
+                    if(value != null)
                     {
-                        gameObjectGrid.DataContext = _gameObject;
+                        gameObjectGrid.DataContext = value;
                         gameObjectGrid.Visibility = Visibility.Visible;
                         //Expand();
                         //CreatePropertyGrids();

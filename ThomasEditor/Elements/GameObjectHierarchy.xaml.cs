@@ -23,13 +23,15 @@ namespace ThomasEditor
     {
 
         bool _isDragging;
-
+        bool wasUnselected = false;
+        public static GameObjectHierarchy instance;
         public GameObjectHierarchy()
         {
             InitializeComponent();
             Scene.sceneChanged = SceneGameObjectsChanged;
             Scene.CurrentScene.GameObjects.CollectionChanged += SceneGameObjectsChanged;
             ThomasWrapper.SelectedGameObjects.CollectionChanged += SceneSelectedGameObjectChanged;
+            instance = this;
         }
 
         private void BuildTree(Transform parent, TreeViewItem parentTree)
@@ -67,6 +69,15 @@ namespace ThomasEditor
             }
         }
 
+        public void Unselect()
+        {
+            if(hierarchy.SelectedItem != null)
+            {
+                wasUnselected = true;
+                ThomasWrapper.UnselectGameObjects();
+            }
+            
+        }
 
         private void SceneGameObjectsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -166,21 +177,25 @@ namespace ThomasEditor
 
         private void SelectedGameObjectChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            if(!wasUnselected)
+                AssetBrowser.instance.UnselectItem();
+            wasUnselected = false;
             ItemContainerGenerator gen = hierarchy.ItemContainerGenerator;
 
-            //GameObjectInspector inspector = ((MainWindow)Application.Current.MainWindow).__inspector;
-            //inspector.SelectedGameObject = null;
-            //if (hierarchy.SelectedItem != null)
-            //{
-            //    TreeViewItem item = hierarchy.SelectedItem as TreeViewItem;
-            //    if (item != null)
-            //    {
-            //        inspector.SelectedGameObject = (GameObject)item.DataContext;
-            //        if (!ThomasWrapper.SelectedGameObjects.Contains((GameObject)item.DataContext))
-            //            ThomasWrapper.SelectGameObject((GameObject)item.DataContext);
-            //    }
+            if (hierarchy.SelectedItem != null)
+            {
+                TreeViewItem item = hierarchy.SelectedItem as TreeViewItem;
+                if (item != null)
+                {
+                    Inspector.instance.SelectedObject = (GameObject)item.DataContext;
+                    if (!ThomasWrapper.SelectedGameObjects.Contains((GameObject)item.DataContext))
+                        ThomasWrapper.SelectGameObject((GameObject)item.DataContext);
+                }
 
-            //}
+            }else
+            {
+                Inspector.instance.SelectedObject = null;
+            }
         }
 
         private void hierarchy_DragOver(object sender, DragEventArgs e)
