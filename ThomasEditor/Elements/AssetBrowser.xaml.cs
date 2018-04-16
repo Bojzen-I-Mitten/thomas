@@ -23,7 +23,7 @@ namespace ThomasEditor
     
     public partial class AssetBrowser : UserControl
     {
-
+        bool wasUnselected = false;
         String path = "..\\Data";
         bool _isDragging = false;
         bool renameNextAddedItem = false;
@@ -31,6 +31,8 @@ namespace ThomasEditor
         public static Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage> assetImages = new Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage>();
 
         FileSystemWatcher watcher;
+
+        public static AssetBrowser instance;
 
         public AssetBrowser()
         {
@@ -51,7 +53,17 @@ namespace ThomasEditor
             watcher.Created += ResourceCreated;
             watcher.Deleted += ResourceDeleted;
             watcher.EnableRaisingEvents = true;
+            instance = this;
+        }
 
+        public void UnselectItem()
+        {
+            if (fileTree.SelectedItem != null)
+            {
+                wasUnselected = true;
+                (fileTree.SelectedItem as TreeViewItem).IsSelected = false;
+            }
+                
         }
 
         private void ResourceRenamed(object sender, RenamedEventArgs e)
@@ -308,7 +320,7 @@ namespace ThomasEditor
                 if (item != null)
                     item.IsSelected = false;
                 return;
-            }
+            }else
             
             //rename on click. Refactor
             if (fileTree.SelectedItem == treeViewItem && e.ClickCount == 1)
@@ -368,6 +380,19 @@ namespace ThomasEditor
                 source = VisualTreeHelper.GetParent(source);
 
             return source as TreeViewItem;
+        }
+
+        private void AssetBrowser_LeftMouseButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (fileTree.SelectedItem != null)
+            {
+                if (!wasUnselected)
+                    GameObjectHierarchy.instance.Unselect();
+                wasUnselected = false;
+                TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+                Inspector.instance.SelectedObject = item.DataContext;
+            }
+
         }
 
         private void AssetBrowser_DoubleClick(object sender, MouseButtonEventArgs e)
@@ -507,14 +532,25 @@ namespace ThomasEditor
 
         private void AssetBrowser_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+
             if (fileTree.SelectedItem == null)
             {
+                if (!wasUnselected)
+                    GameObjectHierarchy.instance.Unselect();
+                wasUnselected = false;
                 Inspector.instance.SelectedObject = null;
                 return;
             }
-                
-            TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
-            Inspector.instance.SelectedObject = item.DataContext;
+            if(Mouse.LeftButton == MouseButtonState.Released)
+            {
+                if (!wasUnselected)
+                    GameObjectHierarchy.instance.Unselect();
+                wasUnselected = false;
+
+                TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+                Inspector.instance.SelectedObject = item.DataContext;
+            }
+           
         }
     }
 
