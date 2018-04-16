@@ -40,7 +40,10 @@ namespace ThomasEditor
 				return gcnew Material(((thomas::object::component::RenderComponent*)nativePtr)->GetMaterial(0));
 			}
 			void set(Material^ value) {
-				((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, (thomas::resource::Material*)value->m_nativePtr);
+				if (value)
+					((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, (thomas::resource::Material*)value->m_nativePtr);
+				else
+					((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, nullptr);
 			}
 		}
 

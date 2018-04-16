@@ -10,8 +10,7 @@ namespace thomas
 
 			void Transform::Decompose() {
 				m_localWorldMatrix.Decompose(m_localScale, m_localRotation, m_localPosition);
-				//m_localEulerAngles = math::ToEuler(m_localRotation);
-				ImGuizmo::DecomposeMatrixToComponents(*m_localWorldMatrix.m, (float*)&m_localPosition, (float*)&m_localEulerAngles, (float*)&m_localScale);
+				m_localEulerAngles = math::ToEuler(m_localRotation);
 			}
 
 			Transform::Transform()

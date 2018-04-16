@@ -40,14 +40,7 @@ namespace thomas
 				ID3DX11EffectVariable* variable = m_effect->GetVariableByIndex(i);
 				if (variable->IsValid())
 				{
-					if (m_properties.size() > i)
-					{
-						//m_properties[i]->UpdateVariable(variable);
-					}else
-					{ 
-						AddProperty(variable);
-					}
-					
+					AddProperty(variable);
 				}
 				
 
@@ -419,6 +412,11 @@ namespace thomas
 			return nullptr;
 		}
 
+		std::vector<std::string> Shader::GetMaterialProperties()
+		{
+			return m_materialProperties;
+		}
+
 		ID3DX11Effect * Shader::GetEffect()
 		{
 			return m_effect;
@@ -463,7 +461,7 @@ namespace thomas
 				SAFE_RELEASE(m_effect);
 				for (auto pass : m_passes)
 					SAFE_RELEASE(pass.inputLayout);
-
+				m_materialProperties.clear();
 				m_passes.clear();
 				m_effect = tempEffect;
 				SetupReflection();
@@ -625,8 +623,10 @@ namespace thomas
 			if (newProperty != nullptr)
 			{
 				newProperty->SetName(name);
-				newProperty->isMaterialProperty = isMaterialProperty;
-				m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(newProperty);
+				if(!HasProperty(name))
+					m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(newProperty);
+				if(isMaterialProperty)
+					m_materialProperties.push_back(name);
 			}
 			
 		}
