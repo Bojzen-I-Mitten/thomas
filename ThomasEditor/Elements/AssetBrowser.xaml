@@ -9,10 +9,10 @@
     
     <Grid>
         <DockPanel>
-            <TreeView KeyDown="AssetBrowser_KeyDown" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="fileTree" AllowDrop="True" MouseMove="AssetBrowser_MouseMove" MouseDoubleClick="AssetBrowser_DoubleClick" PreviewMouseRightButtonDown="AssetBrowser_PreviewMouseRightButtonDown" PreviewMouseLeftButtonDown="AssetBrowser_PreviewMouseLeftButtonDown">
+            <TreeView KeyDown="AssetBrowser_KeyDown" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="fileTree" AllowDrop="True" MouseMove="AssetBrowser_MouseMove" MouseDoubleClick="AssetBrowser_DoubleClick" PreviewMouseRightButtonDown="AssetBrowser_PreviewMouseRightButtonDown" PreviewMouseLeftButtonDown="AssetBrowser_PreviewMouseLeftButtonDown" SelectedItemChanged="AssetBrowser_SelectedItemChanged">
                 <TreeView.ContextMenu>
                     <ContextMenu x:Name="assetBrowserContextMenu">
-                        <MenuItem Header="Create" IsEnabled="false">
+                        <MenuItem Header="Create">
                             <MenuItem Header="Folder" Click="Menu_CreateFolder"/>
                             <Separator/>
                             <MenuItem Header="C# Script" Click="Menu_CreateCSharpScript"/>

@@ -82,7 +82,8 @@ namespace ThomasEditor
 					m_nativePtr = new thomas::resource::Material(Utility::ConvertString(m_path));
 					((thomas::resource::Material*)m_nativePtr)->SetShader((thomas::resource::Shader*)value->m_nativePtr);
 				}
-				UpdateEditorProperties();
+				if(m_loaded)
+					UpdateEditorProperties();
 			}
 		}
 
@@ -117,10 +118,12 @@ namespace ThomasEditor
 						//SetRaw(key, &prop);
 					}
 				}
+				m_editorProperties = value;
 				if(m_loaded)
-					ThomasEditor::Resources::SaveResource(this, m_path);
+				{ }
+					//ThomasEditor::Resources::SaveResource(this, m_path);
 
-				UpdateEditorProperties();
+				//UpdateEditorProperties();
 			}
 		}
 	private:

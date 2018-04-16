@@ -21,28 +21,30 @@ namespace ThomasEditor
     /// Interaction logic for ResourceListPopup.xaml
     /// </summary>
     /// 
-
-    public class ResourceImageConverter : IValueConverter
+    namespace Converters
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public class ResourceImageConverter : IValueConverter
         {
-            if (value is Resource)
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                Resource res = value as Resource;
-                Resources.AssetTypes type = ThomasEditor.Resources.GetResourceAssetType(res.GetType());
-                if(type == Resources.AssetTypes.TEXTURE2D)
+                if (value is Resource)
                 {
-                    return new Uri(System.IO.Path.GetFullPath(res.GetPath()));
+                    Resource res = value as Resource;
+                    Resources.AssetTypes type = ThomasEditor.Resources.GetResourceAssetType(res.GetType());
+                    if (type == Resources.AssetTypes.TEXTURE2D)
+                    {
+                        return new Uri(System.IO.Path.GetFullPath(res.GetPath()));
+                    }
+                    return AssetBrowser.assetImages[type].UriSource.LocalPath;
                 }
-                return AssetBrowser.assetImages[type].UriSource.LocalPath;
+                else
+                    return "../icons/null.png";
             }
-            else
-                return "../icons/null.png";
-        }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 

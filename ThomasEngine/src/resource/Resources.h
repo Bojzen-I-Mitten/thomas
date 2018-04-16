@@ -33,7 +33,7 @@ namespace ThomasEditor
 			return resource;
 		}
 	public:
-
+		static property String^ AssetPath{String^ get(){return "..\\Data\\";}}
 		enum class AssetTypes
 		{
 			MODEL,
@@ -47,10 +47,25 @@ namespace ThomasEditor
 			UNKNOWN
 		};
 
-		static void SaveResource(Resource^ resource, String^ path)
+		static void SaveResource(Resource^ resource)
 		{
+
+		}
+
+		static void CreateResource(Resource^ resource, String^ path)
+		{
+			path = AssetPath + path;
+			String^ extension = IO::Path::GetExtension(path);
+			String^ modifier = "";
+			path = path->Remove(path->Length - extension->Length, extension->Length);
+			int i = 0;
+			while (IO::File::Exists(path + modifier + extension))
+			{
+				i++;
+				modifier = "(" + i + ")";
+			}
+			path = path + modifier + extension;
 			Monitor::Enter(resourceLock);
-			path = "..\\Data\\" + path;
 			using namespace System::Runtime::Serialization;
 			DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
 			serializserSettings->PreserveObjectReferences = true;

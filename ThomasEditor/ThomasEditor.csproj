@@ -91,6 +91,9 @@
       <DependentUpon>AssetBrowser.xaml</DependentUpon>
     </Compile>
     <Compile Include="Inspectors\Converters.cs" />
+    <Compile Include="Inspectors\Inspector.xaml.cs">
+      <DependentUpon>Inspector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="utils\CustomCommands.cs" />
     <Compile Include="utils\DictionaryPropertyGridAdapter.cs" />
     <Compile Include="Inspectors\ExtendedPropertyGrid.xaml.cs">
@@ -99,8 +102,8 @@
     <Compile Include="Elements\GameObjectHierarchy.xaml.cs">
       <DependentUpon>GameObjectHierarchy.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Inspectors\MaterialEditor.xaml.cs">
-      <DependentUpon>MaterialEditor.xaml</DependentUpon>
+    <Compile Include="Inspectors\MaterialInspector.xaml.cs">
+      <DependentUpon>MaterialInspector.xaml</DependentUpon>
     </Compile>
     <Compile Include="Elements\OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
@@ -111,8 +114,8 @@
     <Compile Include="scriptComponent test\TestComponent.cs" />
     <Compile Include="Themes\LeftMarginMultiplierConverter.cs" />
     <Compile Include="Themes\TreeViewItemExtensions.cs" />
-    <Compile Include="Inspectors\ThomasGameObjectInspector.xaml.cs">
-      <DependentUpon>ThomasGameObjectInspector.xaml</DependentUpon>
+    <Compile Include="Inspectors\GameObjectInspector.xaml.cs">
+      <DependentUpon>GameObjectInspector.xaml</DependentUpon>
     </Compile>
     <Compile Include="utils\EditableTextBlock.xaml.cs">
       <DependentUpon>EditableTextBlock.xaml</DependentUpon>
@@ -133,6 +136,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Inspectors\Inspector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -145,7 +152,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Inspectors\MaterialEditor.xaml">
+    <Page Include="Inspectors\MaterialInspector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -165,7 +172,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Inspectors\ThomasGameObjectInspector.xaml">
+    <Page Include="Inspectors\GameObjectInspector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
