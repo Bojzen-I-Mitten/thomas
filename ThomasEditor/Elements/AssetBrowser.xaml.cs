@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.IO;
 using ThomasEditor.utils;
+using ThomasEditor.Inspectors;
 
 namespace ThomasEditor
 {
@@ -25,7 +26,8 @@ namespace ThomasEditor
 
         String path = "..\\Data";
         bool _isDragging = false;
-       
+        bool renameNextAddedItem = false;
+
         public static Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage> assetImages = new Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage>();
 
         FileSystemWatcher watcher;
@@ -174,6 +176,13 @@ namespace ThomasEditor
                     dir.Items.Add(item);
               
             }
+            
+            if(renameNextAddedItem)
+            {
+                TreeViewItem tvi = item as TreeViewItem;
+                tvi.Focus();
+                StartRename();
+            }
         }
 
         private void ResourceCreated(object sender, FileSystemEventArgs e)
@@ -300,16 +309,7 @@ namespace ThomasEditor
                     item.IsSelected = false;
                 return;
             }
-            StackPanel stack = treeViewItem.Header as StackPanel;
-            if(treeViewItem.DataContext is Resource)
-            {
-                Resource resource = treeViewItem.DataContext as Resource;
-                if(resource is Material)
-                {
-                    MaterialEditor matEdit = FindResource("materialEditor") as MaterialEditor;
-                    matEdit.SetMaterial(resource as Material);
-                }
-            }
+            
             //rename on click. Refactor
             if (fileTree.SelectedItem == treeViewItem && e.ClickCount == 1)
             {
@@ -395,11 +395,6 @@ namespace ThomasEditor
                 {
                     System.Diagnostics.Process.Start(file);
                 }
-                else if (assetType == ThomasEditor.Resources.AssetTypes.MATERIAL)
-                {
-                    MaterialEditor matEdit = FindResource("materialEditor") as MaterialEditor;
-                    matEdit.SetMaterial(ThomasEditor.Resources.Load(file) as Material);
-                }
             }
         }
 
@@ -453,7 +448,9 @@ namespace ThomasEditor
 
         private void Menu_CreateMaterial(object sender, RoutedEventArgs e)
         {
-
+            Material newMat = new Material(Shader.Find("StandardShader"));
+            ThomasEditor.Resources.CreateResource(newMat, "New Material.mat");
+            renameNextAddedItem = true;
         }
 
         private void Menu_CreateCurve(object sender, RoutedEventArgs e)
@@ -507,6 +504,18 @@ namespace ThomasEditor
 
         }
         #endregion
+
+        private void AssetBrowser_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (fileTree.SelectedItem == null)
+            {
+                Inspector.instance.SelectedObject = null;
+                return;
+            }
+                
+            TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+            Inspector.instance.SelectedObject = item.DataContext;
+        }
     }
 
 

@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="ThomasEditor.Inspectors.Inspector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ThomasEditor.Inspectors"
+             xmlns:converters="clr-namespace:ThomasEditor.Converters"
+             xmlns:managed="clr-namespace:ThomasEditor;assembly=ThomasEngine"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" x:Name="inspector">
+
+    <UserControl.Resources>
+        <converters:ObjectToTypeConverter x:Key="ObjectToTypeConverter" />
+
+        <DataTemplate x:Key="GameObjectInspector">
+            <local:GameObjectInspector DataContext="{Binding}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="MaterialInspector">
+            <local:MaterialInspector Material="{Binding ElementName=inspector, Path=SelectedObject}"/>
+        </DataTemplate>
+
+        <Style TargetType="{x:Type local:Inspector}">
+            <Style.Triggers>
+                <Trigger Property="SelectedObjectType" Value="{x:Type managed:Material}">
+                    <Setter Property="ContentTemplate" Value="{StaticResource MaterialInspector}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+</UserControl>

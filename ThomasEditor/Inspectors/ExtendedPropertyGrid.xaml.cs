@@ -18,80 +18,81 @@ using Xceed.Wpf.Toolkit.PropertyGrid;
 
 namespace ThomasEditor
 {
-
-   
-    /// <summary>
-    /// Interaction logic for ExtendedPropertyGrid.xaml
-    /// </summary>
-    public partial class ExtendedPropertyGrid : UserControl
+    namespace Inspectors
     {
-
-        public ExtendedPropertyGrid()
-        {
-            InitializeComponent();
-        }
-
-        private void PropertyGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            PropertyGrid grid = sender as PropertyGrid;
-            grid.ExpandAllProperties();
-        }
-
-        private void ResourceEditor_Drop(object sender, DragEventArgs e)
+        /// <summary>
+        /// Interaction logic for ExtendedPropertyGrid.xaml
+        /// </summary>
+        public partial class ExtendedPropertyGrid : UserControl
         {
 
-            if (e.Data.GetDataPresent(typeof(TreeViewItem)))
+            public ExtendedPropertyGrid()
             {
-                TreeViewItem item = e.Data.GetData(typeof(TreeViewItem)) as TreeViewItem;
-                if (item.DataContext is Resource)
+                InitializeComponent();
+            }
+
+            private void PropertyGrid_Loaded(object sender, RoutedEventArgs e)
+            {
+                PropertyGrid grid = sender as PropertyGrid;
+                grid.ExpandAllProperties();
+            }
+
+            private void ResourceEditor_Drop(object sender, DragEventArgs e)
+            {
+
+                if (e.Data.GetDataPresent(typeof(TreeViewItem)))
                 {
-                    Resource resource = item.DataContext as Resource;
-                    Label label = sender as Label;
-                    PropertyItem pi = label.DataContext as PropertyItem;
-                    if (resource.GetType() == pi.PropertyType)
+                    TreeViewItem item = e.Data.GetData(typeof(TreeViewItem)) as TreeViewItem;
+                    if (item.DataContext is Resource)
                     {
-                        Monitor.Enter(Scene.CurrentScene.GetGameObjectsLock());
-                        pi.Value = resource;
+                        Resource resource = item.DataContext as Resource;
+                        Label label = sender as Label;
+                        PropertyItem pi = label.DataContext as PropertyItem;
+                        if (resource.GetType() == pi.PropertyType)
+                        {
+                            Monitor.Enter(Scene.CurrentScene.GetGameObjectsLock());
+                            pi.Value = resource;
 
-                        Monitor.Exit(Scene.CurrentScene.GetGameObjectsLock());
+                            Monitor.Exit(Scene.CurrentScene.GetGameObjectsLock());
+                        }
+
                     }
-
                 }
             }
-        }
 
 
 
-        private void ResourceEditor_PreviewDragOver(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(typeof(TreeViewItem)))
+            private void ResourceEditor_PreviewDragOver(object sender, DragEventArgs e)
             {
-                TreeViewItem item = e.Data.GetData(typeof(TreeViewItem)) as TreeViewItem;
-                if (item.DataContext is Resource)
+                if (e.Data.GetDataPresent(typeof(TreeViewItem)))
                 {
-                    Resource resource = item.DataContext as Resource;
-                    Label label = sender as Label;
-                    PropertyItem pi = label.DataContext as PropertyItem;
-                    if (resource.GetType() == pi.PropertyType)
-                        e.Handled = true;
+                    TreeViewItem item = e.Data.GetData(typeof(TreeViewItem)) as TreeViewItem;
+                    if (item.DataContext is Resource)
+                    {
+                        Resource resource = item.DataContext as Resource;
+                        Label label = sender as Label;
+                        PropertyItem pi = label.DataContext as PropertyItem;
+                        if (resource.GetType() == pi.PropertyType)
+                            e.Handled = true;
+                    }
                 }
+
             }
 
-        }
 
-
-        private void ResourceList_Open(object sender, RoutedEventArgs e)
-        {
-            if (ResourceListPopup.instance != null && ResourceListPopup.instance.IsLoaded)
+            private void ResourceList_Open(object sender, RoutedEventArgs e)
             {
-                ResourceListPopup.instance.Close();
+                if (ResourceListPopup.instance != null && ResourceListPopup.instance.IsLoaded)
+                {
+                    ResourceListPopup.instance.Close();
+                }
+                Button b = sender as Button;
+                PropertyItem pi = b.DataContext as PropertyItem;
+                Type resourceType = pi.PropertyType;
+
+                ResourceListPopup.instance = new ResourceListPopup(pi, resourceType);
             }
-            Button b = sender as Button;
-            PropertyItem pi = b.DataContext as PropertyItem;
-            Type resourceType = pi.PropertyType;
 
-            ResourceListPopup.instance = new ResourceListPopup(pi, resourceType);
         }
-
     }
 }

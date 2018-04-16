@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ThomasEditor.Inspectors;
 
 namespace ThomasEditor
 {
@@ -167,19 +168,19 @@ namespace ThomasEditor
         {
             ItemContainerGenerator gen = hierarchy.ItemContainerGenerator;
 
-            ThomasGameObjectInspector inspector = ((MainWindow)Application.Current.MainWindow).__inspector;
-            inspector.SelectedGameObject = null;
-            if (hierarchy.SelectedItem != null)
-            {
-                TreeViewItem item = hierarchy.SelectedItem as TreeViewItem;
-                if (item != null)
-                {
-                    inspector.SelectedGameObject = (GameObject)item.DataContext;
-                    if (!ThomasWrapper.SelectedGameObjects.Contains((GameObject)item.DataContext))
-                        ThomasWrapper.SelectGameObject((GameObject)item.DataContext);
-                }
+            //GameObjectInspector inspector = ((MainWindow)Application.Current.MainWindow).__inspector;
+            //inspector.SelectedGameObject = null;
+            //if (hierarchy.SelectedItem != null)
+            //{
+            //    TreeViewItem item = hierarchy.SelectedItem as TreeViewItem;
+            //    if (item != null)
+            //    {
+            //        inspector.SelectedGameObject = (GameObject)item.DataContext;
+            //        if (!ThomasWrapper.SelectedGameObjects.Contains((GameObject)item.DataContext))
+            //            ThomasWrapper.SelectGameObject((GameObject)item.DataContext);
+            //    }
 
-            }
+            //}
         }
 
         private void hierarchy_DragOver(object sender, DragEventArgs e)
