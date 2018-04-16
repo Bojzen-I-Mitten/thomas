@@ -9,7 +9,7 @@
     
     <Grid>
         <DockPanel>
-            <TreeView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="fileTree" AllowDrop="True" MouseMove="AssetBrowser_MouseMove" MouseDoubleClick="AssetBrowser_DoubleClick" PreviewMouseRightButtonDown="AssetBrowser_PreviewMouseRightButtonDown" MouseLeftButtonDown="AssetBrowser_MouseLeftButtonDown">
+            <TreeView KeyDown="AssetBrowser_KeyDown" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="fileTree" AllowDrop="True" MouseMove="AssetBrowser_MouseMove" MouseDoubleClick="AssetBrowser_DoubleClick" PreviewMouseRightButtonDown="AssetBrowser_PreviewMouseRightButtonDown" PreviewMouseLeftButtonDown="AssetBrowser_PreviewMouseLeftButtonDown">
                 <TreeView.ContextMenu>
                     <ContextMenu x:Name="assetBrowserContextMenu">
                         <MenuItem Header="Create" IsEnabled="false">
@@ -28,6 +28,7 @@
                         <MenuItem Header="Show in Explorer" Click="Menu_ShowInExplorer" IsEnabled="false"/>
                         <MenuItem Header="Open" IsEnabled="{Binding}" Click="Menu_OpenAsset" />
                         <MenuItem Header="Delete" IsEnabled="{Binding}"  Click="Menu_DeleteAsset"/>
+                        <MenuItem Header="Rename" IsEnabled="{Binding}" Click="MenuItem_Rename"/>
                         <Separator/>
                         <MenuItem Header="Import New Asset..."  Click="Menu_ImportAsset" IsEnabled="false"/>
                         <Separator/>

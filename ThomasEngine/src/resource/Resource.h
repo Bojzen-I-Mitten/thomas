@@ -9,11 +9,12 @@
 
 using namespace System;
 using namespace System::Runtime::Serialization;
+using namespace System::ComponentModel;
 
 namespace ThomasEditor
 {
 	[DataContractAttribute]
-	public ref class Resource
+	public ref class Resource : public INotifyPropertyChanged
 	{
 	internal:
 		thomas::resource::Resource* m_nativePtr;
@@ -33,10 +34,16 @@ namespace ThomasEditor
 		void Rename(String^ newPath) {
 			m_path = newPath;
 			m_nativePtr->Rename(Utility::ConvertString(newPath));
+			OnPropertyChanged("name");
 		}
 
 	public:
-		
+		virtual event PropertyChangedEventHandler^ PropertyChanged;
+		void OnPropertyChanged(String^ info)
+		{
+			PropertyChanged(this, gcnew PropertyChangedEventArgs(info));
+		}
+
 		virtual void Reload() {
 			System::Threading::Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
 			m_nativePtr->Reload();
@@ -48,9 +55,9 @@ namespace ThomasEditor
 			return m_path;
 		}
 
-		virtual String^ ToString() override
+		virtual property String^ name
 		{
-			return System::IO::Path::GetFileNameWithoutExtension(m_path);
-		}
+			String^ get() { return System::IO::Path::GetFileNameWithoutExtension(m_path); }
+		};
 	};
 }

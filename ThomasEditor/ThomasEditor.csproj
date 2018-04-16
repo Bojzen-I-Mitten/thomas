@@ -114,6 +114,9 @@
     <Compile Include="Inspectors\ThomasGameObjectInspector.xaml.cs">
       <DependentUpon>ThomasGameObjectInspector.xaml</DependentUpon>
     </Compile>
+    <Compile Include="utils\EditableTextBlock.xaml.cs">
+      <DependentUpon>EditableTextBlock.xaml</DependentUpon>
+    </Compile>
     <Compile Include="utils\ThomasWindow.cs" />
     <Compile Include="Elements\TransformGizmo.xaml.cs">
       <DependentUpon>TransformGizmo.xaml</DependentUpon>
@@ -167,6 +170,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Elements\TransformGizmo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="utils\EditableTextBlock.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
