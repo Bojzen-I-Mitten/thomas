@@ -5,7 +5,7 @@
 cbuffer MATERIAL_PROPERTIES
 {
 	float testMat;
-	float4 wow;
+	float4 wow : COLOR;
 };
 
 

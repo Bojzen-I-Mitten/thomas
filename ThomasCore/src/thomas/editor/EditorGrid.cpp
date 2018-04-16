@@ -26,52 +26,35 @@ namespace thomas
 			m_gridSize = gridSize;
 			m_cellSize = cellSize;
 			m_internalGridSize = internalGridSize;
-
-			m_lines.positions.reserve(gridSize*gridSize * 2 * 3);
-			m_lines.colors.reserve(gridSize*gridSize * 2 * 3);
-
-			for (int x = -m_gridSize / 2; x <= m_gridSize / 2; x++)
+			for (int i = -m_gridSize / 2; i <= m_gridSize / 2; i+=cellSize)
 			{
-				for (int z = -m_gridSize / 2; z <= m_gridSize / 2; z++)
+				math::Vector3 from(i, 0.0f, -m_gridSize / 2);
+				math::Vector3 to(i, 0.0f, m_gridSize / 2);
+				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f));
+				from = math::Vector3(-m_gridSize / 2, 0.0f, i);
+				to = math::Vector3(m_gridSize / 2, 0.0f, i);
+				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f));
+
+				for (float j = cellSize/internalGridSize; j < cellSize; j+= cellSize/internalGridSize)
 				{
-					math::Vector3 from(x, 0.0f, z);
-					math::Vector3 to(x, 0.0f, z + 1);
-					math::Vector3 to2(x + 1, 0.0f, z);
-					if (z != m_gridSize)
-						AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 0.8f));
-					if (x != m_gridSize)
-						AddLine(from, to2, math::Vector4(0.40625f, 0.40625f, 0.40625f, 0.8f));
-
-					for (int xInternal = 0; xInternal < m_internalGridSize; xInternal++)
-					{
-						for (int zInternal = 0; zInternal < m_internalGridSize; zInternal++)
-						{
-							
-							float internalCellSize = m_cellSize / m_internalGridSize;
-							math::Vector3 internalFrom(xInternal, 0.0f, zInternal);
-							internalFrom *= internalCellSize;
-							internalFrom += from;
-							math::Vector3 internalTo(xInternal, 0.0f, zInternal + 1);
-							internalTo *= internalCellSize;
-							internalTo += from;
-							math::Vector3 internalTo2(xInternal + 1, 0.0f, zInternal);
-							internalTo2 *= internalCellSize;
-							internalTo2 += from;
-							if (xInternal != 0)
-								AddLine(internalFrom, internalTo, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 0.2f), 0.3f);
-							if(zInternal != 0)
-								AddLine(internalFrom, internalTo2, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 0.2f), 0.3f);
-						}
-					}
+					from = math::Vector3(i+j, 0.0f, -m_gridSize / 2);
+					to = math::Vector3(i+j, 0.0f, m_gridSize / 2);
+					AddLine(from, to, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 0.2f), 0.6f);
+					from = math::Vector3(-m_gridSize / 2, 0.0f, i+j);
+					to = math::Vector3(m_gridSize / 2, 0.0f, i+j);
+					AddLine(from, to, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 0.2f), 0.6f);
 				}
-			}
 
+			}
+		
 			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/EditorGridShader.fx");
 			if (shader)
 			{
 				m_material = new resource::Material(shader);
 				m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 				m_mesh = new graphics::Mesh(m_lines, {}, "grid");
+				m_lines.positions.clear();
+				m_lines.colors.clear();
 			}
 				
 			

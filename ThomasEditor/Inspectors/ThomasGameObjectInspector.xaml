@@ -63,9 +63,9 @@
                 x:Name="addComponentButton" Command="{x:Static commands:CustomCommands.GetAddCompenent}" 
                 />
         <DockPanel Grid.Row="3" Panel.ZIndex="1" x:Name="addComponentsListContainer" LostFocus="AddComponentsListContainer_LostFocus" Visibility="Hidden" Width="200" Height="300" Margin="10">
-            <TextBox x:Name="AddComponentsFilter" DockPanel.Dock="Top" TextChanged="AddComponentsFilter_TextChanged" KeyUp="AddComponentList_KeyUp"/>
-            <ListView x:Name="addComponentList" Background="#333333" >
-                <!--SelectionChanged="AddComponentList_SelectionChanged"-->
+            <TextBox x:Name="AddComponentsFilter" DockPanel.Dock="Top" TextChanged="AddComponentsFilter_TextChanged"/>
+            <ListView x:Name="addComponentList" Background="#333333" SelectionChanged="AddComponentList_SelectionChanged">
+                <!--MouseLeftButtonDown="AddComponentsList_MLBUp" KeyUp="AddComponentList_KeyUp"-->
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}"/>

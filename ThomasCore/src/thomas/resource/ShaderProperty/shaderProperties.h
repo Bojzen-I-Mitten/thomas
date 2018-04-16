@@ -5,4 +5,5 @@
 #include "ShaderPropertyVector.h"
 #include "ShaderPropertyShaderResource.h"
 #include "ShaderPropertyTexture2D.h"
-#include "ShaderProperyConstantBuffer.h"
+#include "ShaderPropertyConstantBuffer.h"
+#include "ShaderPropertyColor.h"

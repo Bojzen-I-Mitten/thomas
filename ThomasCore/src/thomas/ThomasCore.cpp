@@ -109,9 +109,7 @@ namespace thomas {
 		object::Object::Clean();
 		editor::EditorCamera::Update();
 
-		Window::Update();
 		resource::Shader::Update();
-		thomas::ThomasTime::Update();
 		Input::Update();
 		
 		/*if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())

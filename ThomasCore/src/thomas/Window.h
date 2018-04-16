@@ -38,6 +38,8 @@ namespace thomas
 
 	public:
 
+		static bool WaitingForUpdate();
+
 		static LRESULT CALLBACK EventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 		static void InitEditor(HWND hWnd);
@@ -83,7 +85,6 @@ namespace thomas
 		bool Initialized();
 
 		void SetCursor(bool visible);
-		
 
 		bool ChangeWindowShowState(int nCmdShow);
 

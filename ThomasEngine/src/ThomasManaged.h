@@ -37,8 +37,8 @@ namespace ThomasEditor {
 		static Thread^ mainThread;
 		static Thread^ renderThread;
 		static bool playing = false;	
-		static AutoResetEvent^ RenderFinished;
-		static AutoResetEvent^ UpdateFinished;
+		static ManualResetEvent^ RenderFinished;
+		static ManualResetEvent^ UpdateFinished;
 	public:
 
 		enum class ManipulatorOperation {
@@ -51,8 +51,8 @@ namespace ThomasEditor {
 			thomas::ThomasCore::Init();
 			if (ThomasCore::Initialized())
 			{
-				RenderFinished = gcnew AutoResetEvent(true);
-				UpdateFinished = gcnew AutoResetEvent(false);
+				RenderFinished = gcnew ManualResetEvent(true);
+				UpdateFinished = gcnew ManualResetEvent(false);
 				ScriptingManger::Init();
 				Scene::CurrentScene = gcnew Scene("test");
 				LOG("Thomas fully initiated, Chugga-chugga-whoo-whoo!");
@@ -73,13 +73,12 @@ namespace ThomasEditor {
 			while (ThomasCore::Initialized())
 			{
 				UpdateFinished->WaitOne();
+				UpdateFinished->Reset();
 				Window::ClearAllWindows();
-				//Monitor::Enter(renderLock);
-					
-				//Monitor::Enter(renderLock);
 				thomas::graphics::Renderer::ProcessCommands();
 				thomas::Window::PresentAllWindows();
 				RenderFinished->Set();
+				thomas::ThomasTime::Update();
 			}
 		}
 
@@ -94,12 +93,20 @@ namespace ThomasEditor {
 		{
 			while (ThomasCore::Initialized())
 			{
+				
 				if (Scene::IsLoading())
 				{
 					Thread::Sleep(1000);
 					continue;
 				}
+				
 				Object^ lock = Scene::CurrentScene->GetGameObjectsLock();
+
+				if (Window::WaitingForUpdate()) //Make sure that we are not rendering when resizing the window.
+					RenderFinished->WaitOne();
+				Window::Update();
+				
+
 				ThomasCore::Update();
 				Monitor::Enter(lock);
 					
@@ -153,6 +160,7 @@ namespace ThomasEditor {
 					}
 					RenderFinished->WaitOne();
 					CopyCommandList();
+					RenderFinished->Reset();
 					UpdateFinished->Set();
 				}
 				Monitor::Exit(lock);
@@ -197,7 +205,6 @@ namespace ThomasEditor {
 				window->QueueResize();
 		}
 
-		static float timeSinceLastUpdate = 100000;
 		static void Update() 
 		{
 			Window::UpdateFocus();

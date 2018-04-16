@@ -1,5 +1,6 @@
 #include "Transform.h"
 #include "../GameObject.h"
+#include <imgui\ImGuizmo.h>
 namespace thomas
 {
 	namespace object
@@ -9,7 +10,8 @@ namespace thomas
 
 			void Transform::Decompose() {
 				m_localWorldMatrix.Decompose(m_localScale, m_localRotation, m_localPosition);
-				m_localEulerAngles = math::ToEuler(m_localRotation);
+				//m_localEulerAngles = math::ToEuler(m_localRotation);
+				ImGuizmo::DecomposeMatrixToComponents(*m_localWorldMatrix.m, (float*)&m_localPosition, (float*)&m_localEulerAngles, (float*)&m_localScale);
 			}
 
 			Transform::Transform()
@@ -53,7 +55,6 @@ namespace thomas
 			{
 				m_localWorldMatrix = matrix;
 				Decompose();
-				m_localEulerAngles = math::ToEuler(m_localRotation);
 			}
 
 			void Transform::LookAt(Transform * target)

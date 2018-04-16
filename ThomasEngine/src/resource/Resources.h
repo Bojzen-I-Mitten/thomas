@@ -6,17 +6,20 @@
 
 using namespace System::Collections::Generic;
 using namespace System::Linq;
+using namespace System::Threading;
 namespace ThomasEditor
 {
 	public ref class Resources
 	{
 	internal:
+		static Object^ resourceLock = gcnew Object();
 		static Dictionary<String^, Resource^>^ resources = gcnew Dictionary<String^, ThomasEditor::Resource^>();
 
 		generic<typename T>
 		where T : Resource
 		static T Deserialize(String^ path)
 		{
+			Monitor::Enter(resourceLock);
 			using namespace System::Runtime::Serialization;
 			DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
 			serializserSettings->PreserveObjectReferences = true;
@@ -26,7 +29,7 @@ namespace ThomasEditor
 			Xml::XmlReader^ file = Xml::XmlReader::Create(path);
 			T resource = (T)serializer->ReadObject(file);
 			file->Close();
-
+			Monitor::Exit(resourceLock);
 			return resource;
 		}
 	public:
@@ -46,6 +49,8 @@ namespace ThomasEditor
 
 		static void SaveResource(Resource^ resource, String^ path)
 		{
+			Monitor::Enter(resourceLock);
+			path = "..\\Data\\" + path;
 			using namespace System::Runtime::Serialization;
 			DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
 			serializserSettings->PreserveObjectReferences = true;
@@ -61,6 +66,7 @@ namespace ThomasEditor
 			serializer->WriteObject(file, resource);
 			file->Close();
 			resources[System::IO::Path::GetFullPath(path)] = resource;
+			Monitor::Exit(resourceLock);
 		}
 
 		static AssetTypes GetResourceAssetType(Type^ type);

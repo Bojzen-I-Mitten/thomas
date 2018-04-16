@@ -7,6 +7,7 @@
 #include "DirectXTK/WICTextureLoader.h"
 #include "DirectXTK/DDSTextureLoader.h"
 #include <dxgi.h>
+#include <D3d11_4.h>
 namespace thomas
 {
 	namespace utils
@@ -99,8 +100,8 @@ namespace thomas
 				return false;
 			}
 
-			ID3D10Multithread *multi;
-			hr = device->QueryInterface(__uuidof(ID3D10Multithread), (void**)&multi);
+			ID3D11Multithread *multi;
+			hr = device->QueryInterface(__uuidof(ID3D11Multithread), (void**)&multi);
 			if (SUCCEEDED(hr) && multi != NULL)
 			{
 				multi->SetMultithreadProtected(TRUE);
@@ -141,7 +142,7 @@ namespace thomas
 						scd.OutputWindow = handle;
 						scd.Flags = 0;
 
-						scd.SampleDesc.Count = THOMAS_AA_COUNT; // AA times 1
+						scd.SampleDesc.Count = THOMAS_AA_COUNT; //Make this costomizable!!!
 						scd.SampleDesc.Quality = THOMAS_AA_QUALITY;
 						scd.Windowed = TRUE;
 						scd.BufferDesc.RefreshRate.Numerator = 0; // change 0 to numerator for vsync
