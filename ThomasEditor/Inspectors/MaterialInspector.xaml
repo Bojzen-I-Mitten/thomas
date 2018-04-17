@@ -5,9 +5,30 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ThomasEditor.Inspectors"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:converters="clr-namespace:ThomasEditor.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" x:Name="materialInspector">
+
+    <UserControl.Resources>
+        <converters:IsNullConverter x:Key="isNullConverter" x:Shared="False"/>
+        <converters:IsEditableMaterial x:Key="isEditableMaterial" x:Shared="False"/>
+        
+        <Style TargetType="{x:Type local:MaterialInspector}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=materialInspector, Path=Material, Converter={StaticResource isNullConverter}}" Value="False">
+                    <Setter Property="ContentTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <local:ExtendedPropertyGrid IsEnabled="{Binding ElementName=materialInspector,Path=Material, Converter={StaticResource isEditableMaterial}}"
+                                                            DataContext="{Binding ElementName=materialInspector, Path=DataContext}" x:Name="editorGrid"/>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <Grid>
-        <local:ExtendedPropertyGrid x:Name="propertyGrid"/>
+        
     </Grid>
 </UserControl>

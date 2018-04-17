@@ -59,5 +59,30 @@ namespace ThomasEditor
 		{
 			String^ get() { return System::IO::Path::GetFileNameWithoutExtension(m_path); }
 		};
+
+		static bool operator ==(Resource^ a, Resource^ b)
+		{
+			if (Object::ReferenceEquals(nullptr, a))
+				return Object::ReferenceEquals(nullptr, b);
+
+			if (Object::ReferenceEquals(nullptr, b))
+				return false;
+
+			return a->m_nativePtr == b->m_nativePtr;
+		}
+
+		static bool operator !=(Resource^ a, Resource^ b)
+		{
+
+			if (Object::ReferenceEquals(nullptr, a))
+				return !Object::ReferenceEquals(nullptr, b);
+
+			if (Object::ReferenceEquals(nullptr, b))
+				return true;
+
+			return a->m_nativePtr != b->m_nativePtr;
+
+			
+		}
 	};
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -19,6 +20,22 @@ using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 namespace ThomasEditor
 {
+    namespace Converters
+    {
+        public class IsEditableMaterial : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                Material mat = value as Material;
+                return (mat != Material.StandardMaterial);
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new InvalidOperationException("IsEditableMaterial can only be used OneWay.");
+            }
+        }
+    }
     namespace Inspectors
     {
         /// <summary>
@@ -39,7 +56,13 @@ namespace ThomasEditor
             "Material",
             typeof(Material),
             typeof(MaterialInspector),
-            new PropertyMetadata(null));
+            new PropertyMetadata(null, OnMaterialPropertyChanged));
+
+            private static void OnMaterialPropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+            {
+                MaterialInspector materialInspector = source as MaterialInspector;
+                materialInspector.MaterialUpdated();
+            }
 
             public MaterialInspector()
             {
@@ -47,16 +70,21 @@ namespace ThomasEditor
                 Loaded += MaterialInspector_Loaded;
             }
 
+            private void MaterialUpdated()
+            {
+                if (Material != null)
+                {
+                    adapter = new DictionaryPropertyGridAdapter(Material.EditorProperties);
+                    adapter.OnPropertyChanged += Adapter_OnPropertyChanged;
+                    DataContext = adapter;
+                    
+                }
+            }
+
             private void MaterialInspector_Loaded(object sender, RoutedEventArgs e)
             {
-                if (propertyGrid.DataContext != null)
-                {
-                    DictionaryPropertyGridAdapter prevAdapter = propertyGrid.DataContext as DictionaryPropertyGridAdapter;
-                    prevAdapter.OnPropertyChanged -= Adapter_OnPropertyChanged;
-                }
-                adapter = new DictionaryPropertyGridAdapter(Material.EditorProperties);
-                adapter.OnPropertyChanged += Adapter_OnPropertyChanged;
-                propertyGrid.DataContext = adapter;
+                MaterialUpdated();
+
             }
 
             DictionaryPropertyGridAdapter adapter;

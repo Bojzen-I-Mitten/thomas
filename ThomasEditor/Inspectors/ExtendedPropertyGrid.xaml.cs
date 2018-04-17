@@ -27,7 +27,7 @@ namespace ThomasEditor
         /// </summary>
         public partial class ExtendedPropertyGrid : UserControl
         {
-
+            bool isMaterialEditor = false;
             public ExtendedPropertyGrid()
             {
 #if DEBUG
@@ -40,13 +40,19 @@ namespace ThomasEditor
             private void PropertyGrid_Loaded(object sender, RoutedEventArgs e)
             {
                 PropertyGrid grid = sender as PropertyGrid;
-                if(grid.DataContext.GetType() == typeof(DictionaryPropertyGridAdapter))
+                if(grid.DataContext != null && grid.DataContext.GetType() == typeof(DictionaryPropertyGridAdapter) && !isMaterialEditor)
                 {
                     EditorTemplateDefinition tex = new EditorTemplateDefinition();
                     tex.EditingTemplate = FindResource("TextureEditor") as DataTemplate;
                     tex.TargetProperties.Add(new TargetPropertyType() { Type = typeof(Texture2D) });
                     grid.EditorDefinitions.Add(tex);
                     grid.EditorDefinitions.Insert(0, tex);
+                    isMaterialEditor = true;
+                }
+                if (Parent is MaterialInspector)
+                {
+                    MaterialInspector matEditor = Parent as MaterialInspector;
+                    grid.IsReadOnly = matEditor.Material == Material.StandardMaterial;
                 }
                 grid.ExpandAllProperties();
             }
@@ -74,7 +80,10 @@ namespace ThomasEditor
                 }
             }
 
-
+            public void SetReadOnly(bool readOnly)
+            {
+                _grid.IsReadOnly = readOnly;
+            }
 
             private void ResourceEditor_PreviewDragOver(object sender, DragEventArgs e)
             {
@@ -107,6 +116,25 @@ namespace ThomasEditor
                 ResourceListPopup.instance = new ResourceListPopup(pi, resourceType);
             }
 
+            private void PropertyGrid_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+            {
+                PropertyGrid grid = sender as PropertyGrid;
+                if (grid.DataContext != null && grid.DataContext.GetType() == typeof(DictionaryPropertyGridAdapter) && !isMaterialEditor)
+                {
+                    EditorTemplateDefinition tex = new EditorTemplateDefinition();
+                    tex.EditingTemplate = FindResource("TextureEditor") as DataTemplate;
+                    tex.TargetProperties.Add(new TargetPropertyType() { Type = typeof(Texture2D) });
+                    grid.EditorDefinitions.Add(tex);
+                    grid.EditorDefinitions.Insert(0, tex);
+                    isMaterialEditor = true;
+                }
+                if (Parent is MaterialInspector)
+                {
+                    MaterialInspector matEditor = Parent as MaterialInspector;
+                    grid.IsReadOnly = matEditor.Material == Material.StandardMaterial;
+                }
+                grid.ExpandAllProperties();
+            }
         }
     }
 }

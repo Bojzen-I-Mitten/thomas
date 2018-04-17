@@ -44,6 +44,8 @@ namespace ThomasEditor
 					((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, (thomas::resource::Material*)value->m_nativePtr);
 				else
 					((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, nullptr);
+
+				OnPropertyChanged("material");
 			}
 		}
 

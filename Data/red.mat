@@ -6,16 +6,18 @@
   </Shader>
   <EditorProperties xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" z:Id="5" z:Size="2">
     <d2p1:KeyValueOfstringanyType>
-      <d2p1:Key z:Id="6">testMat</d2p1:Key>
-      <d2p1:Value z:Id="7" xmlns:d4p1="http://www.w3.org/2001/XMLSchema" i:type="d4p1:float">0</d2p1:Value>
+      <d2p1:Key z:Id="6">ambientTex</d2p1:Key>
+      <d2p1:Value z:Id="7" i:type="Texture2D">
+        <m_path z:Id="8">White Texture</m_path>
+      </d2p1:Value>
     </d2p1:KeyValueOfstringanyType>
     <d2p1:KeyValueOfstringanyType>
-      <d2p1:Key z:Id="8">wow</d2p1:Key>
-      <d2p1:Value z:Id="9" i:type="Color">
+      <d2p1:Key z:Id="9">wow</d2p1:Key>
+      <d2p1:Value z:Id="10" i:type="Color">
         <_x003C_backing_store_x003E_a>1</_x003C_backing_store_x003E_a>
-        <_x003C_backing_store_x003E_b>0</_x003C_backing_store_x003E_b>
-        <_x003C_backing_store_x003E_g>0</_x003C_backing_store_x003E_g>
-        <_x003C_backing_store_x003E_r>0</_x003C_backing_store_x003E_r>
+        <_x003C_backing_store_x003E_b>1</_x003C_backing_store_x003E_b>
+        <_x003C_backing_store_x003E_g>1</_x003C_backing_store_x003E_g>
+        <_x003C_backing_store_x003E_r>1</_x003C_backing_store_x003E_r>
       </d2p1:Value>
     </d2p1:KeyValueOfstringanyType>
   </EditorProperties>

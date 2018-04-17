@@ -35,9 +35,12 @@ namespace ThomasEditor
     namespace Inspectors
     {
 
+        
         /// <summary>
         /// Interaction logic for GameObjectInspector.xaml
         /// </summary>
+        /// 
+        
         public partial class GameObjectInspector : UserControl
         {
             public static readonly DependencyProperty SelectedGameObjectProperty =
@@ -47,7 +50,7 @@ namespace ThomasEditor
                typeof(GameObjectInspector),
                new PropertyMetadata(null));
 
-
+            GameObject prevGameObject;
             //For selecting the firt element in the components list
            // int selectedComponent = 0;
 
@@ -57,8 +60,17 @@ namespace ThomasEditor
 
                 InitializeComponent();
                 Loaded += GameObjectInspector_Loaded;
+                Unloaded += GameObjectInspector_Unloaded;
                 // propertyGrid.Editors.Add(editor);
 
+            }
+
+            private void GameObjectInspector_Unloaded(object sender, RoutedEventArgs e)
+            {
+                if(prevGameObject != null)
+                {
+                    prevGameObject.Components.CollectionChanged -= Components_CollectionChanged;
+                }
             }
 
             private void GameObjectInspector_Loaded(object sender, RoutedEventArgs e)
@@ -70,7 +82,36 @@ namespace ThomasEditor
                     gameObjectGrid.Visibility = Visibility.Visible;
                     //Expand();
                     //CreatePropertyGrids();
+                    SelectedGameObject.Components.CollectionChanged += Components_CollectionChanged;
+                    prevGameObject = SelectedGameObject;
+                    RenderComponent rc = SelectedGameObject.GetComponent<RenderComponent>();
+                    if (rc && rc.material != null)
+                    {
+                        Binding materialBinding = new Binding("material");
+                        materialBinding.Source = rc;
+                        MaterialEditor.SetBinding(MaterialInspector.MaterialProperty, materialBinding);
+                    }
                 }
+            }
+
+            private void Components_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+            {
+                if(SelectedGameObject != null)
+                {
+                    RenderComponent rc = SelectedGameObject.GetComponent<RenderComponent>();
+                    if (rc != null)
+                    {
+                        Binding materialBinding = new Binding("material");
+                        materialBinding.Source = rc;
+                        MaterialEditor.SetBinding(MaterialInspector.MaterialProperty, materialBinding);
+                    }
+                    else
+                    {
+                        BindingOperations.ClearBinding(MaterialEditor, MaterialInspector.MaterialProperty);
+                    }
+                }
+              
+                    
             }
 
             public GameObject SelectedGameObject
@@ -81,17 +122,7 @@ namespace ThomasEditor
                 }
                 set
                 {
-                    SetValue(SelectedGameObjectProperty, value);
-                    gameObjectGrid.DataContext = null;
-                    gameObjectGrid.Visibility = Visibility.Hidden;
-                    if(value != null)
-                    {
-                        gameObjectGrid.DataContext = value;
-                        gameObjectGrid.Visibility = Visibility.Visible;
-                        //Expand();
-                        //CreatePropertyGrids();
-                    }
-                    
+                    SetValue(SelectedGameObjectProperty, value);               
                 }
             }
 
@@ -108,7 +139,7 @@ namespace ThomasEditor
             private void AddComponentButton_Click(object sender, RoutedEventArgs e)
             {
                 addComponentList.SelectedItem = null;
-                addComponentsListContainer.Visibility = Visibility.Visible;
+                addComponentsListPopup.IsOpen = true;
                 AddComponentsFilter.Focus();
                 addComponentList.ItemsSource = Component.GetAllAddableComponentTypes();
                 CollectionViewSource.GetDefaultView(addComponentList.ItemsSource).Filter = ComponentsFilter;
@@ -122,20 +153,13 @@ namespace ThomasEditor
             private void AddComponent(object sender, ExecutedRoutedEventArgs e)
             {
                 addComponentList.SelectedItem = null;
-                addComponentsListContainer.Visibility = Visibility.Visible;
+                addComponentsListPopup.IsOpen = true;
                 AddComponentsFilter.Focus();
                 addComponentList.ItemsSource = Component.GetAllAddableComponentTypes();
                 CollectionViewSource.GetDefaultView(addComponentList.ItemsSource).Filter = ComponentsFilter;
                 //selectedComponent = 0;
                 //addComponentList.SelectedIndex = selectedComponent;
             }
-
-            private void AddComponentsListContainer_LostFocus(object sender, RoutedEventArgs e)
-            {
-                DockPanel panel = sender as DockPanel;
-                panel.Visibility = Visibility.Hidden;
-            }
-
 
             private void AddComponentsFilter_TextChanged(object sender, TextChangedEventArgs e)
             {
@@ -205,8 +229,14 @@ namespace ThomasEditor
                         Type component = addComponentList.SelectedItem as Type;
                         var method = typeof(GameObject).GetMethod("AddComponent").MakeGenericMethod(component);
                         method.Invoke(SelectedGameObject, null);
+                        addComponentsListPopup.IsOpen = false;
                     }
                 }
+            }
+
+            private void AddComponentsListContainer_LostFocus(object sender, RoutedEventArgs e)
+            {
+                addComponentsListPopup.IsOpen = false;
             }
         }
     }

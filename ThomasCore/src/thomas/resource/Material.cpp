@@ -262,8 +262,11 @@ namespace thomas
 		void Material::SetTexture2D(const std::string & name, resource::Texture2D* value)
 		{
 			Lock();
-			m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyTexture2D(value));
-			m_properties[name]->SetName(name);
+			if (value)
+			{
+				m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyTexture2D(value));
+				m_properties[name]->SetName(name);
+			}
 			Unlock();
 		}
 
