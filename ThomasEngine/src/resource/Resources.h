@@ -78,7 +78,7 @@ namespace ThomasEditor
 			Xml::XmlWriterSettings^ settings = gcnew Xml::XmlWriterSettings();
 			settings->Indent = true;
 			Xml::XmlWriter^ file = Xml::XmlWriter::Create(path, settings);
-			resource->m_path = path;
+			resource->Rename(path);
 			serializer->WriteObject(file, resource);
 			file->Close();
 			resources[System::IO::Path::GetFullPath(path)] = resource;
@@ -169,6 +169,14 @@ namespace ThomasEditor
 		static Resource^ Find(String^ path);
 
 		static void RenameResource(String^ oldPath, String^ newPath);
+
+
+		static void Unload(Resource^ resource) {
+			if (Find(resource->m_path))
+			{
+				resources->Remove(System::IO::Path::GetFullPath(resource->m_path));
+			}
+		}
 
 		static void UnloadAll()
 		{

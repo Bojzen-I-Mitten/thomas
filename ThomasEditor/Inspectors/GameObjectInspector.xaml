@@ -29,6 +29,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -62,17 +63,20 @@
                 HorizontalAlignment="Center" HorizontalContentAlignment="Center" 
                 x:Name="addComponentButton" Command="{x:Static commands:CustomCommands.GetAddCompenent}" 
                 />
-        <DockPanel Grid.Row="3" Panel.ZIndex="1" x:Name="addComponentsListContainer" LostFocus="AddComponentsListContainer_LostFocus" Visibility="Hidden" Width="200" Height="300" Margin="10">
-            <TextBox x:Name="AddComponentsFilter" DockPanel.Dock="Top" TextChanged="AddComponentsFilter_TextChanged"/>
-            <ListView x:Name="addComponentList" Background="#333333" SelectionChanged="AddComponentList_SelectionChanged">
-                <!--MouseLeftButtonDown="AddComponentsList_MLBUp" KeyUp="AddComponentList_KeyUp"-->
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </DockPanel>
+        <Popup x:Name="addComponentsListPopup" IsOpen="False" StaysOpen="False" Width="200" Height="300" PlacementTarget="{Binding ElementName=addComponentButton}" Placement="Bottom">
+            <DockPanel LostFocus="AddComponentsListContainer_LostFocus">
+                <TextBox x:Name="AddComponentsFilter" DockPanel.Dock="Top" TextChanged="AddComponentsFilter_TextChanged"/>
+                <ListView x:Name="addComponentList" Background="#333333" SelectionChanged="AddComponentList_SelectionChanged">
+                    <!--MouseLeftButtonDown="AddComponentsList_MLBUp" KeyUp="AddComponentList_KeyUp"-->
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </DockPanel>
+        </Popup>
+        <local:MaterialInspector Grid.Row="4" x:Name="MaterialEditor" DataContext="{x:Null}"/>
     </Grid>
 
 </UserControl>

@@ -137,6 +137,10 @@ namespace ThomasEditor
                         TreeViewItem parent = foundItem.Parent as TreeViewItem;
                         parent.Items.Remove(foundItem);
                     }
+                    if(foundItem.DataContext is Resource)
+                    {
+                        ThomasEditor.Resources.Unload(foundItem.DataContext as Resource);
+                    }
                 }
               
             }), e.FullPath);
