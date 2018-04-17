@@ -6,7 +6,7 @@
 #include "Shader.h"
 #include "../math/Math.h"
 #include "Resources.h"
-
+#include "texture\Texture2D.h"
 using namespace System::Collections::Generic;
 namespace ThomasEditor
 {
@@ -69,6 +69,9 @@ namespace ThomasEditor
 
 		Vector4 GetVector(String^ name) { return Vector4(((thomas::resource::Material*)m_nativePtr)->GetVector(Utility::ConvertString(name))); }
 		void SetVector(String^ name, Vector4 value) { ((thomas::resource::Material*)m_nativePtr)->SetVector(Utility::ConvertString(name), thomas::math::Vector4(value.x, value.y, value.z, value.w)); }
+
+		Texture2D^ GetTexture2D(String^ name) { return gcnew Texture2D(((thomas::resource::Material*)m_nativePtr)->GetTexture2D(Utility::ConvertString(name))); }
+		void SetTexture2D(String^ name, Texture2D^ value) { ((thomas::resource::Material*)m_nativePtr)->SetTexture2D(Utility::ConvertString(name), (thomas::resource::Texture2D*)value->m_nativePtr); }
 		
 		[DataMemberAttribute(Order=0)]
 		property Shader^ Shader
@@ -112,6 +115,11 @@ namespace ThomasEditor
 						Color v = (Color)prop;
 						SetColor(key, v);
 					}
+					else if (t == Texture2D::typeid)
+					{
+						Texture2D^ v = (Texture2D^)prop;
+						SetTexture2D(key, v);
+					}
 					else if (t == System::Single::typeid)
 					{
 						//SetRaw(key, &prop);
@@ -130,7 +138,7 @@ namespace ThomasEditor
 			Dictionary<String^, System::Object^>^ properties = gcnew Dictionary<String^, System::Object^>();
 			for (auto& prop : ((thomas::resource::Material*)m_nativePtr)->GetEditorProperties())
 			{
-
+				String^ name = Utility::ConvertString(prop.first);
 				System::Object^ value;
 				switch (prop.second->GetType())
 				{
@@ -138,24 +146,27 @@ namespace ThomasEditor
 
 					break;
 				case thomas::resource::shaderProperty::ShaderProperty::Type::SCALAR_FLOAT:
-					value = ((thomas::resource::Material*)m_nativePtr)->GetFloat(prop.first);
+					value = GetFloat(name);
 					break;
 				case thomas::resource::shaderProperty::ShaderProperty::Type::SCALAR_INT:
-					value = ((thomas::resource::Material*)m_nativePtr)->GetInt(prop.first);
+					value = GetInt(name);
 					break;
 				case thomas::resource::shaderProperty::ShaderProperty::Type::VECTOR:
-					value = Vector4(((thomas::resource::Material*)m_nativePtr)->GetVector(prop.first));
+					value = GetVector(name);
 					break;
 				case thomas::resource::shaderProperty::ShaderProperty::Type::COLOR:
-					value = Color(((thomas::resource::Material*)m_nativePtr)->GetColor(prop.first));
+					value = GetColor(name);
 					break;
 				case thomas::resource::shaderProperty::ShaderProperty::Type::MATRIX:
-					value = Matrix4x4(((thomas::resource::Material*)m_nativePtr)->GetMatrix(prop.first));
+					value = GetMatrix(name);
+					break;
+				case thomas::resource::shaderProperty::ShaderProperty::Type::TEXTURE2D:
+					value = GetTexture2D(name);
 					break;
 				default:
 					break;
 				}
-				properties->Add(Utility::ConvertString(prop.first), value);
+				properties->Add(name, value);
 			}
 			return properties;
 		}

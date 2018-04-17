@@ -115,6 +115,7 @@ namespace ThomasEditor.Converters
 
     public class ColorConverter : IValueConverter
     {
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
 
@@ -130,6 +131,7 @@ namespace ThomasEditor.Converters
             {
                 return new Color(0, 0, 0, 1);
             }
+            new Color(0, 0, 0, 1);
             System.Windows.Media.Color mediaColor = (System.Windows.Media.Color)value;
             
             //System.Drawing.Color color = System.Drawing.ColorTranslator.FromHtml(mediaColor.ToString());

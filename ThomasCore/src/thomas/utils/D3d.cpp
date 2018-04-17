@@ -45,7 +45,7 @@ namespace thomas
 			return true;
 		}
 
-		bool D3d::CreateTexture(int width, int height, DXGI_FORMAT format, ID3D11Texture2D *& tex, ID3D11ShaderResourceView *& SRV, bool mipMaps, int mipLevels=1)
+		bool D3d::CreateTexture(void* initData, int width, int height, DXGI_FORMAT format, ID3D11Texture2D *& tex, ID3D11ShaderResourceView *& SRV, bool mipMaps, int mipLevels=1)
 		{
 			D3D11_TEXTURE2D_DESC textureDesc;
 			ZeroMemory(&textureDesc, sizeof(textureDesc));
@@ -67,12 +67,24 @@ namespace thomas
 			viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			viewDesc.Texture2D.MipLevels = mipLevels;
 			viewDesc.Texture2D.MostDetailedMip = 0;
-
-			ID3D11Texture2D* tex2D;
-
-			ThomasCore::GetDevice()->CreateTexture2D(&textureDesc, NULL, &tex2D);
-			ThomasCore::GetDevice()->CreateShaderResourceView(tex2D, &viewDesc, &SRV);
-			return true;
+			
+			HRESULT hr;
+			if (initData)
+			{
+				D3D11_SUBRESOURCE_DATA TexInitData;
+				ZeroMemory(&TexInitData, sizeof(D3D11_SUBRESOURCE_DATA));
+				TexInitData.pSysMem = initData;
+				TexInitData.SysMemPitch = static_cast<UINT>(4 * width);
+				TexInitData.SysMemSlicePitch = static_cast<UINT>(4 * width * height);
+				hr = ThomasCore::GetDevice()->CreateTexture2D(&textureDesc, &TexInitData, &tex);
+			}
+			else
+			{
+				hr = ThomasCore::GetDevice()->CreateTexture2D(&textureDesc, NULL, &tex);
+			}
+			if(hr == S_OK)
+				hr = ThomasCore::GetDevice()->CreateShaderResourceView(tex, &viewDesc, &SRV);
+			return hr == S_OK;
 		}
 		
 		bool D3d::CreateDeviceAndContext(ID3D11Device *& device, ID3D11DeviceContext *& context)

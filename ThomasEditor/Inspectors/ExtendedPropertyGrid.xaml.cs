@@ -16,6 +16,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 
+
+
 namespace ThomasEditor
 {
     namespace Inspectors
@@ -28,6 +30,10 @@ namespace ThomasEditor
 
             public ExtendedPropertyGrid()
             {
+#if DEBUG
+                System.Diagnostics.PresentationTraceSources.DataBindingSource.Switch.Level =
+                    System.Diagnostics.SourceLevels.Critical;
+#endif
                 InitializeComponent();
             }
 

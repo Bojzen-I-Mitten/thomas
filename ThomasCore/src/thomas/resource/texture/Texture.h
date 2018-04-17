@@ -65,8 +65,8 @@ namespace thomas
 			int m_width;
 			int m_height;
 
-			ID3D11Resource* m_resource;
-			ID3D11ShaderResourceView* m_srv;
+			ID3D11Resource* m_resource = nullptr;
+			ID3D11ShaderResourceView* m_srv = nullptr;
 		};
 	}
 }

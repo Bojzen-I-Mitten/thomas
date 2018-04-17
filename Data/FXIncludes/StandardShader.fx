@@ -1,9 +1,19 @@
 #pragma warning(disable: 4717) // removes effect deprecation warning.
 
 #include <ThomasCG.hlsl>
+Texture2D ambientTex;
+
+
+SamplerState StandardWrapSampler
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
 
 cbuffer MATERIAL_PROPERTIES
 {
+    
 	float4 wow : COLOR;
 };
 
@@ -46,6 +56,7 @@ struct v2f {
 	float4 vertex : SV_POSITION;
 	float4 worldPos : POSITIONWS;
 	float3 normal : NORMAL;
+    float2 texcoord : TEXCOORD0;
 };
 
 v2f vert(appdata_thomas v)
@@ -54,6 +65,7 @@ v2f vert(appdata_thomas v)
 	o.vertex = ThomasObjectToClipPos(v.vertex);
 	o.worldPos = ThomasObjectToWorldPos(v.vertex);
 	o.normal = ThomasWorldToObjectDir(v.normal);
+    o.texcoord = v.texcoord;
 	return o;
 }
 
@@ -193,7 +205,7 @@ float4 frag(v2f input) : SV_TARGET
         lightMultiplyer = spotFactor * tempLight.color * tempLight.intensity / (tempLight.attenuation.x + tempLight.attenuation.y * lightDistance + tempLight.attenuation.z * lightDistance * lightDistance);
         Apply(finalColor, lightMultiplyer, input.normal, lightDir, viewDir);
     }
-    
+    return ambientTex.Sample(StandardWrapSampler, input.texcoord) * wow;
     return saturate(finalColor);
 
 }
