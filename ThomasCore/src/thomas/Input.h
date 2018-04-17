@@ -1,18 +1,15 @@
+/*
+	Input handler class wrapped around DirectXTK
+*/
+
 #pragma once
 #include <Windows.h>
-#include "Common.h"
 #include <DirectXTK\GamePad.h>
 #include <DirectXTK\Keyboard.h>
 #include <DirectXTK\Mouse.h>
 #include "utils\Math.h"
 
-/*
-This class is a wrapper for handling all the inputs from the different DirectXTK input methods.
-
-GetDown/Up only returns true the frame the button/key was pressed/released.
-
-The other Get function returns true while the button/key is pressed.
-*/
+using namespace DirectX;
 
 namespace thomas
 {
@@ -35,22 +32,16 @@ namespace thomas
 		enum class Keys
 		{
 			None = 0,
-
 			Back = 0x8,
 			Tab = 0x9,
-
 			Enter = 0xd,
-
 			Pause = 0x13,
 			CapsLock = 0x14,
 			Kana = 0x15,
-
 			Kanji = 0x19,
-
 			Escape = 0x1b,
 			ImeConvert = 0x1c,
 			ImeNoConvert = 0x1d,
-
 			Space = 0x20,
 			PageUp = 0x21,
 			PageDown = 0x22,
@@ -77,7 +68,6 @@ namespace thomas
 			D7 = 0x37,
 			D8 = 0x38,
 			D9 = 0x39,
-
 			A = 0x41,
 			B = 0x42,
 			C = 0x43,
@@ -107,7 +97,6 @@ namespace thomas
 			LeftWindows = 0x5b,
 			RightWindows = 0x5c,
 			Apps = 0x5d,
-
 			Sleep = 0x5f,
 			NumPad0 = 0x60,
 			NumPad1 = 0x61,
@@ -123,7 +112,6 @@ namespace thomas
 			Add = 0x6b,
 			Separator = 0x6c,
 			Subtract = 0x6d,
-
 			Decimal = 0x6e,
 			Divide = 0x6f,
 			F1 = 0x70,
@@ -150,10 +138,8 @@ namespace thomas
 			F22 = 0x85,
 			F23 = 0x86,
 			F24 = 0x87,
-
 			NumLock = 0x90,
 			Scroll = 0x91,
-
 			LeftShift = 0xa0,
 			RightShift = 0xa1,
 			LeftControl = 0xa2,
@@ -178,7 +164,6 @@ namespace thomas
 			SelectMedia = 0xb5,
 			LaunchApplication1 = 0xb6,
 			LaunchApplication2 = 0xb7,
-
 			OemSemicolon = 0xba,
 			OemPlus = 0xbb,
 			OemComma = 0xbc,
@@ -186,76 +171,70 @@ namespace thomas
 			OemPeriod = 0xbe,
 			OemQuestion = 0xbf,
 			OemTilde = 0xc0,
-
 			OemOpenBrackets = 0xdb,
 			OemPipe = 0xdc,
 			OemCloseBrackets = 0xdd,
 			OemQuotes = 0xde,
 			Oem8 = 0xdf,
-
 			OemBackslash = 0xe2,
-
 			ProcessKey = 0xe5,
-
 			OemCopy = 0xf2,
 			OemAuto = 0xf3,
 			OemEnlW = 0xf4,
-
 			Attn = 0xf6,
 			Crsel = 0xf7,
 			Exsel = 0xf8,
 			EraseEof = 0xf9,
 			Play = 0xfa,
 			Zoom = 0xfb,
-
 			Pa1 = 0xfd,
 			OemClear = 0xfe,
 		};
+
 		enum class Buttons
 		{
-			//Main Buttons
 			A,
 			B,
 			X,
 			Y,
-			//DPAD
 			DPAD_UP,
 			DPAD_DOWN,
 			DPAD_LEFT,
 			DPAD_RIGHT,
-			//STICKS (click)
 			LS,
 			RS,
-			//BUMPERS
 			LB,
 			RB,
-			//TRIGGERS
 			LT,
 			RT,
-
-			//OTHER
 			START,
 			BACK
 		};
 
+	public:
 		static bool Init();
 		static void Update();
 		static void ProcessKeyboard(UINT message, WPARAM wParam, LPARAM lParam);
 		static void ProcessMouse(UINT message, WPARAM wParam, LPARAM lParam, HWND handle);
 		static void ProcessGamePad(UINT message, WPARAM wParam, LPARAM lParam);
 		static void ResetScrollWheelValue();
+		static void Vibrate(float left, float right, float time = 0.f);
 
+	public:
+		static void SetMouseMode(MouseMode mode);
+
+	public:
 		//Mouse
-		static LONG GetMouseY();
-		static LONG GetMouseX();
+		static float GetMouseY();
+		static float GetMouseX();
 		static bool GetMouseButtonDown(MouseButtons button);
 		static bool GetMouseButtonUp(MouseButtons button);
 		static bool GetMouseButton(MouseButtons button);
 		static int GetMouseScrollWheel();
-
+		static math::Vector2 GetMousePosition();
+		
 		//Keyboard
 		static bool GetKeyDown(Keys key);
-		static std::string GetKeyDown(); // Don't open, dead inside
 		static bool GetKeyUp(Keys key);
 		static bool GetKey(Keys key);
 	
@@ -263,37 +242,34 @@ namespace thomas
 		static bool GetButtonDown(Buttons button);
 		static bool GetButtonUp(Buttons button);
 		static bool GetButton(Buttons button);
-		static void Vibrate(float left, float right, float time=0);
-
 		static float GetLeftStickY();
 		static float GetLeftStickX();
 		static float GetRightStickY();
 		static float GetRightStickX();
 		static float GetLeftTriggerDelta();
 		static float GetRightTriggerDelta();
+		
+	private:
+		//Keyboard
+		static std::unique_ptr<Keyboard> s_keyboard;
+		static Keyboard::State s_keyboardState;
+		static Keyboard::KeyboardStateTracker s_keyboardTracker;
 
-		static math::Vector2 GetMousePosition();
-		static void SetMouseMode(MouseMode mode);		
+		//Mouse
+		static std::unique_ptr<Mouse> s_mouse;
+		static Mouse::State s_mouseState;
+		static Mouse::ButtonStateTracker s_mouseTracker;
+
+		//Gamepad
+		static std::unique_ptr<GamePad> s_gamePad;
+		static GamePad::State s_gamePadState;
+		static GamePad::ButtonStateTracker s_gamePadTracker;
 
 	private:
-		static std::unique_ptr<DirectX::Keyboard> s_keyboard;
-		static std::unique_ptr<DirectX::Mouse> s_mouse;
-		static std::unique_ptr<DirectX::GamePad> s_gamePad;
-
-		static DirectX::Mouse::State s_mouseState;
-		static DirectX::Keyboard::State s_keyboardState;
-		static DirectX::GamePad::State s_gamePadState;
-
-		static DirectX::Keyboard::KeyboardStateTracker s_keyboardTracker;
-		static DirectX::Mouse::ButtonStateTracker s_mouseTracker;
-		static DirectX::GamePad::ButtonStateTracker s_gamePadTracker;
-
 		static bool s_initialized;
-
-		static MouseMode s_mouseMode;
 		static bool s_recordPosition;
+		static MouseMode s_mouseMode;
 		static math::Vector2 s_mousePosition;
-
 		static float s_vibrateTimeLeft;
 	};
 }

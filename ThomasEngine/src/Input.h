@@ -231,8 +231,8 @@ namespace ThomasEditor
 			BACK
 		};
 
-		static LONG GetMouseY() { return thomas::Input::GetMouseY(); }
-		static LONG GetMouseX() { return thomas::Input::GetMouseX(); }
+		static float GetMouseY() { return thomas::Input::GetMouseY(); }
+		static float GetMouseX() { return thomas::Input::GetMouseX(); }
 		static int GetMouseScrollWheel() { return thomas::Input::GetMouseScrollWheel(); };
 		static bool GetMouseButtonDown(MouseButtons button) { return thomas::Input::GetMouseButtonDown((thomas::Input::MouseButtons)button); }
 		static bool GetMouseButtonUp(MouseButtons button) { return thomas::Input::GetMouseButtonUp((thomas::Input::MouseButtons)button); }
