@@ -40,6 +40,14 @@ namespace ThomasEditor
             private void PropertyGrid_Loaded(object sender, RoutedEventArgs e)
             {
                 PropertyGrid grid = sender as PropertyGrid;
+                if(grid.DataContext.GetType() == typeof(DictionaryPropertyGridAdapter))
+                {
+                    EditorTemplateDefinition tex = new EditorTemplateDefinition();
+                    tex.EditingTemplate = FindResource("TextureEditor") as DataTemplate;
+                    tex.TargetProperties.Add(new TargetPropertyType() { Type = typeof(Texture2D) });
+                    grid.EditorDefinitions.Add(tex);
+                    grid.EditorDefinitions.Insert(0, tex);
+                }
                 grid.ExpandAllProperties();
             }
 
@@ -52,7 +60,7 @@ namespace ThomasEditor
                     if (item.DataContext is Resource)
                     {
                         Resource resource = item.DataContext as Resource;
-                        Label label = sender as Label;
+                        ContentControl label = sender as ContentControl;
                         PropertyItem pi = label.DataContext as PropertyItem;
                         if (resource.GetType() == pi.PropertyType)
                         {
@@ -76,7 +84,7 @@ namespace ThomasEditor
                     if (item.DataContext is Resource)
                     {
                         Resource resource = item.DataContext as Resource;
-                        Label label = sender as Label;
+                        ContentControl label = sender as ContentControl;
                         PropertyItem pi = label.DataContext as PropertyItem;
                         if (resource.GetType() == pi.PropertyType)
                             e.Handled = true;

@@ -50,6 +50,16 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="TextureEditor">
+
+            <Border Background="#333333" HorizontalAlignment="Right" Width="100" BorderBrush="Black" BorderThickness="2">
+                <Grid Height="100" HorizontalAlignment="Right" AllowDrop="True" Drop="ResourceEditor_Drop" PreviewDragOver="ResourceEditor_PreviewDragOver">
+                    <Image Width="100" Source="{Binding Value, Converter={StaticResource resourceImageConverter}, Mode=OneWay}"/>
+                    <Button  HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="50" Content="Select" Foreground="#333333" BorderBrush="#333333" Background="WhiteSmoke" Cursor="Hand" Click="ResourceList_Open"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
         <DataTemplate x:Key="Vector2Editor">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -110,10 +120,8 @@
 
         <DataTemplate x:Key="ColorEditor">
 
-            <p:ColorPicker SelectedColor="{Binding Value, Converter={StaticResource convertColor}}">
+            <p:ColorPicker Width="100" HorizontalAlignment="Right" SelectedColor="{Binding Value, Converter={StaticResource convertColor}}">
             </p:ColorPicker>
-            <!--<xctk:ColorPicker UsingAlphaChannel="True" SelectedColor="{Binding Value, Converter={StaticResource convertColor}}"/>-->
-            <!--<xctk:ColorCanvas SelectedColor="{Binding Value, Converter={StaticResource convertColor}}" />-->
         </DataTemplate>
 
     </UserControl.Resources>
@@ -140,6 +148,7 @@
                     <xctk:TargetPropertyType Type="managed:Color"/>
                 </xctk:EditorTemplateDefinition.TargetProperties>
             </xctk:EditorTemplateDefinition>
+
             <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource ResourceEditor}">
                 <xctk:EditorTemplateDefinition.TargetProperties>
                     <xctk:TargetPropertyType Type="managed:Resource"/>
