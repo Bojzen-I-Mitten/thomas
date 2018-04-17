@@ -8,6 +8,7 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:managed="clr-namespace:ThomasEditor;assembly=ThomasEngine"
              mc:Ignorable="d" 
+              xmlns:p="clr-namespace:PropertyTools.Wpf;assembly=PropertyTools.Wpf"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
@@ -18,8 +19,9 @@
         <converters:Vector3Converter x:Key="convertVector3" x:Shared="False"/>
         <converters:Vector4Converter x:Key="convertVector4" x:Shared="False"/>
         <converters:ColorConverter x:Key="convertColor" x:Shared="False"/>
-
-
+        
+        
+        
         <DataTemplate x:Key="ResourceEditor">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -107,7 +109,11 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ColorEditor">
-            <xctk:PropertyGridEditorColorPicker SelectedColor="{Binding Value, Converter={StaticResource convertColor}}" />
+
+            <p:ColorPicker SelectedColor="{Binding Value, Converter={StaticResource convertColor}}">
+            </p:ColorPicker>
+            <!--<xctk:ColorPicker UsingAlphaChannel="True" SelectedColor="{Binding Value, Converter={StaticResource convertColor}}"/>-->
+            <!--<xctk:ColorCanvas SelectedColor="{Binding Value, Converter={StaticResource convertColor}}" />-->
         </DataTemplate>
 
     </UserControl.Resources>

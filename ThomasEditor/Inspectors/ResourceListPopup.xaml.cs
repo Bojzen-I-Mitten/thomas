@@ -33,7 +33,10 @@ namespace ThomasEditor
                     Resources.AssetTypes type = ThomasEditor.Resources.GetResourceAssetType(res.GetType());
                     if (type == Resources.AssetTypes.TEXTURE2D)
                     {
-                        return new Uri(System.IO.Path.GetFullPath(res.GetPath()));
+                        Texture2D tex = res as Texture2D;
+                        BitmapSource bitmapSource = BitmapSource.Create(tex.width, tex.height, 300, 300, PixelFormats.Bgra32, BitmapPalettes.WebPaletteTransparent, tex.GetRawPixelData(), tex.width*tex.height*4,  4*tex.width);
+
+                        return bitmapSource;
                     }
                     return AssetBrowser.assetImages[type].UriSource.LocalPath;
                 }
@@ -61,7 +64,19 @@ namespace ThomasEditor
             Title = "Select " + resourceType.Name;
             
             List<object> resources = ThomasEditor.Resources.GetResourcesOfType(resourceType).Cast<object>().ToList();
+           
+
+            if(resourceType == typeof(Material))
+            {
+                resources.Insert(0, Material.StandardMaterial);
+            }
+            else if(resourceType == typeof(Texture2D))
+            {
+                resources.Insert(0, Texture2D.blackTexture);
+                resources.Insert(0, Texture2D.whiteTexture);
+            }
             resources.Insert(0, "None");
+
             ResourceList.ItemsSource = resources;
             CollectionViewSource.GetDefaultView(ResourceList.ItemsSource).Filter = ResourcesFilter;
             ResourceFilter.Focus();

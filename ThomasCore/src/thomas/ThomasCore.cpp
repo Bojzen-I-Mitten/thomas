@@ -45,7 +45,7 @@ namespace thomas {
 		init = Input::Init();
 
 		if (init)
-		//	init = graphics::Texture2D::Init();
+			resource::Texture2D::Init();
 
 
 
@@ -84,6 +84,7 @@ namespace thomas {
 	{
 		if (!s_device)
 		{
+			CoInitializeEx(nullptr, COINITBASE_MULTITHREADED);
 			bool hr = utils::D3d::CreateDeviceAndContext(s_device, s_context);
 			if(!hr)
 				LOG("Failed to init DirectX Device");
@@ -149,6 +150,7 @@ namespace thomas {
 		//graphics::Texture::Destroy();
 		resource::Shader::DestroyAllShaders();
 		resource::Material::Destroy();
+		resource::Texture2D::Destroy();
 		//utils::DebugTools::Destroy();
 		object::Object::Destroy();
 		editor::EditorCamera::Destroy();

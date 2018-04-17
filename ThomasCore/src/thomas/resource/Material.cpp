@@ -150,8 +150,10 @@ namespace thomas
 					m_properties[name] = m_shader->GetProperty(name);
 					return true;
 				}
+				return false;
 			}
-			return false;
+			return true;
+			
 		}
 
 		std::shared_ptr<shaderProperty::ShaderProperty> Material::GetProperty(const std::string & name)

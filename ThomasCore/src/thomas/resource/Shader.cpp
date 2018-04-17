@@ -545,6 +545,7 @@ namespace thomas
 			prop->GetDesc(&variableDesc);
 			ID3DX11EffectConstantBuffer* cBuffer = prop->GetParentConstantBuffer();
 			
+			bool isMaterialProperty = false;
 			shaderProperty::ShaderProperty* newProperty = nullptr;
 			std::string semantic;
 			if (variableDesc.Semantic != NULL)
@@ -596,6 +597,7 @@ namespace thomas
 				//case D3D_SVT_RWTEXTURE3D:
 				//case D3D_SVT_TEXTURE3D:
 				//case D3D_SVT_TEXTURECUBE:
+					isMaterialProperty = true;
 					newProperty = shaderProperty::ShaderPropertyTexture2D::GetDefault();
 					break;
 				case D3D_SVT_STRUCTURED_BUFFER:
@@ -611,7 +613,7 @@ namespace thomas
 			}
 			
 			std::string name = variableDesc.Name;
-			bool isMaterialProperty = false;
+			
 			if (cBuffer->IsValid())
 			{
 				D3DX11_EFFECT_VARIABLE_DESC bufferDesc;
