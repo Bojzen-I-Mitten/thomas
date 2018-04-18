@@ -1,20 +1,17 @@
 #pragma once
 #include "Common.h"
 #include "utils\Math.h"
-
 #include <btBulletDynamicsCommon.h>
+#include <memory>
 
 namespace thomas
 {
 	namespace graphics { class BulletDebugDraw; };
 	namespace object { namespace component { class Camera; class RigidBodyComponent; } }
+
 	class THOMAS_API Physics
 	{
-	private:
 	public:
-	public:
-		static btDiscreteDynamicsWorld* s_world;
-		static float s_timeStep;
 		static bool Init();
 		static void AddRigidBody(object::component::RigidBodyComponent* rigidBody);
 		static void RemoveRigidBody(object::component::RigidBodyComponent* rigidBody);
@@ -22,18 +19,30 @@ namespace thomas
 		static void Simulate();
 		static void DrawDebug(object::component::Camera* camera);
 		static void Destroy();
+
+	public:
 		static graphics::BulletDebugDraw* getDebugDraw();
 
-		static btVector3 ToBullet(math::Vector3& vector);
-		static math::Vector3 ToSimple(btVector3& vector);
+	public:
+		static btVector3 ToBullet(const math::Vector3& vector);
+		static btQuaternion ToBullet(const math::Quaternion& quaternion);
+		static math::Vector3 ToSimple(const btVector3& vector);
+		static math::Quaternion ToSimple(const btQuaternion& quaternion);
 
-		static btQuaternion ToBullet(math::Quaternion& quaternion);
-		static math::Quaternion ToSimple(btQuaternion& quaternion);
+	public:
+		static std::unique_ptr<btDiscreteDynamicsWorld> s_world;
+
+	private:
+		static std::unique_ptr<btDefaultCollisionConfiguration> s_collisionConfiguration;
+		static std::unique_ptr<btCollisionDispatcher> s_dispatcher;
+		static std::unique_ptr<btBroadphaseInterface> s_broadPhase;
+		static std::unique_ptr<btSequentialImpulseConstraintSolver> s_solver;
+		static std::unique_ptr<graphics::BulletDebugDraw> s_debugDraw;
+
 	private:
 		static float s_timeSinceLastPhysicsStep;
-		static graphics::BulletDebugDraw* s_debugDraw;
 		static float s_accumulator;
-
+		static float s_timeStep;
 		static std::vector<object::component::RigidBodyComponent*> s_rigidBodies;
 	};
 }

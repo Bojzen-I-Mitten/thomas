@@ -30,12 +30,11 @@ namespace thomas
 			
 			RigidBodyComponent::~RigidBodyComponent()
 			{
-				delete getMotionState();
-				Physics::s_world->removeCollisionObject(this);
-				delete getCollisionShape();
-				
 				Physics::RemoveRigidBody(this);
+				delete getMotionState();
 				
+				Physics::s_world->removeCollisionObject(this);
+				delete getCollisionShape();				
 			}
 
 			void RigidBodyComponent::OnEnable()
@@ -53,18 +52,13 @@ namespace thomas
 
 			void RigidBodyComponent::OnDisable()
 			{
-				Physics::RemoveRigidBody(this);
-
-				
+				Physics::RemoveRigidBody(this);				
 			}
 
 			void RigidBodyComponent::OnDestroy()
 			{
 				OnDisable();
 			}
-
-
-
 
 			void RigidBodyComponent::UpdateRigidbodyToTransform()
 			{			
@@ -91,8 +85,7 @@ namespace thomas
 			}
 
 			void RigidBodyComponent::SetKinematic(bool kinematic)
-			{
-				
+			{				
 				if (kinematic != m_kinematic)
 				{
 					m_kinematic = kinematic;
@@ -103,13 +96,14 @@ namespace thomas
 						Physics::AddRigidBody(this);
 					}
 					
-				}
-		
+				}	
 			}
+
 			bool RigidBodyComponent::IsKinematic()
 			{
 				return m_kinematic;
 			}
+
 			void RigidBodyComponent::SetCollider(btCollisionShape * collider)
 			{
 				Physics::RemoveRigidBody(this);
@@ -118,6 +112,7 @@ namespace thomas
 				UpdateRigidbodyMass();
 				Physics::AddRigidBody(this);
 			}
+
 			void RigidBodyComponent::SetMass(float mass)
 			{
 				m_mass = mass;
@@ -125,12 +120,10 @@ namespace thomas
 				{
 					Physics::RemoveRigidBody(this);
 					UpdateRigidbodyMass();
-					Physics::AddRigidBody(this);
-					
-				}
-					
-				
+					Physics::AddRigidBody(this);				
+				}		
 			}
+
 			float RigidBodyComponent::GetMass()
 			{
 				return m_mass;
