@@ -3,6 +3,7 @@
 #include "../utils/Math.h"
 #include "Resource.h"
 #include <vector>
+#include <memory>
 namespace thomas {
 	namespace graphics
 	{
@@ -29,14 +30,14 @@ namespace thomas {
 		public:
 			Model(std::string path);
 
-			std::vector<graphics::Mesh*> GetMeshes();
+			std::vector<std::shared_ptr<graphics::Mesh>> GetMeshes();
 
 			~Model();
 			
 		public:
 			math::BoundingBox m_bounds;
 		private:
-			std::vector<graphics::Mesh*> m_meshes;
+			std::vector<std::shared_ptr<graphics::Mesh>> m_meshes;
 
 			static struct Primitives
 			{

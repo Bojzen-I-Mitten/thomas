@@ -49,7 +49,7 @@ v2f vert(appdata v)
 
 float4 frag(v2f i) : SV_TARGET
 {
-	return float4(1, 1, 0, 1);
+	return float4(1, 0, 1, 1);
 }
 
 

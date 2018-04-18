@@ -214,6 +214,7 @@ namespace ThomasEditor {
 
 		static void Play()
 		{
+			ThomasEditor::Resources::OnPlay();
 			Scene::CurrentScene->Play();
 			playing = true;
 		}
@@ -227,6 +228,7 @@ namespace ThomasEditor {
 		{
 			playing = false;
 			Scene::RestartCurrentScene();
+			ThomasEditor::Resources::OnStop();
 		}
 
 		static void SelectGameObject(GameObject^ gObj)

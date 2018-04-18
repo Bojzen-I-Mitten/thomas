@@ -41,6 +41,12 @@
     <ApplicationIcon>icons\thomas.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PropertyTools, Version=2.0.1.0, Culture=neutral, PublicKeyToken=ea0c9f2b460934d0, processorArchitecture=MSIL">
+      <HintPath>..\packages\PropertyTools.Wpf.2.0.1\lib\net45\PropertyTools.dll</HintPath>
+    </Reference>
+    <Reference Include="PropertyTools.Wpf, Version=2.0.1.0, Culture=neutral, PublicKeyToken=ea0c9f2b460934d0, processorArchitecture=MSIL">
+      <HintPath>..\packages\PropertyTools.Wpf.2.0.1\lib\net45\PropertyTools.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -57,6 +63,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="TAlex.WPF.Controls, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TAlex.WPF.Controls.2.0.1.0\lib\net40\TAlex.WPF.Controls.dll</HintPath>
     </Reference>
     <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
@@ -91,6 +100,9 @@
       <DependentUpon>AssetBrowser.xaml</DependentUpon>
     </Compile>
     <Compile Include="Inspectors\Converters.cs" />
+    <Compile Include="Inspectors\Inspector.xaml.cs">
+      <DependentUpon>Inspector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="utils\CustomCommands.cs" />
     <Compile Include="utils\DictionaryPropertyGridAdapter.cs" />
     <Compile Include="Inspectors\ExtendedPropertyGrid.xaml.cs">
@@ -99,8 +111,8 @@
     <Compile Include="Elements\GameObjectHierarchy.xaml.cs">
       <DependentUpon>GameObjectHierarchy.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Inspectors\MaterialEditor.xaml.cs">
-      <DependentUpon>MaterialEditor.xaml</DependentUpon>
+    <Compile Include="Inspectors\MaterialInspector.xaml.cs">
+      <DependentUpon>MaterialInspector.xaml</DependentUpon>
     </Compile>
     <Compile Include="Elements\OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
@@ -111,8 +123,11 @@
     <Compile Include="scriptComponent test\TestComponent.cs" />
     <Compile Include="Themes\LeftMarginMultiplierConverter.cs" />
     <Compile Include="Themes\TreeViewItemExtensions.cs" />
-    <Compile Include="Inspectors\ThomasGameObjectInspector.xaml.cs">
-      <DependentUpon>ThomasGameObjectInspector.xaml</DependentUpon>
+    <Compile Include="Inspectors\GameObjectInspector.xaml.cs">
+      <DependentUpon>GameObjectInspector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="utils\EditableTextBlock.xaml.cs">
+      <DependentUpon>EditableTextBlock.xaml</DependentUpon>
     </Compile>
     <Compile Include="utils\ThomasWindow.cs" />
     <Compile Include="Elements\TransformGizmo.xaml.cs">
@@ -130,6 +145,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Inspectors\Inspector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -142,7 +161,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Inspectors\MaterialEditor.xaml">
+    <Page Include="Inspectors\MaterialInspector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -162,11 +181,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Inspectors\ThomasGameObjectInspector.xaml">
+    <Page Include="Inspectors\GameObjectInspector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Elements\TransformGizmo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="utils\EditableTextBlock.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -232,12 +255,6 @@
     <Resource Include="icons\local-transform.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThomasEngine\ThomasEngine.vcxproj">
-      <Project>{64d247ed-db4d-4ea3-b8ae-680bf66a8f2e}</Project>
-      <Name>ThomasEngine</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="icons\assets\dir.png" />
   </ItemGroup>
   <ItemGroup>
@@ -261,6 +278,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icons\assets\material.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThomasEngine\ThomasEngine.vcxproj">
+      <Project>{64d247ed-db4d-4ea3-b8ae-680bf66a8f2e}</Project>
+      <Name>ThomasEngine</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

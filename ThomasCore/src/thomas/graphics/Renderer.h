@@ -4,7 +4,7 @@
 #include "../utils/Math.h"
 #include <vector>
 #include <map>
-
+#include <memory>
 namespace thomas {
 
 	class Scene;
@@ -28,10 +28,10 @@ namespace thomas {
 		{
 			object::component::Camera* camera;
 			math::Matrix worldMatrix;
-			Mesh* mesh;
+			std::shared_ptr<Mesh> mesh;
 			resource::Material* material;
 
-			RenderCommand(math::Matrix world, Mesh* m, resource::Material* mat, object::component::Camera* cam) : 
+			RenderCommand(math::Matrix world, std::shared_ptr<Mesh> m, resource::Material* mat, object::component::Camera* cam) :
 				worldMatrix(world), mesh(m), material(mat), camera(cam) {};
 		};
 		typedef std::map<object::component::Camera*, std::map<resource::Material*, std::vector<RenderCommand>>> CommandQueue;

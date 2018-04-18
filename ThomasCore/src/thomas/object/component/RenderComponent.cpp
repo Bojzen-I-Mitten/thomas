@@ -54,14 +54,16 @@ namespace thomas {
 			}
 			void RenderComponent::SetMaterial(int meshIndex, resource::Material * material)
 			{
-				if (!material)
+				
+				if (meshIndex >= 0)
 				{
-					LOG("Material is NULL");
-					return;
-				}
-				if (meshIndex < m_materials.size() && meshIndex >= 0)
-				{
-					m_materials[meshIndex] = material;
+					if (!material)
+						material = resource::Material::GetStandardMaterial();
+					if (meshIndex >= m_materials.size())
+					{
+						m_materials.push_back(material);
+					}
+					else m_materials[meshIndex] = material;
 				}
 					
 			}
@@ -71,7 +73,7 @@ namespace thomas {
 				if (m_materials.size() > meshIndex && meshIndex >= 0)
 					return m_materials[meshIndex];
 				else
-					return nullptr;
+					return resource::Material::GetStandardMaterial();
 			}
 
 
@@ -85,7 +87,7 @@ namespace thomas {
 						if (material == nullptr)
 							material = resource::Material::GetStandardMaterial();
 
-						graphics::Mesh* mesh = m_model->GetMeshes()[i];
+						std::shared_ptr<graphics::Mesh> mesh = m_model->GetMeshes()[i];
 						
 						thomas::graphics::Renderer::SubmitCommand(thomas::graphics::RenderCommand(m_gameObject->m_transform->GetWorldMatrix(), mesh, material, camera));
 					}
