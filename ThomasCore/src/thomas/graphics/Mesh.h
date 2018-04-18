@@ -1,25 +1,15 @@
 #pragma once
-#include "../Common.h"
-
-#include "../utils/Math.h"
+#include "..\utils\Math.h"
+#include "..\resource\Shader.h"
 #include <vector>
 #include <map>
-#include "../resource/Shader.h"
-namespace thomas 
+#include <memory>
+
+namespace thomas
 {
-	namespace object
+	namespace graphics
 	{
-		namespace component
-		{
-			class Camera;
-			class Transform;
-		}
-	}
-	namespace resource { class Material; }
-	namespace graphics 
-	{
-		
-		struct Vertices 
+		struct Vertices
 		{
 			std::vector<math::Vector4> positions;
 			std::vector<math::Vector4> colors;
@@ -29,38 +19,39 @@ namespace thomas
 			std::vector<math::Vector3> bitangents;
 		};
 
-
 		struct MeshData
 		{
 			Vertices vertices;
-			std::vector<int> indices;
-			std::map<resource::Shader::Semantics, utils::buffers::VertexBuffer*> vertexBuffers;
-			utils::buffers::IndexBuffer* indexBuffer = nullptr;
+			std::vector<unsigned int> indices;
+			std::map<resource::Shader::Semantics, std::unique_ptr<utils::buffers::VertexBuffer>> vertexBuffers;
+			std::unique_ptr<utils::buffers::IndexBuffer> indexBuffer;
 		};
 
 		class THOMAS_API Mesh
 		{
+		public:
+			Mesh(const Vertices & vertices, std::vector<unsigned int> indices, const std::string & name);
+			~Mesh() = default;
+			void Draw(resource::Shader* shader);
+
+		public:
+			void SetName(const std::string & name);
+
+		public:
+			std::string GetName() const;
+		    unsigned int GetIndexCount() const;
+			unsigned int GetVertexCount() const;
+			Vertices & GetVertices();
+			std::vector<unsigned int> & GetIndices();
+			MeshData & GetData();
+
 		private:
 			void SetupMesh();
 			math::BoundingBox GenerateBounds();
+
 		public:
-			Mesh(Vertices vertices, std::vector<int> indices, std::string name);
-			~Mesh();
-			bool SetName(std::string name);
-
-			MeshData* GetData();
-	
-			std::string GetName();
-
-			int GetIndexCount();
-			int GetVertexCount();
-
-			void Draw(resource::Shader* shader);
-			
-			Vertices* GetVertices();
-			std::vector<int>* GetIndices();
-
 			math::BoundingBox m_bounds;
+
 		private:
 			std::string m_name;
 			MeshData m_data;
