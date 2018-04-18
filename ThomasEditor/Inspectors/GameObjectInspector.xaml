@@ -23,7 +23,7 @@
     </UserControl.Resources>
 
     
-    <Grid x:Name="gameObjectGrid" Background="#444444" Visibility="Hidden">
+    <Grid x:Name="gameObjectGrid" Background="#444444" Visibility="Visible">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -32,16 +32,15 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" Height="50" Background="#595959" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <CheckBox IsChecked="{Binding activeSelf}" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Active?"/>
-            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="5" Grid.Column="1"/>
-
-
+            <CheckBox Margin="10"  IsChecked="{Binding activeSelf}" Grid.Column="0" HorizontalAlignment="Center" ToolTip="Active?"/>
+            <TextBox VerticalAlignment="Top" Height="20" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="5" Grid.Column="1"/>
+            <CheckBox Content="Static" Grid.Column="2" Margin="10"/>
         </Grid>
 
         <ItemsControl ItemsSource="{Binding Components}" Grid.Row="1" Background="#333333">

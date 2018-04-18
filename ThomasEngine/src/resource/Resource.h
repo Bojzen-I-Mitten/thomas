@@ -60,6 +60,11 @@ namespace ThomasEditor
 			String^ get() { return System::IO::Path::GetFileNameWithoutExtension(m_path); }
 		};
 
+		virtual String^ ToString() override
+		{
+			return name;
+		}
+
 		static bool operator ==(Resource^ a, Resource^ b)
 		{
 			if (Object::ReferenceEquals(nullptr, a))

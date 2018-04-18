@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ThomasEditor
 {
-    class DictionaryPropertyGridAdapter : ICustomTypeDescriptor
+   public class DictionaryPropertyGridAdapter : ICustomTypeDescriptor
     {
         public IDictionary _dictionary;
         public delegate void PropertyChanged();

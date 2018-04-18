@@ -164,6 +164,18 @@ namespace ThomasEditor
 			return list;
 		}
 
+		static Resource^ FindResourceFromNativePtr(thomas::resource::Resource* nativePtr)
+		{
+			if (nativePtr == nullptr)
+				return nullptr;
+			for each(Resource^ resource in resources->Values)
+			{
+				if (resource->m_nativePtr == nativePtr)
+					return resource;
+			}
+			return nullptr;
+		}
+
 		static Resource^ Load(String^ path);
 		
 		static Resource^ Find(String^ path);
