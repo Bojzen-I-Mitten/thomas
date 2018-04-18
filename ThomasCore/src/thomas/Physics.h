@@ -7,7 +7,7 @@
 namespace thomas
 {
 	namespace graphics { class BulletDebugDraw; };
-	namespace object { namespace component { class Camera; class RigidBodyComponent; } }
+	namespace object { namespace component { class Camera; class Rigidbody; } }
 	class THOMAS_API Physics
 	{
 	private:
@@ -16,8 +16,8 @@ namespace thomas
 		static btDiscreteDynamicsWorld* s_world;
 		static float s_timeStep;
 		static bool Init();
-		static void AddRigidBody(object::component::RigidBodyComponent* rigidBody);
-		static void RemoveRigidBody(object::component::RigidBodyComponent* rigidBody);
+		static void AddRigidBody(object::component::Rigidbody* rigidBody);
+		static void RemoveRigidBody(object::component::Rigidbody* rigidBody);
 		static void UpdateRigidbodies();
 		static void Simulate();
 		static void DrawDebug(object::component::Camera* camera);
@@ -34,6 +34,6 @@ namespace thomas
 		static graphics::BulletDebugDraw* s_debugDraw;
 		static float s_accumulator;
 
-		static std::vector<object::component::RigidBodyComponent*> s_rigidBodies;
+		static std::vector<object::component::Rigidbody*> s_rigidBodies;
 	};
 }

@@ -13,6 +13,7 @@ namespace ThomasEditor
 {
 	[DisallowMultipleComponent]
 	[ExecuteInEditor]
+	[HideInInspector]
 	public ref class Transform : public Component
 	{
 	public:

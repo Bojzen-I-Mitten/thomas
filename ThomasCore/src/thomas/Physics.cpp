@@ -1,6 +1,6 @@
 #include "Physics.h"
 #include "ThomasTime.h"
-#include "object\component\RigidBodyComponent.h"
+#include "object\component\physics\Rigidbody.h"
 #include "object\GameObject.h"
 #include "graphics\BulletDebugDraw.h"
 #include "object\component\Camera.h"
@@ -11,7 +11,7 @@ namespace thomas
 	btDiscreteDynamicsWorld* Physics::s_world;
 	float Physics::s_timeStep = 1.0f/60.0f;
 	float Physics::s_timeSinceLastPhysicsStep = 0.0f;
-	std::vector<object::component::RigidBodyComponent*> Physics::s_rigidBodies;
+	std::vector<object::component::Rigidbody*> Physics::s_rigidBodies;
 	float Physics::s_accumulator;
 	bool Physics::Init()
 	{
@@ -42,16 +42,16 @@ namespace thomas
 		return s_debugDraw->m_initialized;
 
 	}
-	void Physics::AddRigidBody(object::component::RigidBodyComponent * rigidBody)
+	void Physics::AddRigidBody(object::component::Rigidbody * rigidBody)
 	{
 		s_rigidBodies.push_back(rigidBody);
 		s_world->addRigidBody(rigidBody);
 	}
-	void Physics::RemoveRigidBody(object::component::RigidBodyComponent * rigidBody)
+	void Physics::RemoveRigidBody(object::component::Rigidbody * rigidBody)
 	{
 		for (int i = 0; i < s_rigidBodies.size(); i++)
 		{
-			object::component::RigidBodyComponent* rb = s_rigidBodies[i];
+			object::component::Rigidbody* rb = s_rigidBodies[i];
 			if (rb == rigidBody)
 			{
 				s_rigidBodies.erase(s_rigidBodies.begin() + i);
@@ -62,7 +62,7 @@ namespace thomas
 	}
 	void Physics::UpdateRigidbodies()
 	{
-		for (object::component::RigidBodyComponent* rb : s_rigidBodies)
+		for (object::component::Rigidbody* rb : s_rigidBodies)
 		{
 			rb->UpdateTransformToRigidBody();
 		}
@@ -85,14 +85,13 @@ namespace thomas
 			btPersistentManifold* contactManifold = s_world->getDispatcher()->getManifoldByIndexInternal(i);
 			btCollisionObject* obA = (btCollisionObject*)contactManifold->getBody0();
 			btCollisionObject* obB = (btCollisionObject*)contactManifold->getBody1();
-			
-			object::component::RigidBodyComponent* rbA = static_cast<object::component::RigidBodyComponent*>(obA);
-			object::component::RigidBodyComponent* rbB = static_cast<object::component::RigidBodyComponent*>(obB);
+			object::component::Rigidbody* rbA = static_cast<object::component::Rigidbody*>(obA);
+			object::component::Rigidbody* rbB = static_cast<object::component::Rigidbody*>(obB);
 
 			if (rbA->isActive() && rbB->isActive())
 			{
-				object::component::RigidBodyComponent::Collision colA;
-				object::component::RigidBodyComponent::Collision colB;
+				object::component::Rigidbody::Collision colA;
+				object::component::Rigidbody::Collision colB;
 				colA.thisRigidbody = rbA;
 				colA.otherRigidbody = rbB;
 				colB.thisRigidbody = rbB;
@@ -102,7 +101,7 @@ namespace thomas
 			}
 				
 		}
-		for (object::component::RigidBodyComponent* rb : s_rigidBodies)
+		for (object::component::Rigidbody* rb : s_rigidBodies)
 		{
 			rb->UpdateRigidbodyToTransform();
 		}

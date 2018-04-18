@@ -28,6 +28,8 @@
     <ClCompile Include="src\thomas\editor\EditorCamera.cpp" />
     <ClCompile Include="src\thomas\editor\EditorGrid.cpp" />
     <ClCompile Include="src\thomas\editor\gizmos\Gizmos.cpp" />
+    <ClCompile Include="src\thomas\object\component\physics\BoxCollider.cpp" />
+    <ClCompile Include="src\thomas\object\component\physics\Collider.cpp" />
     <ClCompile Include="src\thomas\resource\texture\Texture.cpp" />
     <ClCompile Include="src\thomas\resource\texture\Texture2D.cpp" />
     <ClCompile Include="src\thomas\utils\Buffers.cpp" />
@@ -49,7 +51,7 @@
     <ClCompile Include="src\thomas\object\component\Light.cpp" />
     <ClCompile Include="src\thomas\object\component\ParticleEmitterComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\RenderComponent.cpp" />
-    <ClCompile Include="src\thomas\object\component\RigidBodyComponent.cpp" />
+    <ClCompile Include="src\thomas\object\component\physics\Rigidbody.cpp" />
     <ClCompile Include="src\thomas\object\component\SoundComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\SpriteComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\TextComponent.cpp" />
@@ -80,6 +82,8 @@
     <ClInclude Include="src\thomas\editor\EditorCamera.h" />
     <ClInclude Include="src\thomas\editor\EditorGrid.h" />
     <ClInclude Include="src\thomas\editor\gizmos\Gizmos.h" />
+    <ClInclude Include="src\thomas\object\component\physics\BoxCollider.h" />
+    <ClInclude Include="src\thomas\object\component\physics\Collider.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\shaderProperties.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderProperty.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyColor.h" />
@@ -114,7 +118,7 @@
     <ClInclude Include="src\thomas\object\component\Light.h" />
     <ClInclude Include="src\thomas\object\component\ParticleEmitterComponent.h" />
     <ClInclude Include="src\thomas\object\component\RenderComponent.h" />
-    <ClInclude Include="src\thomas\object\component\RigidBodyComponent.h" />
+    <ClInclude Include="src\thomas\object\component\physics\Rigidbody.h" />
     <ClInclude Include="src\thomas\object\component\SoundComponent.h" />
     <ClInclude Include="src\thomas\object\component\SpriteComponent.h" />
     <ClInclude Include="src\thomas\object\component\TextComponent.h" />
