@@ -1,8 +1,3 @@
-/*
-	Lightmanager class for different light types
-	Status: Broken?
-*/
-
 #pragma once
 #include <vector>
 #include "../utils/Math.h"

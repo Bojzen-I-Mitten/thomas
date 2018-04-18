@@ -1,10 +1,10 @@
 #include "BulletDebugDraw.h"
-#include "../ThomasCore.h"
-#include "../resource/Material.h"
-#include "../utils/d3d.h"
-#include "../object/component/Camera.h"
-#include "../resource/Shader.h"
-#include "DirectXTK/CommonStates.h"
+#include "..\ThomasCore.h"
+#include "..\resource\Material.h"
+#include "..\utils\d3d.h"
+#include "..\object\component\Camera.h"
+#include "..\resource\Shader.h"
+#include "DirectXTK\CommonStates.h"
 
 namespace thomas
 {
