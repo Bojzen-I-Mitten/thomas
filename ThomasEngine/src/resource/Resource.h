@@ -31,6 +31,9 @@ namespace ThomasEditor
 		{
 		}
 
+		virtual void OnPlay() {};
+		virtual void OnStop() {};
+
 		void Rename(String^ newPath) {
 			m_path = newPath;
 			m_nativePtr->Rename(Utility::ConvertString(newPath));

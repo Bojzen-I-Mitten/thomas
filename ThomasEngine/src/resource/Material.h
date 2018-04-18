@@ -14,9 +14,10 @@ namespace ThomasEditor
 	public ref class Material : public Resource
 	{
 	private:
-		
+		Shader ^ m_shaderBeforePlay;
+		Dictionary<String^, System::Object^>^ m_propertiesBeforePlay;
 	internal:
-		Material(thomas::resource::Material* ptr) : Resource(Utility::ConvertString(ptr->GetName()), ptr) {};
+		Material(thomas::resource::Material* ptr) : Resource(Utility::ConvertString(ptr->GetPath()), ptr) {};
 		bool m_loaded = false;
 	public:
 
@@ -33,6 +34,21 @@ namespace ThomasEditor
 		Material(Material^ original) : Resource(original->ToString() + " (instance).mat", new thomas::resource::Material((thomas::resource::Material*)original->m_nativePtr))
 		{
 			m_loaded = true;
+		}
+
+
+		void OnPlay() override
+		{
+			m_shaderBeforePlay = this->Shader;
+			m_propertiesBeforePlay = this->EditorProperties;
+		}
+
+		void OnStop() override
+		{
+			this->Shader = m_shaderBeforePlay;
+			this->EditorProperties = m_propertiesBeforePlay;
+			m_shaderBeforePlay = nullptr;
+			m_propertiesBeforePlay = nullptr;
 		}
 
 		property String^ name
@@ -91,17 +107,9 @@ namespace ThomasEditor
 					return (ThomasEditor::Shader^)shader;
 				else
 					return gcnew ThomasEditor::Shader(nativePtr);
+
 			}
-			void set(ThomasEditor::Shader^ value) 
-			{ 
-				if(m_nativePtr)
-					((thomas::resource::Material*)m_nativePtr)->SetShader((thomas::resource::Shader*)value->m_nativePtr);
-				else
-				{
-					m_nativePtr = new thomas::resource::Material(Utility::ConvertString(m_path));
-					((thomas::resource::Material*)m_nativePtr)->SetShader((thomas::resource::Shader*)value->m_nativePtr);
-				}
-			}
+			void set(ThomasEditor::Shader^ value);
 		}
 
 
@@ -113,39 +121,7 @@ namespace ThomasEditor
 				return GetEditorProperties();
 			}
 				
-			void set(Dictionary<String^, System::Object^>^ value)
-			{
-				
-				for each(String^ key in value->Keys)
-				{
-					System::Object^ prop = value[key];
-					Type^ t = prop->GetType();
-					if (t == Vector4::typeid)
-					{
-						Vector4 v = (Vector4)prop;
-						SetVector(key, v);
-					}
-					else if (t == Color::typeid)
-					{
-						Color v = (Color)prop;
-						SetColor(key, v);
-					}
-					else if (t == Texture2D::typeid)
-					{
-						Texture2D^ v = (Texture2D^)prop;
-						SetTexture2D(key, v);
-					}
-					else if (t == System::Single::typeid)
-					{
-						//SetRaw(key, &prop);
-					}
-				}
-				if(m_loaded)
-				{ }
-					//ThomasEditor::Resources::SaveResource(this, m_path);
-
-				//UpdateEditorProperties();
-			}
+			void set(Dictionary<String^, System::Object^>^ value);
 		}
 	private:
 		Dictionary<String^, System::Object^>^ GetEditorProperties()
