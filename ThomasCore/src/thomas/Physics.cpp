@@ -53,8 +53,7 @@ namespace thomas
 				break;
 			}
 		}
-		s_world->removeRigidBody(rigidBody);
-		
+		s_world->removeRigidBody(rigidBody);		
 	}
 
 	void Physics::UpdateRigidbodies()
@@ -114,11 +113,8 @@ namespace thomas
 
 	void Physics::Destroy()
 	{
-		//Destroy everything????
 		btCollisionObjectArray arr = s_world->getCollisionObjectArray();
 		arr.clear();
-
-		//Delete objects...
 		s_collisionConfiguration.reset();
 		s_debugDraw.reset();
 		s_dispatcher.reset();

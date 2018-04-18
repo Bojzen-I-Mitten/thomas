@@ -12,7 +12,7 @@ namespace thomas
 	{
 		BulletDebugDraw::BulletDebugDraw()
 		{
-			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/lineShader.fx");
+			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/lineShader.fx"); //Hardcoded line shader
 
 			if (shader != nullptr)
 			{
@@ -41,27 +41,7 @@ namespace thomas
 		{
 			drawLine(from, to, color, color);
 		}
-
-		void BulletDebugDraw::drawSphere(const btVector3 & p, btScalar radius, const btVector3 & color)
-		{
-		}
-
-		void BulletDebugDraw::drawTriangle(const btVector3 & a, const btVector3 & b, const btVector3 & c, const btVector3 & color, btScalar alpha)
-		{
-		}
-
-		void BulletDebugDraw::drawContactPoint(const btVector3 & PointOnB, const btVector3 & normalOnB, btScalar distance, int lifeTime, const btVector3 & color)
-		{
-		}
-
-		void BulletDebugDraw::reportErrorWarning(const char * warningString)
-		{
-		}
-
-		void BulletDebugDraw::draw3dText(const btVector3 & location, const char * textString)
-		{
-		}
-
+		
 		void BulletDebugDraw::Update(object::component::Camera * camera)
 		{
 			m_viewProjection = camera->GetViewProjMatrix().Transpose();	
