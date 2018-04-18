@@ -12,8 +12,6 @@
                 <ResourceDictionary Source="Themes\PropertyGridStyle.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
-
-            <local:MaterialEditor x:Key="materialEditor" Background="#444444"/>
         </ResourceDictionary>
         
     </Application.Resources>

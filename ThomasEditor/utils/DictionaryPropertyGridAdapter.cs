@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ThomasEditor
 {
-    class DictionaryPropertyGridAdapter : ICustomTypeDescriptor
+   public class DictionaryPropertyGridAdapter : ICustomTypeDescriptor
     {
         public IDictionary _dictionary;
         public delegate void PropertyChanged();
@@ -117,8 +117,11 @@ namespace ThomasEditor
 
         public override void SetValue(object component, object value)
         {
-            _dictionary[_key] = value;
-            OnPropertyChanged();
+            if(_dictionary[_key] != value)
+            {
+                _dictionary[_key] = value;
+                OnPropertyChanged();
+            }
         }
 
         public override object GetValue(object component)

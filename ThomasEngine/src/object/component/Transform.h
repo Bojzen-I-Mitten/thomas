@@ -112,7 +112,8 @@ namespace ThomasEditor
 			else
 				return false;
 		}
-	
+
+		void OnDestroy() override;
 		void Update() override
 		{
 			if (((thomas::object::component::Transform*)nativePtr)->IsDirty())

@@ -37,10 +37,20 @@ namespace ThomasEditor
 
 		property Material^ material {
 			Material^ get() {
-				return gcnew Material(((thomas::object::component::RenderComponent*)nativePtr)->GetMaterial(0));
+				thomas::resource::Material* nptr = ((thomas::object::component::RenderComponent*)nativePtr)->GetMaterial(0);
+				Resource^ mat =	ThomasEditor::Resources::FindResourceFromNativePtr(nptr);
+				if (mat != nullptr)
+					return (Material^)mat;
+				else
+					return gcnew Material(nptr);
 			}
 			void set(Material^ value) {
-				((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, (thomas::resource::Material*)value->m_nativePtr);
+				if (value)
+					((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, (thomas::resource::Material*)value->m_nativePtr);
+				else
+					((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, nullptr);
+
+				OnPropertyChanged("material");
 			}
 		}
 

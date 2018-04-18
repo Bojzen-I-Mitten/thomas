@@ -21,28 +21,33 @@ namespace ThomasEditor
     /// Interaction logic for ResourceListPopup.xaml
     /// </summary>
     /// 
-
-    public class ResourceImageConverter : IValueConverter
+    namespace Converters
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public class ResourceImageConverter : IValueConverter
         {
-            if (value is Resource)
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                Resource res = value as Resource;
-                Resources.AssetTypes type = ThomasEditor.Resources.GetResourceAssetType(res.GetType());
-                if(type == Resources.AssetTypes.TEXTURE2D)
+                if (value is Resource)
                 {
-                    return new Uri(System.IO.Path.GetFullPath(res.GetPath()));
-                }
-                return AssetBrowser.assetImages[type].UriSource.LocalPath;
-            }
-            else
-                return "../icons/null.png";
-        }
+                    Resource res = value as Resource;
+                    Resources.AssetTypes type = ThomasEditor.Resources.GetResourceAssetType(res.GetType());
+                    if (type == Resources.AssetTypes.TEXTURE2D)
+                    {
+                        Texture2D tex = res as Texture2D;
+                        BitmapSource bitmapSource = BitmapSource.Create(tex.width, tex.height, 300, 300, PixelFormats.Bgra32, BitmapPalettes.WebPaletteTransparent, tex.GetRawPixelData(), tex.width*tex.height*4,  4*tex.width);
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
+                        return bitmapSource;
+                    }
+                    return AssetBrowser.assetImages[type].UriSource.LocalPath;
+                }
+                else
+                    return "../icons/null.png";
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 
@@ -59,7 +64,19 @@ namespace ThomasEditor
             Title = "Select " + resourceType.Name;
             
             List<object> resources = ThomasEditor.Resources.GetResourcesOfType(resourceType).Cast<object>().ToList();
+           
+
+            if(resourceType == typeof(Material))
+            {
+                resources.Insert(0, Material.StandardMaterial);
+            }
+            else if(resourceType == typeof(Texture2D))
+            {
+                resources.Insert(0, Texture2D.blackTexture);
+                resources.Insert(0, Texture2D.whiteTexture);
+            }
             resources.Insert(0, "None");
+
             ResourceList.ItemsSource = resources;
             CollectionViewSource.GetDefaultView(ResourceList.ItemsSource).Filter = ResourcesFilter;
             ResourceFilter.Focus();

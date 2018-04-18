@@ -22,8 +22,7 @@ namespace ThomasEditor
 
             if (Input.GetKeyDown(Input.Keys.K))
             {
-                Material mat = Material.StandardMaterial;
-                ThomasEditor.Resources.SaveResource(mat, "testMat.mat");
+
                 //RenderComponent r = gameObject.AddComponent<RenderComponent>();
                 
             }
