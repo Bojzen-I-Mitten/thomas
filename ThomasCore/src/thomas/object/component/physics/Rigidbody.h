@@ -1,25 +1,26 @@
 #pragma once
-#include "Component.h"
-#include "../../Physics.h"
+#include "../Component.h"
+#include "../../../Physics.h"
 namespace thomas
 {
 	namespace object
 	{
 		namespace component
 		{
-			class THOMAS_API RigidBodyComponent : public Component, public btRigidBody
+			class Collider;
+			class THOMAS_API Rigidbody : public Component, public btRigidBody
 			{
 			public:
 				struct Collision
 				{
-					RigidBodyComponent* thisRigidbody;
-					RigidBodyComponent* otherRigidbody;
+					Rigidbody* thisRigidbody;
+					Rigidbody* otherRigidbody;
 				};
 			private:
 				void UpdateRigidbodyMass();
 			public:
-				RigidBodyComponent();
-				~RigidBodyComponent();
+				Rigidbody();
+				~Rigidbody();
 				void OnEnable();
 				void OnDisable();
 				void OnDestroy();
