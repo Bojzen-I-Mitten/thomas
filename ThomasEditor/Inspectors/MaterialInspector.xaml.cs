@@ -42,13 +42,32 @@ namespace ThomasEditor
         /// Interaction logic for MaterialEditor.xaml
         /// </summary>
         /// 
-        public partial class MaterialInspector : UserControl
+        public partial class MaterialInspector : UserControl, INotifyPropertyChanged
         {
-            
+            public virtual event PropertyChangedEventHandler PropertyChanged;
+            public void OnPropertyChanged(String info)
+            {
+                if(PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
+
             public Material Material
             {
                 get { return (Material)GetValue(MaterialProperty); }
                 set { SetValue(MaterialProperty, value); }
+            }
+
+            public DictionaryPropertyGridAdapter MaterialProperties { get; set; }
+
+            public Shader SelectedShader
+            {
+                get { return Material.Shader; }
+                set { Material.Shader = value; MaterialUpdated(); }
+            }
+
+            public List<Shader> AvailableShaders
+            {
+                get { return new List<Shader>(ThomasEditor.Resources.GetResourcesOfType(typeof(Shader)).Cast<Shader>()); }
             }
 
             public static readonly DependencyProperty MaterialProperty =
@@ -74,10 +93,14 @@ namespace ThomasEditor
             {
                 if (Material != null)
                 {
-                    adapter = new DictionaryPropertyGridAdapter(Material.EditorProperties);
-                    adapter.OnPropertyChanged += Adapter_OnPropertyChanged;
-                    DataContext = adapter;
-                    
+                    if(MaterialProperties != null)
+                    {
+                        MaterialProperties.OnPropertyChanged -= Adapter_OnPropertyChanged;
+                    }
+                    MaterialProperties = new DictionaryPropertyGridAdapter(Material.EditorProperties);
+                    MaterialProperties.OnPropertyChanged += Adapter_OnPropertyChanged;
+
+                    OnPropertyChanged("MaterialProperties");
                 }
             }
 
@@ -88,7 +111,7 @@ namespace ThomasEditor
             }
 
             DictionaryPropertyGridAdapter adapter;
-                       
+
             public void SetMaterial(Material material)
             {
                 //dynamic employee = new BusinessObject();
@@ -99,7 +122,7 @@ namespace ThomasEditor
 
             private void Adapter_OnPropertyChanged()
             {
-                Material.EditorProperties = adapter._dictionary as Dictionary<String, object>;
+                Material.EditorProperties = MaterialProperties._dictionary as Dictionary<String, object>;
             }
 
 

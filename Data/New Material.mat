@@ -2,7 +2,7 @@
 <Material xmlns:i="http://www.w3.org/2001/XMLSchema-instance" z:Id="1" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/" xmlns="http://schemas.datacontract.org/2004/07/ThomasEditor">
   <m_path z:Id="2">..\Data\New Material.mat</m_path>
   <Shader z:Id="3">
-    <m_path z:Id="4">../Data/FXIncludes/StandardShader.fx</m_path>
+    <m_path z:Id="4">..\Data\FXIncludes\StandardShader.fx</m_path>
   </Shader>
   <EditorProperties xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" z:Id="5" z:Size="2">
     <d2p1:KeyValueOfstringanyType>

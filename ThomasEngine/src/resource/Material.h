@@ -70,13 +70,28 @@ namespace ThomasEditor
 		Vector4 GetVector(String^ name) { return Vector4(((thomas::resource::Material*)m_nativePtr)->GetVector(Utility::ConvertString(name))); }
 		void SetVector(String^ name, Vector4 value) { ((thomas::resource::Material*)m_nativePtr)->SetVector(Utility::ConvertString(name), thomas::math::Vector4(value.x, value.y, value.z, value.w)); }
 
-		Texture2D^ GetTexture2D(String^ name) { return gcnew Texture2D(((thomas::resource::Material*)m_nativePtr)->GetTexture2D(Utility::ConvertString(name))); }
+		Texture2D^ GetTexture2D(String^ name) 
+		{
+			thomas::resource::Texture2D* nativePtr = ((thomas::resource::Material*)m_nativePtr)->GetTexture2D(Utility::ConvertString(name));
+			ThomasEditor::Resource^ texture = ThomasEditor::Resources::FindResourceFromNativePtr(nativePtr);
+			if (texture)
+				return (ThomasEditor::Texture2D^)texture;
+			else
+				return gcnew ThomasEditor::Texture2D(nativePtr);
+		}
 		void SetTexture2D(String^ name, Texture2D^ value) { ((thomas::resource::Material*)m_nativePtr)->SetTexture2D(Utility::ConvertString(name), (thomas::resource::Texture2D*)value->m_nativePtr); }
 		
 		[DataMemberAttribute(Order=0)]
 		property Shader^ Shader
 		{
-			ThomasEditor::Shader^ get() {return gcnew ThomasEditor::Shader(((thomas::resource::Material*)m_nativePtr)->GetShader()); }
+			ThomasEditor::Shader^ get() {
+				thomas::resource::Shader* nativePtr = ((thomas::resource::Material*)m_nativePtr)->GetShader();
+				ThomasEditor::Resource^ shader = ThomasEditor::Resources::FindResourceFromNativePtr(nativePtr);
+				if (shader)
+					return (ThomasEditor::Shader^)shader;
+				else
+					return gcnew ThomasEditor::Shader(nativePtr);
+			}
 			void set(ThomasEditor::Shader^ value) 
 			{ 
 				if(m_nativePtr)
