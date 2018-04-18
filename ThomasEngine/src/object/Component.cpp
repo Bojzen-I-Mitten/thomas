@@ -61,7 +61,7 @@ List<Type^>^ ThomasEditor::Component::GetAllAddableComponentTypes()
 	for (int i = 0; i < types->Count; i++)
 	{
 		Type^ t = types[i];
-		if (t == Component::typeid || t == Transform::typeid || t == ScriptComponent::typeid)
+		if (t->IsDefined(HideInInspector::typeid, false))
 		{
 			types->RemoveAt(i);
 			i--;

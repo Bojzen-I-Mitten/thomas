@@ -1,8 +1,9 @@
-#include "RigidBodyComponent.h"
+#include "Rigidbody.h"
 
-#include "../GameObject.h"
-#include "../../utils/Math.h"
-#include "Transform.h"
+#include "../../GameObject.h"
+#include "../../../utils/Math.h"
+#include "../Transform.h"
+#include "Collider.h"
 
 namespace thomas
 {
@@ -10,16 +11,20 @@ namespace thomas
 	{
 		namespace component
 		{
-			void RigidBodyComponent::UpdateRigidbodyMass()
+			void Rigidbody::UpdateRigidbodyMass()
 			{
 				float mass = m_kinematic ? 0 : m_mass;
-				btVector3 inertia;
-				getCollisionShape()->calculateLocalInertia(mass, inertia);
+				btVector3 inertia = getLocalInertia();
+				if (getCollisionShape())
+				{
+					getCollisionShape()->calculateLocalInertia(mass, inertia);
+					
+				}
 				setMassProps(mass, inertia);
 				updateInertiaTensor();
 				
 			}
-			RigidBodyComponent::RigidBodyComponent() : btRigidBody(1, NULL, NULL)
+			Rigidbody::Rigidbody() : btRigidBody(1, NULL, NULL)
 			{
 				Physics::RemoveRigidBody(this);
 				btDefaultMotionState* motionState = new btDefaultMotionState();
@@ -28,7 +33,7 @@ namespace thomas
 				m_mass = 1;
 			}
 			
-			RigidBodyComponent::~RigidBodyComponent()
+			Rigidbody::~Rigidbody()
 			{
 				delete getMotionState();
 				Physics::s_world->removeCollisionObject(this);
@@ -37,36 +42,31 @@ namespace thomas
 				Physics::RemoveRigidBody(this);
 				
 			}
-
-			void RigidBodyComponent::OnEnable()
+			void Rigidbody::OnEnable()
 			{
 				btTransform trans;
 				trans.setFromOpenGLMatrix(*m_gameObject->m_transform->GetWorldMatrix().m);
 				getMotionState()->setWorldTransform(trans);
 				setCenterOfMassTransform(trans);
-				btCollisionShape* collider = new btBoxShape(btVector3(1, 1, 1));
-				setCollisionShape(collider);
 				UpdateRigidbodyMass();
 				Physics::AddRigidBody(this);
 
 			}
 
-			void RigidBodyComponent::OnDisable()
+
+			void Rigidbody::OnDisable()
 			{
 				Physics::RemoveRigidBody(this);
 
 				
 			}
 
-			void RigidBodyComponent::OnDestroy()
+			void Rigidbody::OnDestroy()
 			{
 				OnDisable();
 			}
 
-
-
-
-			void RigidBodyComponent::UpdateRigidbodyToTransform()
+			void Rigidbody::UpdateRigidbodyToTransform()
 			{			
 				btTransform trans;
 				float* transMatrix = *math::Matrix().m;
@@ -78,7 +78,7 @@ namespace thomas
 				m_gameObject->m_transform->SetDirty(true);
 			}
 
-			void RigidBodyComponent::UpdateTransformToRigidBody()
+			void Rigidbody::UpdateTransformToRigidBody()
 			{
 				math::Matrix currentMatrix = m_gameObject->m_transform->GetWorldMatrix();
 				if (m_prevMatrix != currentMatrix) //maybe use internal bool in transform
@@ -90,7 +90,7 @@ namespace thomas
 				}
 			}
 
-			void RigidBodyComponent::SetKinematic(bool kinematic)
+			void Rigidbody::SetKinematic(bool kinematic)
 			{
 				
 				if (kinematic != m_kinematic)
@@ -106,11 +106,11 @@ namespace thomas
 				}
 		
 			}
-			bool RigidBodyComponent::IsKinematic()
+			bool Rigidbody::IsKinematic()
 			{
 				return m_kinematic;
 			}
-			void RigidBodyComponent::SetCollider(btCollisionShape * collider)
+			void Rigidbody::SetCollider(btCollisionShape * collider)
 			{
 				Physics::RemoveRigidBody(this);
 				delete getCollisionShape();
@@ -118,7 +118,7 @@ namespace thomas
 				UpdateRigidbodyMass();
 				Physics::AddRigidBody(this);
 			}
-			void RigidBodyComponent::SetMass(float mass)
+			void Rigidbody::SetMass(float mass)
 			{
 				m_mass = mass;
 				if (initialized)
@@ -128,10 +128,8 @@ namespace thomas
 					Physics::AddRigidBody(this);
 					
 				}
-					
-				
 			}
-			float RigidBodyComponent::GetMass()
+			float Rigidbody::GetMass()
 			{
 				return m_mass;
 			}

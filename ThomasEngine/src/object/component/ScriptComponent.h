@@ -7,6 +7,7 @@
 
 namespace ThomasEditor
 {
+	[HideInInspector]
 	public ref class ScriptComponent : public Component
 	{
 	private:
