@@ -255,12 +255,6 @@
     <Resource Include="icons\local-transform.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThomasEngine\ThomasEngine.vcxproj">
-      <Project>{64d247ed-db4d-4ea3-b8ae-680bf66a8f2e}</Project>
-      <Name>ThomasEngine</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="icons\assets\dir.png" />
   </ItemGroup>
   <ItemGroup>
@@ -284,6 +278,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icons\assets\material.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThomasEngine\ThomasEngine.vcxproj">
+      <Project>{64d247ed-db4d-4ea3-b8ae-680bf66a8f2e}</Project>
+      <Name>ThomasEngine</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

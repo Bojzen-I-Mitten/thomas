@@ -48,9 +48,39 @@ namespace ThomasEditor
 			UNKNOWN
 		};
 
+		static void OnPlay()
+		{
+			for each (Resource^ resource in resources->Values)
+			{
+				resource->OnPlay();
+			}
+		}
+		static void OnStop()
+		{
+			for each (Resource^ resource in resources->Values)
+			{
+				resource->OnStop();
+			}
+		}
+
 		static void SaveResource(Resource^ resource)
 		{
+			
+			Monitor::Enter(resourceLock);
+			using namespace System::Runtime::Serialization;
+			DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
+			serializserSettings->PreserveObjectReferences = true;
+			serializserSettings->KnownTypes = System::Reflection::Assembly::GetAssembly(Resource::typeid)->ExportedTypes;
+			DataContractSerializer^ serializer = gcnew DataContractSerializer(resource->GetType(), serializserSettings);
+			System::IO::FileInfo^ fi = gcnew System::IO::FileInfo(resource->m_path);
 
+			fi->Directory->Create();
+			Xml::XmlWriterSettings^ settings = gcnew Xml::XmlWriterSettings();
+			settings->Indent = true;
+			Xml::XmlWriter^ file = Xml::XmlWriter::Create(resource->m_path, settings);
+			serializer->WriteObject(file, resource);
+			file->Close();
+			Monitor::Exit(resourceLock);
 		}
 
 		static void CreateResource(Resource^ resource, String^ path)

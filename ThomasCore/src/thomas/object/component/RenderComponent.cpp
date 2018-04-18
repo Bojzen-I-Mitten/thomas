@@ -58,10 +58,8 @@ namespace thomas {
 				if (meshIndex >= 0)
 				{
 					if (!material)
-					{
-						m_materials[meshIndex] = resource::Material::GetStandardMaterial();
-					}
-					else if (meshIndex >= m_materials.size())
+						material = resource::Material::GetStandardMaterial();
+					if (meshIndex >= m_materials.size())
 					{
 						m_materials.push_back(material);
 					}
