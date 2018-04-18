@@ -1,5 +1,4 @@
 #include "EditorCamera.h"
-#include "../utils/DebugTools.h"
 #include "../Input.h"
 #include "../ThomasTime.h"
 #include <algorithm>

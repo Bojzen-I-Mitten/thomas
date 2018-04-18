@@ -15,7 +15,6 @@
 #include "../resource/Material.h"
 #include "../resource/Shader.h"
 #include <algorithm>
-#include "../utils/DebugTools.h"
 #include "../Window.h"
 #include "../editor/gizmos/Gizmos.h"
 #include "../editor/EditorCamera.h"

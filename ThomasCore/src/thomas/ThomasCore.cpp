@@ -11,7 +11,6 @@
 #include <assimp\Importer.hpp>
 #include "graphics\Sprite.h"
 #include "Physics.h"
-#include "utils\DebugTools.h"
 #include <AtlBase.h>
 #include <atlconv.h>
 #include "utils/d3d.h"
@@ -23,6 +22,7 @@
 #include "editor\EditorCamera.h"
 #include "editor\gizmos\Gizmos.h"
 #include <thread>
+
 namespace thomas {
 	ID3D11Debug* ThomasCore::s_debug = nullptr;
 	ID3D11Device* ThomasCore::s_device = nullptr;

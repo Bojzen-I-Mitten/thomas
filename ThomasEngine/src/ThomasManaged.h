@@ -9,7 +9,6 @@
 #include <thomas\Window.h>
 #include <thomas\ThomasTime.h>
 #include <thomas\Input.h>
-#include <thomas\utils\DebugTools.h>
 #include <thomas\resource\Shader.h>
 #include <thomas\graphics\Renderer.h>
 #include <thomas\editor\gizmos\Gizmos.h>

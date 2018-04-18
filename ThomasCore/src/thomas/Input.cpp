@@ -95,11 +95,6 @@ namespace thomas
 		}
 	}
 
-	void Input::ResetScrollWheelValue()
-	{
-		s_mouse->ResetScrollWheelValue();
-	}
-
 	//Gamepad
 	float Input::GetLeftStickY()
 	{
@@ -132,6 +127,11 @@ namespace thomas
 	}
 
 	//Mouse
+	void Input::ResetScrollWheelValue()
+	{
+		s_mouse->ResetScrollWheelValue();
+	}
+
 	void Input::SetMouseMode(MouseMode mode)
 	{
 		if (s_mouseMode == mode)
@@ -206,6 +206,7 @@ namespace thomas
 		return s_mouseState.scrollWheelValue;
 	}
 
+	//Gamepad
 	bool Input::GetButtonDown(Buttons button)
 	{
 		if (!s_gamePadState.IsConnected()) //Always false if no gamePad.

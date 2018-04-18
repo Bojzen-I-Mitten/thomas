@@ -1,17 +1,15 @@
 #include "Window.h"
 #include "Input.h"
-#include "utils\DebugTools.h"
 #include "ThomasCore.h"
 #include "utils\d3d.h"
 #include <imgui\imgui.h>
 #include <imgui\imgui_impl_dx11.h>
 #include <imgui\ImGuizmo.h>
 
-
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 namespace thomas 
 {
-
 	std::vector<Window*> Window::s_windows;
 	Window* Window::s_editorWindow = nullptr;
 	Window* Window::s_current = nullptr;
@@ -21,10 +19,7 @@ namespace thomas
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
 			return true;
 		
-		utils::DebugTools::ProcessMessages(hWnd, message, wParam, lParam);
 		Window* window = GetWindow(hWnd);
-
-	
 
 		//If one case is hit the code will execute everything down until a break;
 		switch (message)
