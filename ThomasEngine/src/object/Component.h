@@ -15,6 +15,7 @@ using namespace System::ComponentModel;
 namespace ThomasEditor 
 {
 	ref class GameObject;
+	[HideInInspector]
 	public ref class Component : public Object
 	{
 		Component();

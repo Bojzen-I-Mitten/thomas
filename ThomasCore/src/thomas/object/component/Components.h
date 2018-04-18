@@ -7,5 +7,6 @@
 #include "SoundComponent.h"
 #include "TextComponent.h"
 #include "SpriteComponent.h"
-#include "RigidBodyComponent.h"
 #include "ParticleEmitterComponent.h"
+#include "physics/Rigidbody.h"
+#include "physics/BoxCollider.h"

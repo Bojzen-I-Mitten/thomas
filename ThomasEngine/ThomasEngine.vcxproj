@@ -146,7 +146,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\object\component\Rigidbody.h" />
+    <ClInclude Include="src\object\component\physics\BoxCollider.h" />
+    <ClInclude Include="src\object\component\physics\Collider.h" />
+    <ClInclude Include="src\object\component\physics\Rigidbody.h" />
     <ClInclude Include="src\resource\Model.h" />
     <ClInclude Include="src\resource\Resource.h" />
     <ClInclude Include="src\resource\texture\Texture.h" />
@@ -175,12 +177,14 @@
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\object\component\physics\BoxCollider.cpp" />
+    <ClCompile Include="src\object\component\physics\Collider.cpp" />
     <ClCompile Include="src\resource\Material.cpp" />
     <ClCompile Include="src\math\Math.cpp" />
     <ClCompile Include="src\object\Component.cpp" />
     <ClCompile Include="src\object\component\Camera.cpp" />
     <ClCompile Include="src\object\component\RenderComponent.cpp" />
-    <ClCompile Include="src\object\component\Rigidbody.cpp" />
+    <ClCompile Include="src\object\component\physics\Rigidbody.cpp" />
     <ClCompile Include="src\object\component\ScriptComponent.cpp" />
     <ClCompile Include="src\object\component\SoundComponent.cpp" />
     <ClCompile Include="src\object\component\Transform.cpp" />

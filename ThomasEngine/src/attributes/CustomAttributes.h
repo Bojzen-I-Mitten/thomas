@@ -11,3 +11,9 @@ public ref class DisallowMultipleComponent : Attribute
 {
 
 };
+
+[AttributeUsageAttribute(AttributeTargets::All, Inherited = false)]
+public ref class HideInInspector : Attribute
+{
+
+};
