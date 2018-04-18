@@ -1,17 +1,17 @@
 #pragma once
 #include "../../Common.h"
 #include "../../utils/Math.h"
+
 namespace thomas
 {
 	namespace resource { class Model; class Material; }
 	namespace utils { struct Ray; namespace buffers { class VertexBuffer; } }
+
 	namespace editor
 	{
 		class THOMAS_API Gizmos
 		{
-
 		private:
-
 			enum class GizmoPasses
 			{
 				SOLID = 0,
@@ -29,19 +29,21 @@ namespace thomas
 				GizmoRenderCommand(std::vector<math::Vector3> v, math::Matrix m, math::Color c, D3D_PRIMITIVE_TOPOLOGY t, GizmoPasses p) :
 					vertexData(v), matrix(m), color(c), topology(t), pass(p) {};
 			};
+
 			static void DrawLines(std::vector<math::Vector3> lines);
+
 		public:
 			static void TransferGizmoCommands();
 			static void RenderGizmos();
 			static void ClearGizmos();
 			static void Init();
 			static void Destroy();
+
+		public:
 			static void DrawModel(resource::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
 			static void DrawModel(resource::Model* model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
-
 			static void DrawWireModel(resource::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
 			static void DrawWireModel(resource::Model* model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
-
 			static void DrawCube(math::Vector3 center, math::Vector3 size);
 			static void DrawWireCube(math::Vector3 center, math::Vector3 size);
 			static void DrawBoundingOrientedBox(math::BoundingOrientedBox& obb);
@@ -52,12 +54,13 @@ namespace thomas
 			static void DrawWireSphere(math::Vector3 center, float radius);
 			static void DrawRay(math::Vector3 from, math::Vector3 direction);
 			static void DrawRay(math::Ray ray);
-
 			static void DrawFrustum(math::Vector3 center, float fov, float maxRange, float minRange, float aspect);
 			static void DrawFrustum(math::BoundingFrustum& frustrum);
 
+		public:
 			static void SetColor(math::Color color);
 			static void SetMatrix(math::Matrix matrix);
+
 		private:
 			static std::vector<GizmoRenderCommand> s_gizmoCommands;
 			static std::vector<GizmoRenderCommand> s_prevGizmoCommands;

@@ -13,6 +13,7 @@ namespace thomas
 	float Physics::s_timeSinceLastPhysicsStep = 0.0f;
 	std::vector<object::component::RigidBodyComponent*> Physics::s_rigidBodies;
 	float Physics::s_accumulator;
+
 	bool Physics::Init()
 	{
 		// collision configuration contains default setup for memory, collision setup. Advanced
@@ -38,10 +39,9 @@ namespace thomas
 		s_debugDraw->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
 		s_world->setDebugDrawer(s_debugDraw);
 		
-
-		return s_debugDraw->m_initialized;
-
+		return true;
 	}
+
 	void Physics::AddRigidBody(object::component::RigidBodyComponent * rigidBody)
 	{
 		s_rigidBodies.push_back(rigidBody);

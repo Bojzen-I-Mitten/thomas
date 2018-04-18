@@ -3,48 +3,38 @@
 #include "../resource/Material.h"
 #include "../utils/d3d.h"
 #include "../object/component/Camera.h"
-#include "DirectXTK/CommonStates.h"
 #include "../resource/Shader.h"
+#include "DirectXTK/CommonStates.h"
 
 namespace thomas
 {
 	namespace graphics
 	{
-
 		BulletDebugDraw::BulletDebugDraw()
 		{
-			m_initialized = false;
-			//Create VS shader
 			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/lineShader.fx");
+
 			if (shader != nullptr)
 			{
-				m_material = new resource::Material(shader);
-
-				m_vertexBufferPos = new utils::buffers::VertexBuffer(nullptr, sizeof(math::Vector3), 1000, DYNAMIC_BUFFER);
-				m_vertexBufferColor = new utils::buffers::VertexBuffer(nullptr, sizeof(math::Vector3), 1000, DYNAMIC_BUFFER);
-
-				m_initialized = true;
+				m_material = std::make_unique<resource::Material>(shader);
+				m_vertexBufferPos = std::make_unique<utils::buffers::VertexBuffer>(nullptr, sizeof(math::Vector3), 1000, DYNAMIC_BUFFER);
+				m_vertexBufferColor = std::make_unique<utils::buffers::VertexBuffer>(nullptr, sizeof(math::Vector3), 1000, DYNAMIC_BUFFER);
 			}
-			
-
 		}
 
 		BulletDebugDraw::~BulletDebugDraw()
 		{
-			delete m_vertexBufferColor;
-			delete m_vertexBufferPos;
+			m_material.reset();
+			m_vertexBufferPos.reset();
+			m_vertexBufferColor.reset();
 		}
 
 		void BulletDebugDraw::drawLine(const btVector3 & from, const btVector3 & to, const btVector3 & fromColor, const btVector3 & toColor)
 		{
-
-			m_lines.positions.push_back(math::Vector3(from.x(), from.y(), from.z()));
-			m_lines.colors.push_back(math::Vector3(fromColor.x(), fromColor.y(), fromColor.z()));
-
-			m_lines.positions.push_back(math::Vector3(to.x(), to.y(), to.z()));
-			m_lines.colors.push_back(math::Vector3(toColor.x(), toColor.y(), toColor.z()));
-			
-
+			m_linePositions.push_back(math::Vector3(from.x(), from.y(), from.z()));
+			m_linePositions.push_back(math::Vector3(to.x(), to.y(), to.z()));
+			m_lineColors.push_back(math::Vector3(fromColor.x(), fromColor.y(), fromColor.z()));
+			m_lineColors.push_back(math::Vector3(toColor.x(), toColor.y(), toColor.z()));	
 		}
 
 		void BulletDebugDraw::drawLine(const btVector3 & from, const btVector3 & to, const btVector3 & color)
@@ -74,10 +64,8 @@ namespace thomas
 
 		void BulletDebugDraw::Update(object::component::Camera * camera)
 		{
-			m_viewProjection = camera->GetViewProjMatrix().Transpose();
-			
+			m_viewProjection = camera->GetViewProjMatrix().Transpose();	
 		}
-
 
 		void BulletDebugDraw::setDebugMode(int debugMode)
 		{
@@ -86,27 +74,27 @@ namespace thomas
 
 		void BulletDebugDraw::drawLineFinal()
 		{
-			if (m_lines.positions.empty())
+			if (m_linePositions.empty())
 				return;
+
+			//Set necessary states
 			DirectX::CommonStates states(ThomasCore::GetDevice());
 			ThomasCore::GetDeviceContext()->OMSetBlendState(states.Opaque(), nullptr, 0xFFFFFFFF);
 			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(states.DepthNone(), 0);
 			ThomasCore::GetDeviceContext()->RSSetState(states.CullNone());
 
-			m_vertexBufferPos->SetData(m_lines.positions);
-			m_vertexBufferColor->SetData(m_lines.colors);
-
-			m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
-			
-			m_material->GetShader()->BindVertexBuffers({m_vertexBufferPos, m_vertexBufferColor});
-						
+			//Set the data and send to GPU
+			m_vertexBufferPos->SetData(m_linePositions);
+			m_vertexBufferColor->SetData(m_lineColors);
+			m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;		
+			m_material->GetShader()->BindVertexBuffers({m_vertexBufferPos.get(), m_vertexBufferColor.get()});	
 			m_material->SetMatrix("viewProjection", m_viewProjection);
-
 			m_material->Bind();
-			m_material->Draw(m_lines.positions.size(), 0);
-			m_lines.positions.clear();
-			m_lines.colors.clear();
-		}
+			m_material->Draw(m_linePositions.size(), 0);
 
+			//Clear the memory
+			m_linePositions.clear();
+			m_lineColors.clear();
+		}
 	}
 }
