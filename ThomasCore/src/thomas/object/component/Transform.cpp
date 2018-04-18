@@ -10,8 +10,7 @@ namespace thomas
 
 			void Transform::Decompose() {
 				m_localWorldMatrix.Decompose(m_localScale, m_localRotation, m_localPosition);
-				//m_localEulerAngles = math::ToEuler(m_localRotation);
-				ImGuizmo::DecomposeMatrixToComponents(*m_localWorldMatrix.m, (float*)&m_localPosition, (float*)&m_localEulerAngles, (float*)&m_localScale);
+				m_localEulerAngles = math::ToEuler(m_localRotation);
 			}
 
 			Transform::Transform()
@@ -278,12 +277,16 @@ namespace thomas
 			}
 			void Transform::OnDestroy()
 			{	
-				for (int i = 0; i < m_children.size(); i++)
-				{
-					GameObject::Destroy(m_children[i]->m_gameObject);
-					m_children.erase(m_children.begin() + i);
-					i -= 1;
-				}
+				//if (m_parent)
+				//{
+				//	RemoveParent();
+				//}
+				//for (int i = 0; i < m_children.size(); i++)
+				//{
+				//	GameObject::Destroy(m_children[i]->m_gameObject);
+				//	//m_children.erase(m_children.begin() + i);
+				//	i -= 1;
+				//}
 			}
 			void Transform::SetDirty(bool dirty)
 			{

@@ -71,7 +71,7 @@ namespace thomas
 			void SetShaderPass(int index);
 			void SetShaderPass(std::string name);
 
-			void Draw(graphics::Mesh* mesh);
+			void Draw(std::shared_ptr<graphics::Mesh> mesh);
 			void Draw(UINT vertexCount, UINT startVertexLocation);
 
 			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> GetEditorProperties();
@@ -95,7 +95,6 @@ namespace thomas
 			UINT m_id;
 			resource::Shader* m_shader;
 			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> m_properties;
-			std::vector<std::string> m_materialProperties;
 			std::vector<Pass> m_passes;
 			static Material* s_standardMaterial;
 

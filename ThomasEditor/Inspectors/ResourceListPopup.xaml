@@ -4,11 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ThomasEditor"
+        xmlns:converters="clr-namespace:ThomasEditor.Converters"
         mc:Ignorable="d"
         Title="Select Resource" Height="450" Width="438" TextBlock.TextAlignment="Center" ResizeMode="CanResizeWithGrip" WindowStyle="ToolWindow">
 
     <Window.Resources>
-        <local:ResourceImageConverter x:Key="resourceImageConverter"/>
+        <converters:ResourceImageConverter x:Key="resourceImageConverter"/>
     </Window.Resources>
 
     <DockPanel Background="#3D3D3D">
@@ -20,7 +21,7 @@
                         <StackPanel Orientation="Horizontal" Height="20">
                             <Image Source="{Binding Converter={StaticResource resourceImageConverter}, Mode=OneWay}" VerticalAlignment="Center" />
                             <Viewbox>
-                                <TextBlock Text="{Binding}" Padding="10,0,0,0" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding name}" Padding="10,0,0,0" HorizontalAlignment="Center"/>
                             </Viewbox>
                             
                         </StackPanel>

@@ -12,10 +12,10 @@ namespace thomas
 {
 	namespace utils
 	{
-		std::vector<graphics::Mesh*> AssimpLoader::LoadModel(std::string path)
+		std::vector<std::shared_ptr<graphics::Mesh>> AssimpLoader::LoadModel(std::string path)
 		{
 
-			std::vector<graphics::Mesh*> meshes;
+			std::vector<std::shared_ptr<graphics::Mesh>> meshes;
 			std::string dir = path.substr(0, path.find_last_of("\\/"));
 			// Read file via ASSIMP
 			Assimp::Importer importer;
@@ -161,7 +161,7 @@ namespace thomas
 			return opacity;
 		}
 
-		graphics::Mesh* AssimpLoader::ProcessMesh(aiMesh * mesh, const aiScene* scene, std::string meshName)
+		std::shared_ptr<graphics::Mesh> AssimpLoader::ProcessMesh(aiMesh * mesh, const aiScene* scene, std::string meshName)
 		{
 			graphics::Vertices vertices;
 			std::vector <int> indices;
@@ -234,11 +234,11 @@ namespace thomas
 			//material = graphics::Material::CreateMaterial(dir, materialType, mat);
 
 
-			graphics::Mesh* m = new graphics::Mesh(vertices, indices, name);
+			std::shared_ptr<graphics::Mesh> m(new graphics::Mesh(vertices, indices, name));
 			return m;
 		}
 
-		void AssimpLoader::ProcessNode(aiNode * node, const aiScene * scene, std::vector<graphics::Mesh*> &meshes)
+		void AssimpLoader::ProcessNode(aiNode * node, const aiScene * scene, std::vector<std::shared_ptr<graphics::Mesh>> &meshes)
 		{
 			std::string modelName(scene->mRootNode->mName.C_Str());
 			std::string nodeName(node->mName.C_Str());
@@ -250,7 +250,7 @@ namespace thomas
 				// The node object only contains indices to index the actual objects in the scene. 
 				// The scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 				aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-				graphics::Mesh* processedMesh = ProcessMesh(mesh, scene, modelName + "-" + nodeName + "-" + std::to_string(i));
+				std::shared_ptr<graphics::Mesh> processedMesh = ProcessMesh(mesh, scene, modelName + "-" + nodeName + "-" + std::to_string(i));
 				meshes.push_back(processedMesh);
 			}
 			// After we've processed all of the meshes (if any) we then recursively process each of the children nodes

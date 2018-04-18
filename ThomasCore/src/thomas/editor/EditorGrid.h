@@ -2,6 +2,7 @@
 #include "../Common.h"
 #include "../utils/Math.h"
 #include "../graphics/Mesh.h"
+#include <memory>
 namespace thomas
 {
 	namespace utils
@@ -30,7 +31,7 @@ namespace thomas
 			~EditorGrid();
 		private:
 			graphics::Vertices m_lines;
-			graphics::Mesh* m_mesh;
+			std::shared_ptr<graphics::Mesh> m_mesh;
 			resource::Material* m_material = nullptr;
 			math::Matrix worldMatrix;
 			int m_gridSize;

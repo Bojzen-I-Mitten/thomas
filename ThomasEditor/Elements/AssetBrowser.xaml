@@ -6,10 +6,42 @@
              xmlns:local="clr-namespace:ThomasEditor"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    
     <Grid>
         <DockPanel>
-            <TreeView x:Name="fileTree" AllowDrop="True" MouseMove="AssetBrowser_MouseMove">
-
+            <TreeView KeyDown="AssetBrowser_KeyDown" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="fileTree" AllowDrop="True"
+                      MouseMove="AssetBrowser_MouseMove" MouseDoubleClick="AssetBrowser_DoubleClick"
+                      PreviewMouseRightButtonDown="AssetBrowser_PreviewMouseRightButtonDown" PreviewMouseLeftButtonDown="AssetBrowser_PreviewMouseLeftButtonDown"
+                      SelectedItemChanged="AssetBrowser_SelectedItemChanged" MouseLeftButtonUp="AssetBrowser_LeftMouseButtonUp">
+                <TreeView.ContextMenu>
+                    <ContextMenu x:Name="assetBrowserContextMenu">
+                        <MenuItem Header="Create">
+                            <MenuItem Header="Folder" Click="Menu_CreateFolder"/>
+                            <Separator/>
+                            <MenuItem Header="C# Script" Click="Menu_CreateCSharpScript"/>
+                            <MenuItem Header="Shader" Click="Menu_CreateShader"/>
+                            <Separator/>
+                            <MenuItem Header="Scene" Click="Menu_CreateScene"/>
+                            <MenuItem Header="Prefab" Click="Menu_CreatePrefab"/>
+                            <Separator/>
+                            <MenuItem Header="Material" Click="Menu_CreateMaterial"/>
+                            <Separator/>
+                            <MenuItem Header="Curve" Click="Menu_CreateCurve"/>
+                        </MenuItem>
+                        <MenuItem Header="Show in Explorer" Click="Menu_ShowInExplorer" IsEnabled="false"/>
+                        <MenuItem Header="Open" IsEnabled="{Binding}" Click="Menu_OpenAsset" />
+                        <MenuItem Header="Delete" IsEnabled="{Binding}"  Click="Menu_DeleteAsset"/>
+                        <MenuItem Header="Rename" IsEnabled="{Binding}" Click="MenuItem_Rename"/>
+                        <Separator/>
+                        <MenuItem Header="Import New Asset..."  Click="Menu_ImportAsset" IsEnabled="false"/>
+                        <Separator/>
+                        <MenuItem Header="Refresh" IsEnabled="{Binding}" Click="Menu_Refresh" />
+                        <MenuItem Header="Reimport" IsEnabled="{Binding}" Click="Menu_Reimport"/>
+                        <MenuItem Header="Reimport All" Click="Menu_ReimportAll" IsEnabled="false"/>
+                        <Separator/>
+                        <MenuItem Header="Open C# Project" Click="Menu_OpenCSharpProject" IsEnabled="false"/>
+                    </ContextMenu>
+                </TreeView.ContextMenu>
             </TreeView>
         </DockPanel>
     </Grid>

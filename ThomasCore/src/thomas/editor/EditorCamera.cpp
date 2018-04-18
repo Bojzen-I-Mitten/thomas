@@ -14,10 +14,10 @@
 namespace thomas
 {
 	namespace editor
-	{		
+	{
 		EditorCamera* EditorCamera::s_editorCamera = nullptr;
 		std::vector<object::GameObject*> EditorCamera::s_selectedObjects;
-		
+
 		EditorCamera::EditorCamera() : object::GameObject("editorCamera")
 		{
 			m_transform = new object::component::Transform();
@@ -25,7 +25,7 @@ namespace thomas
 			m_cameraComponent = new object::component::Camera(true);
 			m_cameraComponent->SetTargetDisplay(-1);
 			m_cameraComponent->m_gameObject = this;
-			m_grid = new EditorGrid(100, 1,  10);
+			m_grid = new EditorGrid(100, 1, 10);
 			m_sensitivity = 50.0f;
 			m_speed = 2.0f;
 			m_hasSelectionChanged = false;
@@ -83,7 +83,7 @@ namespace thomas
 		void EditorCamera::SelectObject(object::GameObject * gameObject)
 		{
 			s_selectedObjects.clear();
-			if(gameObject)
+			if (gameObject)
 				s_selectedObjects.push_back(gameObject);
 			GetEditorCamera()->m_hasSelectionChanged = true;
 		}
@@ -142,13 +142,13 @@ namespace thomas
 		}
 
 		void EditorCamera::renderCamera()
-		{	
+		{
 			renderSelectedObjects();
 			m_cameraComponent->Render();
 			renderGizmos();
 			Physics::DrawDebug(m_cameraComponent);
 			m_grid->Draw(m_cameraComponent);
-			
+
 		}
 
 		void EditorCamera::updateCamera()
@@ -159,21 +159,21 @@ namespace thomas
 
 			if (!Window::GetEditorWindow())
 				return;
-			
+
 			//Toggle editor mode on scene camera
 			if (Input::GetMouseButtonDown(Input::MouseButtons::RIGHT))
 				Input::SetMouseMode(Input::MouseMode::POSITION_RELATIVE);
-			
+
 			if (Input::GetMouseButtonUp(Input::MouseButtons::RIGHT))
 				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
-			
+
 			if (Input::GetMouseScrollWheel() > 0)
 				m_transform->Translate(m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 3000.f);
 
 			if (Input::GetMouseScrollWheel() < 0)
 				m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 3000.f);
 
-			if(Input::GetMouseButton(Input::MouseButtons::RIGHT))
+			if (Input::GetMouseButton(Input::MouseButtons::RIGHT))
 			{
 				float speed = m_speed;
 
@@ -196,7 +196,7 @@ namespace thomas
 
 				rotationX += Input::GetMouseX() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
 				rotationY += Input::GetMouseY() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
-				
+
 				m_transform->SetRotation(-rotationX, -rotationY, 0);
 			}
 			else if (Input::GetMouseButtonDown(Input::MouseButtons::LEFT))
@@ -205,12 +205,12 @@ namespace thomas
 				{
 					object::GameObject* gObj = findClickedGameObject();
 					SelectObject(gObj);
-				}			
+				}
 			}
 			else
 			{
 				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
-				
+
 				if (Input::GetKeyDown(Input::Keys::W))
 					m_manipulatorOperation = ImGuizmo::OPERATION::TRANSLATE;
 				if (Input::GetKeyDown(Input::Keys::R))
@@ -219,14 +219,14 @@ namespace thomas
 					m_manipulatorOperation = ImGuizmo::OPERATION::SCALE;
 				if (Input::GetKey(Input::Keys::LeftShift))
 					m_manipulatorSnapping = true;
-			}			
+			}
 		}
 
 		void EditorCamera::renderSelectedObjects()
 		{
 			if (!m_objectHighlighter)
 				return;
-			for(object::GameObject* gameObject : s_selectedObjects)
+			for (object::GameObject* gameObject : s_selectedObjects)
 			{
 				if (!gameObject->GetActive())
 					continue;
@@ -237,19 +237,19 @@ namespace thomas
 					resource::Model* model = gameObject->GetComponent<object::component::RenderComponent>()->GetModel();
 					if (model)
 					{
-						for (graphics::Mesh* mesh : model->GetMeshes())
+						for (std::shared_ptr<graphics::Mesh> mesh : model->GetMeshes())
 							graphics::Renderer::SubmitCommand(graphics::RenderCommand(gameObject->m_transform->GetWorldMatrix(), mesh, m_objectHighlighter, m_cameraComponent));
 					}
-				}		
-			}		
+				}
+			}
 		}
 
 		void EditorCamera::renderGizmos()
 		{
-			for (int i=0; i < s_selectedObjects.size(); i++)
+			for (int i = 0; i < s_selectedObjects.size(); i++)
 			{
 				object::GameObject* gameObject = s_selectedObjects[i];
-				ImGuiIO& io = ImGui::GetIO();	
+				ImGuiIO& io = ImGui::GetIO();
 				ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 				math::Matrix worldMatrix = gameObject->m_transform->GetLocalWorldMatrix();
 
@@ -268,7 +268,7 @@ namespace thomas
 				{
 					gameObject->m_transform->SetLocalMatrix(worldMatrix);
 					gameObject->m_transform->SetDirty(true);
-				}	
+				}
 			}
 		}
 
@@ -288,7 +288,7 @@ namespace thomas
 					closestGameObject = renderComponent->m_gameObject;
 				}
 			}
-			return closestGameObject;			
+			return closestGameObject;
 		}
 	}
 }

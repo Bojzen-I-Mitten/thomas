@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.IO;
+using ThomasEditor.utils;
+using ThomasEditor.Inspectors;
+
 namespace ThomasEditor
 {
     /// <summary>
@@ -20,13 +23,16 @@ namespace ThomasEditor
     
     public partial class AssetBrowser : UserControl
     {
-
+        bool wasUnselected = false;
         String path = "..\\Data";
         bool _isDragging = false;
-       
+        bool renameNextAddedItem = false;
+
         public static Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage> assetImages = new Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage>();
 
         FileSystemWatcher watcher;
+
+        public static AssetBrowser instance;
 
         public AssetBrowser()
         {
@@ -38,6 +44,7 @@ namespace ThomasEditor
                 fileTree.Items.Add(item);
             }
 
+            assetBrowserContextMenu.DataContext = false;
             watcher = new FileSystemWatcher(path);
             watcher.IncludeSubdirectories = true;
 
@@ -46,7 +53,17 @@ namespace ThomasEditor
             watcher.Created += ResourceCreated;
             watcher.Deleted += ResourceDeleted;
             watcher.EnableRaisingEvents = true;
+            instance = this;
+        }
 
+        public void UnselectItem()
+        {
+            if (fileTree.SelectedItem != null)
+            {
+                wasUnselected = true;
+                (fileTree.SelectedItem as TreeViewItem).IsSelected = false;
+            }
+                
         }
 
         private void ResourceRenamed(object sender, RenamedEventArgs e)
@@ -70,7 +87,7 @@ namespace ThomasEditor
 
                     String visibleName = Path.GetFileNameWithoutExtension(newPath);
 
-                    stack.Children.OfType<TextBlock>().First().Text = visibleName;
+                   (stack.Children[1] as EditableTextBlock).Text = visibleName;
                 }
                 else
                 {
@@ -119,6 +136,10 @@ namespace ThomasEditor
                     {
                         TreeViewItem parent = foundItem.Parent as TreeViewItem;
                         parent.Items.Remove(foundItem);
+                    }
+                    if(foundItem.DataContext is Resource)
+                    {
+                        ThomasEditor.Resources.Unload(foundItem.DataContext as Resource);
                     }
                 }
               
@@ -171,6 +192,13 @@ namespace ThomasEditor
                     dir.Items.Add(item);
               
             }
+            
+            if(renameNextAddedItem)
+            {
+                TreeViewItem tvi = item as TreeViewItem;
+                tvi.Focus();
+                StartRename();
+            }
         }
 
         private void ResourceCreated(object sender, FileSystemEventArgs e)
@@ -203,10 +231,10 @@ namespace ThomasEditor
 
                 StackPanel stack = new StackPanel();
                 stack.Orientation = Orientation.Horizontal;
-                stack.Height = 15;
+                stack.Height = 18;
                 Image image = new Image();
                 image.Source = new BitmapImage(new Uri("pack://application:,,/icons/assets/dir.png"));
-                TextBlock lbl = new TextBlock { Text = dirName };
+                EditableTextBlock lbl = new EditableTextBlock { Text = dirName };
                 stack.Children.Add(image);
                 stack.Children.Add(lbl);
                 stack.DataContext = filePath;
@@ -225,7 +253,7 @@ namespace ThomasEditor
                     return null;
                 StackPanel stack = new StackPanel();
                 stack.Orientation = Orientation.Horizontal;
-                stack.Height = 15;
+                stack.Height = 18;
 
                 ImageSource source;
                 if (assetType == ThomasEditor.Resources.AssetTypes.TEXTURE2D)
@@ -235,10 +263,9 @@ namespace ThomasEditor
 
                 Image image = new Image { Source = source };
 
-                TextBlock lbl = new TextBlock { Text = fileName };
+                EditableTextBlock lbl = new EditableTextBlock { Text = fileName };
                 stack.Children.Add(image);
                 stack.Children.Add(lbl);
-                stack.MouseDown += Asset_MouseDown;
                 stack.DataContext = filePath;
 
                 return new TreeViewItem { Header = stack, DataContext = ThomasEditor.Resources.Load(filePath) };
@@ -267,35 +294,6 @@ namespace ThomasEditor
             return nodes;
         }
 
-        private void Asset_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            StackPanel stack = sender as StackPanel;
-            String file = stack.DataContext as String;
-            ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(file);
-            if(e.ClickCount == 2)
-            {
-
-                if(assetType == ThomasEditor.Resources.AssetTypes.SCENE)
-                {
-                    SplashScreen splash = new SplashScreen("splash.png");
-                    splash.Show(false, true);
-                    Scene.CurrentScene.UnLoad();
-                    Scene.CurrentScene = Scene.LoadScene(file);
-                    splash.Close(TimeSpan.FromSeconds(0.2));
-
-                }else if(assetType == ThomasEditor.Resources.AssetTypes.SHADER)
-                {
-                    System.Diagnostics.Process.Start(file);
-                }else if(assetType == ThomasEditor.Resources.AssetTypes.MATERIAL)
-                {
-
-                    MaterialEditor matEdit = FindResource("materialEditor") as MaterialEditor;
-                    matEdit.SetMaterial(ThomasEditor.Resources.Load(file) as Material);
-                }
-            }
-        }
-
-
 
       
         private void AssetBrowser_MouseMove(object sender, MouseEventArgs e)
@@ -314,7 +312,250 @@ namespace ThomasEditor
             }
 
         }
+        bool hasSelection { get { return true; } }
 
+        private void AssetBrowser_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            
+            TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
+            if(treeViewItem == null)
+            {
+                TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+                if (item != null)
+                    item.IsSelected = false;
+                return;
+            }else
+            
+            //rename on click. Refactor
+            if (fileTree.SelectedItem == treeViewItem && e.ClickCount == 1)
+            {
+                //EditableTextBlock lbl = stack.Children[1] as EditableTextBlock;
+                //treeViewItem.IsSelected = false;
+                //lbl.IsInEditMode = true;
+                //lbl.OnTextChanged += Lbl_OnTextChanged;
+            }
+        }
+
+        private void Lbl_OnTextChanged(object sender)
+        {
+            EditableTextBlock lbl = sender as EditableTextBlock;
+            lbl.OnTextChanged -= Lbl_OnTextChanged;
+            StackPanel stack = lbl.Parent as StackPanel;
+            String fullPath = stack.DataContext as String;
+            String oldName = Path.GetFileNameWithoutExtension(fullPath);
+            String newFullPath = fullPath.Replace(oldName, lbl.Text);
+
+            //Rename if file/dir does not exist
+
+            if(File.Exists(fullPath) && !File.Exists(newFullPath))
+                File.Move(fullPath, newFullPath);
+            else if(Directory.Exists(fullPath) && !Directory.Exists(newFullPath))
+                Directory.Move(fullPath, newFullPath);
+            else
+            {
+                lbl.Text = oldName;
+            }
+            TreeViewItem item = stack.Parent as TreeViewItem;
+            item.Focus();
+        }
+
+        private void AssetBrowser_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
+
+            if (treeViewItem != null)
+            {
+                treeViewItem.Focus();
+                assetBrowserContextMenu.DataContext = true;
+                //e.Handled = true;
+            }
+            else
+            {
+                TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+                if(item != null)
+                    item.IsSelected = false;
+                assetBrowserContextMenu.DataContext = false;
+            }
+        }
+
+        private TreeViewItem VisualUpwardSearch(DependencyObject source)
+        {
+            while (source != null && !(source is TreeViewItem))
+                source = VisualTreeHelper.GetParent(source);
+
+            return source as TreeViewItem;
+        }
+
+        private void AssetBrowser_LeftMouseButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (fileTree.SelectedItem != null)
+            {
+                if (!wasUnselected)
+                    GameObjectHierarchy.instance.Unselect();
+                wasUnselected = false;
+                TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+                Inspector.instance.SelectedObject = item.DataContext;
+            }
+
+        }
+
+        private void AssetBrowser_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (fileTree.SelectedItem == null)
+                return;
+            TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+            StackPanel stack = item.Header as StackPanel;
+
+            String file = stack.DataContext as String;
+            ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(file);
+            if (e.ClickCount == 2)
+            {
+
+                if (assetType == ThomasEditor.Resources.AssetTypes.SCENE)
+                {
+                    SplashScreen splash = new SplashScreen("splash.png");
+                    splash.Show(false, true);
+                    Scene.CurrentScene.UnLoad();
+                    Scene.CurrentScene = Scene.LoadScene(file);
+                    splash.Close(TimeSpan.FromSeconds(0.2));
+
+                }
+                else if (assetType == ThomasEditor.Resources.AssetTypes.SHADER)
+                {
+                    System.Diagnostics.Process.Start(file);
+                }
+            }
+        }
+
+        private void StartRename()
+        {
+            if (fileTree.SelectedItem != null)
+            {
+                TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+                StackPanel stack = item.Header as StackPanel;
+                EditableTextBlock lbl = stack.Children[1] as EditableTextBlock;
+                item.IsSelected = false;
+                lbl.IsInEditMode = true;
+                lbl.OnTextChanged += Lbl_OnTextChanged;
+            }
+        }
+
+        private void AssetBrowser_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F2)
+            {
+                StartRename();
+            }
+        }
+
+        #region MenuItems
+
+        private void Menu_CreateFolder(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_CreateCSharpScript(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_CreateShader(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_CreateScene(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_CreatePrefab(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_CreateMaterial(object sender, RoutedEventArgs e)
+        {
+            Material newMat = new Material(Shader.Find("StandardShader"));
+            ThomasEditor.Resources.CreateResource(newMat, "New Material.mat");
+            renameNextAddedItem = true;
+        }
+
+        private void Menu_CreateCurve(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_ShowInExplorer(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_OpenAsset(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_DeleteAsset(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MenuItem_Rename(object sender, RoutedEventArgs e)
+        {
+            StartRename();
+            e.Handled = true;
+        }
+
+        private void Menu_ImportAsset(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_Refresh(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_Reimport(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_ReimportAll(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_OpenCSharpProject(object sender, RoutedEventArgs e)
+        {
+
+        }
+        #endregion
+
+        private void AssetBrowser_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+
+            if (fileTree.SelectedItem == null)
+            {
+                if (!wasUnselected)
+                    GameObjectHierarchy.instance.Unselect();
+                wasUnselected = false;
+                Inspector.instance.SelectedObject = null;
+                return;
+            }
+            if(Mouse.LeftButton == MouseButtonState.Released)
+            {
+                if (!wasUnselected)
+                    GameObjectHierarchy.instance.Unselect();
+                wasUnselected = false;
+
+                TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+                Inspector.instance.SelectedObject = item.DataContext;
+            }
+           
+        }
     }
 
 

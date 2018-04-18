@@ -3,6 +3,7 @@
 #include <thomas\resource\Shader.h>
 #pragma managed
 #include "resource.h"
+#include "Resources.h"
 #include "../math/Math.h"
 namespace ThomasEditor
 {
@@ -17,9 +18,15 @@ namespace ThomasEditor
 		
 
 		static Shader^ Find(String^ name) { 
-			thomas::resource::Shader* s = thomas::resource::Shader::FindByName(Utility::ConvertString(name));
-			if (s)
-				return %Shader(s);
+			thomas::resource::Shader* nativePtr = thomas::resource::Shader::FindByName(Utility::ConvertString(name));
+			if (nativePtr)
+			{
+				ThomasEditor::Resource^ shader = ThomasEditor::Resources::FindResourceFromNativePtr(nativePtr);
+				if (shader)
+					return (ThomasEditor::Shader^)shader;
+				else
+					return gcnew ThomasEditor::Shader(nativePtr);
+			}
 			else
 				return nullptr;
 		}
@@ -33,11 +40,6 @@ namespace ThomasEditor
 		//static void SetGlobalTexture(String^ name, Texture& value);
 
 		static void RecompileShaders() { thomas::resource::Shader::QueueRecompile(); }
-
-		property String^ Name
-		{
-			String^ get() { return Utility::ConvertString(m_nativePtr->GetName()); }
-		}
 		
 		[OnDeserializedAttribute]
 		void OnDeserialized(StreamingContext c)

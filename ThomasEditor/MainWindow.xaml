@@ -6,6 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:local="clr-namespace:ThomasEditor"
+        xmlns:inspectors="clr-namespace:ThomasEditor.Inspectors"
         xmlns:commands="clr-namespace:ThomasEditor.Commands"
         mc:Ignorable="d"
         Title="Thomas Editor">
@@ -155,12 +156,7 @@
 
                         <xcad:LayoutDocumentPane DockWidth="2*">
                             <xcad:LayoutAnchorable ContentId="Inspector" Title="Inspector">
-                                <local:ThomasGameObjectInspector x:Name="__inspector" x:FieldModifier="public" Background="#444444"/>
-                            </xcad:LayoutAnchorable>
-                        </xcad:LayoutDocumentPane>
-                        <xcad:LayoutDocumentPane DockWidth="2*">
-                            <xcad:LayoutAnchorable ContentId="MaterialEditor" Title="Material Editor">
-                                <ContentControl Content="{StaticResource materialEditor}"/>
+                                <inspectors:Inspector x:Name="inspector" x:FieldModifier="public" Background="#444444"/>
                             </xcad:LayoutAnchorable>
                         </xcad:LayoutDocumentPane>
                     </xcad:LayoutDocumentPaneGroup>

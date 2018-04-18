@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include "Math.h"
-
+#include <memory>
 
 struct aiNode;
 struct aiMesh;
@@ -22,11 +22,11 @@ namespace thomas
 		class AssimpLoader
 		{
 		private:
-			static graphics::Mesh* ProcessMesh(aiMesh* mesh, const aiScene* scene, std::string meshName);
-			static void ProcessNode(aiNode* node, const aiScene* scene, std::vector<graphics::Mesh*> &meshes);
+			static std::shared_ptr<graphics::Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene, std::string meshName);
+			static void ProcessNode(aiNode* node, const aiScene* scene, std::vector<std::shared_ptr<graphics::Mesh>> &meshes);
 		public:
 
-			static std::vector<graphics::Mesh*> LoadModel(std::string path);
+			static std::vector<std::shared_ptr<graphics::Mesh>> LoadModel(std::string path);
 			
 			static std::string GetMaterialName(aiMaterial* material);
 			static int GetMaterialShadingModel(aiMaterial* material);
