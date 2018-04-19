@@ -14,7 +14,6 @@
 #include <AtlBase.h>
 #include <atlconv.h>
 #include "utils/d3d.h"
-#include "graphics\ParticleSystem.h"
 #include "Input.h"
 #include "Window.h"
 #include "ThomasTime.h"
@@ -143,7 +142,6 @@ namespace thomas {
 		s_context->Flush();
 		Window::Destroy();
 		graphics::LightManager::Destroy();
-		graphics::ParticleSystem::Destroy();
 		//graphics::Sprite::Destroy();
 		//graphics::TextRender::Destroy();
 		//graphics::Texture::ReleaseSamplers();

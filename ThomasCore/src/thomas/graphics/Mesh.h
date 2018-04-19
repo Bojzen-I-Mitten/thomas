@@ -50,7 +50,7 @@ namespace thomas
 			math::BoundingBox GenerateBounds();
 
 		public:
-			math::BoundingBox m_bounds;
+			math::BoundingBox m_bounds; //This should be private
 
 		private:
 			std::string m_name;

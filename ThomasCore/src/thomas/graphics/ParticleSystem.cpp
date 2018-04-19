@@ -234,9 +234,6 @@ namespace thomas
 			thomas::utils::D3d::CreateBufferAndUAV(NULL, bytewidth, structurebytestride, buffer, uav, srv);
 
 		}
-
-
-
 	}
 }
 
