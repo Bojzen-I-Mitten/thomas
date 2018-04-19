@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "../utils/Math.h"
+#include "..\utils\Math.h"
 
 #define MAX_NUMBER_OF_POINTLIGHTS 32
 #define MAX_NUMBER_OF_SPOTLIGHTS 32

@@ -5,8 +5,8 @@
 #pragma once
 #define _XM_NO_INTRINSICS_ 1;
 #include <LinearMath\btIDebugDraw.h>
-#include "..\utils/Math.h"
-#include "..\utils/Buffers.h"
+#include "..\utils\Math.h"
+#include "..\utils\Buffers.h"
 #include <vector>
 #include <memory>
 

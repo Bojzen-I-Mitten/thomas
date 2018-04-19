@@ -74,6 +74,7 @@ namespace thomas
 
 		void Renderer::ProcessCommands()
 		{
+			//Process commands
 			BindFrame();
 			for (auto & perCameraQueue : s_lastFramesCommands)
 			{
@@ -91,6 +92,7 @@ namespace thomas
 				}
 			}
 
+			//Take care of the editor camera and render gizmos
 			if (editor::EditorCamera::GetEditorCamera())
 			{
 				BindCamera(editor::EditorCamera::GetEditorCamera()->GetCamera());

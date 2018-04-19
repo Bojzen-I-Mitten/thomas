@@ -7,9 +7,7 @@
 #include "resource\Shader.h"
 #include "resource\Material.h"
 #include "graphics\LightManager.h"
-#include "graphics\TextRender.h"
 #include <assimp\Importer.hpp>
-#include "graphics\Sprite.h"
 #include "Physics.h"
 #include <AtlBase.h>
 #include <atlconv.h>

@@ -5,7 +5,5 @@
 #include "RenderComponent.h"
 #include "Light.h"
 #include "SoundComponent.h"
-#include "TextComponent.h"
-#include "SpriteComponent.h"
 #include "RigidBodyComponent.h"
 #include "ParticleEmitterComponent.h"
