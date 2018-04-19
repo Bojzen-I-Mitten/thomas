@@ -57,9 +57,9 @@ namespace thomas
 		private:
 			ImGuizmo::OPERATION m_manipulatorOperation;
 			ImGuizmo::MODE m_manipulatorMode;
-			object::component::Camera* m_cameraComponent;
-			resource::Material* m_objectHighlighter;
-			EditorGrid* m_grid;
+			std::unique_ptr<object::component::Camera> m_cameraComponent;
+			std::unique_ptr<resource::Material> m_objectHighlighter;
+			std::unique_ptr<EditorGrid> m_grid;
 
 		private:
 			float m_sensitivity = 1.0f;
