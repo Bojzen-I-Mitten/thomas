@@ -2,6 +2,7 @@
 #pragma unmanaged
 #include <thomas\object\component\Transform.h>
 #pragma managed
+
 #include "../../math/Math.h"
 #include "../Component.h"
 #include <string>
@@ -14,43 +15,42 @@ namespace ThomasEditor
 	[ExecuteInEditor]
 	public ref class Transform : public Component
 	{
-
 	public:
-		Transform() : Component(new thomas::object::component::Transform()) {
+		Transform() : Component(new thomas::object::component::Transform()) 
+		{
 		}
 
 		[BrowsableAttribute(false)]
-		property Transform^ parent {
-			Transform^ get() {
+		property Transform^ parent 
+		{
+			Transform^ get() 
+			{
 				if (((thomas::object::component::Transform*)nativePtr)->GetParent())
 					return (Transform^)GetObject(((thomas::object::component::Transform*)nativePtr)->GetParent());
 				else
 					return nullptr;
 			}
 
-			void set(Transform^ newParent) {
+			void set(Transform^ newParent) 
+			{
 				if (newParent)
-				{
 					((thomas::object::component::Transform*)nativePtr)->SetParent((thomas::object::component::Transform*)newParent->nativePtr);
-				}
 				else
-				{
 					((thomas::object::component::Transform*)nativePtr)->SetParent(nullptr);
-				}
-				
 			}
 		}
+
 		[BrowsableAttribute(false)]
-		property List<Transform^>^ children {
-			List<Transform^>^ get() {
+		property List<Transform^>^ children 
+		{
+			List<Transform^>^ get() 
+			{
 				std::vector<thomas::object::component::Transform*> nativeChildren = ((thomas::object::component::Transform*)nativePtr)->GetChildren();
 				List<Transform^>^ managedChildren = gcnew List<Transform^>(nativeChildren.size());
 
 				for (thomas::object::component::Transform* nativeChild : nativeChildren)
-				{
-					
 					managedChildren->Add((Transform^)GetObject(nativeChild));
-				}
+
 				return managedChildren;
 			}
 		}
@@ -68,13 +68,13 @@ namespace ThomasEditor
 			Vector3 get() { return Vector3(((thomas::object::component::Transform*)nativePtr)->GetLocalPosition()); }
 			void set(Vector3 value) { ((thomas::object::component::Transform*)nativePtr)->SetLocalPosition(value.x, value.y, value.z); }
 		}
+
 		[BrowsableAttribute(false)]
 		property Quaternion rotation
 		{
 			Quaternion get() { return Quaternion(((thomas::object::component::Transform*)nativePtr)->GetRotation()); }
 		}
-
-				
+	
 		[BrowsableAttribute(false)]
 		property Vector3 eulerAngles
 		{
@@ -95,6 +95,7 @@ namespace ThomasEditor
 			Vector3 get() { return Vector3(((thomas::object::component::Transform*)nativePtr)->GetScale()); }
 			void set(Vector3 value) { ((thomas::object::component::Transform*)nativePtr)->SetScale(thomas::math::Vector3(value.x, value.y, value.z)); }
 		}
+
 		[DisplayNameAttribute("scale")]
 		property Vector3 localScale
 		{
@@ -110,9 +111,9 @@ namespace ThomasEditor
 				return parent->IsChildOf(_parent);
 			else
 				return false;
-
 		}
-	
+
+		void OnDestroy() override;
 		void Update() override
 		{
 			if (((thomas::object::component::Transform*)nativePtr)->IsDirty())
@@ -122,7 +123,6 @@ namespace ThomasEditor
 				OnPropertyChanged("localEulerAngles");
 				OnPropertyChanged("localScale");
 			}
-		}
-		
+		}	
 	};
 }

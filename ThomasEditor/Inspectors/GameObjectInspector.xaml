@@ -2,11 +2,12 @@
                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                xmlns:local="clr-namespace:ThomasEditor"
+                xmlns:local="clr-namespace:ThomasEditor.Inspectors"
+                xmlns:converters="clr-namespace:ThomasEditor.Converters"
                 xmlns:commands="clr-namespace:ThomasEditor.Commands"
                
                 xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-                x:Class="ThomasEditor.ThomasGameObjectInspector"
+                x:Class="ThomasEditor.Inspectors.GameObjectInspector"
                 mc:Ignorable="d" 
                 d:DesignHeight="300" d:DesignWidth="300"
                 x:Name="_this">
@@ -18,29 +19,28 @@
 
 
     <UserControl.Resources>
-
-        <local:ComponentToNameConverter x:Key="componentToNameConverter"/>
+        <converters:ComponentToNameConverter x:Key="componentToNameConverter"/>
     </UserControl.Resources>
 
     
-    <Grid x:Name="gameObjectGrid" Background="#444444" Visibility="Hidden">
+    <Grid x:Name="gameObjectGrid" Background="#444444" Visibility="Visible">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" Height="50" Background="#595959" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <CheckBox IsChecked="{Binding activeSelf}" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Active?"/>
-            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="5" Grid.Column="1"/>
-
-
+            <CheckBox Margin="10"  IsChecked="{Binding activeSelf}" Grid.Column="0" HorizontalAlignment="Center" ToolTip="Active?"/>
+            <TextBox VerticalAlignment="Top" Height="20" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="5" Grid.Column="1"/>
+            <CheckBox Content="Static" Grid.Column="2" Margin="10"/>
         </Grid>
 
         <ItemsControl ItemsSource="{Binding Components}" Grid.Row="1" Background="#333333">
@@ -62,17 +62,20 @@
                 HorizontalAlignment="Center" HorizontalContentAlignment="Center" 
                 x:Name="addComponentButton" Command="{x:Static commands:CustomCommands.GetAddCompenent}" 
                 />
-        <DockPanel Grid.Row="3" Panel.ZIndex="1" x:Name="addComponentsListContainer" LostFocus="AddComponentsListContainer_LostFocus" Visibility="Hidden" Width="200" Height="300" Margin="10">
-            <TextBox x:Name="AddComponentsFilter" DockPanel.Dock="Top" TextChanged="AddComponentsFilter_TextChanged" KeyUp="AddComponentList_KeyUp"/>
-            <ListView x:Name="addComponentList" Background="#333333" >
-                <!--SelectionChanged="AddComponentList_SelectionChanged"-->
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </DockPanel>
+        <Popup x:Name="addComponentsListPopup" IsOpen="False" StaysOpen="False" Width="200" Height="300" PlacementTarget="{Binding ElementName=addComponentButton}" Placement="Bottom">
+            <DockPanel LostFocus="AddComponentsListContainer_LostFocus">
+                <TextBox x:Name="AddComponentsFilter" DockPanel.Dock="Top" TextChanged="AddComponentsFilter_TextChanged"/>
+                <ListView x:Name="addComponentList" Background="#333333" SelectionChanged="AddComponentList_SelectionChanged">
+                    <!--MouseLeftButtonDown="AddComponentsList_MLBUp" KeyUp="AddComponentList_KeyUp"-->
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </DockPanel>
+        </Popup>
+        <local:MaterialInspector Grid.Row="4" x:Name="MaterialEditor" DataContext="{x:Null}"/>
     </Grid>
 
 </UserControl>

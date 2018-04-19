@@ -1,11 +1,20 @@
 #pragma warning(disable: 4717) // removes effect deprecation warning.
 
 #include <ThomasCG.hlsl>
+Texture2D ambientTex;
+
+
+SamplerState StandardWrapSampler
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
 
 cbuffer MATERIAL_PROPERTIES
 {
-	float testMat;
-	float4 wow;
+    
+	float4 wow : COLOR;
 };
 
 
@@ -47,6 +56,7 @@ struct v2f {
 	float4 vertex : SV_POSITION;
 	float4 worldPos : POSITIONWS;
 	float3 normal : NORMAL;
+    float2 texcoord : TEXCOORD0;
 };
 
 v2f vert(appdata_thomas v)
@@ -55,6 +65,7 @@ v2f vert(appdata_thomas v)
 	o.vertex = ThomasObjectToClipPos(v.vertex);
 	o.worldPos = ThomasObjectToWorldPos(v.vertex);
 	o.normal = ThomasWorldToObjectDir(v.normal);
+    o.texcoord = v.texcoord;
 	return o;
 }
 
@@ -88,11 +99,12 @@ struct Light
 	float3  direction;
 	float   spotInnerAngle;
 	float3  attenuation;
-    float   pad;
+    uint type;
 
     
 };
 
+//StructuredBuffer<Light> lights;
 
 float CalculatePointLightContribution(float4 lightColor, float lightIntensity, float lightDistance, float3 lightAttenuation)
 {
@@ -142,6 +154,7 @@ float4 frag(v2f input) : SV_TARGET
     tempLight.spotInnerAngle = 10.0f;
     tempLight.spotOuterAngle = 30.0f;
     tempLight.attenuation = float3(0.4f, 0.02f, 0.1f);
+    tempLight.type = 0;
 
     ConstantBufferForLights testCBuffer;
     testCBuffer.nrOfDirectionalLights = 1;
@@ -194,8 +207,8 @@ float4 frag(v2f input) : SV_TARGET
         lightMultiplyer = spotFactor * tempLight.color * tempLight.intensity / (tempLight.attenuation.x + tempLight.attenuation.y * lightDistance + tempLight.attenuation.z * lightDistance * lightDistance);
         Apply(finalColor, lightMultiplyer, input.normal, lightDir, viewDir);
     }
-    
-    return saturate(finalColor);
+    return saturate(ambientTex.Sample(StandardWrapSampler, input.texcoord) * wow + finalColor);
+  //  return saturate(finalColor);
 
 }
 

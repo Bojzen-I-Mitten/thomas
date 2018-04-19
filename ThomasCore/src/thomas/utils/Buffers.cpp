@@ -84,7 +84,6 @@ namespace thomas
 				
 				ThomasCore::GetDevice()->CreateShaderResourceView(m_buffer, &desc, &m_resource);
 			}
-
 		}
 	}
 }

@@ -1,5 +1,6 @@
 #include "Transform.h"
 #include "../GameObject.h"
+#include <imgui\ImGuizmo.h>
 namespace thomas
 {
 	namespace object
@@ -53,7 +54,6 @@ namespace thomas
 			{
 				m_localWorldMatrix = matrix;
 				Decompose();
-				m_localEulerAngles = math::ToEuler(m_localRotation);
 			}
 
 			void Transform::LookAt(Transform * target)
@@ -277,12 +277,16 @@ namespace thomas
 			}
 			void Transform::OnDestroy()
 			{	
-				for (int i = 0; i < m_children.size(); i++)
-				{
-					GameObject::Destroy(m_children[i]->m_gameObject);
-					m_children.erase(m_children.begin() + i);
-					i -= 1;
-				}
+				//if (m_parent)
+				//{
+				//	RemoveParent();
+				//}
+				//for (int i = 0; i < m_children.size(); i++)
+				//{
+				//	GameObject::Destroy(m_children[i]->m_gameObject);
+				//	//m_children.erase(m_children.begin() + i);
+				//	i -= 1;
+				//}
 			}
 			void Transform::SetDirty(bool dirty)
 			{

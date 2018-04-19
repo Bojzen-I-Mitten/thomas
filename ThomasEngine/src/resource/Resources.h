@@ -6,17 +6,20 @@
 
 using namespace System::Collections::Generic;
 using namespace System::Linq;
+using namespace System::Threading;
 namespace ThomasEditor
 {
 	public ref class Resources
 	{
 	internal:
+		static Object^ resourceLock = gcnew Object();
 		static Dictionary<String^, Resource^>^ resources = gcnew Dictionary<String^, ThomasEditor::Resource^>();
 
 		generic<typename T>
 		where T : Resource
 		static T Deserialize(String^ path)
 		{
+			Monitor::Enter(resourceLock);
 			using namespace System::Runtime::Serialization;
 			DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
 			serializserSettings->PreserveObjectReferences = true;
@@ -26,11 +29,12 @@ namespace ThomasEditor
 			Xml::XmlReader^ file = Xml::XmlReader::Create(path);
 			T resource = (T)serializer->ReadObject(file);
 			file->Close();
-
+			resource->Rename(path);
+			Monitor::Exit(resourceLock);
 			return resource;
 		}
 	public:
-
+		static property String^ AssetPath{String^ get(){return "..\\Data\\";}}
 		enum class AssetTypes
 		{
 			MODEL,
@@ -44,8 +48,55 @@ namespace ThomasEditor
 			UNKNOWN
 		};
 
-		static void SaveResource(Resource^ resource, String^ path)
+		static void OnPlay()
 		{
+			for each (Resource^ resource in resources->Values)
+			{
+				resource->OnPlay();
+			}
+		}
+		static void OnStop()
+		{
+			for each (Resource^ resource in resources->Values)
+			{
+				resource->OnStop();
+			}
+		}
+
+		static void SaveResource(Resource^ resource)
+		{
+			
+			Monitor::Enter(resourceLock);
+			using namespace System::Runtime::Serialization;
+			DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
+			serializserSettings->PreserveObjectReferences = true;
+			serializserSettings->KnownTypes = System::Reflection::Assembly::GetAssembly(Resource::typeid)->ExportedTypes;
+			DataContractSerializer^ serializer = gcnew DataContractSerializer(resource->GetType(), serializserSettings);
+			System::IO::FileInfo^ fi = gcnew System::IO::FileInfo(resource->m_path);
+
+			fi->Directory->Create();
+			Xml::XmlWriterSettings^ settings = gcnew Xml::XmlWriterSettings();
+			settings->Indent = true;
+			Xml::XmlWriter^ file = Xml::XmlWriter::Create(resource->m_path, settings);
+			serializer->WriteObject(file, resource);
+			file->Close();
+			Monitor::Exit(resourceLock);
+		}
+
+		static void CreateResource(Resource^ resource, String^ path)
+		{
+			path = AssetPath + path;
+			String^ extension = IO::Path::GetExtension(path);
+			String^ modifier = "";
+			path = path->Remove(path->Length - extension->Length, extension->Length);
+			int i = 0;
+			while (IO::File::Exists(path + modifier + extension))
+			{
+				i++;
+				modifier = "(" + i + ")";
+			}
+			path = path + modifier + extension;
+			Monitor::Enter(resourceLock);
 			using namespace System::Runtime::Serialization;
 			DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
 			serializserSettings->PreserveObjectReferences = true;
@@ -57,17 +108,21 @@ namespace ThomasEditor
 			Xml::XmlWriterSettings^ settings = gcnew Xml::XmlWriterSettings();
 			settings->Indent = true;
 			Xml::XmlWriter^ file = Xml::XmlWriter::Create(path, settings);
-			resource->m_path = path;
+			resource->Rename(path);
 			serializer->WriteObject(file, resource);
 			file->Close();
 			resources[System::IO::Path::GetFullPath(path)] = resource;
+			Monitor::Exit(resourceLock);
 		}
 
 		static AssetTypes GetResourceAssetType(Type^ type);
 
 		static AssetTypes GetResourceAssetType(String^ path)
 		{
-			String^ extension = System::IO::Path::GetExtension(path)->Remove(0, 1);
+			String^ extension = System::IO::Path::GetExtension(path);
+			if (extension->Length == 0)
+				return AssetTypes::UNKNOWN;
+			extension = extension->Remove(0, 1);
 			if (extension == "fx")
 			{
 				return AssetTypes::SHADER;
@@ -139,11 +194,31 @@ namespace ThomasEditor
 			return list;
 		}
 
+		static Resource^ FindResourceFromNativePtr(thomas::resource::Resource* nativePtr)
+		{
+			if (nativePtr == nullptr)
+				return nullptr;
+			for each(Resource^ resource in resources->Values)
+			{
+				if (resource->m_nativePtr == nativePtr)
+					return resource;
+			}
+			return nullptr;
+		}
+
 		static Resource^ Load(String^ path);
 		
 		static Resource^ Find(String^ path);
 
 		static void RenameResource(String^ oldPath, String^ newPath);
+
+
+		static void Unload(Resource^ resource) {
+			if (Find(resource->m_path))
+			{
+				resources->Remove(System::IO::Path::GetFullPath(resource->m_path));
+			}
+		}
 
 		static void UnloadAll()
 		{

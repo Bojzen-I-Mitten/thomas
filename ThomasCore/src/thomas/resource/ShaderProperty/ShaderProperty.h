@@ -17,6 +17,7 @@ namespace thomas
 					SCALAR_BOOL,
 					SCALAR_INT,
 					VECTOR,
+					COLOR,
 					MATRIX,
 					SHADER_RESOURCE,
 					CONSTANT_BUFFER,
@@ -28,8 +29,6 @@ namespace thomas
 				virtual void Apply(std::string name, Shader* shader) = 0;
 				void Apply(Shader* shader) { Apply(m_name, shader); }
 				Type GetType() { return m_type; }
-
-				bool isMaterialProperty;
 				std::string GetName() { return m_name; }
 				void SetName(std::string name) {m_name = name;}
 			private:

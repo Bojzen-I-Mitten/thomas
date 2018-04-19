@@ -40,14 +40,7 @@ namespace thomas
 				ID3DX11EffectVariable* variable = m_effect->GetVariableByIndex(i);
 				if (variable->IsValid())
 				{
-					if (m_properties.size() > i)
-					{
-						//m_properties[i]->UpdateVariable(variable);
-					}else
-					{ 
-						AddProperty(variable);
-					}
-					
+					AddProperty(variable);
 				}
 				
 
@@ -315,7 +308,7 @@ namespace thomas
 			{
 				if (shader->HasProperty(name))
 				{
-					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyVector(value));
+					shader->m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(new shaderProperty::ShaderPropertyColor(value));
 					shader->m_properties[name]->SetName(name);
 				}
 			}
@@ -419,6 +412,11 @@ namespace thomas
 			return nullptr;
 		}
 
+		std::vector<std::string> Shader::GetMaterialProperties()
+		{
+			return m_materialProperties;
+		}
+
 		ID3DX11Effect * Shader::GetEffect()
 		{
 			return m_effect;
@@ -463,7 +461,7 @@ namespace thomas
 				SAFE_RELEASE(m_effect);
 				for (auto pass : m_passes)
 					SAFE_RELEASE(pass.inputLayout);
-
+				m_materialProperties.clear();
 				m_passes.clear();
 				m_effect = tempEffect;
 				SetupReflection();
@@ -547,8 +545,11 @@ namespace thomas
 			prop->GetDesc(&variableDesc);
 			ID3DX11EffectConstantBuffer* cBuffer = prop->GetParentConstantBuffer();
 			
+			bool isMaterialProperty = false;
 			shaderProperty::ShaderProperty* newProperty = nullptr;
-			
+			std::string semantic;
+			if (variableDesc.Semantic != NULL)
+				semantic = variableDesc.Semantic;
 			switch (typeDesc.Class)
 			{
 			case D3D_SVC_SCALAR:
@@ -571,7 +572,10 @@ namespace thomas
 				break;
 			}
 			case D3D_SVC_VECTOR:
-				newProperty = shaderProperty::ShaderPropertyVector::GetDefault();
+				if(semantic == "COLOR")
+					newProperty = shaderProperty::ShaderPropertyColor::GetDefault();
+				else
+					newProperty = shaderProperty::ShaderPropertyVector::GetDefault();
 				break;
 			case D3D_SVC_MATRIX_COLUMNS:
 			case D3D_SVC_MATRIX_ROWS:
@@ -593,6 +597,7 @@ namespace thomas
 				//case D3D_SVT_RWTEXTURE3D:
 				//case D3D_SVT_TEXTURE3D:
 				//case D3D_SVT_TEXTURECUBE:
+					isMaterialProperty = true;
 					newProperty = shaderProperty::ShaderPropertyTexture2D::GetDefault();
 					break;
 				case D3D_SVT_STRUCTURED_BUFFER:
@@ -608,7 +613,7 @@ namespace thomas
 			}
 			
 			std::string name = variableDesc.Name;
-			bool isMaterialProperty = false;
+			
 			if (cBuffer->IsValid())
 			{
 				D3DX11_EFFECT_VARIABLE_DESC bufferDesc;
@@ -620,8 +625,10 @@ namespace thomas
 			if (newProperty != nullptr)
 			{
 				newProperty->SetName(name);
-				newProperty->isMaterialProperty = isMaterialProperty;
-				m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(newProperty);
+				if(!HasProperty(name))
+					m_properties[name] = std::shared_ptr<shaderProperty::ShaderProperty>(newProperty);
+				if(isMaterialProperty)
+					m_materialProperties.push_back(name);
 			}
 			
 		}

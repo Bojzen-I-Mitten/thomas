@@ -16,7 +16,8 @@ namespace ThomasEditor
 		Camera() : Component(new thomas::object::component::Camera()) {};
 
 		[BrowsableAttribute(false)]
-		property Matrix4x4 viewMatrix{
+		property Matrix4x4 viewMatrix
+		{
 			Matrix4x4 get() { return Matrix4x4(((thomas::object::component::Camera*)nativePtr)->GetViewMatrix()); }
 		}
 
@@ -58,7 +59,5 @@ namespace ThomasEditor
 			int get() { return ((thomas::object::component::Camera*)nativePtr)->GetTargetDisplayIndex(); }
 			void set(int value) { ((thomas::object::component::Camera*)nativePtr)->SetTargetDisplay(value); }
 		}
-
-
 	};
 }

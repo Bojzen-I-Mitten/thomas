@@ -7,6 +7,7 @@
 #include "DirectXTK/WICTextureLoader.h"
 #include "DirectXTK/DDSTextureLoader.h"
 #include <dxgi.h>
+#include <D3d11_4.h>
 namespace thomas
 {
 	namespace utils
@@ -44,7 +45,7 @@ namespace thomas
 			return true;
 		}
 
-		bool D3d::CreateTexture(int width, int height, DXGI_FORMAT format, ID3D11Texture2D *& tex, ID3D11ShaderResourceView *& SRV, bool mipMaps, int mipLevels=1)
+		bool D3d::CreateTexture(void* initData, int width, int height, DXGI_FORMAT format, ID3D11Texture2D *& tex, ID3D11ShaderResourceView *& SRV, bool mipMaps, int mipLevels=1)
 		{
 			D3D11_TEXTURE2D_DESC textureDesc;
 			ZeroMemory(&textureDesc, sizeof(textureDesc));
@@ -66,12 +67,24 @@ namespace thomas
 			viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			viewDesc.Texture2D.MipLevels = mipLevels;
 			viewDesc.Texture2D.MostDetailedMip = 0;
-
-			ID3D11Texture2D* tex2D;
-
-			ThomasCore::GetDevice()->CreateTexture2D(&textureDesc, NULL, &tex2D);
-			ThomasCore::GetDevice()->CreateShaderResourceView(tex2D, &viewDesc, &SRV);
-			return true;
+			
+			HRESULT hr;
+			if (initData)
+			{
+				D3D11_SUBRESOURCE_DATA TexInitData;
+				ZeroMemory(&TexInitData, sizeof(D3D11_SUBRESOURCE_DATA));
+				TexInitData.pSysMem = initData;
+				TexInitData.SysMemPitch = static_cast<UINT>(4 * width);
+				TexInitData.SysMemSlicePitch = static_cast<UINT>(4 * width * height);
+				hr = ThomasCore::GetDevice()->CreateTexture2D(&textureDesc, &TexInitData, &tex);
+			}
+			else
+			{
+				hr = ThomasCore::GetDevice()->CreateTexture2D(&textureDesc, NULL, &tex);
+			}
+			if(hr == S_OK)
+				hr = ThomasCore::GetDevice()->CreateShaderResourceView(tex, &viewDesc, &SRV);
+			return hr == S_OK;
 		}
 		
 		bool D3d::CreateDeviceAndContext(ID3D11Device *& device, ID3D11DeviceContext *& context)
@@ -99,8 +112,8 @@ namespace thomas
 				return false;
 			}
 
-			ID3D10Multithread *multi;
-			hr = device->QueryInterface(__uuidof(ID3D10Multithread), (void**)&multi);
+			ID3D11Multithread *multi;
+			hr = device->QueryInterface(__uuidof(ID3D11Multithread), (void**)&multi);
 			if (SUCCEEDED(hr) && multi != NULL)
 			{
 				multi->SetMultithreadProtected(TRUE);
@@ -141,7 +154,7 @@ namespace thomas
 						scd.OutputWindow = handle;
 						scd.Flags = 0;
 
-						scd.SampleDesc.Count = THOMAS_AA_COUNT; // AA times 1
+						scd.SampleDesc.Count = THOMAS_AA_COUNT; //Make this costomizable!!!
 						scd.SampleDesc.Quality = THOMAS_AA_QUALITY;
 						scd.Windowed = TRUE;
 						scd.BufferDesc.RefreshRate.Numerator = 0; // change 0 to numerator for vsync

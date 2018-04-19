@@ -46,7 +46,6 @@
     <ClCompile Include="src\thomas\Input.cpp" />
     <ClCompile Include="src\thomas\object\component\Camera.cpp" />
     <ClCompile Include="src\thomas\object\component\Component.cpp" />
-    <ClCompile Include="src\thomas\object\component\FrustumCullingComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\ParticleEmitterComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\RenderComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\RigidBodyComponent.cpp" />
@@ -65,7 +64,6 @@
     <ClCompile Include="src\thomas\utils\AssimpLoader.cpp" />
     <ClCompile Include="src\thomas\utils\D3d.cpp" />
     <ClCompile Include="src\thomas\utils\DebugTools.cpp" />
-    <ClCompile Include="src\thomas\utils\FrustumCulling.cpp" />
     <ClCompile Include="src\thomas\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +82,7 @@
     <ClInclude Include="src\thomas\object\component\LightComponent.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\shaderProperties.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderProperty.h" />
+    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyColor.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyMatrix.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyScalarBool.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyScalarFloat.h" />
@@ -91,7 +90,7 @@
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyShaderResource.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyTexture2D.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyVector.h" />
-    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderProperyConstantBuffer.h" />
+    <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyConstantBuffer.h" />
     <ClInclude Include="src\thomas\resource\texture\Texture2D.h" />
     <ClInclude Include="src\thomas\utils\Buffers.h" />
     <ClInclude Include="src\thomas\graphics\BulletDebugDraw.h" />
@@ -110,7 +109,6 @@
     <ClInclude Include="src\thomas\object\component\Camera.h" />
     <ClInclude Include="src\thomas\object\component\Component.h" />
     <ClInclude Include="src\thomas\object\component\Components.h" />
-    <ClInclude Include="src\thomas\object\component\FrustumCullingComponent.h" />
     <ClInclude Include="src\thomas\object\component\ScriptComponent.h" />
     <ClInclude Include="src\thomas\object\component\ParticleEmitterComponent.h" />
     <ClInclude Include="src\thomas\object\component\RenderComponent.h" />
@@ -130,7 +128,6 @@
     <ClInclude Include="src\thomas\utils\AssimpLoader.h" />
     <ClInclude Include="src\thomas\utils\d3d.h" />
     <ClInclude Include="src\thomas\utils\DebugTools.h" />
-    <ClInclude Include="src\thomas\utils\FrustumCulling.h" />
     <ClInclude Include="src\thomas\utils\Math.h" />
     <ClInclude Include="src\thomas\Window.h" />
   </ItemGroup>
@@ -222,7 +219,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;DirectXTK_Debug.lib;DirectXTKAudioWin8_Debug.lib;Effects11_Debug.lib;libnoise.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;DirectXTK_Debug.lib;DirectXTKAudioWin8_Debug.lib;DirectXTex_Debug.lib;Effects11_Debug.lib;libnoise.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -263,7 +260,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>$(ProjectDir)\lib\assimp.lib;$(ProjectDir)\lib\libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision.lib;BulletDynamics.lib;DirectXTK.lib;DirectXTKAudioWin8.lib;libnoise.lib;LinearMath.lib;Effects11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision.lib;BulletDynamics.lib;DirectXTK.lib;DirectXTKAudioWin8.lib;DirectXTex.lib;libnoise.lib;LinearMath.lib;Effects11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

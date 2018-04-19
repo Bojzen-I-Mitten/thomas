@@ -19,9 +19,9 @@
             <z>0</z>
           </localEulerAngles>
           <localPosition>
-            <x>0.9120178</x>
-            <y>2.385813</y>
-            <z>-2.35636067</z>
+            <x>-4.11350632</x>
+            <y>2.54043055</y>
+            <z>-0.942621231</z>
           </localPosition>
           <localScale>
             <x>1</x>
@@ -30,9 +30,9 @@
           </localScale>
           <parent i:nil="true" />
           <position>
-            <x>0.9120178</x>
-            <y>2.385813</y>
-            <z>-2.35636067</z>
+            <x>-4.11350632</x>
+            <y>2.54043055</y>
+            <z>-0.942621231</z>
           </position>
           <scale>
             <x>1</x>
@@ -43,8 +43,11 @@
         <Component z:Id="5" i:type="RenderComponent">
           <m_name i:nil="true" />
           <enabled>true</enabled>
-          <model z:Id="6">
-            <path z:Id="7">..\Data\cones.obj</path>
+          <material z:Id="6">
+            <path z:Id="7">..\Data\red.mat</path>
+          </material>
+          <model z:Id="8">
+            <path z:Id="9">..\Data\cone.obj</path>
           </model>
         </Component>
       </Components>
@@ -52,6 +55,6 @@
       <transform z:Ref="4" i:nil="true" />
     </GameObject>
   </GameObjects>
-  <Name z:Id="8">test</Name>
-  <SavePath i:nil="true" />
+  <Name z:Id="10">test</Name>
+  <SavePath z:Id="11">K:\Users\Morgan Cromell\Documents\thomas\Data\test.tds</SavePath>
 </Scene>

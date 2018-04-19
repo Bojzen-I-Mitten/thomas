@@ -5,23 +5,22 @@
 namespace thomas {
 	namespace object {
 		namespace component {
-			
-			std::vector<LightComponent*>	LightComponent::s_lightComponents;
 
-			
+			std::vector<LightComponent::Light> LightComponent::s_dataVector;
+			thomas::utils::buffers::StructuredBuffer* LightComponent::s_dataBuffer;
+			std::vector<LightComponent*>	LightComponent::s_lightComponents;
 
 			LightComponent::LightComponent()
 			{
-				attenuation = math::Vector3(1.0f, 0.2f, 0.0f);
-				color = math::Color(1.0f, 1.0f, 1.0f);
-				intensity = 1.0f;
-				spotInnerAngle = 0.0f;
-				spotOuterAngle = 20.0f;
+				m_attenuation = math::Vector3(1.0f, 0.2f, 0.0f);
+				m_color = math::Color(1.0f, 1.0f, 1.0f);
+				m_intensity = 1.0f;
+				m_spotInnerAngle = 0.0f;
+				m_spotOuterAngle = 20.0f;
 				
 				m_type = LIGHT_TYPES::DIRECTIONAL;
 
 				s_lightComponents.push_back(this);
-
 			}
 
 			LightComponent::~LightComponent()
@@ -59,6 +58,27 @@ namespace thomas {
 				return s_lightComponents;
 			}
 
+			void LightComponent::UpdateLights()
+			{
+				s_dataVector.clear();
+				for (LightComponent* lc : s_lightComponents)
+				{
+					Light temp;
+					temp.color = lc->GetColor().ToVector3();
+					temp.intensity = lc->GetIntensity();
+					temp.position = lc->m_gameObject->m_transform->GetPosition();
+					temp.spotOuterAngle = lc->GetSpotOuterAngle();
+					temp.direction = lc->m_gameObject->m_transform->Forward();
+					temp.spotInnerAngle = lc->GetSpotInnerAngle();
+					temp.attenuation = lc->GetAttenuation();
+					temp.type = (unsigned int)lc->GetType();
+
+					s_dataVector.push_back(temp);
+				}
+				
+				s_dataBuffer->SetData(s_dataVector.data(), s_dataVector.size() * sizeof(Light));
+			}
+
 			void LightComponent::OnDrawGizmos()
 			{
 				/*
@@ -70,63 +90,63 @@ namespace thomas {
 
 			void LightComponent::SetColor(math::Color color)
 			{
-				color = color;
+				m_color = color;
 			}
 			math::Color LightComponent::GetColor()
 			{
-				return color;
+				return m_color;
 			}
 			void LightComponent::SetIntensity(float intensity)
 			{
-				intensity = intensity;
+				m_intensity = intensity;
 			}
 			float LightComponent::GetIntensity()
 			{
-				return intensity;
+				return m_intensity;
 			}
 			void LightComponent::SetSpotInnerAngle(float angle)
 			{
-				spotInnerAngle = angle;
+				m_spotInnerAngle = angle;
 			}
 			float LightComponent::GetSpotInnerAngle()
 			{
-				return spotInnerAngle;
+				return m_spotInnerAngle;
 			}
 			void LightComponent::SetSpotOuterAngle(float angle)
 			{
-				spotOuterAngle = angle;
+				m_spotOuterAngle = angle;
 			}
 			float LightComponent::GetSpotOuterAngle()
 			{
-				return spotOuterAngle;
+				return m_spotOuterAngle;
 			}
 			void LightComponent::SetConstantAttenuation(float x)
 			{
-				attenuation.x = x;
+				m_attenuation.x = x;
 			}
 			float LightComponent::GetConstantAttenuation()
 			{
-				return attenuation.x;
+				return m_attenuation.x;
 			}
 			void LightComponent::SetLinearAttenuation(float y)
 			{
-				attenuation.y = y;
+				m_attenuation.y = y;
 			}
 			float LightComponent::GetLinearAttenuation()
 			{
-				return attenuation.y;
+				return m_attenuation.y;
 			}
 			void LightComponent::SetQuadraticAttenuation(float z)
 			{
-				attenuation.z = z;
+				m_attenuation.z = z;
 			}
 			float LightComponent::GetQuadraticAttenuation()
 			{
-				return attenuation.y;
+				return m_attenuation.y;
 			}
 			math::Vector3 LightComponent::GetAttenuation()
 			{
-				return attenuation;
+				return m_attenuation;
 			}
 
 			void LightComponent::SetLightType(LIGHT_TYPES type)
@@ -137,6 +157,15 @@ namespace thomas {
 			LightComponent::LIGHT_TYPES LightComponent::GetType()
 			{
 				return m_type;
+			}
+
+			void LightComponent::Init()
+			{
+				s_dataBuffer = new thomas::utils::buffers::StructuredBuffer(nullptr, sizeof(Light), NR_OF_LIGHTS, D3D11_USAGE_DYNAMIC);
+			}
+			void LightComponent::Destroy()
+			{
+				delete s_dataBuffer;
 			}
 		}
 	}

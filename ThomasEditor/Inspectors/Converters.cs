@@ -113,6 +113,48 @@ namespace ThomasEditor.Converters
         }
     }
 
+    public class ColorConverter : IValueConverter
+    {
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+
+            if (value == null)
+                return System.Drawing.Color.Black;
+            Color color = (Color)value;
+            return System.Windows.Media.Color.FromScRgb(color.a, color.r, color.g, color.b);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return new Color(0, 0, 0, 1);
+            }
+            new Color(0, 0, 0, 1);
+            System.Windows.Media.Color mediaColor = (System.Windows.Media.Color)value;
+            
+            //System.Drawing.Color color = System.Drawing.ColorTranslator.FromHtml(mediaColor.ToString());
+            //System.Drawing.Color color = System.Drawing.ColorTranslator.FromHtml(value as string);
+            return new Color(mediaColor.ScR, mediaColor.ScG, mediaColor.ScB, mediaColor.ScA);
+
+        }
+    }
+
+
+    public class ObjectToTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.GetType();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class NullResourceConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -123,6 +165,19 @@ namespace ThomasEditor.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class IsNullConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (value == null);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new InvalidOperationException("IsNullConverter can only be used OneWay.");
         }
     }
 }

@@ -2,6 +2,7 @@
 #pragma unmanaged
 #include <thomas\object\component\RenderComponent.h>
 #pragma managed
+
 #include "../Component.h"
 #include "../../resource/Model.h"
 #include "../../resource/Material.h"
@@ -14,15 +15,16 @@ namespace ThomasEditor
 	{
 	private:
 		Model^ m_model;
+
 	public:
-		RenderComponent() : Component(new thomas::object::component::RenderComponent()) {
-		}
+		RenderComponent() : Component(new thomas::object::component::RenderComponent()) {}
 
 		property Model^ model {
-			Model^ get() {
+			Model^ get() 
+			{
 				return m_model;
-				
 			}
+
 			void set(Model^ value)
 			{
 				m_model = value;
@@ -35,10 +37,20 @@ namespace ThomasEditor
 
 		property Material^ material {
 			Material^ get() {
-				return gcnew Material(((thomas::object::component::RenderComponent*)nativePtr)->GetMaterial(0));
+				thomas::resource::Material* nptr = ((thomas::object::component::RenderComponent*)nativePtr)->GetMaterial(0);
+				Resource^ mat =	ThomasEditor::Resources::FindResourceFromNativePtr(nptr);
+				if (mat != nullptr)
+					return (Material^)mat;
+				else
+					return gcnew Material(nptr);
 			}
 			void set(Material^ value) {
-				((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, (thomas::resource::Material*)value->m_nativePtr);
+				if (value)
+					((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, (thomas::resource::Material*)value->m_nativePtr);
+				else
+					((thomas::object::component::RenderComponent*)nativePtr)->SetMaterial(0, nullptr);
+
+				OnPropertyChanged("material");
 			}
 		}
 

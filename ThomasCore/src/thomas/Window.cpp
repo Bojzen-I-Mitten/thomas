@@ -263,9 +263,6 @@ namespace thomas
 		}
 		else
 			LOG("Failed to create window");
-			
-		
-
 	}
 
 	Window::~Window()
@@ -297,12 +294,9 @@ namespace thomas
 	{
 		float color[4] = { 0.34375f, 0.34375f, 0.34375f, 1.0f };
 
-	
 		ThomasCore::GetDeviceContext()->ClearRenderTargetView(m_dxBuffers.backBuffer, color);
 		ThomasCore::GetDeviceContext()->ClearDepthStencilView(m_dxBuffers.depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 	}
-
-
 
 	bool Window::SetHeight(LONG height)
 	{
@@ -521,6 +515,23 @@ namespace thomas
 		}
 	}
 
+	bool Window::WaitingForUpdate()
+	{
+		if (s_editorWindow && s_editorWindow->m_shouldResize)
+		{
+			return true;
+		}
+		for (Window* window : s_windows)
+		{
+			if (window->m_shouldResize)
+			{
+				return true;
+			}
+		}
+		return false;
+
+	}
+
 	void Window::Update()
 	{
 		if (s_editorWindow)
@@ -554,9 +565,7 @@ namespace thomas
 				window->Resize();
 				window->m_shouldResize = false;
 			}
-		}
-	
-				
+		}		
 	}
 
 	void Window::UpdateFocus()
