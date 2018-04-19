@@ -1,9 +1,7 @@
 #include "EditorGrid.h"
-#include "..\utils\d3d.h"
 #include "..\resource\Material.h"
-#include "..\utils\Buffers.h"
 #include "..\resource\Shader.h"
-#include "..\object\component/Camera.h"
+#include "..\object\component\Camera.h"
 #include "..\graphics\Renderer.h"
 
 namespace thomas
@@ -22,13 +20,13 @@ namespace thomas
 			if (m_material)
 			{
 				math::Vector3 cameraPos = camera->GetPosition();
-				int scale = (int)log10(((abs(cameraPos.y / 2) + 1) / m_cellSize)*m_cellSize);
+				int scale = (int)log10(((abs(cameraPos.y / 2.f) + 1.f) / m_cellSize) * m_cellSize);
 				scale = (int)pow(10.0f, scale);
-				math::Matrix worldMatrix = math::Matrix::CreateScale((scale)*m_cellSize) * math::Matrix::CreateTranslation(
+				math::Matrix worldMatrix = math::Matrix::CreateScale((scale) * m_cellSize) * math::Matrix::CreateTranslation(
 											(int)(cameraPos.x / (float)scale) * (float)scale, 0.f, (int)(cameraPos.z / (float)scale) * (float)scale);
 
 				scale *= (int)m_cellSize;
-				math::Vector4 cameraScaleMatrix(cameraPos.x, cameraPos.y, cameraPos.z, 0);
+				math::Vector4 cameraScaleMatrix(cameraPos.x, cameraPos.y, cameraPos.z, 0.f);
 				m_material->SetVector("cameraPos", math::Vector4(cameraScaleMatrix));
 				m_material->SetInt("gridScale", scale);
 				graphics::Renderer::SubmitCommand(graphics::RenderCommand(worldMatrix, m_mesh, m_material.get(), camera));

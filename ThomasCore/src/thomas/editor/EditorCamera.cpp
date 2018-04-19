@@ -1,14 +1,12 @@
 #include "EditorCamera.h"
-#include "../Input.h"
-#include "../ThomasTime.h"
-#include <algorithm>
-#include "../Window.h"
-#include "../graphics/BulletDebugDraw.h"
 #include "EditorGrid.h"
-#include "../resource/Shader.h"
-#include "../resource/Material.h"
-#include "../graphics/Renderer.h"
-#include "../resource/Model.h"
+#include "..\Input.h"
+#include "..\ThomasTime.h"
+#include "..\Window.h"
+#include "..\resource\Shader.h"
+#include "..\resource\Material.h"
+#include "..\graphics\Renderer.h"
+#include "..\resource\Model.h"
 
 namespace thomas
 {
@@ -24,7 +22,7 @@ namespace thomas
 			m_cameraComponent = new object::component::Camera(true);
 			m_cameraComponent->SetTargetDisplay(-1);
 			m_cameraComponent->m_gameObject = this;
-			m_grid = new EditorGrid(100, 1, 10);
+			m_grid = new EditorGrid(100, 1.f, 10);
 			m_sensitivity = 50.0f;
 			m_speed = 2.0f;
 			m_hasSelectionChanged = false;
@@ -36,9 +34,9 @@ namespace thomas
 			m_transform->SetPosition(math::Vector3(5, 5, 5));
 			m_transform->LookAt(math::Vector3(0, 0, 0));
 			math::Vector3 eulerAngles = math::ToEuler(m_transform->GetRotation());
-			rotationX = -eulerAngles.y;
-			rotationY = -eulerAngles.x;
-			m_transform->SetRotation(-rotationX, -rotationY, 0);
+			m_rotationX = -eulerAngles.y;
+			m_rotationY = -eulerAngles.x;
+			m_transform->SetRotation(-m_rotationX, -m_rotationY, 0);
 
 			m_manipulatorMode = ImGuizmo::MODE::LOCAL;
 			m_manipulatorOperation = ImGuizmo::OPERATION::TRANSLATE;
@@ -70,13 +68,13 @@ namespace thomas
 		void EditorCamera::Render()
 		{
 			if (s_editorCamera)
-				s_editorCamera->renderCamera();
+				s_editorCamera->RenderCamera();
 		}
 
 		void EditorCamera::Update()
 		{
 			if (s_editorCamera)
-				s_editorCamera->updateCamera();
+				s_editorCamera->UpdateCamera();
 		}
 
 		void EditorCamera::SelectObject(object::GameObject * gameObject)
@@ -140,17 +138,17 @@ namespace thomas
 			s_editorCamera->m_manipulatorMode = s_editorCamera->m_manipulatorMode == ImGuizmo::MODE::WORLD ? ImGuizmo::MODE::LOCAL : ImGuizmo::MODE::WORLD;
 		}
 
-		void EditorCamera::renderCamera()
+		void EditorCamera::RenderCamera()
 		{
-			renderSelectedObjects();
+			RenderSelectedObjects();
 			m_cameraComponent->Render();
-			renderGizmos();
+			RenderGizmos();
 			Physics::DrawDebug(m_cameraComponent);
 			m_grid->Draw(m_cameraComponent);
 
 		}
 
-		void EditorCamera::updateCamera()
+		void EditorCamera::UpdateCamera()
 		{
 			Input::ResetScrollWheelValue();
 			m_manipulatorSnapping = false;
@@ -193,16 +191,16 @@ namespace thomas
 				if (Input::GetKey(Input::Keys::E))
 					m_transform->Translate(m_transform->Up()*ThomasTime::GetActualDeltaTime()*speed);
 
-				rotationX += Input::GetMouseX() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
-				rotationY += Input::GetMouseY() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
+				m_rotationX += Input::GetMouseX() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
+				m_rotationY += Input::GetMouseY() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
 
-				m_transform->SetRotation(-rotationX, -rotationY, 0);
+				m_transform->SetRotation(-m_rotationX, -m_rotationY, 0);
 			}
 			else if (Input::GetMouseButtonDown(Input::MouseButtons::LEFT))
 			{
 				if (!ImGuizmo::IsOver())
 				{
-					object::GameObject* gObj = findClickedGameObject();
+					object::GameObject* gObj = FindClickedGameObject();
 					SelectObject(gObj);
 				}
 			}
@@ -221,7 +219,7 @@ namespace thomas
 			}
 		}
 
-		void EditorCamera::renderSelectedObjects()
+		void EditorCamera::RenderSelectedObjects()
 		{
 			if (!m_objectHighlighter)
 				return;
@@ -243,7 +241,7 @@ namespace thomas
 			}
 		}
 
-		void EditorCamera::renderGizmos()
+		void EditorCamera::RenderGizmos()
 		{
 			for (int i = 0; i < s_selectedObjects.size(); i++)
 			{
@@ -271,7 +269,7 @@ namespace thomas
 			}
 		}
 
-		object::GameObject* EditorCamera::findClickedGameObject()
+		object::GameObject* EditorCamera::FindClickedGameObject()
 		{
 			math::Ray ray = m_cameraComponent->ScreenPointToRay(Input::GetMousePosition());
 			std::vector<object::component::RenderComponent*> renderComponents = object::Object::FindObjectsOfType<object::component::RenderComponent>();

@@ -1,3 +1,7 @@
+/*
+	Class for management of the grid in the scene
+*/
+
 #pragma once
 #include "..\utils\Math.h"
 #include "..\graphics\Mesh.h"

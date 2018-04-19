@@ -1,62 +1,76 @@
+/*
+	Class for management of the editor camera in the scene 
+ */
+
 #pragma once
-#include "../Common.h"
-#include "../object/GameObject.h"
-#include <vector>
+#include "..\Common.h"
+#include "..\object\GameObject.h"
 #include <imgui\ImGuizmo.h>
+#include <vector>
+#include <memory>
+
 namespace thomas
 {
 	namespace resource
 	{
 		class Material;
 	}
+
 	namespace editor
 	{
 		class EditorGrid;
+
 		class THOMAS_API EditorCamera : public object::GameObject
 		{
-		private:
-			
-			void renderCamera();
-			void updateCamera();
-			void renderSelectedObjects();
-			void renderGizmos();
-			object::GameObject* findClickedGameObject();
-			EditorCamera();
-			~EditorCamera();
-		public:
-			
-			static void Destroy();
+		public:		
 			static void Init();
-			static EditorCamera* GetEditorCamera();
+			static void Destroy();
 			static void Render();
 			static void Update();
+
+		public:
+			static bool HasSelectionChanged();
+			static void ToggleManipulatorMode();
 			static void SelectObject(GameObject* gameObject);
 			static void UnselectObject(GameObject* gameObject);
 			static void UnselectObjects();
-			static std::vector<object::GameObject*> GetSelectedObjects();
-			static bool HasSelectionChanged();
+
+		public:
 			static void SetHasSelectionChanged(bool selectionChanged);
+			static void SetManipulatorOperation(ImGuizmo::OPERATION operation);
+
+		public:
+			static EditorCamera* GetEditorCamera();
+			static ImGuizmo::OPERATION GetManipulatorOperation();
+			static std::vector<object::GameObject*> GetSelectedObjects();
 			object::component::Camera* GetCamera();
 
-			static void SetManipulatorOperation(ImGuizmo::OPERATION operation);
-			static ImGuizmo::OPERATION GetManipulatorOperation();
+		private:
+			void RenderCamera();
+			void UpdateCamera();
+			void RenderSelectedObjects();
+			void RenderGizmos();
+			object::GameObject* FindClickedGameObject();
+			EditorCamera();
+			~EditorCamera();
 
-			static void ToggleManipulatorMode();
 		private:
 			ImGuizmo::OPERATION m_manipulatorOperation;
 			ImGuizmo::MODE m_manipulatorMode;
-
-			float m_sensitivity = 1.0f;
-			float rotationX;
-			float rotationY;
-			float m_speed;
-			float m_manipulatorScale = 2.0f;
-			bool m_manipulatorSnapping = false;
-
 			object::component::Camera* m_cameraComponent;
 			resource::Material* m_objectHighlighter;
 			EditorGrid* m_grid;
+
+		private:
+			float m_sensitivity = 1.0f;
+			float m_rotationX;
+			float m_rotationY;
+			float m_speed;
+			float m_manipulatorScale = 2.0f;
+			bool m_manipulatorSnapping = false;	
 			bool m_hasSelectionChanged;
+
+		private:
 			static EditorCamera* s_editorCamera;
 			static std::vector<object::GameObject*> s_selectedObjects;
 		};
