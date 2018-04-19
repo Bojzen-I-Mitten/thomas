@@ -1,3 +1,8 @@
+/*
+	Helper file for loading models with the assimp library. This class prepares the mesh
+	with vertex and index buffers and renders the model.
+*/
+
 #pragma once
 #include "..\utils\Math.h"
 #include "..\resource\Shader.h"

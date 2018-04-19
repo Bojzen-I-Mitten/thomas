@@ -1,3 +1,7 @@
+/*
+	Render class for the gameobjects and material assembly
+*/
+
 #pragma once
 #include "..\Common.h"
 #include "..\utils\Math.h"
@@ -32,7 +36,7 @@ namespace thomas
 		{
 			object::component::Camera* camera;
 			math::Matrix worldMatrix;
-			std::shared_ptr<Mesh> mesh;
+			std::shared_ptr<Mesh> mesh; //This doesn't have to be a shared ptr? More process overhead!
 			resource::Material* material;
 
 			RenderCommand(math::Matrix world, std::shared_ptr<Mesh> m, resource::Material* mat, object::component::Camera* cam) :

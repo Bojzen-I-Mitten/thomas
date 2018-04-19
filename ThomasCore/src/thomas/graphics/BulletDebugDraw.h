@@ -1,5 +1,5 @@
 /*
-	Wrapper around the debug draw provided by the bullet physics library
+	Wrapper around the debug draw provided by the bullet physics library.
 */
 
 #pragma once

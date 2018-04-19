@@ -12,7 +12,7 @@ namespace thomas
 	{
 		BulletDebugDraw::BulletDebugDraw()
 		{
-			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/lineShader.fx"); //Hardcoded line shader
+			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/lineShader.fx"); //Hardcoded line shader for debug draw
 
 			if (shader != nullptr)
 			{
