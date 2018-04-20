@@ -34,10 +34,17 @@ namespace thomas {
 			RenderCommand(math::Matrix world, std::shared_ptr<Mesh> m, resource::Material* mat, object::component::Camera* cam) :
 				worldMatrix(world), mesh(m), material(mat), camera(cam) {};
 		};
-		typedef std::map<object::component::Camera*, std::map<resource::Material*, std::vector<RenderCommand>>> CommandQueue;
+
+		struct MaterialSorter
+		{
+			bool operator() (resource::Material* mat1, resource::Material* mat2) const;
+		};
+
+		typedef std::map<object::component::Camera*, std::map<resource::Material*, std::vector<RenderCommand>, MaterialSorter>> CommandQueue;
 
 		class THOMAS_API Renderer {
-		private:			
+		private:
+
 			static void BindFrame();
 			static void BindObject(thomas::resource::Material* material, thomas::math::Matrix& worldMatrix);
 						

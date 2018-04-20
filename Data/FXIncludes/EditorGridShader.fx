@@ -62,7 +62,7 @@ VS_OUT VSMain(VS_IN input)
 	//dist -= pow(cameraPos.y + 1, 1.5f);
 	//dist /= gridScale;
 	output.Color = input.Color;
-	//output.Color.w = 1.0f - (dist / 10.0f);
+    output.Color.w = 1.0f - (cameraPos.y /gridScale / viewDistance);
 	return output;
 }
 

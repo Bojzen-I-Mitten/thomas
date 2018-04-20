@@ -16,6 +16,8 @@ namespace thomas
 		}
 	}
 	namespace resource { class Material; }
+
+
 	namespace graphics 
 	{
 		
@@ -64,6 +66,8 @@ namespace thomas
 		private:
 			std::string m_name;
 			MeshData m_data;
+
+			
 		};
 	}
 }

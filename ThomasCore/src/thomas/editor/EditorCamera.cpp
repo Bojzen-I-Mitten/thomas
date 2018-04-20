@@ -32,8 +32,10 @@ namespace thomas
 			m_objectHighlighter = nullptr;
 			resource::Shader* outliner = resource::Shader::CreateShader("../Data/FXIncludes/EditorOutlineShader.fx");
 			if (outliner)
+			{
 				m_objectHighlighter = new resource::Material(outliner);
-
+				m_objectHighlighter->m_renderQueue = 100;
+			}
 			m_transform->SetPosition(math::Vector3(5, 5, 5));
 			m_transform->LookAt(math::Vector3(0, 0, 0));
 			math::Vector3 eulerAngles = math::ToEuler(m_transform->GetRotation());

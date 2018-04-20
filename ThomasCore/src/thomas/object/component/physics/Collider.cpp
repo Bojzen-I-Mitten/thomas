@@ -1,5 +1,5 @@
 #include "Collider.h"
-
+#include "../../GameObject.h"
 namespace thomas
 {
 	namespace object
@@ -52,11 +52,30 @@ namespace thomas
 
 			void Collider::OnDisable()
 			{
+				if (m_collisionObject)
+				{
+					Physics::s_world->removeCollisionObject(m_collisionObject);
+					m_collisionObject = nullptr;
+				}
 			}
 
 			void Collider::OnDestroy()
 			{
+				OnDisable();
 				//SAFE_DELETE(m_collisionShape);
+			}
+
+			void Collider::Update()
+			{
+				
+				//m_collisionShape->setLocalScaling(Physics::ToBullet(m_gameObject->m_transform->GetScale()));
+				if (m_collisionObject)
+				{
+					btTransform trans;
+					trans.setFromOpenGLMatrix(*m_gameObject->m_transform->GetWorldMatrix().m);
+					m_collisionObject->setWorldTransform(trans);
+					Physics::s_world->updateSingleAabb(m_collisionObject);
+				}
 			}
 
 			btCollisionShape * Collider::GetCollisionShape()

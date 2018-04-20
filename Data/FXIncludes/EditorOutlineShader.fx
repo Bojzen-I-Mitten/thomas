@@ -11,7 +11,7 @@ DepthStencilState DisableDepth
 RasterizerState TestRasterizerOutline
 {
 	FillMode = SOLID;
-	CullMode = FRONT;
+	CullMode = BACK;
 	FrontCounterClockWise = TRUE;
 	DepthClipEnable = TRUE;
 };
@@ -31,7 +31,7 @@ v2f vert(appdata_thomas v)
 
 float4 frag(v2f i) : SV_TARGET
 {
-	return float4(1,1,0, 1.0f);
+	return float4(1,0.5f,0, 1.0f);
 }
 
 
