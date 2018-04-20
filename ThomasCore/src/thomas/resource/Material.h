@@ -78,9 +78,12 @@ namespace thomas
 			std::map<std::string, std::shared_ptr<shaderProperty::ShaderProperty>> GetAllProperties();
 
 			UINT GetId();
+			friend bool operator<(const Material& mat1, const Material& mat2);
+			bool operator<(const Material& other);
+			bool operator<(const Material* other);
 
 		public:
-			int m_renderQueue;
+			int m_renderQueue = 2000;
 			D3D11_PRIMITIVE_TOPOLOGY m_topology;
 		private:
 			struct Pass

@@ -25,6 +25,8 @@ namespace thomas
 				void OnDisable();
 				void OnDestroy();
 
+				void Update();
+
 				btCollisionShape* GetCollisionShape();
 				
 			protected:

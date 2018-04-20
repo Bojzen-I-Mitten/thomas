@@ -62,6 +62,7 @@ namespace thomas
 
 		void Renderer::SubmitCommand(RenderCommand command)
 		{
+			
 			s_renderCommands[command.camera][command.material].push_back(command);
 		}
 
@@ -105,6 +106,11 @@ namespace thomas
 				editor::Gizmos::RenderGizmos();
 			}
 			
+		}
+		bool MaterialSorter::operator()(resource::Material * mat1, resource::Material * mat2) const
+		{
+
+			return mat1->m_renderQueue < mat2->m_renderQueue;
 		}
 
 	}

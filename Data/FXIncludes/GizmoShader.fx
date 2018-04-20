@@ -52,8 +52,8 @@ struct v2f {
 v2f vert(appdata_thomas v)
 {
 	v2f o;
-	o.vertex = mul(gizmoMatrix, v.vertex);
-	o.vertex = ThomasWorldToClipPos(o.vertex);
+    o.vertex = mul(float4(v.vertex, 1), gizmoMatrix);
+	o.vertex = ThomasWorldToClipPos(o.vertex.xyz);
 	return o;
 }
 

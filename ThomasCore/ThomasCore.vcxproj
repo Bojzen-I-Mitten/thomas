@@ -67,6 +67,7 @@
     <ClCompile Include="src\thomas\utils\AssimpLoader.cpp" />
     <ClCompile Include="src\thomas\utils\D3d.cpp" />
     <ClCompile Include="src\thomas\utils\DebugTools.cpp" />
+    <ClCompile Include="src\thomas\utils\Primitives.cpp" />
     <ClCompile Include="src\thomas\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +136,7 @@
     <ClInclude Include="src\thomas\utils\d3d.h" />
     <ClInclude Include="src\thomas\utils\DebugTools.h" />
     <ClInclude Include="src\thomas\utils\Math.h" />
+    <ClInclude Include="src\thomas\utils\Primitives.h" />
     <ClInclude Include="src\thomas\Window.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
