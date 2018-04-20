@@ -23,6 +23,7 @@
 #include "editor\EditorCamera.h"
 #include "editor\gizmos\Gizmos.h"
 #include <thread>
+#include "utils\Primitives.h"
 namespace thomas {
 	ID3D11Debug* ThomasCore::s_debug = nullptr;
 	ID3D11Device* ThomasCore::s_device = nullptr;
@@ -47,7 +48,7 @@ namespace thomas {
 		if (init)
 			resource::Texture2D::Init();
 
-
+		utils::Primitives::Init();
 
 		//utils::DebugTools::Init();
 
@@ -151,6 +152,7 @@ namespace thomas {
 		resource::Shader::DestroyAllShaders();
 		resource::Material::Destroy();
 		resource::Texture2D::Destroy();
+		utils::Primitives::Destroy();
 		//utils::DebugTools::Destroy();
 		object::Object::Destroy();
 		editor::EditorCamera::Destroy();

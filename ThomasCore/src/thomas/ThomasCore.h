@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <imgui\imgui.h>
+
 namespace thomas
 {
 	class ThomasCore

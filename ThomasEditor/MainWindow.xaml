@@ -71,7 +71,10 @@
                     <MenuItem Header="_3D Object">
                         <MenuItem Header="_Cube" Click="AddNewCubePrimitive"/>
                         <MenuItem Header="_Sphere" Click="AddNewSpherePrimitive"/>
-                        <MenuItem Header="_Cone" Click="AddNewConePrimitive"/>
+                        <MenuItem Header="_Capsule" Click="AddNewCapsulePrimitive"/>
+                        <MenuItem Header="_Cylinder" Click="AddNewCylinderPrimitive"/>
+                        <MenuItem Header="_Plane" Click="AddNewPlanePrimitive"/>
+                        <MenuItem Header="_Quad" Click="AddNewQuadPrimitive"/>
                     </MenuItem>
                 </MenuItem>
 

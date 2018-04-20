@@ -11,11 +11,10 @@
 #include "Object.h"
 #include "Component.h"
 #include "component\Transform.h"
-#include "component\RenderComponent.h"
 #include "component\ScriptComponent.h"
 #include "../attributes/CustomAttributes.h"
+#include "component\RenderComponent.h"
 #using "PresentationFramework.dll"
-
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::Collections::ObjectModel;
@@ -24,16 +23,6 @@ using namespace System::Linq;
 
 namespace ThomasEditor 
 {
-	namespace Primitive
-	{
-		public enum class ID
-		{
-			Cube,
-			Sphere,
-			Cone
-		};
-	}
-
 	public ref class GameObject : public Object
 	{
 		ObservableCollection<Component^> m_components;
@@ -289,25 +278,7 @@ namespace ThomasEditor
 			return nullptr;
 		}
 
-		static GameObject^ CreateNewPrimitive(ThomasEditor::Primitive::ID id) 
-		{
-			GameObject^ gameObject = gcnew GameObject("gameobject");
-
-			if (id == ThomasEditor::Primitive::ID::Cube)
-			{	
-				gameObject->AddComponent<RenderComponent^>()->model = ThomasEditor::Resources().Load<Model^>("..\\Data\\box.obj");
-			}
-			else if (id == ThomasEditor::Primitive::ID::Sphere)
-			{
-				gameObject->AddComponent<RenderComponent^>()->model = ThomasEditor::Resources().Load<Model^>("..\\Data\\sphere.obj");
-			}
-			else if (id == ThomasEditor::Primitive::ID::Cone)
-			{
-				gameObject->AddComponent<RenderComponent^>()->model = ThomasEditor::Resources().Load<Model^>("..\\Data\\cone.obj");
-			}
-				
-			return gameObject;
-		}
+		static GameObject^ CreatePrimitive(PrimitiveType type);
 
 		bool GetActive()
 		{
