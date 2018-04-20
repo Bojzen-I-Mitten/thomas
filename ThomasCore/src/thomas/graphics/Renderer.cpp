@@ -31,7 +31,7 @@ namespace thomas
 		{
 			//Get the current active window
 			int displayIndex = camera->GetTargetDisplayIndex();
-			Window* window = Window::GetWindow(displayIndex);
+			auto window = Window::GetWindow(displayIndex);
 
 			if (!window || !window->Initialized())
 				return;
@@ -78,13 +78,13 @@ namespace thomas
 			BindFrame();
 			for (auto & perCameraQueue : s_lastFramesCommands)
 			{
-				object::component::Camera* camera = perCameraQueue.first;
+				auto camera = perCameraQueue.first;
 				BindCamera(camera);
 				for (auto & perMaterialQueue : perCameraQueue.second)
 				{
-					resource::Material* material = perMaterialQueue.first;
+					auto material = perMaterialQueue.first;
 					material->Bind();
-					for (RenderCommand & perMeshCommand : perMaterialQueue.second)
+					for (auto & perMeshCommand : perMaterialQueue.second)
 					{
 						BindObject(material, perMeshCommand.worldMatrix);
 						material->Draw(perMeshCommand.mesh);

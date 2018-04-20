@@ -65,7 +65,7 @@ namespace thomas
 				}
 			}
 
-			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/EditorGridShader.fx"); //Hardcoded grid shader
+			auto shader = resource::Shader::CreateShader("../Data/FXIncludes/EditorGridShader.fx"); //Hardcoded grid shader
 			if (shader != nullptr)
 			{
 				//Prepare the material
@@ -80,9 +80,8 @@ namespace thomas
 		void EditorGrid::AddLine(const math::Vector3 & from, const math::Vector3 & to, const math::Vector4 & color, const float & viewDistance)
 		{
 			m_lines.positions.push_back(math::Vector4(from.x, from.y, from.z, viewDistance));
-			m_lines.colors.push_back(color);
-	
 			m_lines.positions.push_back(math::Vector4(to.x, to.y, to.z, viewDistance));
+			m_lines.colors.push_back(color);		
 			m_lines.colors.push_back(color);
 		}
 	}

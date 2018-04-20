@@ -1,10 +1,12 @@
 #include "Gizmos.h"
-#include "../../resource/Model.h"
-#include "../../resource/Material.h"
-#include "../../resource/Shader.h"
-#include "../../graphics/Mesh.h"
-#include "../../utils/d3d.h"
-#include "../../utils/Buffers.h"
+#include "..\..\resource\Model.h"
+#include "..\..\resource\Material.h"
+#include "..\..\resource\Shader.h"
+#include "..\..\graphics\Mesh.h"
+#include "..\..\utils\d3d.h"
+#include "..\..\utils\Buffers.h"
+
+#define RAY_DISTANCE 1000.f
 
 namespace thomas
 {
@@ -12,19 +14,21 @@ namespace thomas
 	{
 		std::vector<Gizmos::GizmoRenderCommand> Gizmos::s_gizmoCommands;
 		std::vector<Gizmos::GizmoRenderCommand> Gizmos::s_prevGizmoCommands;
-		resource::Material* Gizmos::s_gizmoMaterial;
-		utils::buffers::VertexBuffer* Gizmos::s_vertexBuffer;
+		std::unique_ptr<resource::Material> Gizmos::s_gizmoMaterial;
+		std::unique_ptr<utils::buffers::VertexBuffer> Gizmos::s_vertexBuffer;
 		math::Matrix Gizmos::s_matrix;
 		math::Color Gizmos::s_color;
-		void Gizmos::DrawModel(resource::Model * model, math::Vector3 position = math::Vector3::Zero, math::Quaternion rotation = math::Quaternion::Identity, math::Vector3 scale = math::Vector3::One)
+
+		void Gizmos::DrawModel(resource::Model * model, const math::Vector3 & position = math::Vector3::Zero, const math::Quaternion & rotation = math::Quaternion::Identity, 
+								 const math::Vector3 & scale = math::Vector3::One)
 		{
 			DrawModel(model, -1, position, rotation, scale);
 		}
 
 
-		void Gizmos::DrawModel(resource::Model * model, int meshIndex, math::Vector3 position = math::Vector3::Zero, math::Quaternion rotation = math::Quaternion::Identity, math::Vector3 scale = math::Vector3::One)
-		{
-			
+		void Gizmos::DrawModel(resource::Model * model, int meshIndex, const math::Vector3 & position = math::Vector3::Zero, const math::Quaternion & rotation = math::Quaternion::Identity,
+							   const math::Vector3 & scale = math::Vector3::One)
+		{		
 			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
 			s_gizmoMaterial->SetMatrix("gizmoMatrix", math::CreateMatrix(position, rotation, scale));
@@ -41,12 +45,12 @@ namespace thomas
 			}*/
 		}
 
-		void Gizmos::DrawWireModel(resource::Model * model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale)
+		void Gizmos::DrawWireModel(resource::Model * model, const math::Vector3 & position, const math::Quaternion & rotation, const math::Vector3 & scale)
 		{
 			DrawWireModel(model, -1, position, rotation, scale);
 		}
 
-		void Gizmos::DrawWireModel(resource::Model * model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale)
+		void Gizmos::DrawWireModel(resource::Model * model, int meshIndex, const math::Vector3 & position, const math::Quaternion & rotation, const math::Vector3 & scale)
 		{
 			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::WIREFRAME);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
@@ -65,7 +69,7 @@ namespace thomas
 		}
 		
 
-		void Gizmos::DrawCube(math::Vector3 center, math::Vector3 size)
+		void Gizmos::DrawCube(const math::Vector3 & center, const math::Vector3 & size)
 		{
 			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
@@ -73,7 +77,7 @@ namespace thomas
 			//s_gizmoMaterial->Draw(graphics::Model::GetPrimitive(graphics::PrimitiveType::Cube))
 		}
 
-		void Gizmos::DrawWireCube(math::Vector3 center, math::Vector3 size)
+		void Gizmos::DrawWireCube(const math::Vector3 & center, const math::Vector3 & size)
 		{
 			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
@@ -81,11 +85,10 @@ namespace thomas
 			//s_gizmoMaterial->Draw(graphics::Model::GetPrimitive(graphics::PrimitiveType::Cube))
 		}
 
-		void Gizmos::DrawBoundingOrientedBox(math::BoundingOrientedBox & obb)
+		void Gizmos::DrawBoundingOrientedBox(const math::BoundingOrientedBox & obb)
 		{
 			math::Vector3 corners[math::BoundingOrientedBox::CORNER_COUNT];
 			obb.GetCorners(corners);
-
 			std::vector<math::Vector3> lines(24);
 
 			lines[0] = corners[0];
@@ -118,7 +121,7 @@ namespace thomas
 			DrawLines(lines);
 		}
 
-		void Gizmos::DrawBoundingSphere(math::BoundingSphere & sphere)
+		void Gizmos::DrawBoundingSphere(const math::BoundingSphere & sphere)
 		{
 			math::Vector3 origin = sphere.Center;
 			const float radius = sphere.Radius;
@@ -132,46 +135,42 @@ namespace thomas
 			DrawRing(origin, yAxis, zAxis);
 		}
 
-		void Gizmos::DrawRing(math::Vector3 origin, math::Vector3 majorAxis, math::Vector3 minorAxis)
+		void Gizmos::DrawRing(const math::Vector3 & origin, const math::Vector3 & majorAxis, const math::Vector3 & minorAxis)
 		{
 			static const size_t ringSegments = 32;
-
-			float angleDelta = math::PI*2.0f / float(ringSegments);
+			float angleDelta = math::PI * 2.f / float(ringSegments);
 
 			std::vector<math::Vector3> lines(ringSegments + 1);
-
 			math::Vector3 cosDelta = math::Vector3(cosf(angleDelta));
 			math::Vector3 sinDelta = math::Vector3(sinf(angleDelta));
 			math::Vector3 incrementalSin = math::Vector3::Zero;
 			math::Vector3 incrementalCos = math::Vector3::One;
-			for (size_t i = 0; i < ringSegments; i++)
+
+			for (size_t i = 0; i < ringSegments; ++i)
 			{
-				math::Vector3 pos = majorAxis*incrementalCos + origin;
+				math::Vector3 pos = majorAxis * incrementalCos + origin;
 				pos = minorAxis*incrementalSin + pos;
 				lines[i] = pos;
-				// Standard formula to rotate a vector.
+
+				//Standard formula to rotate a vector.
 				math::Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
 				math::Vector3 newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
 				incrementalCos = newCos;
 				incrementalSin = newSin;
 			}
+
 			lines[ringSegments] = lines[0];
-
-
 			DrawLines(lines);
-
 		}
 
-		void Gizmos::DrawLine(math::Vector3 from, math::Vector3 to)
+		void Gizmos::DrawLine(const math::Vector3 & from, const math::Vector3 & to)
 		{
 			std::vector<math::Vector3> corners(2);
-			corners[0] = from;
-			corners[1] = to;
-
+			corners[0] = from; corners[1] = to;
 			DrawLines(corners);
 		}
 
-		void Gizmos::DrawSphere(math::Vector3 center, float radius)
+		void Gizmos::DrawSphere(const math::Vector3 & center, float radius)
 		{
 			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
@@ -179,7 +178,7 @@ namespace thomas
 			//s_gizmoMaterial->Draw(graphics::Model::GetPrimitive(graphics::PrimitiveType::Cube))
 		}
 
-		void Gizmos::DrawWireSphere(math::Vector3 center, float radius)
+		void Gizmos::DrawWireSphere(const math::Vector3 & center, float radius)
 		{
 			/*s_gizmoMaterial->SetShaderPass((int)GizmoPasses::WIREFRAME);
 			s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
@@ -187,37 +186,32 @@ namespace thomas
 			//s_gizmoMaterial->Draw(graphics::Model::GetPrimitive(graphics::PrimitiveType::Cube))
 		}
 
-		void Gizmos::DrawRay(math::Vector3 from, math::Vector3 direction)
+		void Gizmos::DrawRay(const math::Vector3 & from, const math::Vector3 & direction)
 		{
-
 			std::vector<math::Vector3> corners(2);
-			corners[0] = from;
-			corners[1] = from + direction * 1000;
-
+			corners[0] = from; corners[1] = from + direction * RAY_DISTANCE;
 			DrawLines(corners);
 		}
 
-		void Gizmos::DrawRay(math::Ray ray)
+		void Gizmos::DrawRay(const math::Ray & ray)
 		{
 			std::vector<math::Vector3> corners(2);
 			corners[0] = ray.position;
-			corners[1] = ray.position + ray.direction * 1000;
+			corners[1] = ray.position + ray.direction * RAY_DISTANCE;
 
 			DrawLines(corners);		
 		}
 
-		void Gizmos::DrawFrustum(math::Vector3 center, float fov, float maxRange, float minRange, float aspect)
+		void Gizmos::DrawFrustum(const math::Vector3 & center, float fov, float maxRange, float minRange, float aspect)
 		{
 			math::Matrix proj = math::Matrix::CreatePerspectiveFieldOfView(fov, aspect, minRange, maxRange);
 			DrawFrustum(math::BoundingFrustum(proj));
 		}
 
-		void Gizmos::DrawFrustum(math::BoundingFrustum& frustrum)
-		{
-						
+		void Gizmos::DrawFrustum(const math::BoundingFrustum & frustrum)
+		{			
 			math::Vector3 corners[DirectX::BoundingFrustum::CORNER_COUNT];
 			frustrum.GetCorners(corners);
-
 			std::vector<math::Vector3> lines(24);
 
 			lines[0] = corners[0];
@@ -247,16 +241,13 @@ namespace thomas
 			lines[22] = corners[7];
 			lines[23] = corners[4];
 			
-
 			DrawLines(lines);
 		}
 
 		void Gizmos::DrawLines(std::vector<math::Vector3> lines)
 		{
 			//s_vertexBuffer->SetData(lines);
-
 			//s_gizmoMaterial->SetShaderPass((int)GizmoPasses::SOLID);
-
 			//s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer);
 			//s_gizmoMaterial->m_topology = D3D10_PRIMITIVE_TOPOLOGY_LINELIST;
 			//s_gizmoMaterial->Bind();
@@ -266,23 +257,21 @@ namespace thomas
 		}
 
 		void Gizmos::TransferGizmoCommands()
-		{
-			
+		{			
 			s_prevGizmoCommands = s_gizmoCommands;
 		}
 
 		void Gizmos::RenderGizmos()
 		{
-			for (GizmoRenderCommand& command : s_prevGizmoCommands)
-			{
-				
+			for (auto & command : s_prevGizmoCommands)
+			{	
 				s_gizmoMaterial->SetShaderPass((int)command.pass);
 				s_gizmoMaterial->SetMatrix("gizmoMatrix", command.matrix);
 				s_gizmoMaterial->SetColor("gizmoColor", command.color);
 				s_gizmoMaterial->m_topology = command.topology;
 
 				s_vertexBuffer->SetData(command.vertexData);
-				s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer);
+				s_gizmoMaterial->GetShader()->BindVertexBuffer(s_vertexBuffer.get());
 				s_gizmoMaterial->Bind();
 				s_gizmoMaterial->Draw(command.vertexData.size(), 0);
 			}
@@ -295,36 +284,33 @@ namespace thomas
 
 		void Gizmos::Init()
 		{
-			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/GizmoShader.fx");
+			auto shader = resource::Shader::CreateShader("../Data/FXIncludes/GizmoShader.fx");
 			if (shader)
 			{
-				s_gizmoMaterial = new resource::Material(shader);
+				s_gizmoMaterial = std::make_unique<resource::Material>(shader);
 				SetColor(math::Color(1, 1, 1));
 				SetMatrix(math::Matrix::Identity);
 			}
 
-			s_vertexBuffer = new utils::buffers::VertexBuffer(nullptr, sizeof(math::Vector3), 500, DYNAMIC_BUFFER); //500 hardcoded here :/
-
+			s_vertexBuffer = std::make_unique<utils::buffers::VertexBuffer>(nullptr, sizeof(math::Vector3), 500, DYNAMIC_BUFFER);
 		}
 
 		void Gizmos::Destroy()
 		{
-			delete s_gizmoMaterial;
-			delete s_vertexBuffer;
+			s_gizmoMaterial.reset();
+			s_vertexBuffer.reset();
 		}
-
 		
-		void Gizmos::SetColor(math::Color color)
+		void Gizmos::SetColor(const math::Color & color)
 		{
 			s_color = color;
 			//s_gizmoMaterial->SetColor("gizmoColor", color);
 		}
 
-		void Gizmos::SetMatrix(math::Matrix matrix)
+		void Gizmos::SetMatrix(const math::Matrix & matrix)
 		{
 			s_matrix = matrix;
 			//s_gizmoMaterial->SetMatrix("gizmoMatrix", matrix);
 		}
-
 	}
 }
