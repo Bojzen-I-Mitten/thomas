@@ -5,10 +5,6 @@
 namespace thomas {
 	namespace resource {
 
-		//std::vector<Model*> Model::s_loadedModels;
-		Model::Primitives Model::s_primitives;
-
-
 		math::BoundingBox Model::GenerateBounds()
 		{
 			math::BoundingBox bounds = m_meshes[0]->m_bounds;

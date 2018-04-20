@@ -111,7 +111,6 @@ namespace thomas
 		{
 			Lock();
 			m_shader = shader;
-			m_renderQueue = -1;
 			m_passes.clear();
 			for (resource::Shader::ShaderPass p : *m_shader->GetPasses())
 			{
@@ -411,6 +410,18 @@ namespace thomas
 		UINT Material::GetId()
 		{
 			return m_id;
+		}
+		bool Material::operator<(const Material & other)
+		{
+			return this->m_renderQueue < other.m_renderQueue;
+		}
+		bool Material::operator<(const Material * other)
+		{
+			return this->m_renderQueue < other->m_renderQueue;
+		}
+		bool operator<(const Material & mat1, const Material & mat2)
+		{
+			return mat1.m_renderQueue < mat2.m_renderQueue;
 		}
 	}
 }

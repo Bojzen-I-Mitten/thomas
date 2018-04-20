@@ -43,7 +43,7 @@ namespace ThomasEditor.Commands
         //This is a custom command object.
         public static readonly RoutedUICommand NewGameObjectCmd = new RoutedUICommand
             (
-                "Empty Game Object",     //The text that will show on the item that the command is bound to.
+                "Create Empty",     //The text that will show on the item that the command is bound to.
                 "NewGameObject",       //Name of the command
                 typeof(CustomCommands), //Owner of command
                 new InputGestureCollection()

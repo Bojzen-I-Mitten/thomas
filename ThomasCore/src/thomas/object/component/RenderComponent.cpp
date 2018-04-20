@@ -83,7 +83,7 @@ namespace thomas {
 				{
 					for (int i = 0; i < m_model->GetMeshes().size(); i++)
 					{
-						resource::Material* material = m_materials[i];
+						resource::Material* material = m_materials.size() > i ? m_materials[i] : nullptr;
 						if (material == nullptr)
 							material = resource::Material::GetStandardMaterial();
 

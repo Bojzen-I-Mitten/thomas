@@ -87,6 +87,8 @@ namespace thomas
 					trans.setFromOpenGLMatrix(*m_gameObject->m_transform->GetWorldMatrix().m);
 					getMotionState()->setWorldTransform(trans);
 					setCenterOfMassTransform(trans);
+					Physics::s_world->updateSingleAabb(this);
+					activate();
 				}
 			}
 

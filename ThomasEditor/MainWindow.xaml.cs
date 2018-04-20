@@ -247,23 +247,45 @@ namespace ThomasEditor
             playPauseButton.DataContext = ThomasWrapper.IsPlaying();
         }
 
+        #region primitives
+
         private void AddNewCubePrimitive(object sender, RoutedEventArgs e)
-        {            
-            var x = GameObject.CreateNewPrimitive(Primitive.ID.Cube);
+        {
+            var x = GameObject.CreatePrimitive(PrimitiveType.Cube);
             ThomasWrapper.SelectGameObject(x);
         }
 
         private void AddNewSpherePrimitive(object sender, RoutedEventArgs e)
         {
-            var x = GameObject.CreateNewPrimitive(Primitive.ID.Sphere);
+            var x = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             ThomasWrapper.SelectGameObject(x);
         }
 
-        private void AddNewConePrimitive(object sender, RoutedEventArgs e)
+        private void AddNewQuadPrimitive(object sender, RoutedEventArgs e)
         {
-            var x = GameObject.CreateNewPrimitive(Primitive.ID.Cone);
+            var x = GameObject.CreatePrimitive(PrimitiveType.Quad);
             ThomasWrapper.SelectGameObject(x);
         }
+
+        private void AddNewPlanePrimitive(object sender, RoutedEventArgs e)
+        {
+            var x = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            ThomasWrapper.SelectGameObject(x);
+        }
+
+        private void AddNewCylinderPrimitive(object sender, RoutedEventArgs e)
+        {
+            var x = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            ThomasWrapper.SelectGameObject(x);
+        }
+
+        private void AddNewCapsulePrimitive(object sender, RoutedEventArgs e)
+        {
+            var x = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            ThomasWrapper.SelectGameObject(x);
+        }
+
+        #endregion
     }
 
     public static class Extensions

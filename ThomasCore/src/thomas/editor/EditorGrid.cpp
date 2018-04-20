@@ -30,19 +30,19 @@ namespace thomas
 			{
 				math::Vector3 from(i, 0.0f, -m_gridSize / 2);
 				math::Vector3 to(i, 0.0f, m_gridSize / 2);
-				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f));
+				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 50);
 				from = math::Vector3(-m_gridSize / 2, 0.0f, i);
 				to = math::Vector3(m_gridSize / 2, 0.0f, i);
-				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f));
+				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 50);
 
 				for (float j = cellSize/internalGridSize; j < cellSize; j+= cellSize/internalGridSize)
 				{
 					from = math::Vector3(i+j, 0.0f, -m_gridSize / 2);
 					to = math::Vector3(i+j, 0.0f, m_gridSize / 2);
-					AddLine(from, to, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 0.2f), 0.6f);
+					AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 2.0f);
 					from = math::Vector3(-m_gridSize / 2, 0.0f, i+j);
 					to = math::Vector3(m_gridSize / 2, 0.0f, i+j);
-					AddLine(from, to, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 0.2f), 0.6f);
+					AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 2.0f);
 				}
 
 			}
@@ -51,6 +51,7 @@ namespace thomas
 			if (shader)
 			{
 				m_material = new resource::Material(shader);
+				m_material->m_renderQueue = 1;
 				m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 				m_mesh = std::shared_ptr<graphics::Mesh>(new graphics::Mesh(m_lines, {}, "grid"));
 				m_lines.positions.clear();
@@ -65,7 +66,7 @@ namespace thomas
 			if (m_material)
 			{
 				math::Vector3 cameraPos = camera->GetPosition();
-				int scale = (int)log10(((abs(cameraPos.y/2)+1) / m_cellSize)*m_cellSize);
+				int scale = (int)log10(((abs((cameraPos.y*m_internalGridSize)/2)+1) / m_cellSize)*m_cellSize);
 				scale = pow(10.0f,scale);
 				math::Matrix worldMatrix = math::Matrix::CreateScale((scale)*m_cellSize) * math::Matrix::CreateTranslation(
 					(int)(cameraPos.x / scale)*scale,
