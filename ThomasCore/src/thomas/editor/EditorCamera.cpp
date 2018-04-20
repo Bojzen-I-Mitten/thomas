@@ -15,9 +15,9 @@ namespace thomas
 		EditorCamera* EditorCamera::s_editorCamera;
 		std::vector<object::GameObject*> EditorCamera::s_selectedObjects;
 
-		EditorCamera::EditorCamera() : object::GameObject("editorCamera"), m_sensitivity(50.f), m_speed(2.f), m_hasSelectionChanged(false), 
-																		   m_objectHighlighter(nullptr), m_manipulatorMode(ImGuizmo::MODE::LOCAL),
-																		   m_manipulatorOperation(ImGuizmo::OPERATION::TRANSLATE)
+		EditorCamera::EditorCamera() : object::GameObject("editorCamera"), m_sensitivity(50.f), m_speed(2.f), m_manipulatorScale(2.f), m_hasSelectionChanged(false),
+																		   m_manipulatorSnapping(false), m_objectHighlighter(nullptr), 
+																		   m_manipulatorMode(ImGuizmo::MODE::LOCAL), m_manipulatorOperation(ImGuizmo::OPERATION::TRANSLATE)
 		{
 			//Transform component
 			m_transform = new object::component::Transform();
@@ -78,6 +78,7 @@ namespace thomas
 
 		void EditorCamera::SelectObject(object::GameObject * gameObject)
 		{
+			//Select single gameobject
 			s_selectedObjects.clear();
 			if (gameObject)
 				s_selectedObjects.push_back(gameObject);
@@ -86,7 +87,8 @@ namespace thomas
 
 		void EditorCamera::UnselectObject(GameObject * gameObject)
 		{
-			for (int i = 0; i < s_selectedObjects.size(); ++i)
+			//Unselect only a specific gameobject
+			for (int i = 0; i < (int)s_selectedObjects.size(); ++i)
 			{
 				if (s_selectedObjects[i] == gameObject)
 				{
@@ -98,6 +100,7 @@ namespace thomas
 
 		void EditorCamera::UnselectObjects()
 		{
+			//Unselect all objects in the scene
 			s_selectedObjects.clear();
 			GetEditorCamera()->m_hasSelectionChanged = true;
 		}
@@ -117,7 +120,7 @@ namespace thomas
 			return GetEditorCamera()->m_hasSelectionChanged;
 		}
 
-		object::component::Camera * EditorCamera::GetCamera()
+		object::component::Camera * EditorCamera::GetCamera() const
 		{
 			return m_cameraComponent.get();
 		}
@@ -139,6 +142,7 @@ namespace thomas
 
 		void EditorCamera::RenderCamera()
 		{
+			//Render camera related work
 			RenderSelectedObjects();
 			m_cameraComponent->Render();
 			RenderGizmos();
@@ -152,6 +156,7 @@ namespace thomas
 			m_manipulatorSnapping = false;
 			HWND focus = GetForegroundWindow();
 
+			//Make sure we are dealing with the editor window
 			if (!Window::GetEditorWindow())
 				return;
 
@@ -171,28 +176,7 @@ namespace thomas
 
 			if (Input::GetMouseButton(Input::MouseButtons::RIGHT))
 			{
-				float speed = m_speed;
-
-				//Increase camera speed
-				if (Input::GetKey(Input::Keys::LeftShift))
-					speed *= 4.0f;
-
-				if (Input::GetKey(Input::Keys::A))
-					m_transform->Translate(-m_transform->Right()*ThomasTime::GetActualDeltaTime()*speed);
-				if (Input::GetKey(Input::Keys::D))
-					m_transform->Translate(m_transform->Right()*ThomasTime::GetActualDeltaTime()*speed);
-				if (Input::GetKey(Input::Keys::W))
-					m_transform->Translate(m_transform->Forward()*ThomasTime::GetActualDeltaTime()*speed);
-				if (Input::GetKey(Input::Keys::S))
-					m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime()*speed);
-				if (Input::GetKey(Input::Keys::Q))
-					m_transform->Translate(-m_transform->Up()*ThomasTime::GetActualDeltaTime()*speed);
-				if (Input::GetKey(Input::Keys::E))
-					m_transform->Translate(m_transform->Up()*ThomasTime::GetActualDeltaTime()*speed);
-
-				m_rotationX += Input::GetMouseX() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
-				m_rotationY += Input::GetMouseY() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
-				m_transform->SetRotation(-m_rotationX, -m_rotationY, 0);
+				MoveAndRotateCamera();
 			}
 			else if (Input::GetMouseButtonDown(Input::MouseButtons::LEFT))
 			{
@@ -204,6 +188,7 @@ namespace thomas
 			}
 			else
 			{
+				//Allow manipulation of the gizmo if the game object is focused
 				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
 
 				if (Input::GetKeyDown(Input::Keys::W))
@@ -219,20 +204,22 @@ namespace thomas
 
 		void EditorCamera::RenderSelectedObjects()
 		{
+			//Render the selected objects for the editor camera
 			if (!m_objectHighlighter)
 				return;
+
 			for (object::GameObject* gameObject : s_selectedObjects)
 			{
 				if (!gameObject->GetActive())
 					continue;
 
-				object::component::RenderComponent* renderComponent = gameObject->GetComponent<object::component::RenderComponent>();
+				auto renderComponent = gameObject->GetComponent<object::component::RenderComponent>();
 				if (renderComponent)
 				{
-					resource::Model* model = gameObject->GetComponent<object::component::RenderComponent>()->GetModel();
+					auto model = gameObject->GetComponent<object::component::RenderComponent>()->GetModel();
 					if (model)
 					{
-						for (std::shared_ptr<graphics::Mesh> mesh : model->GetMeshes())
+						for (auto mesh : model->GetMeshes())
 							graphics::Renderer::SubmitCommand(graphics::RenderCommand(gameObject->m_transform->GetWorldMatrix(), mesh, m_objectHighlighter.get(), m_cameraComponent.get()));
 					}
 				}
@@ -241,18 +228,17 @@ namespace thomas
 
 		void EditorCamera::RenderGizmos()
 		{
-			for (int i = 0; i < s_selectedObjects.size(); i++)
+			float snap[] = { 1.f, 1.f, 1.f };
+
+			for (unsigned i = 0; i < s_selectedObjects.size(); ++i)
 			{
 				object::GameObject* gameObject = s_selectedObjects[i];
 				ImGuiIO& io = ImGui::GetIO();
-				ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+				ImGuizmo::SetRect(0.f, 0.f, io.DisplaySize.x, io.DisplaySize.y);
 				math::Matrix worldMatrix = gameObject->m_transform->GetLocalWorldMatrix();
 
-				float bounds[] = { 5,5,5 };
-				float snap[] = { 1,1,1 };
-
 				if (m_manipulatorOperation == ImGuizmo::OPERATION::ROTATE)
-					snap[0] = 15;
+					snap[0] = 15.f;
 
 				math::Matrix deltaMatrix;
 				ImGuizmo::Manipulate(
@@ -270,11 +256,11 @@ namespace thomas
 		object::GameObject* EditorCamera::FindClickedGameObject()
 		{
 			math::Ray ray = m_cameraComponent->ScreenPointToRay(Input::GetMousePosition());
-			std::vector<object::component::RenderComponent*> renderComponents = object::Object::FindObjectsOfType<object::component::RenderComponent>();
+			auto renderComponents = object::Object::FindObjectsOfType<object::component::RenderComponent>();
 
 			object::GameObject* closestGameObject = nullptr;
 			float closestDistance = m_cameraComponent->GetFar();
-			for (object::component::RenderComponent* renderComponent : renderComponents)
+			for (auto renderComponent : renderComponents)
 			{
 				float distance;
 				if (renderComponent->m_bounds.Intersects(ray.position, ray.direction, distance) && distance < closestDistance)
@@ -284,6 +270,38 @@ namespace thomas
 				}
 			}
 			return closestGameObject;
+		}
+
+		void EditorCamera::MoveAndRotateCamera()
+		{
+			float speed = m_speed;
+			auto move = [](const math::Vector3 & direction, object::component::Transform* transform, float speed)
+			{
+				transform->Translate(direction * ThomasTime::GetActualDeltaTime() * speed);
+			};
+
+			//Increase camera speed
+			if (Input::GetKey(Input::Keys::LeftShift))
+				speed *= 4.0f;
+
+			//Allow the camera to move freely in the scene
+			if (Input::GetKey(Input::Keys::A))
+				move(-m_transform->Right(), m_transform, speed);
+			if (Input::GetKey(Input::Keys::D))
+				move(m_transform->Right(), m_transform, speed);
+			if (Input::GetKey(Input::Keys::W))
+				move(m_transform->Forward(), m_transform, speed);
+			if (Input::GetKey(Input::Keys::S))
+				move(-m_transform->Forward(), m_transform, speed);
+			if (Input::GetKey(Input::Keys::Q))
+				move(-m_transform->Up(), m_transform, speed);
+			if (Input::GetKey(Input::Keys::E))
+				move(m_transform->Up(), m_transform, speed);
+
+			//Rotate camera
+			m_rotationX += Input::GetMouseX() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
+			m_rotationY += Input::GetMouseY() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
+			m_transform->SetRotation(-m_rotationX, -m_rotationY, 0.f);
 		}
 	}
 }

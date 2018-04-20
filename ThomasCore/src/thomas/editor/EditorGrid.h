@@ -1,5 +1,5 @@
 /*
-	Class for management of the grid in the scene
+	Class for management of the grid in the scene.
 */
 
 #pragma once

@@ -1,5 +1,5 @@
 /*
-	Class for management of the editor camera in the scene 
+	Singeleton class for management of the editor camera in the scene. 
  */
 
 #pragma once
@@ -43,13 +43,14 @@ namespace thomas
 			static EditorCamera* GetEditorCamera();
 			static ImGuizmo::OPERATION GetManipulatorOperation();
 			static std::vector<object::GameObject*> GetSelectedObjects();
-			object::component::Camera* GetCamera();
+			object::component::Camera* GetCamera() const;
 
 		private:
 			void RenderCamera();
 			void UpdateCamera();
 			void RenderSelectedObjects();
 			void RenderGizmos();
+			void MoveAndRotateCamera();
 			object::GameObject* FindClickedGameObject();
 			EditorCamera();
 			~EditorCamera();
@@ -62,12 +63,12 @@ namespace thomas
 			std::unique_ptr<EditorGrid> m_grid;
 
 		private:
-			float m_sensitivity = 1.0f;
+			float m_sensitivity;
 			float m_rotationX;
 			float m_rotationY;
 			float m_speed;
-			float m_manipulatorScale = 2.0f;
-			bool m_manipulatorSnapping = false;	
+			float m_manipulatorScale;
+			bool m_manipulatorSnapping;	
 			bool m_hasSelectionChanged;
 
 		private:

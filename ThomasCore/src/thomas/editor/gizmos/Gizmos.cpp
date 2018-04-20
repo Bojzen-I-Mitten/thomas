@@ -5,6 +5,7 @@
 #include "../../graphics/Mesh.h"
 #include "../../utils/d3d.h"
 #include "../../utils/Buffers.h"
+
 namespace thomas
 {
 	namespace editor
