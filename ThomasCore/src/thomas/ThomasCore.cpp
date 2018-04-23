@@ -167,7 +167,7 @@ namespace thomas
 		}
 
 		ID3D11Multithread* multi;
-		hr = s_device->QueryInterface(__uuidof(ID3D11Multithread), (void**)&multi);
+		hr = s_device->QueryInterface(IID_PPV_ARGS(&multi));
 		if (SUCCEEDED(hr) && multi != NULL)
 		{
 			multi->SetMultithreadProtected(TRUE);
