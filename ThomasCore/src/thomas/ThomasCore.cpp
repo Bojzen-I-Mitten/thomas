@@ -1,29 +1,21 @@
 #include "ThomasCore.h"
 #include "Sound.h"
 #include "Input.h"
-#include "object\Object.h"
-#include "resource\texture\Texture2D.h"
-#include "graphics\Renderer.h"
-#include "resource\Shader.h"
-#include "resource\Material.h"
-#include "graphics\LightManager.h"
-#include <assimp\Importer.hpp>
-#include "Physics.h"
-#include <AtlBase.h>
-#include <atlconv.h>
-#include "utils/d3d.h"
-#include "Input.h"
 #include "Window.h"
 #include "ThomasTime.h"
-#include <time.h>
+#include "object\Object.h"
+#include "resource\texture\Texture2D.h"
+#include "resource\Shader.h"
+#include "resource\Material.h"
 #include "editor\EditorCamera.h"
 #include "editor\gizmos\Gizmos.h"
-#include <thread>
+#include <D3d11_4.h>
 
-namespace thomas {
-	ID3D11Debug* ThomasCore::s_debug = nullptr;
-	ID3D11Device* ThomasCore::s_device = nullptr;
-	ID3D11DeviceContext* ThomasCore::s_context = nullptr;
+namespace thomas 
+{
+	ID3D11Debug* ThomasCore::s_debug;
+	ID3D11Device* ThomasCore::s_device;
+	ID3D11DeviceContext* ThomasCore::s_context;
 	std::vector<std::string> ThomasCore::s_logOutput;
 	bool ThomasCore::s_clearLog;
 	bool ThomasCore::s_initialized;
@@ -31,70 +23,25 @@ namespace thomas {
 
 	bool ThomasCore::Init()
 	{
-		srand(time(NULL));
-		
-		s_logOutput.reserve(10);
-		bool init = InitDirectX();
-
 		s_imGuiContext = ImGui::CreateContext();
+		s_logOutput.reserve(10);
 
-		if(init)
-		init = Input::Init();
+		//Init all required classes
+		assert(InitDirectX());
+		assert(Input::Init());
+		resource::Texture2D::Init();
+		assert(ThomasTime::Init());
+		assert(Sound::Init());
+		assert(resource::Shader::Init());
 
-		if (init)
-			resource::Texture2D::Init();
-
-
-
-		//utils::DebugTools::Init();
-
-		if (init)
-			init = ThomasTime::Init();
-
-		//if (init)
-			init = Sound::Init();
-
-
-		//if(init)
-		//	init = graphics::TextRender::Initialize();
-
-		//if (init)
-		//	init = graphics::Sprite::Initialize();
-
-		//graphics::ParticleSystem::Init();
-		if(init)
-			init = resource::Shader::Init();
-		if(init)
-			resource::Material::Init();
-		if (init)
-			init = Physics::Init();
-		if(init)
-			editor::EditorCamera::Init();
-
+		resource::Material::Init();
+		assert(Physics::Init());
+		editor::EditorCamera::Init();
 		editor::Gizmos::Init();
-		
-		s_initialized = init;
+
+		s_initialized = true;
 		return s_initialized;
 	}
-
-	bool ThomasCore::InitDirectX()
-	{
-		if (!s_device)
-		{
-			CoInitializeEx(nullptr, COINITBASE_MULTITHREADED);
-			bool hr = utils::D3d::CreateDeviceAndContext(s_device, s_context);
-			if(!hr)
-				LOG("Failed to init DirectX Device");
-			#ifdef _DEBUG_DX
-				utils::D3d::CreateDebug(s_debug);
-			#endif // _DEBUG_DX
-			return hr;
-		}
-		return true;
-	}
-
-
-
 
 	void ThomasCore::Update()
 	{
@@ -106,23 +53,12 @@ namespace thomas {
 
 		object::Object::Clean();
 		editor::EditorCamera::Update();
-
 		resource::Shader::Update();
-		Input::Update();
-		
-		/*if (Window::GetEditorWindow() && Window::GetEditorWindow()->Initialized())
-			Render();
-*/
-
-		//std::string title = "FPS: " + std::to_string(ThomasTime::GetFPS()) + " FrameTime: " + std::to_string(ThomasTime::GetFrameTime());
-
-		//if (Input::GetKeyDown(Input::Keys::F1))
-		//	utils::DebugTools::ToggleVisibility();
-
+		Input::Update();		
 		Sound::Update();
 	}
-		
-	void ThomasCore::Stop()
+
+	void ThomasCore::Exit()
 	{
 		s_initialized = false;
 	}
@@ -133,75 +69,113 @@ namespace thomas {
 	}
 
 	bool ThomasCore::Destroy()
-	{
-
-		
+	{	
 		s_context->ClearState();
 		s_context->Flush();
+
+		//Destroy all objects
 		Window::Destroy();
 		graphics::LightManager::Destroy();
-		//graphics::Sprite::Destroy();
-		//graphics::TextRender::Destroy();
-		//graphics::Texture::ReleaseSamplers();
-		//graphics::Texture::Destroy();
 		resource::Shader::DestroyAllShaders();
 		resource::Material::Destroy();
 		resource::Texture2D::Destroy();
-		//utils::DebugTools::Destroy();
 		object::Object::Destroy();
 		editor::EditorCamera::Destroy();
 		editor::Gizmos::Destroy();
 		Physics::Destroy();
+		Sound::Destroy();
 		ImGui::DestroyContext(s_imGuiContext);
 
-
+		//Release
 		s_context->ClearState();
 		s_context->Flush();
-
-		s_context->Release();
-		s_device->Release();
-
-		s_context = nullptr;
-		s_device = nullptr;
+		SAFE_RELEASE(s_context);
+		SAFE_RELEASE(s_device);
 
 		#ifdef _DEBUG_DX
-
 			s_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
-			s_debug->Release();
-			s_debug = nullptr;
-		#endif // _DEBUG
-
-		Sound::Destroy();
+			SAFE_RELEASE(s_debug);
+		#endif
 
 		return true;
-	}
-	void ThomasCore::Exit()
-	{
-		s_initialized = false;
 	}
 
 	ID3D11Device * ThomasCore::GetDevice()
 	{
 		return s_device;
 	}
+
 	ID3D11DeviceContext* ThomasCore::GetDeviceContext()
 	{
 		return s_context;
-	}
-	void ThomasCore::LogOutput(std::string message)
-	{
-		s_logOutput.push_back(message);
-		if (s_logOutput.size() > 10)
-			s_logOutput.erase(s_logOutput.begin());
 	}
 
 	std::vector<std::string> ThomasCore::GetLogOutput()
 	{
 		return s_logOutput;
 	}
+
+	void ThomasCore::LogOutput(const std::string & message)
+	{
+		s_logOutput.push_back(message);
+		if (s_logOutput.size() > 10)
+			s_logOutput.erase(s_logOutput.begin());
+	}
+
 	void ThomasCore::ClearLogOutput()
 	{
 		s_clearLog = true;
+	}
+
+	bool ThomasCore::InitDirectX()
+	{
+		if (!s_device)
+		{
+			CoInitializeEx(nullptr, COINITBASE_MULTITHREADED);
+			assert(CreateDeviceAndContext());
+#ifdef _DEBUG_DX
+			assert(!ThomasCore::GetDevice()->QueryInterface(IID_PPV_ARGS(&s_debug)));
+#endif
+			return true;
+		}
+		return true;
+	}
+
+	bool ThomasCore::CreateDeviceAndContext()
+	{
+		HRESULT hr = D3D11CreateDevice(
+			NULL,
+			D3D_DRIVER_TYPE_HARDWARE,
+			NULL,
+#ifdef _DEBUG_DX
+			D3D11_CREATE_DEVICE_DEBUG,
+#else
+			NULL,
+#endif
+			NULL,
+			NULL,
+			D3D11_SDK_VERSION,
+			&s_device,
+			NULL,
+			&s_context
+		);
+
+		if (FAILED(hr))
+		{
+			LOG(hr);
+			return false;
+		}
+
+		ID3D11Multithread* multi;
+		hr = s_device->QueryInterface(__uuidof(ID3D11Multithread), (void**)&multi);
+		if (SUCCEEDED(hr) && multi != NULL)
+		{
+			multi->SetMultithreadProtected(TRUE);
+			SAFE_RELEASE(multi);
+		}
+		else
+			LOG_HR(hr);
+		return true;
 	}
 }
 

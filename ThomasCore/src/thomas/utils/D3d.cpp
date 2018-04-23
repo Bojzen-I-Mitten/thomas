@@ -86,51 +86,9 @@ namespace thomas
 				hr = ThomasCore::GetDevice()->CreateShaderResourceView(tex, &viewDesc, &SRV);
 			return hr == S_OK;
 		}
-		
-		bool D3d::CreateDeviceAndContext(ID3D11Device *& device, ID3D11DeviceContext *& context)
-		{
-			HRESULT hr = D3D11CreateDevice(
-				NULL,
-				D3D_DRIVER_TYPE_HARDWARE,
-				NULL,
-				#ifdef _DEBUG_DX
-					D3D11_CREATE_DEVICE_DEBUG,
-				#else
-					NULL,
-				#endif // _DEBUG_DX
-				NULL,
-				NULL,
-				D3D11_SDK_VERSION,
-				&device,
-				NULL,
-				&context
-			);
-
-			if (FAILED(hr))
-			{
-				LOG(hr);
-				return false;
-			}
-
-			ID3D11Multithread *multi;
-			hr = device->QueryInterface(__uuidof(ID3D11Multithread), (void**)&multi);
-			if (SUCCEEDED(hr) && multi != NULL)
-			{
-				multi->SetMultithreadProtected(TRUE);
-				multi->Release();
-			}
-			else
-			{
-				LOG_HR(hr);
-			}
-
-			return true;
-		}
-
+	
 		bool D3d::CreateSwapChain(LONG width, LONG height, HWND handle, IDXGISwapChain*& swapchain, ID3D11Device* device)
 		{
-
-
 			IDXGIDevice * dxgiDevice = 0;
 			HRESULT hr = ThomasCore::GetDevice()->QueryInterface(__uuidof(IDXGIDevice), (void **)& dxgiDevice);
 			if (SUCCEEDED(hr))
@@ -182,9 +140,6 @@ namespace thomas
 			LOG("Failed to create swapchain" << hr);
 			return false;
 		}
-
-
-	
 
 		bool D3d::CreateBackBuffer(ID3D11Device * device, IDXGISwapChain * swapchain, ID3D11RenderTargetView*& backBuffer, ID3D11ShaderResourceView*& backbufferSRV)
 		{
@@ -344,19 +299,9 @@ namespace thomas
 			return true;
 			
 		}
-		
-		bool D3d::CreateDebug(ID3D11Debug *& debug)
-		{
-			HRESULT hr = ThomasCore::GetDevice()->QueryInterface(IID_PPV_ARGS(&debug));
-			if (FAILED(hr))
-			{
-				LOG_HR(hr);
-				return nullptr;
-			}
-			return debug;
-		}
 
-		ID3D11InfoQueue* D3d::CreateDebugInfoQueue() {
+		ID3D11InfoQueue* D3d::CreateDebugInfoQueue() 
+		{
 			ID3D11InfoQueue* infoQueue;
 			HRESULT hr = ThomasCore::GetDevice()->QueryInterface(IID_PPV_ARGS(&infoQueue));
 			if (FAILED(hr))
@@ -374,10 +319,6 @@ namespace thomas
 			infoQueue->ClearStoredMessages();
 			return infoQueue;
 		}
-
-
-
-
 
 		bool D3d::LoadTextureFromFile(std::string fileName, 
 			ID3D11Resource*& texture, ID3D11ShaderResourceView*& textureView)

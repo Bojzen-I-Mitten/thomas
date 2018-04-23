@@ -33,7 +33,6 @@ namespace thomas
 		s_timescale = 1.f;
 		s_FpsUpdateFreq = 0.7f;
 		s_TimeLeftToUpdateFPS = s_FpsUpdateFreq;
-
 		return true;
 	}
 

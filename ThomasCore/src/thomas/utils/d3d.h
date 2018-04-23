@@ -21,10 +21,7 @@ namespace thomas
 						
 			static bool CreateBackBuffer(ID3D11Device* device, IDXGISwapChain* swapchain, ID3D11RenderTargetView*& backBuffer, ID3D11ShaderResourceView*& backBufferSRV);
 			static bool CreateDepthStencilView(ID3D11Device* device, LONG width, LONG height, ID3D11DepthStencilView *& stencilView, ID3D11DepthStencilView*& depthStencilViewReadOnly, ID3D11ShaderResourceView *& depthBufferSRV);
-
-			static bool CreateDeviceAndContext(ID3D11Device*& device, ID3D11DeviceContext*& context);
 			static bool CreateSwapChain(LONG width, LONG height, HWND handle, IDXGISwapChain*& swapchain, ID3D11Device* device);
-			static bool CreateDebug(ID3D11Debug*& debug);
 
 			static ID3D11InfoQueue* CreateDebugInfoQueue();
 

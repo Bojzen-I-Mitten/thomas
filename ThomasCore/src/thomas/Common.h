@@ -3,8 +3,8 @@
 #include <sstream>
 #include <comdef.h>
 #include "ThomasCore.h"
-#define THOMAS_API
 
+#define THOMAS_API
 
 //#ifdef _DEBUG
 #define LOG(msg){std::stringstream __buff__; __buff__ << msg; thomas::ThomasCore::LogOutput(__buff__.str());}
@@ -19,10 +19,9 @@
 //#define LOG_HR(hr) 
 //#endif
 
-#define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p)=NULL; } }
-#define SAFE_DELETE(p)		 { if (p) { delete (p); (p)=nullptr; } }
+#define SAFE_RELEASE(p)      { if (p) { p->Release(); p = nullptr; } }
+#define SAFE_DELETE(p)		 { if (p) { delete p; p = nullptr; } }
 
 #define THOMAS_AA_COUNT 8
 #define THOMAS_AA_QUALITY 0
-
 #define _XM_NO_INTRINSICS_ 1; //Bullet fix
