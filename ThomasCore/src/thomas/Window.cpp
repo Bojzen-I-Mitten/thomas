@@ -374,7 +374,6 @@ namespace thomas
 		return s_windows;
 	}
 
-
 	IDXGISwapChain * Window::GetSwapChain() const
 	{
 		return m_swapChain;
@@ -522,7 +521,6 @@ namespace thomas
 			PostQuitMessage(0);
 			break;
 		}
-
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 }

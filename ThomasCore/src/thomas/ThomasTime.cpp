@@ -1,6 +1,6 @@
 #include "ThomasTime.h"
-#include <Windows.h>
 #include "Common.h"
+#include <Windows.h>
 #include <ctime>
 
 namespace thomas
@@ -19,52 +19,60 @@ namespace thomas
 
 	bool ThomasTime::Init()
 	{
+		//Get current performance frequency
 		LARGE_INTEGER freq;
-	//	timeBeginPeriod(1);
-		if (!QueryPerformanceFrequency(&freq))LOG("QueryPerformanceFrequency failed!!!!");
+		if (!QueryPerformanceFrequency(&freq)) LOG("QueryPerformanceFrequency failed");
 		s_timeFreq = double(freq.QuadPart);
 
+		//Init time variables
 		LARGE_INTEGER currentTime;
 		QueryPerformanceCounter(&currentTime);
 		s_initTime = double(currentTime.QuadPart);
 		s_startTime = double(currentTime.QuadPart);
-		s_FPS = 0.0f;
-		s_timescale = 1.0f;
+		s_FPS = 0.f;
+		s_timescale = 1.f;
 		s_FpsUpdateFreq = 0.7f;
 		s_TimeLeftToUpdateFPS = s_FpsUpdateFreq;
 
 		return true;
 	}
 
+	//Updates the timestep
 	void ThomasTime::Update()
 	{
-
 		s_DeltaTime = GetElapsedTime();
-		s_TimeLeftToUpdateFPS -= s_DeltaTime;
+		s_TimeLeftToUpdateFPS -= (float)s_DeltaTime;
+
+		//Reset
 		if (s_TimeLeftToUpdateFPS <= 0)
 		{
-			float avgDelta = s_StackedDeltaTime / s_framesPassedSinceFPSUpdate;
-			s_FPS = 1.0 / avgDelta;
-			s_FrameTime = 1000.0 / s_FPS;
+			float avgDelta = s_StackedDeltaTime / (float)s_framesPassedSinceFPSUpdate;
+			s_FPS = 1.f / avgDelta;
+			s_FrameTime = 1000.f / s_FPS;
 			s_TimeLeftToUpdateFPS = s_FpsUpdateFreq;
-			s_StackedDeltaTime = 0;
+			s_StackedDeltaTime = 0.f;
 			s_framesPassedSinceFPSUpdate = 0;
-		}else
-		{
-			s_StackedDeltaTime += s_DeltaTime;
-			s_framesPassedSinceFPSUpdate++;
 		}
-	
+		else
+		{
+			s_StackedDeltaTime += (float)s_DeltaTime;
+			s_framesPassedSinceFPSUpdate++;
+		}	
+	}
+
+	void ThomasTime::SetTimescale(const float & timescale)
+	{
+		s_timescale = timescale;
 	}
 
 	float ThomasTime::GetDeltaTime()
 	{
-		return s_DeltaTime * s_timescale;
+		return (float)(s_DeltaTime * s_timescale);
 	}
 
 	float ThomasTime::GetActualDeltaTime()
 	{
-		return s_DeltaTime;
+		return (float)s_DeltaTime;
 	}
 
 	double ThomasTime::GetInitTime()
@@ -74,17 +82,12 @@ namespace thomas
 
 	int ThomasTime::GetFPS()
 	{
-		return s_FPS;
+		return (int)s_FPS;
 	}
 
 	float ThomasTime::GetFrameTime()
 	{
-		return 1000.0 / s_FPS;
-	}
-
-	void ThomasTime::SetTimescale(float timescale)
-	{
-		s_timescale = timescale;
+		return 1000.f / s_FPS;
 	}
 
 	float ThomasTime::GetTimescale()
@@ -92,15 +95,12 @@ namespace thomas
 		return s_timescale;
 	}
 
-
 	double ThomasTime::GetElapsedTime()
 	{
-
 		LARGE_INTEGER newTime;
 		QueryPerformanceCounter(&newTime);
-		double elapsed = double(newTime.QuadPart - s_startTime)/ s_timeFreq;
-		s_startTime = newTime.QuadPart;
+		double elapsed = double(newTime.QuadPart - s_startTime) / s_timeFreq;
+		s_startTime = (double)newTime.QuadPart;
 		return elapsed;
 	}
-
 }

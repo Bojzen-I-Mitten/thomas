@@ -1,32 +1,30 @@
-#pragma once
-
-/**
-*Time calss, holds delta time(DT), FPS and timescale.
-*Timescale is for slowmotion or speedup.
+/*
+	Time managment class of the engine. Responsible for delta-time (dt) and FPS calculations.
 */
 
+#pragma once
 namespace thomas
 {
 	class ThomasTime
 	{
-	private:
-		static double GetElapsedTime();
 	public:
 		static bool Init();
+		static void Update();	
 
-		static void Update();		///Updates delta time and FPS
+	public:
+		static void SetTimescale(const float & timescale);
 
-		static float GetDeltaTime();		///Delta time
-		static float GetActualDeltaTime();
+	public:
 		static double GetInitTime();
-		static int GetFPS();
-		static float GetFrameTime();
-
-		static void SetTimescale(float timescale);		///The smaller the timescale the slower the time
 		static float GetTimescale();
+		static float GetDeltaTime();	
+		static float GetActualDeltaTime();
+		static float GetFrameTime();
+		static int GetFPS();
 
-		
-
+	private:
+		static double GetElapsedTime();
+	
 	private:
 		static double s_initTime;
 		static double s_startTime;
@@ -39,7 +37,5 @@ namespace thomas
 		static float s_TimeLeftToUpdateFPS;
 		static float s_StackedDeltaTime;
 		static int s_framesPassedSinceFPSUpdate;
-	public:
-
 	};
 }
