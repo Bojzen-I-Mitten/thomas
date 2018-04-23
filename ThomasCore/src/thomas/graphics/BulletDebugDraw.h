@@ -4,9 +4,9 @@
 
 #pragma once
 #define _XM_NO_INTRINSICS_ 1;
-#include <LinearMath\btIDebugDraw.h>
 #include "..\utils\Math.h"
 #include "..\utils\Buffers.h"
+#include <LinearMath\btIDebugDraw.h>
 #include <vector>
 #include <memory>
 
@@ -17,7 +17,7 @@ namespace thomas
 
 	namespace graphics
 	{
-		class THOMAS_API BulletDebugDraw : public btIDebugDraw
+		class BulletDebugDraw : public btIDebugDraw
 		{
 		public:
 			BulletDebugDraw();

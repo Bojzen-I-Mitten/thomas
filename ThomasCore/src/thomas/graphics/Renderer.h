@@ -3,7 +3,6 @@
 */
 
 #pragma once
-#include "..\Common.h"
 #include "..\utils\Math.h"
 #include <vector>
 #include <map>
@@ -46,7 +45,7 @@ namespace thomas
 		//This could probably be simplified...
 		using CommandQueue = std::map<object::component::Camera*, std::map<resource::Material*, std::vector<RenderCommand>>>;
 
-		class THOMAS_API Renderer 
+		class Renderer 
 		{						
 		public:
 			static void BindCamera(thomas::object::component::Camera* camera);
@@ -57,7 +56,7 @@ namespace thomas
 
 		private:
 			static void BindFrame();
-			static void BindObject(thomas::resource::Material* material, const thomas::math::Matrix& worldMatrix);
+			static void BindObject(thomas::resource::Material* material, const thomas::math::Matrix & worldMatrix);
 
 		private:
 			static CommandQueue s_renderCommands;

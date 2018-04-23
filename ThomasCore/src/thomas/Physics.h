@@ -1,15 +1,15 @@
 #pragma once
-#include "Common.h"
 #include "utils\Math.h"
 #include <btBulletDynamicsCommon.h>
 #include <memory>
+#include <vector>
 
 namespace thomas
 {
 	namespace graphics { class BulletDebugDraw; };
 	namespace object { namespace component { class Camera; class RigidBodyComponent; } }
 
-	class THOMAS_API Physics
+	class Physics
 	{
 	public:
 		static bool Init();

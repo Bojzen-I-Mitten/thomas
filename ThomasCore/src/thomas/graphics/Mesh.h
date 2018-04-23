@@ -32,7 +32,7 @@ namespace thomas
 			std::unique_ptr<utils::buffers::IndexBuffer> indexBuffer;
 		};
 
-		class THOMAS_API Mesh
+		class Mesh
 		{
 		public:
 			Mesh(const Vertices & vertices, std::vector<unsigned int> indices, const std::string & name);

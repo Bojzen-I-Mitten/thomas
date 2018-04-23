@@ -1,5 +1,4 @@
 #pragma once
-#include "Common.h"
 #include "DirectXTK\SoundCommon.h"
 #include <map>
 
@@ -7,7 +6,7 @@ using namespace DirectX;
 
 namespace thomas
 {
-	class THOMAS_API Sound
+	class Sound
 	{
 	public:
 		static bool Init();

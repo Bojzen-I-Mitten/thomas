@@ -20,7 +20,7 @@ namespace thomas
 	{
 		class EditorGrid;
 
-		class THOMAS_API EditorCamera : public object::GameObject
+		class EditorCamera : public object::GameObject
 		{
 		public:		
 			static void Init();

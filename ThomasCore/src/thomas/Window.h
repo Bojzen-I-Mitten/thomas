@@ -4,11 +4,13 @@
 
 #pragma once
 #include <Windows.h>
-#include "Common.h"
+#include <vector>
+#include <d3d11.h>
+#include <imgui\imgui.h>
 
 namespace thomas 
 {
-	class THOMAS_API Window
+	class Window
 	{
 	public:
 		struct DXBuffers

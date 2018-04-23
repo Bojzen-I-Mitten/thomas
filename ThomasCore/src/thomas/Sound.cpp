@@ -1,4 +1,5 @@
 #include "Sound.h"
+#include "Common.h"
 #include <AtlBase.h>
 #include <atlconv.h>
 

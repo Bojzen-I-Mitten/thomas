@@ -1,14 +1,15 @@
 #pragma once
-
 #pragma warning( disable : 4561)
 
 #include <d3d11.h>
 #include "DirectXTK/SimpleMath.h"
 #include <cmath>
 #include <string>
-namespace DirectX {
-	namespace SimpleMath {
 
+namespace DirectX 
+{
+	namespace SimpleMath 
+	{
 		using DirectX::BoundingBox;
 		using DirectX::BoundingSphere;
 		using DirectX::BoundingFrustum;

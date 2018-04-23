@@ -1,7 +1,7 @@
 #pragma once
-#include "..\..\Common.h"
 #include "..\..\utils\Math.h"
 #include <memory>
+#include <vector>
 
 namespace thomas
 {
@@ -10,13 +10,13 @@ namespace thomas
 
 	namespace editor
 	{
-		class THOMAS_API Gizmos
+		class Gizmos
 		{
 		private:
 			enum class GizmoPasses
 			{
-				SOLID = 0,
-				WIREFRAME = 1,
+				SOLID,
+				WIREFRAME
 			};
 
 			struct GizmoRenderCommand
