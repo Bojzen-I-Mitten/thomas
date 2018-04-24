@@ -18,6 +18,7 @@ namespace ThomasEditor
 	public:
 		Collider(thomas::object::component::Collider* nativePtr) : Component(nativePtr) {}
 		
+		[BrowsableAttribute(false)]
 		property Rigidbody^ attachedRigidbody {
 			Rigidbody^ get() { return m_attachedRigidbody; }
 			void set(Rigidbody^ value);
