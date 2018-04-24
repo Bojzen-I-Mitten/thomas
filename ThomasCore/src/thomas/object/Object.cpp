@@ -39,8 +39,11 @@ namespace thomas
 		}
 		bool Object::Destroy(Object *object)
 		{
-			object->OnDestroy();
-			object->m_destroyed = true;
+			if (!object->m_destroyed)
+			{
+				object->OnDestroy();
+				object->m_destroyed = true;
+			}
 			return true;
 		}
 

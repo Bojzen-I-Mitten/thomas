@@ -5,7 +5,7 @@
 #include "../object/component/Camera.h"
 #include "DirectXTK/CommonStates.h"
 #include "../resource/Shader.h"
-
+#include "../editor/gizmos/Gizmos.h"
 namespace thomas
 {
 	namespace graphics
@@ -93,7 +93,12 @@ namespace thomas
 			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(states.DepthNone(), 0);
 			ThomasCore::GetDeviceContext()->RSSetState(states.CullNone());
 
-			m_vertexBufferPos->SetData(m_lines.positions);
+
+			editor::Gizmos::SetMatrix(math::Matrix::Identity);
+			editor::Gizmos::DrawLines(m_lines.positions);
+			m_lines.positions.clear();
+			m_lines.colors.clear();
+		/*	m_vertexBufferPos->SetData(m_lines.positions);
 			m_vertexBufferColor->SetData(m_lines.colors);
 
 			m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
@@ -105,7 +110,7 @@ namespace thomas
 			m_material->Bind();
 			m_material->Draw(m_lines.positions.size(), 0);
 			m_lines.positions.clear();
-			m_lines.colors.clear();
+			m_lines.colors.clear();*/
 		}
 
 	}

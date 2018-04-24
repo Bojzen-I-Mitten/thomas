@@ -29,8 +29,9 @@ namespace thomas
 				GizmoRenderCommand(std::vector<math::Vector3> v, math::Matrix m, math::Color c, D3D_PRIMITIVE_TOPOLOGY t, GizmoPasses p) :
 					vertexData(v), matrix(m), color(c), topology(t), pass(p) {};
 			};
-			static void DrawLines(std::vector<math::Vector3> lines);
+			
 		public:
+			static void DrawLines(std::vector<math::Vector3> lines, D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 			static void TransferGizmoCommands();
 			static void RenderGizmos();
 			static void ClearGizmos();
@@ -44,8 +45,8 @@ namespace thomas
 
 			static void DrawCube(math::Vector3 center, math::Vector3 size);
 			static void DrawWireCube(math::Vector3 center, math::Vector3 size);
-			static void DrawBoundingOrientedBox(math::BoundingOrientedBox& obb);
-			static void DrawBoundingSphere(math::BoundingSphere& sphere);
+			static void DrawBoundingOrientedBox(const math::BoundingOrientedBox& obb);
+			static void DrawBoundingSphere(const math::BoundingSphere& sphere);
 			static void DrawRing(math::Vector3 origin, math::Vector3 majorAxis, math::Vector3 minorAxis);
 			static void DrawLine(math::Vector3 from, math::Vector3 to);
 			static void DrawSphere(math::Vector3 center, float radius);

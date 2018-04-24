@@ -69,27 +69,27 @@ namespace thomas
 			void Rigidbody::UpdateRigidbodyToTransform()
 			{			
 				btTransform trans;
-				float* transMatrix = *math::Matrix().m;
 				getMotionState()->getWorldTransform(trans);
-				trans.getOpenGLMatrix(transMatrix);
-				math::Matrix newMatrix = math::Matrix::CreateScale(m_gameObject->m_transform->GetScale()) * math::Matrix(transMatrix);
-				m_gameObject->m_transform->SetLocalMatrix(newMatrix);
-				m_prevMatrix = newMatrix;
+				m_gameObject->m_transform->SetPosition((math::Vector3)trans.getOrigin());
+				m_gameObject->m_transform->SetRotation((math::Quaternion)trans.getRotation());
 				m_gameObject->m_transform->SetDirty(true);
+
+				m_prevMatrix = m_gameObject->m_transform->GetWorldMatrix();
 			}
 
 			void Rigidbody::UpdateTransformToRigidBody()
 			{
-				math::Matrix currentMatrix = m_gameObject->m_transform->GetWorldMatrix();
-				if (m_prevMatrix != currentMatrix) //maybe use internal bool in transform
+				if (m_prevMatrix != m_gameObject->m_transform->GetWorldMatrix())
 				{
 					btTransform trans;
-					trans.setFromOpenGLMatrix(*m_gameObject->m_transform->GetWorldMatrix().m);
+					trans.setOrigin((btVector3&)m_gameObject->m_transform->GetPosition());
+					trans.setRotation((btQuaternion&)m_gameObject->m_transform->GetRotation());
 					getMotionState()->setWorldTransform(trans);
 					setCenterOfMassTransform(trans);
 					Physics::s_world->updateSingleAabb(this);
 					activate();
 				}
+				
 			}
 
 			void Rigidbody::SetKinematic(bool kinematic)
