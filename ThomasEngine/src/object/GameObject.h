@@ -139,8 +139,9 @@ namespace ThomasEditor
 	public:
 		static GameObject^ s_lastObject;
 
-		GameObject(String^ name) : Object(new thomas::object::GameObject(msclr::interop::marshal_as<std::string>(name))) 
+		GameObject(String^ name) : Object(new thomas::object::GameObject(Utility::ConvertString(name))) 
 		{
+			s_lastObject = this;
 			m_name = name;
 			m_transform = AddComponent<Transform^>();
 			((thomas::object::GameObject*)nativePtr)->m_transform = (thomas::object::component::Transform*)m_transform->nativePtr;
@@ -247,7 +248,8 @@ namespace ThomasEditor
 		where T : Component
 		List<T>^ GetComponents()
 		{
-			return (List<T>^)Enumerable::OfType<T>(%m_components);
+			List<T>^ list = gcnew List<T>(Enumerable::OfType<T>(%m_components));
+			return list;
 		}
 
 

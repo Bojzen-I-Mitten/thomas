@@ -15,6 +15,9 @@ namespace ThomasEditor
 
 		void Awake() override;
 
+
+		void OnDestroy() override;
+
 		property bool IsKinematic 
 		{
 			bool get() { return ((thomas::object::component::Rigidbody*)nativePtr)->IsKinematic(); }

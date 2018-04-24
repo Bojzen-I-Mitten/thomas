@@ -22,7 +22,7 @@ namespace ThomasEditor {
 	public:
 		[field:NonSerializedAttribute]
 		virtual event PropertyChangedEventHandler^ PropertyChanged;
-		virtual void OnDestroy() { nativePtr->OnDestroy(); }
+		virtual void OnDestroy() {nativePtr->OnDestroy(); }
 
 		static void Destroy(Object^ object) { object->Destroy(); }
 		

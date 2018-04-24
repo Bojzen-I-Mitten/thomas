@@ -9,3 +9,13 @@ void ThomasEditor::Rigidbody::Awake()
 		((thomas::object::component::Rigidbody*)nativePtr)->setCollisionShape(((thomas::object::component::Collider*)collider->nativePtr)->GetCollisionShape());
 	}
 }
+
+void ThomasEditor::Rigidbody::OnDestroy()
+{
+	List<Collider^>^ colliders = gameObject->GetComponents<Collider^>();
+	for each(Collider^ c in colliders)
+	{
+		c->attachedRigidbody = nullptr;
+	}
+	Component::OnDestroy();
+}
