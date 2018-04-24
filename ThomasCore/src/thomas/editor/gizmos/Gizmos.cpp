@@ -3,7 +3,7 @@
 #include "..\..\resource\Material.h"
 #include "..\..\resource\Shader.h"
 #include "..\..\graphics\Mesh.h"
-#include "..\..\utils\d3d.h"
+#include "..\..\utils\D3D.h"
 #include "..\..\utils\Buffers.h"
 
 #define RAY_DISTANCE 1000.f

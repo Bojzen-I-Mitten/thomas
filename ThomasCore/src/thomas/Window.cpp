@@ -1,7 +1,7 @@
 #include "Window.h"
 #include "Input.h"
-#include "ThomasCore.h"
-#include "utils\d3d.h"
+#include "Common.h"
+#include "utils\D3D.h"
 #include <imgui\imgui_impl_dx11.h>
 #include <imgui\ImGuizmo.h>
 

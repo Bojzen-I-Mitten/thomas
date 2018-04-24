@@ -1,5 +1,7 @@
 #pragma once
-#include "../utils/d3d.h"
+#include "..\utils/d3d.h"
+#include "..\Common.h"
+
 namespace thomas
 {
 	namespace utils

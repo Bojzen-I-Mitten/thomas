@@ -1,5 +1,5 @@
 #include "Renderer.h"
-#include "..\utils\d3d.h"
+#include "..\utils\D3D.h"
 #include "..\object\GameObject.h"
 #include "..\object\component\Camera.h"
 #include "..\object\component\Transform.h"

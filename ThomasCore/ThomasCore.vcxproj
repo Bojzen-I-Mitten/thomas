@@ -58,7 +58,7 @@
     <ClCompile Include="src\thomas\ThomasCore.cpp" />
     <ClCompile Include="src\thomas\ThomasTime.cpp" />
     <ClCompile Include="src\thomas\utils\AssimpLoader.cpp" />
-    <ClCompile Include="src\thomas\utils\D3d.cpp" />
+    <ClCompile Include="src\thomas\utils\D3D.cpp" />
     <ClCompile Include="src\thomas\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -117,7 +117,7 @@
     <ClInclude Include="src\thomas\ThomasCore.h" />
     <ClInclude Include="src\thomas\ThomasTime.h" />
     <ClInclude Include="src\thomas\utils\AssimpLoader.h" />
-    <ClInclude Include="src\thomas\utils\d3d.h" />
+    <ClInclude Include="src\thomas\utils\D3D.h" />
     <ClInclude Include="src\thomas\utils\Math.h" />
     <ClInclude Include="src\thomas\Window.h" />
   </ItemGroup>

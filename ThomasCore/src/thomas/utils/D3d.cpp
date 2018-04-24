@@ -1,13 +1,14 @@
 #pragma once
-#include "d3d.h"
-#include <AtlBase.h>
-#include <atlconv.h>
-#include "Math.h"
-#include "../Window.h"
+#include "D3D.h"
+#include "..\Common.h"
+#include "..\Window.h"
 #include "DirectXTK/WICTextureLoader.h"
 #include "DirectXTK/DDSTextureLoader.h"
 #include <dxgi.h>
 #include <D3d11_4.h>
+#include <AtlBase.h>
+#include <atlconv.h>
+
 namespace thomas
 {
 	namespace utils
@@ -382,9 +383,6 @@ namespace thomas
 			return true;
 		}
 
-
-
-
 		ID3D11RasterizerState * D3d::CreateRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode)
 		{
 			ID3D11RasterizerState* rasterState;
@@ -405,58 +403,7 @@ namespace thomas
 
 			return rasterState;
 		}
-		ID3D11ShaderResourceView * D3d::CreateFresnel(int fresnelTexSize, float blending)
-		{
-			DWORD* buffer = new DWORD[fresnelTexSize];
-			for (int i = 0; i < fresnelTexSize; i++)
-			{
-				float cos_a = i / (FLOAT)fresnelTexSize;
-				// Using water's refraction index 1.33
-			
-
-				DWORD fresnel = math::Vector2(DirectX::XMFresnelTerm(math::Vector2(cos_a), math::Vector2(1.33f))).x*255.0f;
-
-				DWORD sky_blend = (DWORD)(powf(1 / (1 + cos_a), blending) * 255);
-
-				buffer[i] = (sky_blend << 8) | fresnel;
-			}
-
-			D3D11_TEXTURE1D_DESC tex_desc;
-			tex_desc.Width = fresnelTexSize;
-			tex_desc.MipLevels = 1;
-			tex_desc.ArraySize = 1;
-			tex_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			tex_desc.Usage = D3D11_USAGE_IMMUTABLE;
-			tex_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-			tex_desc.CPUAccessFlags = 0;
-			tex_desc.MiscFlags = 0;
-
-			D3D11_SUBRESOURCE_DATA init_data;
-			init_data.pSysMem = buffer;
-			init_data.SysMemPitch = 0;
-			init_data.SysMemSlicePitch = 0;
-
-			ID3D11Texture1D* fresnelMap;
-
-			ThomasCore::GetDevice()->CreateTexture1D(&tex_desc, &init_data, &fresnelMap);
-
-			delete buffer;
-
-			// Create shader resource
-			D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc;
-			srv_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			srv_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE1D;
-			srv_desc.Texture1D.MipLevels = 1;
-			srv_desc.Texture1D.MostDetailedMip = 0;
-
-			ID3D11ShaderResourceView* fresnelSRV;
-
-			ThomasCore::GetDevice()->CreateShaderResourceView(fresnelMap, &srv_desc, &fresnelSRV);
-			
-			fresnelMap->Release();
-
-			return fresnelSRV;
-		}
+		
 		void D3d::CreateTextureAndViews(UINT width, UINT height, DXGI_FORMAT format, ID3D11Texture2D *& tex, ID3D11ShaderResourceView *& SRV, ID3D11RenderTargetView *& RTV)
 		{
 			// Create 2D texture
@@ -499,6 +446,7 @@ namespace thomas
 				ThomasCore::GetDevice()->CreateRenderTargetView(tex, &rtv_desc, &RTV);
 			}
 		}
+
 		void D3d::CreateBufferAndUAV(void * data, UINT byte_width, UINT byte_stride, ID3D11Buffer *& buffer, ID3D11UnorderedAccessView *& UAV, ID3D11ShaderResourceView *& SRV)
 		{
 
@@ -547,6 +495,7 @@ namespace thomas
 				LOG_HR(result);
 			}
 		}
+
 		void D3d::CreateCPUReadBufferAndUAV(void * data, UINT byte_width, UINT byte_stride, ID3D11Buffer *& buffer, ID3D11UnorderedAccessView *& UAV)
 		{
 			HRESULT result;
@@ -581,8 +530,6 @@ namespace thomas
 				LOG_HR(result);
 			}
 		}
-
-
 
 		ID3D11Buffer * D3d::CreateStagingBuffer(UINT byte_width, UINT byte_stride)
 		{

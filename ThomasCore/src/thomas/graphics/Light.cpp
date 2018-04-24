@@ -1,5 +1,4 @@
 #include "Light.h"
-#include "..\utils\d3d.h"
 
 namespace thomas
 {
@@ -18,7 +17,7 @@ namespace thomas
 			m_data.spotInnerAngle = 0.f;
 			m_data.spotOuterAngle = 20.f;
 			
-			this->s_lights.push_back(*this);
+			s_lights.push_back(*this);
 			s_nrOfLights++;
 		}
 
