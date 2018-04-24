@@ -30,6 +30,8 @@
     <ClCompile Include="src\thomas\editor\gizmos\Gizmos.cpp" />
     <ClCompile Include="src\thomas\object\component\physics\BoxCollider.cpp" />
     <ClCompile Include="src\thomas\object\component\physics\Collider.cpp" />
+    <ClCompile Include="src\thomas\object\component\physics\MeshCollider.cpp" />
+    <ClCompile Include="src\thomas\object\component\physics\SphereCollider.cpp" />
     <ClCompile Include="src\thomas\resource\texture\Texture.cpp" />
     <ClCompile Include="src\thomas\resource\texture\Texture2D.cpp" />
     <ClCompile Include="src\thomas\utils\Buffers.cpp" />
@@ -85,6 +87,8 @@
     <ClInclude Include="src\thomas\editor\gizmos\Gizmos.h" />
     <ClInclude Include="src\thomas\object\component\physics\BoxCollider.h" />
     <ClInclude Include="src\thomas\object\component\physics\Collider.h" />
+    <ClInclude Include="src\thomas\object\component\physics\MeshCollider.h" />
+    <ClInclude Include="src\thomas\object\component\physics\SphereCollider.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\shaderProperties.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderProperty.h" />
     <ClInclude Include="src\thomas\resource\ShaderProperty\ShaderPropertyColor.h" />

@@ -80,7 +80,7 @@ namespace thomas
 			//s_gizmoMaterial->Draw(graphics::Model::GetPrimitive(graphics::PrimitiveType::Cube))
 		}
 
-		void Gizmos::DrawBoundingOrientedBox(math::BoundingOrientedBox & obb)
+		void Gizmos::DrawBoundingOrientedBox(const math::BoundingOrientedBox & obb)
 		{
 			math::Vector3 corners[math::BoundingOrientedBox::CORNER_COUNT];
 			obb.GetCorners(corners);
@@ -117,7 +117,7 @@ namespace thomas
 			DrawLines(lines);
 		}
 
-		void Gizmos::DrawBoundingSphere(math::BoundingSphere & sphere)
+		void Gizmos::DrawBoundingSphere(const math::BoundingSphere & sphere)
 		{
 			math::Vector3 origin = sphere.Center;
 			const float radius = sphere.Radius;
@@ -157,7 +157,7 @@ namespace thomas
 			lines[ringSegments] = lines[0];
 
 
-			DrawLines(lines);
+			DrawLines(lines, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
 		}
 
@@ -250,7 +250,7 @@ namespace thomas
 			DrawLines(lines);
 		}
 
-		void Gizmos::DrawLines(std::vector<math::Vector3> lines)
+		void Gizmos::DrawLines(std::vector<math::Vector3> lines, D3D_PRIMITIVE_TOPOLOGY topology)
 		{
 			//s_vertexBuffer->SetData(lines);
 
@@ -261,7 +261,7 @@ namespace thomas
 			//s_gizmoMaterial->Bind();
 			//s_gizmoMaterial->Draw(lines.size(), 0);
 
-			s_gizmoCommands.push_back(GizmoRenderCommand(lines, s_matrix, s_color, D3D10_PRIMITIVE_TOPOLOGY_LINELIST, GizmoPasses::SOLID));
+			s_gizmoCommands.push_back(GizmoRenderCommand(lines, s_matrix, s_color, topology, GizmoPasses::SOLID));
 		}
 
 		void Gizmos::TransferGizmoCommands()

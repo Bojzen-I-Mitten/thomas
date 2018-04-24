@@ -3,6 +3,7 @@
 #include "..\ThomasManaged.h"
 
 #include "component\physics\BoxCollider.h"
+#include "component\physics\SphereCollider.h"
 
 void ThomasEditor::GameObject::Destroy()
 {
@@ -31,6 +32,10 @@ ThomasEditor::GameObject ^ ThomasEditor::GameObject::CreatePrimitive(PrimitiveTy
 	{
 	case PrimitiveType::Cube:
 		gameObject->AddComponent<BoxCollider^>();
+		break;
+	case PrimitiveType::Sphere:
+		gameObject->AddComponent<SphereCollider^>();
+		break;
 	default:
 		break;
 	}

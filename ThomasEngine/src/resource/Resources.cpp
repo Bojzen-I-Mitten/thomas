@@ -10,49 +10,49 @@ namespace ThomasEditor
 {
 	Resource^ Resources::Load(String^ path)
 	{
+		
+		if (resources->ContainsKey(System::IO::Path::GetFullPath(path)))
 		{
-			if (resources->ContainsKey(System::IO::Path::GetFullPath(path)))
-			{
-				Resource^ obj = resources[System::IO::Path::GetFullPath(path)];
-				return obj;
-			}
-			else
-			{
-				Resource^ obj;
-				AssetTypes type = GetResourceAssetType(path);
-				switch (type)
-				{
-				case AssetTypes::MODEL:
-					obj = gcnew Model(path);
-					break;
-				case AssetTypes::TEXTURE2D:
-					obj = gcnew Texture2D(path);
-					break;
-				case AssetTypes::SCENE:
-					break;
-				case AssetTypes::SHADER:
-					obj = gcnew Shader(path);
-					break;
-				case AssetTypes::MATERIAL:
-					obj = Deserialize<Material^>(path);
-					break;
-				case AssetTypes::SCRIPT:
-					break;
-				case AssetTypes::AUDIO_CLIP:
-					obj = gcnew AudioClip(path);
-					break;
-				case AssetTypes::UNKNOWN:
-					break;
-				default:
-					break;
-				}
-				if (obj != nullptr)
-				{
-					resources[System::IO::Path::GetFullPath(path)] = obj;
-				}
-				return obj;
-			}
+			Resource^ obj = resources[System::IO::Path::GetFullPath(path)];
+			return obj;
 		}
+		else
+		{
+			Resource^ obj;
+			AssetTypes type = GetResourceAssetType(path);
+			switch (type)
+			{
+			case AssetTypes::MODEL:
+				obj = gcnew Model(path);
+				break;
+			case AssetTypes::TEXTURE2D:
+				obj = gcnew Texture2D(path);
+				break;
+			case AssetTypes::SCENE:
+				break;
+			case AssetTypes::SHADER:
+				obj = gcnew Shader(path);
+				break;
+			case AssetTypes::MATERIAL:
+				obj = Deserialize<Material^>(path);
+				break;
+			case AssetTypes::SCRIPT:
+				break;
+			case AssetTypes::AUDIO_CLIP:
+				obj = gcnew AudioClip(path);
+				break;
+			case AssetTypes::UNKNOWN:
+				break;
+			default:
+				break;
+			}
+			if (obj != nullptr)
+			{
+				resources[System::IO::Path::GetFullPath(path)] = obj;
+			}
+			return obj;
+		}
+		
 	}
 	Resources::AssetTypes Resources::GetResourceAssetType(Type ^ type)
 	{

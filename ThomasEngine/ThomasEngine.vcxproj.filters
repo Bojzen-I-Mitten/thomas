@@ -32,6 +32,8 @@
     <ClCompile Include="src\object\component\physics\Rigidbody.cpp" />
     <ClCompile Include="src\object\component\physics\Collider.cpp" />
     <ClCompile Include="src\object\component\physics\BoxCollider.cpp" />
+    <ClCompile Include="src\object\component\physics\SphereCollider.cpp" />
+    <ClCompile Include="src\object\component\physics\MeshCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\resource\Model.h" />
@@ -68,6 +70,8 @@
     <ClInclude Include="src\object\component\physics\Rigidbody.h" />
     <ClInclude Include="src\object\component\physics\Collider.h" />
     <ClInclude Include="src\object\component\physics\BoxCollider.h" />
+    <ClInclude Include="src\object\component\physics\SphereCollider.h" />
+    <ClInclude Include="src\object\component\physics\MeshCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />

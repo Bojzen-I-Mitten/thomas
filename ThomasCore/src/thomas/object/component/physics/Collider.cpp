@@ -9,6 +9,7 @@ namespace thomas
 			Collider::Collider(btCollisionShape * collisionShape)
 			{
 				m_collisionShape = collisionShape;
+				m_collisionShape->setMargin(0);
 			}
 
 			Collider::~Collider()
@@ -68,11 +69,13 @@ namespace thomas
 			void Collider::Update()
 			{
 				
-				//m_collisionShape->setLocalScaling(Physics::ToBullet(m_gameObject->m_transform->GetScale()));
+				m_collisionShape->setLocalScaling((btVector3&)m_gameObject->m_transform->GetScale());
+				
 				if (m_collisionObject)
 				{
 					btTransform trans;
-					trans.setFromOpenGLMatrix(*m_gameObject->m_transform->GetWorldMatrix().m);
+					trans.setOrigin((btVector3&)m_gameObject->m_transform->GetPosition());
+					trans.setRotation((btQuaternion&)m_gameObject->m_transform->GetRotation());
 					m_collisionObject->setWorldTransform(trans);
 					Physics::s_world->updateSingleAabb(m_collisionObject);
 				}
