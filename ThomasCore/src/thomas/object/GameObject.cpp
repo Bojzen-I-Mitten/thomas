@@ -16,23 +16,7 @@ namespace thomas
 
 		GameObject::~GameObject()
 		{
-			for (unsigned int i = 0; i < this->m_components.size(); i++)
-			{
-				if (this->m_components[i])
-				{
-					Object::Destroy(this->m_components[i]);
-				}     
-					
-			}
 			this->m_components.clear();
-
-			for (unsigned int i = 0; i < s_gameObjects.size(); i++)
-			{
-				if (s_gameObjects[i] == this)
-				{
-					s_gameObjects.erase(s_gameObjects.begin() + i);
-				}
-			}
 			editor::EditorCamera::UnselectObject(this);
 			Object::Destroy(this);
 		}
@@ -54,27 +38,27 @@ namespace thomas
 
 		bool GameObject::Destroy(GameObject * gameObject)
 		{
-			for (unsigned int i = 0; i < gameObject->m_components.size(); i++)
-			{
-				if (gameObject->m_components[i])
-				{
-					Object::Destroy(gameObject->m_components[i]);
-					
-				}
+			//for (unsigned int i = 0; i < gameObject->m_components.size(); i++)
+			//{
+			//	if (gameObject->m_components[i])
+			//	{
+			//		Object::Destroy(gameObject->m_components[i]);
+			//		
+			//	}
 
-			}
-			gameObject->m_components.clear();
+			//}
+			//gameObject->m_components.clear();
 
-			for (unsigned int i = 0; i < s_gameObjects.size(); i++)
-			{
-				if (s_gameObjects[i] == gameObject)
-				{
-					s_gameObjects.erase(s_gameObjects.begin() + i);
+			//for (unsigned int i = 0; i < s_gameObjects.size(); i++)
+			//{
+			//	if (s_gameObjects[i] == gameObject)
+			//	{
+			//		s_gameObjects.erase(s_gameObjects.begin() + i);
 
-				}
-			}
+			//	}
+			//}
 
-			Object::Destroy(gameObject);
+			//Object::Destroy(gameObject);
 
 			return true;
 		}
