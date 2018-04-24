@@ -30,19 +30,19 @@ namespace thomas
 			{
 				math::Vector3 from(i, 0.0f, -m_gridSize / 2);
 				math::Vector3 to(i, 0.0f, m_gridSize / 2);
-				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 50);
+				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 25);
 				from = math::Vector3(-m_gridSize / 2, 0.0f, i);
 				to = math::Vector3(m_gridSize / 2, 0.0f, i);
-				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 50);
+				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 25);
 
 				for (float j = cellSize/internalGridSize; j < cellSize; j+= cellSize/internalGridSize)
 				{
 					from = math::Vector3(i+j, 0.0f, -m_gridSize / 2);
 					to = math::Vector3(i+j, 0.0f, m_gridSize / 2);
-					AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 2.0f);
+					AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 1.5f);
 					from = math::Vector3(-m_gridSize / 2, 0.0f, i+j);
 					to = math::Vector3(m_gridSize / 2, 0.0f, i+j);
-					AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 2.0f);
+					AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 1.5f);
 				}
 
 			}

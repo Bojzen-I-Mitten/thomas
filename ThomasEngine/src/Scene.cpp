@@ -138,7 +138,13 @@ namespace ThomasEditor
 		if (obj->GetType() == SceneResource::typeid)
 		{
 			SceneResource^ sceneResource = (SceneResource^)obj;
-			return Resources::Load(sceneResource->path);
+			if (sceneResource->path == "")
+			{
+				if (targetType == Material::typeid)
+					return Material::StandardMaterial;
+			}
+			else
+				return Resources::Load(sceneResource->path);
 		}
 		return obj;
 	}

@@ -20,7 +20,7 @@ namespace ThomasEditor
 	[DataContractAttribute]
 	public ref class Model : public Resource
 	{
-	private:
+	internal:
 		Model(thomas::resource::Model* nativePtr) : Resource(Utility::ConvertString(nativePtr->GetPath()), nativePtr){}
 	public:
 		Model(String^ path) : Resource(path, new thomas::resource::Model(Utility::ConvertString(path))) {};
