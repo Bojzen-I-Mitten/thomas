@@ -26,6 +26,18 @@ void ThomasEditor::Component::Destroy()
 {
 	Monitor::Enter(m_gameObject->m_componentsLock);
 	OnDestroy();
+	for (int i = 0; i < ((thomas::object::GameObject*)m_gameObject->nativePtr)->m_components.size(); i++)
+	{
+		auto component = ((thomas::object::GameObject*)m_gameObject->nativePtr)->m_components[i];
+		if (component == nativePtr)
+		{
+			((thomas::object::GameObject*)m_gameObject->nativePtr)->
+				m_components.erase(((thomas::object::GameObject*)m_gameObject->nativePtr)->m_components.begin() + i);
+			break;
+		}
+	}
+	
+
 	m_gameObject->Components->Remove(this);
 	thomas::object::Object::Destroy(nativePtr);
 	Monitor::Exit(m_gameObject->m_componentsLock);

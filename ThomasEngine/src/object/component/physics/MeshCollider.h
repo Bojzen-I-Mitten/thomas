@@ -13,6 +13,9 @@ namespace ThomasEditor
 	public:
 		MeshCollider() : Collider(new thomas::object::component::MeshCollider()) {}
 
+
+
+
 		property Model^ mesh
 		{
 			Model^ get() {
