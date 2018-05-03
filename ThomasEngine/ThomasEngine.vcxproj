@@ -160,6 +160,7 @@
     <ClInclude Include="src\object\component\Camera.h" />
     <ClInclude Include="src\object\component\SoundComponent.h" />
     <ClInclude Include="src\resource\Shader.h" />
+    <ClInclude Include="src\Time.h" />
     <ClInclude Include="src\Utility.h" />
     <ClInclude Include="src\resource\Material.h" />
     <ClInclude Include="src\math\Math.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="src\ScriptingManager.cpp" />
     <ClCompile Include="src\resource\Shader.cpp" />
     <ClCompile Include="src\ThomasManaged.cpp" />
+    <ClCompile Include="src\Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

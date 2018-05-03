@@ -12,7 +12,10 @@ namespace ThomasEditor
         public AudioClip audioClip { get; set; }
         public Material mat { get; set; }
 
-        public Thomas_Graph.Bezier curve {get; set;}
+        public Thomas_Graph.Bezier posCurve {get; set;}
+        public Thomas_Graph.Bezier scaleCurve { get; set; }
+
+        float t = 0;
 
         public override void Start()
         {
@@ -21,7 +24,9 @@ namespace ThomasEditor
 
         public override void Update()
         {
-            
+            t += Time.DeltaTime;
+            gameObject.transform.position = new Vector3(0, (float)posCurve.GetYFromX((t*10) % 10), 0);
+            gameObject.transform.scale = new Vector3((float)scaleCurve.GetYFromX((t*10) % 10), 1, (float)scaleCurve.GetYFromX((t*10) % 10));
             if (Input.GetKeyDown(Input.Keys.K))
             {
 

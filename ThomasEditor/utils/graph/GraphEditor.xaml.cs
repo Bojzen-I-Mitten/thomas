@@ -35,6 +35,18 @@ namespace Thomas_Graph
             set { SetValue(ValueProperty, value); }
         }
 
+        public static readonly DependencyProperty PropNameProperty =
+       DependencyProperty.Register(
+       "PropName", typeof(String),
+       typeof(GraphEditor)
+       );
+
+        public String PropName
+        {
+            get { return (String)GetValue(PropNameProperty); }
+            set { SetValue(PropNameProperty, value); }
+        }
+
         ExpandedGraphControl expandedGraph;
         public GraphEditor()
         {
@@ -89,6 +101,7 @@ namespace Thomas_Graph
             {
                 isExpanded = true;
                 expandedGraph = new ExpandedGraphControl(graph);
+                expandedGraph.Title = PropName;
                 expandedGraph.graph.OnPointsChanged += GraphControl_OnPointsChanged;
                 expandedGraph.onPopIn += ExpandedGraph_onPopIn;
                 graph.OnLostFocus();

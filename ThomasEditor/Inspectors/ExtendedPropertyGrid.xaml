@@ -52,7 +52,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="CurveEditor">
-            <graph:GraphEditor Value="{Binding Value, Mode=TwoWay}"/>
+            <graph:GraphEditor PropName="{Binding DisplayName}" Value="{Binding Value, Mode=TwoWay}"/>
         </DataTemplate>
         
         <DataTemplate x:Key="TextureEditor">
