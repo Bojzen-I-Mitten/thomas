@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Scene xmlns:i="http://www.w3.org/2001/XMLSchema-instance" z:Id="1" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/" xmlns="http://schemas.datacontract.org/2004/07/ThomasEditor">
+  <GameObjects z:Size="1">
+    <GameObject z:Id="2">
+      <m_name z:Id="3">newCube</m_name>
+      <Components z:Size="4">
+        <Component z:Id="4" i:type="Transform">
+          <m_name i:nil="true" />
+          <enabled>true</enabled>
+          <children z:Size="0" />
+          <eulerAngles>
+            <x>0</x>
+            <y>-0</y>
+            <z>0</z>
+          </eulerAngles>
+          <localEulerAngles>
+            <x>0</x>
+            <y>-0</y>
+            <z>0</z>
+          </localEulerAngles>
+          <localPosition>
+            <x>0</x>
+            <y>1</y>
+            <z>0</z>
+          </localPosition>
+          <localScale>
+            <x>1</x>
+            <y>1</y>
+            <z>1</z>
+          </localScale>
+          <parent i:nil="true" />
+          <position>
+            <x>0</x>
+            <y>1</y>
+            <z>0</z>
+          </position>
+          <rotation>
+            <w>1</w>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+          </rotation>
+          <scale>
+            <x>1</x>
+            <y>1</y>
+            <z>1</z>
+          </scale>
+        </Component>
+        <Component z:Id="5" i:type="RenderComponent">
+          <m_name i:nil="true" />
+          <enabled>true</enabled>
+          <material z:Id="6">
+            <path z:Id="7"></path>
+          </material>
+          <model z:Id="8">
+            <path z:Id="9">..\Data\primitives\cube.obj</path>
+          </model>
+        </Component>
+        <Component z:Id="10" i:type="BoxCollider">
+          <m_name i:nil="true" />
+          <enabled>true</enabled>
+          <attachedRigidbody i:nil="true" />
+          <isTrigger>false</isTrigger>
+          <center>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+          </center>
+          <size>
+            <x>0.5</x>
+            <y>0.5</y>
+            <z>0.5</z>
+          </size>
+        </Component>
+        <Component z:Id="11" i:type="TestComponent">
+          <m_name i:nil="true" />
+          <enabled>true</enabled>
+          <posCurve z:Id="12">
+            <expandedInPropertyGrid>true</expandedInPropertyGrid>
+            <points xmlns:d7p1="http://schemas.datacontract.org/2004/07/System.Windows" z:Id="13" z:Size="7">
+              <d7p1:Point>
+                <d7p1:_x>-0.02</d7p1:_x>
+                <d7p1:_y>1</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>2.23</d7p1:_x>
+                <d7p1:_y>1</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>2.96</d7p1:_x>
+                <d7p1:_y>5.1</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>4.98</d7p1:_x>
+                <d7p1:_y>5</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>7.1</d7p1:_x>
+                <d7p1:_y>5.04</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>7.73</d7p1:_x>
+                <d7p1:_y>1</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>9.98</d7p1:_x>
+                <d7p1:_y>1</d7p1:_y>
+              </d7p1:Point>
+            </points>
+          </posCurve>
+          <scaleCurve z:Id="14">
+            <expandedInPropertyGrid>true</expandedInPropertyGrid>
+            <points xmlns:d7p1="http://schemas.datacontract.org/2004/07/System.Windows" z:Id="15" z:Size="7">
+              <d7p1:Point>
+                <d7p1:_x>-0.04</d7p1:_x>
+                <d7p1:_y>2.04</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>2.98</d7p1:_x>
+                <d7p1:_y>2.2</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>2.84</d7p1:_x>
+                <d7p1:_y>0.16</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>5.04</d7p1:_x>
+                <d7p1:_y>0.64</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>7.56</d7p1:_x>
+                <d7p1:_y>1.24</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>8.06</d7p1:_x>
+                <d7p1:_y>1.24</d7p1:_y>
+              </d7p1:Point>
+              <d7p1:Point>
+                <d7p1:_x>10.02</d7p1:_x>
+                <d7p1:_y>2</d7p1:_y>
+              </d7p1:Point>
+            </points>
+          </scaleCurve>
+        </Component>
+      </Components>
+      <activeSelf>true</activeSelf>
+      <transform z:Ref="4" i:nil="true" />
+    </GameObject>
+  </GameObjects>
+  <Name z:Id="16">test</Name>
+  <SavePath z:Id="17">C:\Users\mocr14\AppData\Local\thomas/scene.tds</SavePath>
+</Scene>
