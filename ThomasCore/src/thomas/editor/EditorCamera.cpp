@@ -148,7 +148,7 @@ namespace thomas
 			renderSelectedObjects();
 			m_cameraComponent->Render();
 			renderGizmos();
-			Physics::DrawDebug(m_cameraComponent);
+			//Physics::DrawDebug(m_cameraComponent);
 			m_grid->Draw(m_cameraComponent);
 
 		}

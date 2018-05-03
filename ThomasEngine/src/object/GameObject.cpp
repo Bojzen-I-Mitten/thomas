@@ -13,7 +13,7 @@ void ThomasEditor::GameObject::Destroy()
 		m_components[i]->Destroy();
 		i--;
 	}
-	thomas::object::Object::Destroy(nativePtr);
+	Object::Destroy();
 	m_components.Clear();
 	Monitor::Exit(m_componentsLock);
 
