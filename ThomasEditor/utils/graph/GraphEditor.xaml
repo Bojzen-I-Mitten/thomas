@@ -1,9 +1,10 @@
-﻿<UserControl x:Class="Thomas_Graph.GraphEditor"
+﻿<UserControl x:Class="ThomasEditor.GraphEditor"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Thomas_Graph"
+             xmlns:local="clr-namespace:ThomasEditor"
+             xmlns:graphns="clr-namespace:Thomas_Graph"
              mc:Ignorable="d" 
              d:DesignHeight="350" d:DesignWidth="525">
     <Grid x:Name="grid">
@@ -15,7 +16,7 @@
         <Button Content="Click me" Grid.Column="1" Click="Show_Graph"/>
         <Popup x:Name="popup" Width="{Binding ActualWidth, ElementName=grid}" StaysOpen="False">
             <Canvas>
-                <local:GraphControl x:Name="graph"/>
+                <graphns:GraphControl x:Name="graph"/>
                 <Button Click="Expand" Canvas.Bottom="0" Canvas.Right="0" Width="33" Height="33">
                     <Button.Content>
                         <Image Source="popout.png"/>
