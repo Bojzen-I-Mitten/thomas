@@ -17,10 +17,10 @@ namespace Thomas_Graph
             points = new List<Point>();
         }
 
-        double Interpolate(double x)
+        double Interpolate(int indexLP, double x)
         {
-            double p0x = points[0].X;
-            return (x - p0x) / (points[points.Count - 1].X - p0x);
+            double p0x = points[indexLP].X;
+            return (x - p0x) / (points[indexLP + 3].X - p0x);
         }
 
         double BezierFunction(int indexLP, double t)
@@ -36,26 +36,37 @@ namespace Thomas_Graph
 
         int GetLinePointIndexToLeft(double x)
         {
-            if (x < points[0].X || x > points[points.Count - 1].X)
-                return -1;
             int currentMaxPos = 0;
-            for (int i = 0; i < points.Count; i += 4)
+            for (int i = 0; i < points.Count; i += 3)
             {
                 int newMaxPos = i;
-                if (points[newMaxPos].X > x)
-                    break;
-                currentMaxPos = newMaxPos;
+                
+                if (points[newMaxPos].X >= x)
+                {
+                    return currentMaxPos;
+                }
+                else
+                    currentMaxPos = newMaxPos;
+                
             }
-
-            return currentMaxPos;
+            return 0;
         }
 
         public double GetYFromX(double x)
         {
-            int lp = GetLinePointIndexToLeft(x);
-            if (lp == -1)
-                return points[0].Y; //Error
-            return BezierFunction(lp, Interpolate(x));
+            if (points.Count == 0)
+                return 1;
+            if (x < points[0].X)
+                return points[0].Y;
+            else if (x > points[points.Count - 1].X)
+                return points[points.Count-1].Y;
+            else
+            {
+                int lp = GetLinePointIndexToLeft(x);
+                return BezierFunction(lp, Interpolate(lp, x));
+            }
+
+            
         }
     }
 }

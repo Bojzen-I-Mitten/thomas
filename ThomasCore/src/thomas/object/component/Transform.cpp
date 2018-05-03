@@ -170,6 +170,10 @@ namespace thomas
 				{
 					SetLocalScale(scale / m_parent->GetScale());
 				}
+				else
+				{
+					SetLocalScale(scale);
+				}
 			}
 			void Transform::SetScale(float x, float y, float z)
 			{

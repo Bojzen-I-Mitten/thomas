@@ -29,6 +29,7 @@
     <ClCompile Include="src\object\component\Camera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
+    <ClCompile Include="src\Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\object\component\Rigidbody.h" />
@@ -62,6 +63,7 @@
     <ClInclude Include="src\object\component\Camera.h">
       <Filter>Camera</Filter>
     </ClInclude>
+    <ClInclude Include="src\Time.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />
