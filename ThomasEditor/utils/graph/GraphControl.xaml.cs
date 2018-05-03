@@ -45,9 +45,6 @@ namespace Thomas_Graph
 
             this.Background = Brushes.Transparent;
 
-            if(points.Count > 0)
-                start.StartPoint = points[0].p;
-
             this.MouseMove += MainWindow_MouseMove;
             this.MouseDoubleClick += MainWindow_MouseDoubleClick;
             curve.Points = rawPoints;
@@ -371,21 +368,74 @@ namespace Thomas_Graph
             }
             else
             {
-                CustomPoint prevPoint = points[points.Count - 1];
-                Vector dir = new Vector(pos.X - prevPoint.X, pos.Y - prevPoint.Y);
+                CustomPoint prevPoint = null;
+                int i;
+                for (i = 0; i < points.Count; i += 3)
+                {
+                    if (linePoint.X < points[i].X)
+                    {
+                        break;
+                    }
+                    prevPoint = points[i];
+                }
 
-                CustomPoint cp1 = new CustomPoint(prevPoint.X + dir.X * 0.45, prevPoint.Y + dir.Y * 0.45);
-                points.Add(cp1);
-                CustomPoint cp2 = new CustomPoint(pos.X - dir.X * 0.45, pos.Y - dir.Y * 0.45);
-                points.Add(cp2);
-                points.Add(linePoint);
+                if (prevPoint == null)
+                {
+                    prevPoint = points[0];
+                    Vector dir = new Vector(prevPoint.X - pos.X, prevPoint.Y - pos.Y);
+                    CustomPoint cp1 = new CustomPoint(pos.X + dir.X * 0.45, pos.Y + dir.Y * 0.45);
+                    CustomPoint cp2 = new CustomPoint(prevPoint.X - dir.X * 0.45, prevPoint.Y - dir.Y * 0.45);
+                    points.Insert(0, cp2);
+                    points.Insert(0, cp1);
+                    points.Insert(0, linePoint);
+                }
+                else if (prevPoint != points[points.Count - 1])
+                {
+                    CustomPoint nextPoint = points[i];
+                    Vector dir1 = new Vector(prevPoint.X - pos.X, prevPoint.Y - pos.Y);
+                    Vector dir2 = new Vector(nextPoint.X - pos.X, nextPoint.Y - pos.Y);
+                    CustomPoint cp1 = new CustomPoint(pos.X + dir1.X * 0.45, pos.Y + dir1.Y * 0.45);
+                    CustomPoint cp2 = new CustomPoint(pos.X + dir2.X * 0.45, pos.Y + dir2.Y * 0.45);
 
-                rawPoints.Add(cp1.p);
-                rawPoints.Add(cp2.p);
-                rawPoints.Add(linePoint.p);
+                    //Update previousPoint's right CP
+                    Vector prevCPvec = new Vector(points[i - 2].X - prevPoint.X, points[i - 2].Y - prevPoint.Y);
+                    Point tempCP = new Point(points[i - 2].X, points[i - 2].Y);
+                    Point prevAsPoint = new Point(prevPoint.X, prevPoint.Y);
+                    Vector tempUnit = (prevCPvec / prevCPvec.Length);
+                    double scalar = (-dir1 * tempUnit);
+                    tempCP = prevAsPoint + tempUnit * scalar * 0.45;
+                    points[i - 2] = new CustomPoint(tempCP.X, tempCP.Y);
+
+                    //Update nextPoint's left CP
+                    Vector nextCPvec = new Vector(points[i - 1].X - nextPoint.X, points[i - 1].Y - nextPoint.Y);
+                    tempCP = new Point(points[i - 1].X, points[i - 1].Y);
+                    Point nextAsPoint = new Point(nextPoint.X, nextPoint.Y);
+                    tempUnit = (prevCPvec / prevCPvec.Length);
+                    scalar = (-dir2 * tempUnit);
+                    tempCP = nextAsPoint + tempUnit * scalar * 0.45;
+                    points[i - 1] = new CustomPoint(tempCP.X, tempCP.Y);
+
+                    points.Insert(i - 1, cp2);
+                    points.Insert(i - 1, linePoint);
+                    points.Insert(i - 1, cp1);
+                }
+                else
+                {
+                    Vector dir = new Vector(pos.X - prevPoint.X, pos.Y - prevPoint.Y);
+                    CustomPoint cp1 = new CustomPoint(prevPoint.X + dir.X * 0.45, prevPoint.Y + dir.Y * 0.45);
+                    CustomPoint cp2 = new CustomPoint(pos.X - dir.X * 0.45, pos.Y - dir.Y * 0.45);
+
+                    points.Add(cp1);
+                    points.Add(cp2);
+                    points.Add(linePoint);
+                }
             }
+
+            UpdateRawPoints();
             linePoint.visible = true;
             linePoint.isLinePoint = true;
+
+            InvalidateVisual();
         }
 
 
