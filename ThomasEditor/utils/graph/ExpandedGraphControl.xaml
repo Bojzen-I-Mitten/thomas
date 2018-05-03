@@ -1,0 +1,17 @@
+﻿<Window x:Class="Thomas_Graph.ExpandedGraphControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Thomas_Graph"
+        mc:Ignorable="d"
+        Height="600" Width="800" WindowStyle="ToolWindow" Title="Graph Editor">
+    <Canvas>
+        <local:GraphControl x:Name="graph" Width="800" Height="600"/>
+        <Button Height="33" Canvas.Right="0" Canvas.Bottom="0" Width="33" Click="Button_Click">
+            <Button.Content>
+                <Image Source="popin.png"/>
+            </Button.Content>
+        </Button>
+    </Canvas>
+</Window>

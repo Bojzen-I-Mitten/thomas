@@ -129,6 +129,16 @@
     <Compile Include="utils\EditableTextBlock.xaml.cs">
       <DependentUpon>EditableTextBlock.xaml</DependentUpon>
     </Compile>
+    <Compile Include="utils\graph\Bezier.cs" />
+    <Compile Include="utils\graph\ExpandedGraphControl.xaml.cs">
+      <DependentUpon>ExpandedGraphControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="utils\graph\GraphControl.xaml.cs">
+      <DependentUpon>GraphControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="utils\graph\GraphEditor.xaml.cs">
+      <DependentUpon>GraphEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="utils\ThomasWindow.cs" />
     <Compile Include="Elements\TransformGizmo.xaml.cs">
       <DependentUpon>TransformGizmo.xaml</DependentUpon>
@@ -192,6 +202,18 @@
     <Page Include="utils\EditableTextBlock.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="utils\graph\ExpandedGraphControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="utils\graph\GraphControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="utils\graph\GraphEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -284,6 +306,10 @@
       <Project>{64d247ed-db4d-4ea3-b8ae-680bf66a8f2e}</Project>
       <Name>ThomasEngine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="utils\graph\popin.png" />
+    <Resource Include="utils\graph\popout.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
