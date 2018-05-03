@@ -109,7 +109,6 @@ namespace thomas
 		}
 		bool MaterialSorter::operator()(resource::Material * mat1, resource::Material * mat2) const
 		{
-
 			return mat1->m_renderQueue < mat2->m_renderQueue;
 		}
 
