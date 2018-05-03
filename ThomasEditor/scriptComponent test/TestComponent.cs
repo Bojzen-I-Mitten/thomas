@@ -12,6 +12,8 @@ namespace ThomasEditor
         public AudioClip audioClip { get; set; }
         public Material mat { get; set; }
 
+        public Thomas_Graph.Bezier curve {get; set;}
+
         public override void Start()
         {
 
@@ -19,7 +21,7 @@ namespace ThomasEditor
 
         public override void Update()
         {
-
+            
             if (Input.GetKeyDown(Input.Keys.K))
             {
 
