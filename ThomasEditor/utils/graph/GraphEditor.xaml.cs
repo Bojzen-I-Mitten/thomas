@@ -65,6 +65,11 @@ namespace Thomas_Graph
 
         private void GraphEditor_Unloaded(object sender, RoutedEventArgs e)
         {
+            if(expandedGraph != null)
+            {
+                expandedGraph.Close();
+                expandedGraph = null;
+            }
             graph.OnPointsChanged -= GraphControl_OnPointsChanged;
             graph.points.CollectionChanged -= Points_CollectionChanged;
         }
@@ -76,6 +81,9 @@ namespace Thomas_Graph
             graph.OnPointsChanged += GraphControl_OnPointsChanged;
             graph.points.CollectionChanged += Points_CollectionChanged;
             UpdatePoints();
+
+            if (Value.expandedInPropertyGrid)
+                Expand(null, new RoutedEventArgs());
         }
 
         private void UpdateValue()
@@ -100,6 +108,7 @@ namespace Thomas_Graph
             if(expandedGraph == null)
             {
                 isExpanded = true;
+                Value.expandedInPropertyGrid = true;
                 expandedGraph = new ExpandedGraphControl(graph);
                 expandedGraph.Title = PropName;
                 expandedGraph.graph.OnPointsChanged += GraphControl_OnPointsChanged;
@@ -117,6 +126,7 @@ namespace Thomas_Graph
         private void ExpandedGraph_onPopIn()
         {
             isExpanded = false;
+            Value.expandedInPropertyGrid = false;
             expandedGraph.Close();
             popup.IsOpen = true;
             popup.Height = popup.Width / 16 * 9;

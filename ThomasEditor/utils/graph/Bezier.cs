@@ -10,7 +10,7 @@ namespace Thomas_Graph
     public class Bezier
     {
         public List<Point> points;
-       
+        public bool expandedInPropertyGrid = false;
 
         public Bezier()
         {
