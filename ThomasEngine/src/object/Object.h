@@ -14,11 +14,28 @@ namespace ThomasEditor {
 	public ref class Object: public INotifyPropertyChanged
 	{
 		static List<Object^> s_objects;
+	private:
+		
 	protected:
+		
 		String^ m_name;
 	internal:
+		[System::Runtime::Serialization::DataMemberAttribute]
+		Guid m_guid;
+
 		[NonSerializedAttribute]
 		thomas::object::Object* nativePtr;
+
+		static Object^ Find(Guid guid)
+		{
+			for each(Object^ o in s_objects)
+			{
+				if (o->m_guid == guid)
+					return o;
+			}
+			return nullptr;
+		}
+
 	public:
 		[field:NonSerializedAttribute]
 		virtual event PropertyChangedEventHandler^ PropertyChanged;
@@ -48,6 +65,7 @@ namespace ThomasEditor {
 			nativePtr = ptr;
 			s_objects.Add(this);
 			thomas::object::Object::Add(ptr);
+			m_guid = Guid::NewGuid();
 		}
 
 		virtual void Destroy()
@@ -69,6 +87,30 @@ namespace ThomasEditor {
 		static List<Object^>^ GetObjects()
 		{
 			return %s_objects;
+		}
+
+		static bool operator ==(Object^ a, Object^ b)
+		{
+			if (Object::ReferenceEquals(nullptr, a))
+				return Object::ReferenceEquals(nullptr, b);
+
+			if (Object::ReferenceEquals(nullptr, b))
+				return false;
+
+			return a->nativePtr == b->nativePtr;
+		}
+
+		static bool operator !=(Object^ a, Object^ b)
+		{
+
+			if (Object::ReferenceEquals(nullptr, a))
+				return !Object::ReferenceEquals(nullptr, b);
+
+			if (Object::ReferenceEquals(nullptr, b))
+				return true;
+
+			return a->nativePtr != b->nativePtr;
+			
 		}
 
 		static operator bool(Object^ object)
