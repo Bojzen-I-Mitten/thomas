@@ -138,7 +138,7 @@ namespace ThomasEditor
         private void W_Closed(object sender, EventArgs e)
         {
             expandedGraph = null;
-            Value.expandedInPropertyGrid = false;
+            
         }
 
         private void Show_Graph(object sender, RoutedEventArgs e)
