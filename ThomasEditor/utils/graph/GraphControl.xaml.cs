@@ -102,9 +102,11 @@ namespace Thomas_Graph
 
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
-            translateTransform.Y += (RenderSize.Height != 0 ? RenderSize.Height : 350) - 100;
+            translateTransform.Y += ((RenderSize.Height != 0 ? RenderSize.Height : 350) - 100)/10;
             translateTransform.X += 50;
             this.Loaded -= GraphControl_Loaded;
+            path.StrokeThickness = 1 / ((scaleTransform.ScaleX + scaleTransform.ScaleY) / 2.0);
+            InvalidateVisual();
         }
 
         private void GraphControl_MouseUp(object sender, MouseButtonEventArgs e)
@@ -115,8 +117,12 @@ namespace Thomas_Graph
         private void GraphControl_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             Point pos = e.GetPosition(this);
-            scaleTransform.ScaleX += e.Delta * 0.0001;
-            scaleTransform.ScaleY += e.Delta * 0.0001;
+            double delta = e.Delta * 0.01;
+            if(scaleTransform.ScaleX + delta > 0 && scaleTransform.ScaleX + delta < 15)
+                scaleTransform.ScaleX += delta;
+            if (scaleTransform.ScaleY + delta > 0 && scaleTransform.ScaleY + delta < 15)
+                scaleTransform.ScaleY += delta;
+
 
             Point pos2 = e.GetPosition(this);
 
@@ -145,11 +151,11 @@ namespace Thomas_Graph
             double width = RenderSize.Width != 0 ? RenderSize.Width : 1000;
             double height = RenderSize.Height != 0 ? RenderSize.Height : 1000;
 
-            int startX = (int)(Math.Round((-translateTransform.X) / dynamicGridSpacingX) * dynamicGridSpacingX);
-            int endX = (int)(Math.Round(((-translateTransform.X + width)) / dynamicGridSpacingX) * dynamicGridSpacingX);
+            int startX = (int)(Math.Round((-translateTransform.X) / dynamicGridSpacingX) * dynamicGridSpacingX) - dynamicGridSpacingX;
+            int endX = (int)(Math.Round(((-translateTransform.X + width)) / dynamicGridSpacingX) * dynamicGridSpacingX) + dynamicGridSpacingX;
 
-            int startY = (int)(Math.Round((-translateTransform.Y) / dynamicGridSpacingY) * dynamicGridSpacingY);
-            int endY = (int)(Math.Round(((-translateTransform.Y + height)) / dynamicGridSpacingY) * dynamicGridSpacingY);
+            int startY = (int)(Math.Round((-translateTransform.Y) / dynamicGridSpacingY) * dynamicGridSpacingY) - dynamicGridSpacingY;
+            int endY = (int)(Math.Round(((-translateTransform.Y + height)) / dynamicGridSpacingY) * dynamicGridSpacingY) + dynamicGridSpacingY;
 
             drawingContext.PushTransform(new ScaleTransform(1, -1));
         
@@ -158,7 +164,7 @@ namespace Thomas_Graph
                 Math.Abs(endX-startX) + gridSpacing, Math.Abs(endY-startY) + gridSpacing));
             //grid
             
-            for (int x = startX; x < endX; x+= gridSpacing/zoomX) // parallel to y-axis grid
+            for (int x = startX; x < endX; x+= gridSpacing/zoomX) // x-axis
             {
                 drawingContext.DrawLine(new Pen(Brushes.DimGray, 1.0/zoomX), new Point(x, startY), new Point(x, endY));
 
@@ -169,14 +175,14 @@ namespace Thomas_Graph
                         CultureInfo.GetCultureInfo("en-us"),
                         FlowDirection.LeftToRight,
                         new Typeface("Verdana"),
-                        10/zoomX, System.Windows.Media.Brushes.Black);
+                        10.0/zoomX, System.Windows.Media.Brushes.Black);
                     ft.TextAlignment = TextAlignment.Center;
-                    drawingContext.DrawText(ft, new System.Windows.Point(x, 5));
+                    drawingContext.DrawText(ft, new System.Windows.Point(x, 5.0/zoomX));
                 }
                
             }
            
-            for (int y = startY; y < endY; y+= gridSpacing/zoomY) //parllel to x-axis grid
+            for (int y = startY; y < endY; y+= gridSpacing/zoomY) //y-axis
             {
                 drawingContext.DrawLine(new Pen(Brushes.DimGray, 1.0 / zoomY), new Point(startX, y), new Point(endX, y));
 
@@ -186,9 +192,9 @@ namespace Thomas_Graph
                          CultureInfo.GetCultureInfo("en-us"),
                          FlowDirection.LeftToRight,
                          new Typeface("Verdana"),
-                         10/zoomY, System.Windows.Media.Brushes.Black);
+                         10.0/zoomY, System.Windows.Media.Brushes.Black);
                     ft.TextAlignment = TextAlignment.Right;
-                    drawingContext.DrawText(ft, new System.Windows.Point(-10, y-7.5));
+                    drawingContext.DrawText(ft, new System.Windows.Point(-10.0/zoomY, y-7.5/zoomY));
                 }
                 else
                 {
@@ -196,17 +202,17 @@ namespace Thomas_Graph
                          CultureInfo.GetCultureInfo("en-us"),
                          FlowDirection.LeftToRight,
                          new Typeface("Verdana"),
-                         10, System.Windows.Media.Brushes.Black);
+                         10.0/zoomY, System.Windows.Media.Brushes.Black);
                     ft.TextAlignment = TextAlignment.Right;
-                    drawingContext.DrawText(ft, new System.Windows.Point(-10, 5));
+                    drawingContext.DrawText(ft, new System.Windows.Point(-10.0/zoomY, 5.0/zoomY));
                 }
 
             }
             
             
             //axis
-            drawingContext.DrawLine(new Pen(Brushes.Black, 1), new Point(startX, 0), new Point(endX, 0));
-            drawingContext.DrawLine(new Pen(Brushes.Black, 1), new Point(0, startY), new Point(0, endY));
+            drawingContext.DrawLine(new Pen(Brushes.Black, 1.0 / zoomX), new Point(startX, 0), new Point(endX, 0));
+            drawingContext.DrawLine(new Pen(Brushes.Black, 1.0 / zoomY), new Point(0, startY), new Point(0, endY));
 
             //unselected points
 
