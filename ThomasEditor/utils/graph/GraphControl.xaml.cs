@@ -413,6 +413,7 @@ namespace Thomas_Graph
         void RemovePoint(CustomPoint point)
         {
             int pointIndex = points.IndexOf(point);
+            bool lastPoint = pointIndex == points.Count - 1;
             foreach(CustomPoint cp in GetControlPoints(point))
             {
                 points.Remove(cp);
@@ -423,7 +424,7 @@ namespace Thomas_Graph
             {
                 points.RemoveAt(0);
             }
-            else if (pointIndex >= points.Count - 1 && points.Count > 0)
+            else if (lastPoint && points.Count > 0)
                 points.RemoveAt(points.Count - 1);
             
             UpdateRawPoints();
@@ -601,6 +602,46 @@ namespace Thomas_Graph
                 AddPoint(e.GetPosition(this));
         }
 
+        private void HandleMovement(Point targetPoint)
+        {
+            Point validPos = GetValidPosition(selectedPoint, targetPoint);
+            Point deltaMovement = new Point(selectedPoint.p.X - validPos.X, selectedPoint.p.Y - validPos.Y);
+
+            if (selectedPoint == selectedLinePoint)
+            {
+                foreach (CustomPoint cp in GetControlPoints(selectedLinePoint))
+                {
+                    Point newPos = new Point(cp.p.X - deltaMovement.X, cp.p.Y - deltaMovement.Y);
+                    cp.MoveTo(GetValidPosition(cp, newPos));
+                }
+                validPos = GetValidPosition(selectedPoint, targetPoint);
+                selectedPoint.MoveTo(validPos);
+            }
+            else //is a control point
+            {
+                selectedPoint.MoveTo(validPos);
+                CustomPoint mirror = GetMirrorControlPoint(selectedPoint);
+                if (mirror != null)
+                {
+                    Point cpDelta = new Point(selectedPoint.p.X - selectedLinePoint.p.X, selectedPoint.p.Y - selectedLinePoint.p.Y);
+                    Point newPos = new Point(selectedLinePoint.p.X - cpDelta.X, selectedLinePoint.p.Y - cpDelta.Y);
+                    mirror.MoveTo(GetValidPosition(mirror, newPos));
+
+                    int i = points.IndexOf(selectedPoint) % 3;
+
+                    if ((i == 1 && selectedPoint.X <= mirror.X) || (i == 2 && selectedPoint.X >= mirror.X))
+                    {
+                        int a = points.IndexOf(selectedPoint);
+                        int b = points.IndexOf(mirror);
+                        points[a] = mirror;
+                        points[b] = selectedPoint;
+                    }
+
+                }
+
+            }
+        }
+
 
         private void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
@@ -613,44 +654,8 @@ namespace Thomas_Graph
             }
             if (selectedPoint != null)
             {
-                Point validPos = GetValidPosition(selectedPoint, e.GetPosition(this));
-                Point deltaMovement = new Point(selectedPoint.p.X - validPos.X, selectedPoint.p.Y - validPos.Y);
-                
-                if (selectedPoint == selectedLinePoint)
-                {
-                    foreach(CustomPoint cp in GetControlPoints(selectedLinePoint))
-                    {
-                        Point newPos = new Point(cp.p.X - deltaMovement.X, cp.p.Y - deltaMovement.Y);
-                        cp.MoveTo(GetValidPosition(cp, newPos));
-                    }
-                    validPos = GetValidPosition(selectedPoint, e.GetPosition(this));
-                    selectedPoint.MoveTo(validPos);
-                }
-                else //is a control point
-                {
-                    validPos = GetValidPosition(selectedPoint, e.GetPosition(this));
-                    selectedPoint.MoveTo(validPos);
-                    CustomPoint mirror = GetMirrorControlPoint(selectedPoint);
-                    if (mirror != null)
-                    {
-                        Point cpDelta = new Point(selectedPoint.p.X - selectedLinePoint.p.X, selectedPoint.p.Y - selectedLinePoint.p.Y);
-                        Point newPos = new Point(selectedLinePoint.p.X - cpDelta.X, selectedLinePoint.p.Y - cpDelta.Y);
-                        mirror.MoveTo(GetValidPosition(mirror, newPos));
 
-                        int i = points.IndexOf(selectedPoint) % 3;
-
-                        if((i == 1 && selectedPoint.X <= mirror.X) || (i == 2 && selectedPoint.X >= mirror.X))
-                        {
-                            int a = points.IndexOf(selectedPoint);
-                            int b = points.IndexOf(mirror);
-                            points[a] = mirror;
-                            points[b] = selectedPoint;
-                        }
-
-                    }
-                    
-                }
-                
+                HandleMovement(e.GetPosition(this));
                 InvalidateVisual();
                 OnPointsChanged?.Invoke();
                 
