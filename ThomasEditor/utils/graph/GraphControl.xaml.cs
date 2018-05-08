@@ -118,9 +118,9 @@ namespace Thomas_Graph
         {
             Point pos = e.GetPosition(this);
             double delta = e.Delta * 0.01;
-            if(scaleTransform.ScaleX + delta > 0 && scaleTransform.ScaleX + delta < 15)
+            if(scaleTransform.ScaleX + delta > 1 && scaleTransform.ScaleX + delta < 15)
                 scaleTransform.ScaleX += delta;
-            if (scaleTransform.ScaleY + delta > 0 && scaleTransform.ScaleY + delta < 15)
+            if (scaleTransform.ScaleY + delta > 1 && scaleTransform.ScaleY + delta < 15)
                 scaleTransform.ScaleY += delta;
 
 
@@ -140,13 +140,13 @@ namespace Thomas_Graph
                 start.StartPoint = points[0].p;
             
             
-            int zoomX = (int)(Math.Round(scaleTransform.ScaleX * 0.5) * 2);
-            int zoomY = (int)(Math.Round(scaleTransform.ScaleX * 0.5) * 2);
+            double zoomX = (Math.Round(scaleTransform.ScaleX * 0.5) * 2);
+            double zoomY = (Math.Round(scaleTransform.ScaleX * 0.5) * 2);
             if (zoomX == 0) zoomX = 1;
             if (zoomY == 0) zoomY = 1;
 
-            int dynamicGridSpacingX = gridSpacing / zoomX;
-            int dynamicGridSpacingY = gridSpacing / zoomY;
+            int dynamicGridSpacingX = (int)(gridSpacing / zoomX);
+            int dynamicGridSpacingY = (int)(gridSpacing / zoomY);
 
             double width = RenderSize.Width != 0 ? RenderSize.Width : 1000;
             double height = RenderSize.Height != 0 ? RenderSize.Height : 1000;
@@ -164,7 +164,7 @@ namespace Thomas_Graph
                 Math.Abs(endX-startX) + gridSpacing, Math.Abs(endY-startY) + gridSpacing));
             //grid
             
-            for (int x = startX; x < endX; x+= gridSpacing/zoomX) // x-axis
+            for (int x = startX; x < endX; x+= (int)(gridSpacing/zoomX)) // x-axis
             {
                 drawingContext.DrawLine(new Pen(Brushes.DimGray, 1.0/zoomX), new Point(x, startY), new Point(x, endY));
 
@@ -182,7 +182,7 @@ namespace Thomas_Graph
                
             }
            
-            for (int y = startY; y < endY; y+= gridSpacing/zoomY) //y-axis
+            for (int y = startY; y < endY; y+= (int)(gridSpacing/zoomY)) //y-axis
             {
                 drawingContext.DrawLine(new Pen(Brushes.DimGray, 1.0 / zoomY), new Point(startX, y), new Point(endX, y));
 
