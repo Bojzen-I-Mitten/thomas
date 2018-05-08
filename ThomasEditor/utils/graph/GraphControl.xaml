@@ -7,7 +7,13 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Background="White">
     <Canvas>
-        
+        <Canvas.ContextMenu>
+            <ContextMenu x:Name="menu">
+                <MenuItem Header="Add Point" x:Name="addPointMenu" Click="MenuAddPoint"/>
+                <MenuItem Header="Remove Point"  IsEnabled="{Binding TargetNullValue=False}" Click="MenuRemovePoint"/>
+                <MenuItem IsCheckable="True" Header="Control Points Unlocked" IsEnabled="{Binding TargetNullValue=False}" Checked="MenuUnlockPoint" Unchecked="MenuLockPoint"/>
+            </ContextMenu>
+        </Canvas.ContextMenu>
         <Path x:Name="path" Stroke="White" StrokeThickness="1">
             <Path.Data>
                 <PathGeometry>
