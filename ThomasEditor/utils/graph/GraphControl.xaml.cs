@@ -343,7 +343,7 @@ namespace Thomas_Graph
             int i = points.IndexOf(controlPoint);
             if (points[i + 1].isLinePoint && points.Count > i + 2)
                 return points[i + 2];
-            else if (i > 1)
+            else if (i > 1 && !points[i-2].isLinePoint)
                 return points[i - 2];
             else
                 return null;
@@ -449,8 +449,8 @@ namespace Thomas_Graph
                 {
                     prevPoint = points[0];
                     Vector dir = new Vector(prevPoint.X - pos.X, prevPoint.Y - pos.Y);
-                    CustomPoint cp1 = new CustomPoint(pos.X + dir.X * 0.45, pos.Y + dir.Y * 0.45);
-                    CustomPoint cp2 = new CustomPoint(prevPoint.X - dir.X * 0.45, prevPoint.Y - dir.Y * 0.45);
+                    CustomPoint cp1 = new CustomPoint(pos.X + dir.X * 0.45, pos.Y);
+                    CustomPoint cp2 = new CustomPoint(prevPoint.X - dir.X * 0.45, prevPoint.Y);
                     points.Insert(0, cp2);
                     points.Insert(0, cp1);
                     points.Insert(0, linePoint);
@@ -460,8 +460,12 @@ namespace Thomas_Graph
                     CustomPoint nextPoint = points[i];
                     Vector dir1 = new Vector(prevPoint.X - pos.X, prevPoint.Y - pos.Y);
                     Vector dir2 = new Vector(nextPoint.X - pos.X, nextPoint.Y - pos.Y);
-                    CustomPoint cp1 = new CustomPoint(pos.X + dir1.X * 0.45, pos.Y + dir1.Y * 0.45);
-                    CustomPoint cp2 = new CustomPoint(pos.X + dir2.X * 0.45, pos.Y + dir2.Y * 0.45);
+
+
+                    Vector dir = dir1.Length > dir2.Length ? dir2 : dir1;
+
+                    CustomPoint cp1 = new CustomPoint(pos.X - Math.Abs(dir.X) * 0.45, pos.Y);
+                    CustomPoint cp2 = new CustomPoint(pos.X + Math.Abs(dir.X) * 0.45, pos.Y);
 
                     //Update previousPoint's right CP
                     Vector prevCPvec = new Vector(points[i - 2].X - prevPoint.X, points[i - 2].Y - prevPoint.Y);
@@ -488,8 +492,8 @@ namespace Thomas_Graph
                 else
                 {
                     Vector dir = new Vector(pos.X - prevPoint.X, pos.Y - prevPoint.Y);
-                    CustomPoint cp1 = new CustomPoint(prevPoint.X + dir.X * 0.45, prevPoint.Y + dir.Y * 0.45);
-                    CustomPoint cp2 = new CustomPoint(pos.X - dir.X * 0.45, pos.Y - dir.Y * 0.45);
+                    CustomPoint cp1 = new CustomPoint(prevPoint.X + dir.X * 0.45, prevPoint.Y);
+                    CustomPoint cp2 = new CustomPoint(pos.X - dir.X * 0.45, pos.Y);
 
                     points.Add(cp1);
                     points.Add(cp2);
@@ -507,6 +511,7 @@ namespace Thomas_Graph
 
         bool isValidMovement(CustomPoint target, Point mousePoint)
         {
+            return true;
             int i = points.IndexOf(target);
             float mouseX = (float)mousePoint.X;
             bool movingLeft = target.p.X > mouseX;
@@ -562,6 +567,7 @@ namespace Thomas_Graph
                 AddPoint(e.GetPosition(this));
         }
 
+
         private void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
             if(currentMode == ManipulateMode.All)
@@ -575,15 +581,30 @@ namespace Thomas_Graph
             {
                 if (isValidMovement(selectedPoint, e.GetPosition(this)))
                 {
+                    Point deltaMovement = new Point(selectedPoint.p.X - e.GetPosition(this).X, selectedPoint.p.Y - e.GetPosition(this).Y);
+                    if (selectedPoint == selectedLinePoint)
+                    {
+                        foreach(CustomPoint cp in GetControlPoints(selectedLinePoint))
+                        {
+                            Point newPos = new Point(cp.p.X - deltaMovement.X, cp.p.Y - deltaMovement.Y);
+                            cp.MoveTo(newPos);
+                        }
+                    }
+                    else //is a control point
+                    {
+                        CustomPoint mirror = GetMirrorControlPoint(selectedPoint);
+                        selectedPoint.MoveTo(e.GetPosition(this));
+                        if (mirror != null)
+                        {
+                            Point cpDelta = new Point(selectedPoint.p.X - selectedLinePoint.p.X, selectedPoint.p.Y - selectedLinePoint.p.Y);
+                            mirror.MoveTo(new Point(selectedLinePoint.p.X - cpDelta.X, selectedLinePoint.p.Y - cpDelta.Y));
+                        }
+                    }
                     selectedPoint.MoveTo(e.GetPosition(this));
                     InvalidateVisual();
                     OnPointsChanged?.Invoke();
                 }
-                int i = points.IndexOf(selectedPoint);
-                if(i != 0)
-                {
-                    rawPoints[i - 1] = selectedPoint.p;
-                }
+                UpdateRawPoints();
             }
             else if (e.LeftButton == MouseButtonState.Pressed)
             {
@@ -596,6 +617,8 @@ namespace Thomas_Graph
             }
             prevMouseX = e.GetPosition(this).X;
             prevMouseY = e.GetPosition(this).Y;
+
+            
         }
     }
 
