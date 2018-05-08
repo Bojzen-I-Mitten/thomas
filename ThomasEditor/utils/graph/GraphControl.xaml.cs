@@ -282,7 +282,23 @@ namespace Thomas_Graph
         {
             Focus();
             Keyboard.Focus(this);
-            CustomPoint point = GetPointAt(e.GetPosition(this));
+
+            SelectPointAt(e.GetPosition(this));
+            if(e.RightButton == MouseButtonState.Pressed)
+            {
+                menu.DataContext = selectedLinePoint;
+                menu.IsOpen = true;
+                addPointMenu.IsEnabled = selectedLinePoint == null;
+            }
+            InvalidateVisual();
+
+
+        }
+
+        void SelectPointAt(Point position)
+        {
+            CustomPoint point = GetPointAt(position);
+
 
             foreach (CustomPoint p in points)
             {
@@ -320,9 +336,6 @@ namespace Thomas_Graph
 
 
             }
-            InvalidateVisual();
-
-
         }
 
         List<CustomPoint> GetControlPoints(CustomPoint linePoint)
@@ -408,6 +421,7 @@ namespace Thomas_Graph
             {
                 rawPoints.Add(points[i].p);
             }
+            InvalidateVisual();
         }
 
         void RemovePoint(CustomPoint point)
@@ -621,7 +635,7 @@ namespace Thomas_Graph
             {
                 selectedPoint.MoveTo(validPos);
                 CustomPoint mirror = GetMirrorControlPoint(selectedPoint);
-                if (mirror != null)
+                if (mirror != null && !selectedLinePoint.unlockedControlPoints)
                 {
                     Point cpDelta = new Point(selectedPoint.p.X - selectedLinePoint.p.X, selectedPoint.p.Y - selectedLinePoint.p.Y);
                     Point newPos = new Point(selectedLinePoint.p.X - cpDelta.X, selectedLinePoint.p.Y - cpDelta.Y);
@@ -648,33 +662,63 @@ namespace Thomas_Graph
             if(currentMode == ManipulateMode.All)
                 Cursor = Cursors.Arrow;
             CustomPoint over = GetPointAt(e.GetPosition(this));
-            if (over != null || selectedPoint != null)
+            if (over != null)
             {
                 Cursor = Cursors.SizeAll;
             }
-            if (selectedPoint != null)
+           
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
+                if (selectedPoint != null)
+                {
+                    Cursor = Cursors.SizeAll;
+                    HandleMovement(e.GetPosition(this));
+                    InvalidateVisual();
+                    OnPointsChanged?.Invoke();
 
-                HandleMovement(e.GetPosition(this));
-                InvalidateVisual();
-                OnPointsChanged?.Invoke();
+                    UpdateRawPoints();
+                }
+                else
+                {
+                    double deltaX = e.GetPosition(this).X - prevMouseX;
+                    double deltaY = e.GetPosition(this).Y - prevMouseY;
+                    Cursor = Cursors.Hand;
+                    translateTransform.X += deltaX;
+                    translateTransform.Y -= deltaY;
+                    InvalidateVisual();
+                }
+
                 
-                UpdateRawPoints();
-
-            }
-            else if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                double deltaX = e.GetPosition(this).X - prevMouseX;
-                double deltaY = e.GetPosition(this).Y - prevMouseY;
-                Cursor = Cursors.Hand;
-                translateTransform.X += deltaX;
-                translateTransform.Y -= deltaY;
-                InvalidateVisual();
             }
             prevMouseX = e.GetPosition(this).X;
             prevMouseY = e.GetPosition(this).Y;
 
             
+        }
+
+        private void MenuAddPoint(object sender, RoutedEventArgs e)
+        {
+            AddPoint(Mouse.GetPosition(this));
+            SelectPointAt(Mouse.GetPosition(this));
+        }
+
+        private void MenuRemovePoint(object sender, RoutedEventArgs e)
+        {
+            RemovePoint(selectedLinePoint);
+            selectedLinePoint = null;
+            selectedPoint = null;
+            UpdateRawPoints();
+
+        }
+
+        private void MenuUnlockPoint(object sender, RoutedEventArgs e)
+        {
+            selectedLinePoint.unlockedControlPoints = true;
+        }
+
+        private void MenuLockPoint(object sender, RoutedEventArgs e)
+        {
+            selectedLinePoint.unlockedControlPoints = false;
         }
     }
 
@@ -685,6 +729,7 @@ namespace Thomas_Graph
         private Rect rectangle;
         public bool isLinePoint = false;
         public bool visible = false;
+        public bool unlockedControlPoints = false;
 
         public double X { get { return rectangle.X; } }
         public double Y { get { return rectangle.Y; } }
