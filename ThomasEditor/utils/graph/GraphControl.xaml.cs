@@ -94,6 +94,15 @@ namespace Thomas_Graph
                     currentMode = ManipulateMode.Horizontal;
                     Cursor = Cursors.SizeWE;
                     break;
+                case Key.Delete:
+                    {
+                        if(selectedLinePoint != null)
+                        {
+                            RemovePoint(selectedLinePoint);
+                            selectedLinePoint = null;
+                        }
+                    }
+                    break;
             }
             
             
@@ -401,6 +410,25 @@ namespace Thomas_Graph
             }
         }
 
+        void RemovePoint(CustomPoint point)
+        {
+            int pointIndex = points.IndexOf(point);
+            foreach(CustomPoint cp in GetControlPoints(point))
+            {
+                points.Remove(cp);
+            }
+            points.Remove(point);
+
+            if (pointIndex == 0 && points.Count > 0)
+            {
+                points.RemoveAt(0);
+            }
+            else if (pointIndex >= points.Count - 1 && points.Count > 0)
+                points.RemoveAt(points.Count - 1);
+            
+            UpdateRawPoints();
+            InvalidateVisual();
+        }
         public void AddPoints(List<Point> newPoints)
         {
             ClearList();
