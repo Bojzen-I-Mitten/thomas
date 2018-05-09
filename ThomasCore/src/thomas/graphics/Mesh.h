@@ -20,7 +20,43 @@ namespace thomas
 
 	namespace graphics 
 	{
-		
+		struct BoneWeight
+		{
+			int boneIndex0 = 0;
+			int boneIndex1 = 0;
+			int boneIndex2 = 0;
+			int boneIndex3 = 0;
+
+			float weight0 = 0.0f;
+			float weight1 = 0.0f;
+			float weight2 = 0.0f;
+			float weight3 = 0.0f;
+
+			void AddBoneData(int boneIndex, float weight)
+			{
+				if (weight0 == 0.0f)
+				{
+					boneIndex0 = boneIndex;
+					weight0 = weight;
+				}
+				else if (weight1 == 0.0f)
+				{
+					boneIndex1 = boneIndex;
+					weight1 = weight;
+				}
+				else if (weight2 == 0.0f)
+				{
+					boneIndex2 = boneIndex;
+					weight2 = weight;
+				}
+				else if (weight3 == 0.0f)
+				{
+					boneIndex3 = boneIndex;
+					weight3 = weight;
+				}
+			}
+			
+		};
 		struct Vertices 
 		{
 			std::vector<math::Vector4> positions;
@@ -29,6 +65,7 @@ namespace thomas
 			std::vector<math::Vector3> normals;
 			std::vector<math::Vector3> tangents;
 			std::vector<math::Vector3> bitangents;
+			std::vector<BoneWeight> boneWeight;
 		};
 
 
