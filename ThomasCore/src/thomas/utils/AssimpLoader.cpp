@@ -174,6 +174,7 @@ namespace thomas
 			vertices.normals.resize(mesh->mNumVertices);
 			vertices.tangents.resize(mesh->mNumVertices);
 			vertices.bitangents.resize(mesh->mNumVertices);
+			vertices.boneWeight.resize(mesh->mNumVertices);
 
 			// Walk through each of the mesh's vertices
 			for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -224,6 +225,37 @@ namespace thomas
 			
 				for (unsigned int j = 0; j < face.mNumIndices; j++)
 					indices.push_back(face.mIndices[j]);
+			}
+
+
+			if (mesh->HasBones())
+			{
+
+			}
+			std::map<std::string, unsigned int> boneMapping;
+			std::map<unsigned int, math::Matrix> bones;
+			
+			for (unsigned i = 0; i < mesh->mNumBones; i++)
+			{
+				unsigned int boneIndex = 0;
+				aiBone* bone = mesh->mBones[i];
+				std::string boneName = bone->mName.C_Str();
+				
+				if (boneMapping.find(boneName) == boneMapping.end())
+				{
+					boneIndex = boneMapping.size();
+					boneMapping[boneName] = boneIndex;
+				}
+				else
+				{
+					boneIndex = boneMapping[boneName];
+				}
+				bones[boneIndex] = math::Matrix((float*)&bone->mOffsetMatrix);
+				
+				for (int j = 0; j < bone->mNumWeights; j++)
+				{
+					vertices.boneWeight[bone->mWeights[0].mVertexId].AddBoneData(boneIndex, bone->mWeights[j].mWeight);
+				}
 			}
 
 			//Process materials
