@@ -3,7 +3,7 @@
 #include "thomas\resource\Resource.h"
 #pragma managed
 #include "Resource.h"
-
+#include "../Application.h"
 using namespace System::Collections::Generic;
 using namespace System::Linq;
 using namespace System::Threading;
@@ -34,7 +34,6 @@ namespace ThomasEditor
 			return resource;
 		}
 	public:
-		static property String^ AssetPath{String^ get(){return "..\\Data\\";}}
 		enum class AssetTypes
 		{
 			MODEL,
@@ -85,7 +84,7 @@ namespace ThomasEditor
 
 		static void CreateResource(Resource^ resource, String^ path)
 		{
-			path = AssetPath + path;
+			path = Application::currentProject->assetPath + "\\" + path;
 			String^ extension = IO::Path::GetExtension(path);
 			String^ modifier = "";
 			path = path->Remove(path->Length - extension->Length, extension->Length);
@@ -217,6 +216,20 @@ namespace ThomasEditor
 			if (Find(resource->m_path))
 			{
 				resources->Remove(System::IO::Path::GetFullPath(resource->m_path));
+			}
+		}
+
+		static void LoadAll(String^ path)
+		{
+			array<String^>^ directories = IO::Directory::GetDirectories(path);
+			array<String^>^ files = IO::Directory::GetFiles(path);
+			for each(String^ dir in directories)
+			{
+				LoadAll(dir);
+			}
+			for each(String^ file in files)
+			{
+				Load(file);
 			}
 		}
 

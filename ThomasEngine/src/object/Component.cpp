@@ -14,6 +14,11 @@ ThomasEditor::Component::Component(thomas::object::component::Component * ptr) :
 		setGameObject(GameObject::s_lastObject);
 }
 
+ThomasEditor::Transform^ ThomasEditor::Component::transform::get()
+{
+	return gameObject->transform;
+}
+
 void ThomasEditor::Component::setGameObject(GameObject ^ gObj)
 {
 	m_gameObject = gObj;

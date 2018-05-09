@@ -286,6 +286,30 @@ namespace ThomasEditor
         }
 
         #endregion
+
+        private void NewProject_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+            saveFileDialog.Filter = "Thomas Project (*.thomas) |*.thomas";
+
+
+            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.FileName = "New Project";
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                Project proj = new Project(System.IO.Path.GetFileNameWithoutExtension(saveFileDialog.FileName), System.IO.Path.GetDirectoryName(saveFileDialog.FileName));
+                Application.currentProject = proj;
+            }
+
+          
+        }
+
+        private void OpenProject_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
     public static class Extensions

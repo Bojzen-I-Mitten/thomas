@@ -27,6 +27,7 @@ namespace ThomasEditor
 
 			fsw->EnableRaisingEvents = true;
 
+			
 			LoadAssembly();
 		}
 

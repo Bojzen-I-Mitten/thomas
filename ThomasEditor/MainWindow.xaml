@@ -57,10 +57,17 @@
             <Menu DockPanel.Dock="Top" Grid.Row="0">
                 <MenuItem Header="_File">
                     <MenuItem Header="_New Scene" Click="NewScene_Click"/>
-                    <MenuItem Header="_Open Scene" Click="LoadScene_Click"/>
+                    <MenuItem Header="_Open Scene..." Click="LoadScene_Click"/>
+                    <Separator/>
                     <MenuItem Command="{x:Static commands:CustomCommands.GetSave}"/>
-                    <MenuItem Header="_Save Scene As" Click="SaveSceneAs_Click"/>
-                    
+                    <MenuItem Header="_Save Scene As..." Click="SaveSceneAs_Click"/>
+                    <Separator/>
+                    <MenuItem Header="_New Project..." Click="NewProject_Click"/>
+                    <MenuItem Header="_Open Project..." Click="OpenProject_Click"/>
+
+                    <Separator/>
+
+
                 </MenuItem>
                 <MenuItem Header="_Edit">
 

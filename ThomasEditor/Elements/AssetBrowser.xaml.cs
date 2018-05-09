@@ -24,7 +24,6 @@ namespace ThomasEditor
     public partial class AssetBrowser : UserControl
     {
         bool wasUnselected = false;
-        String path = "..\\Data";
         bool _isDragging = false;
         bool renameNextAddedItem = false;
 
@@ -38,22 +37,37 @@ namespace ThomasEditor
         {
             InitializeComponent();
             LoadAssetImages();
-            List<object> items = CreateTree(path);
-            foreach(object item in items)
-            {
-                fileTree.Items.Add(item);
-            }
 
             assetBrowserContextMenu.DataContext = false;
-            watcher = new FileSystemWatcher(path);
+            watcher = new FileSystemWatcher();
             watcher.IncludeSubdirectories = true;
 
             watcher.Renamed += ResourceRenamed;
             watcher.Changed += ResourceChanged;
             watcher.Created += ResourceCreated;
             watcher.Deleted += ResourceDeleted;
-            watcher.EnableRaisingEvents = true;
+            
             instance = this;
+
+            Application.currentProjectChanged += Application_currentProjectChanged;
+            
+        }
+
+        private void Application_currentProjectChanged(Project newProject)
+        {
+            fileTree.Items.Clear();
+            ShowAssetsFrom(newProject.assetPath);
+        }
+
+        public void ShowAssetsFrom(String path)
+        {
+            List<object> items = CreateTree(path);
+            foreach (object item in items)
+            {
+                fileTree.Items.Add(item);
+            }
+            watcher.Path = path;
+            watcher.EnableRaisingEvents = true;
         }
 
         public void UnselectItem()
@@ -181,7 +195,7 @@ namespace ThomasEditor
                 return;
             String parentDir = filePath.Remove(filePath.LastIndexOf(Path.DirectorySeparatorChar, filePath.Length-1));
 
-            if(parentDir == path)
+            if(parentDir == watcher.Path)
             {
                     fileTree.Items.Add(item);
             }
