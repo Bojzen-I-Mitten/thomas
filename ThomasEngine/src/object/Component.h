@@ -15,6 +15,7 @@ using namespace System::ComponentModel;
 namespace ThomasEditor 
 {
 	ref class GameObject;
+	ref class Transform;
 	[HideInInspector]
 	public ref class Component : public Object
 	{
@@ -49,6 +50,13 @@ namespace ThomasEditor
 		property GameObject^ gameObject
 		{
 			GameObject^ get() { return m_gameObject; }
+		}
+
+		[BrowsableAttribute(false)]
+		property Transform^ transform
+		{
+			Transform^ get();
+			
 		}
 
 		virtual void Destroy() override;

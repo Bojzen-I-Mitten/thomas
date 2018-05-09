@@ -22,6 +22,8 @@ namespace thomas
 				virtual void OnDrawGizmos() {};
 				virtual void OnDrawGizmosSelected() {};
 				virtual ~Component();
+
+
 			private:
 			protected:
 				
