@@ -203,13 +203,44 @@ namespace ThomasEditor
 			}
 			return numberStack[0];
 		}
+		//Driver for approximate function
+		List<Point>^ Approximate(String^ func, double xMin, double xMax, int recursions)
+		{
+			//Create start & end points, pass along to private approx
+			
+			//remove points between xMin and xMax
+			for (int i = 0; i < points->Count; ++++++i)
+			{
+				if (points[i].X >= xMin && points[i].X <= xMax)
+				{
 
-		List<Point>^ Approximate(String^ func, double minX, double maxX, int recursions)
+				}
+			}
+
+			//add LP for start
+			//add CP for start
+
+			//add LP for end
+			//add CP for end
+		}
+	private:
+		List<Point>^ ApproximatePr(String^ func, double xMin, double xMax, int recursions)
 		{
 			if (recursions == 0)
 				return;
-			double minY = ParseFunction(func, minX);
-			double maxY = ParseFunction(func, maxX);
+			double h = (xMax - xMin) / 1000;
+			double yMin = ParseFunction(func, xMin);
+			double yMinh = ParseFunction(func, xMin + h);
+			double yMax = ParseFunction(func, xMax);
+			double yMaxh = ParseFunction(func, xMax - h);
+			double mindx = (yMinh - yMin) / ((xMin + h) - xMin);
+			double maxdx = (yMaxh - yMax) / ((xMax - h) - xMax);
+
+			//add middle point, update existing start/end points 
+
+			int recuCopy = recursions - 1;
+			Approximate(func, xMin, xMax / 2, recuCopy);
+			Approximate(func, xMax / 2, xMax, recuCopy);
 		}
 	};
 }
