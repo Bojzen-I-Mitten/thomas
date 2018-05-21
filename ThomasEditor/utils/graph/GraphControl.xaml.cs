@@ -33,13 +33,16 @@ namespace Thomas_Graph
         CustomPoint selectedLinePoint = null;
         CustomPoint selectedPoint = null;
 
-        ScaleTransform scaleTransform = new ScaleTransform(1, 1);
+        ScaleTransform scaleTransform = new ScaleTransform(10, 10);
         TranslateTransform translateTransform;
 
         
 
         double prevMouseX = 0;
         double prevMouseY = 0;
+
+        enum ManipulateMode { All, Vertical, Horizontal};
+        ManipulateMode currentMode = ManipulateMode.All;
 
         public GraphControl()
         {
@@ -55,6 +58,9 @@ namespace Thomas_Graph
             this.MouseUp += GraphControl_MouseUp;
 
             this.MouseWheel += GraphControl_MouseWheel;
+            this.KeyDown += GraphControl_KeyDown;
+            this.KeyUp += GraphControl_KeyUp;
+            
             translateTransform = new TranslateTransform(0, 0);
             TransformGroup group = new TransformGroup();
             group.Children.Add(new ScaleTransform(1, -1)); //flip
@@ -63,12 +69,53 @@ namespace Thomas_Graph
             this.RenderTransform = group;
 
             this.Loaded += GraphControl_Loaded;
+            Focusable = true;
+            InvalidateVisual();
+            
 
             //Curve asdf = new Curve();
             //asdf.ParseFunction("x + 1-1*5", 6);
 
 
         }
+
+        private void GraphControl_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.LeftShift:
+                case Key.LeftCtrl:
+                    currentMode = ManipulateMode.All;
+                    break;
+            }
+        }
+
+        private void GraphControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.LeftShift:
+                    currentMode = ManipulateMode.Vertical;
+                    Cursor = Cursors.SizeNS;
+                    break;
+                case Key.LeftCtrl:
+                    currentMode = ManipulateMode.Horizontal;
+                    Cursor = Cursors.SizeWE;
+                    break;
+                case Key.Delete:
+                    {
+                        if(selectedLinePoint != null)
+                        {
+                            RemovePoint(selectedLinePoint);
+                            selectedLinePoint = null;
+                        }
+                    }
+                    break;
+            }
+            
+            
+        }
+
         public void OnLostFocus() 
         {
             selectedLinePoint = null;
@@ -92,9 +139,11 @@ namespace Thomas_Graph
 
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
-            translateTransform.Y += (RenderSize.Height != 0 ? RenderSize.Height : 350) - 100;
+            translateTransform.Y += ((RenderSize.Height != 0 ? RenderSize.Height : 350) - 100)/10;
             translateTransform.X += 50;
             this.Loaded -= GraphControl_Loaded;
+            path.StrokeThickness = 1 / ((scaleTransform.ScaleX + scaleTransform.ScaleY) / 2.0);
+            InvalidateVisual();
         }
 
         private void GraphControl_MouseUp(object sender, MouseButtonEventArgs e)
@@ -105,13 +154,21 @@ namespace Thomas_Graph
         private void GraphControl_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             Point pos = e.GetPosition(this);
-            scaleTransform.ScaleX += e.Delta * 0.0001;
-            scaleTransform.ScaleY += e.Delta * 0.0001;
+            double delta = e.Delta * 0.01;
+            if(scaleTransform.ScaleX + delta > 1 && scaleTransform.ScaleX + delta < 15 && (currentMode == ManipulateMode.Horizontal || currentMode == ManipulateMode.All))
+                scaleTransform.ScaleX += delta;
+            if (scaleTransform.ScaleY + delta > 1 && scaleTransform.ScaleY + delta < 15 && (currentMode == ManipulateMode.Vertical || currentMode == ManipulateMode.All))
+                scaleTransform.ScaleY += delta;
+
 
             Point pos2 = e.GetPosition(this);
 
             translateTransform.X += pos2.X - pos.X;
             translateTransform.Y -= pos2.Y - pos.Y;
+
+            path.StrokeThickness = 1 / ((scaleTransform.ScaleX + scaleTransform.ScaleY) / 2.0);
+
+            InvalidateVisual();
         }
 
         protected override void OnRender(DrawingContext drawingContext)
@@ -119,63 +176,81 @@ namespace Thomas_Graph
             if(points.Count > 0)
                 start.StartPoint = points[0].p;
             
-            int distance = 10000;
-
            
-            drawingContext.PushTransform(new ScaleTransform(1, -1));
-        
-            drawingContext.DrawRectangle(Brushes.Gray, null, new Rect(-distance, -distance, distance*2, distance*2));
-            //grid
-            
-            for (int x = -distance; x < distance; x+= gridSpacing) // parallel to y-axis grid
-            {
-                drawingContext.DrawLine(new Pen(Brushes.DimGray, 1), new Point(x, -distance), new Point(x, distance));
 
-                if(x != 0)
+            int dynamicGridSpacingX = (int)(gridSpacing / scaleTransform.ScaleX);
+            int dynamicGridSpacingY = (int)(gridSpacing / scaleTransform.ScaleY);
+
+            double width = RenderSize.Width != 0 ? RenderSize.Width : 1000;
+            double height = RenderSize.Height != 0 ? RenderSize.Height : 1000;
+
+            int startX = (int)(Math.Round((-translateTransform.X) / dynamicGridSpacingX) * dynamicGridSpacingX) - dynamicGridSpacingX;
+            int endX = (int)(Math.Round(((-translateTransform.X + width)) / dynamicGridSpacingX) * dynamicGridSpacingX) + dynamicGridSpacingX;
+
+            int startY = (int)(Math.Round((-translateTransform.Y) / dynamicGridSpacingY) * dynamicGridSpacingY) - dynamicGridSpacingY;
+            int endY = (int)(Math.Round(((-translateTransform.Y + height)) / dynamicGridSpacingY) * dynamicGridSpacingY) + dynamicGridSpacingY;
+            drawingContext.PushTransform(new ScaleTransform(1, -1));
+           
+        
+            drawingContext.DrawRectangle(Brushes.Gray, null,
+                new Rect(startX - gridSpacing, startY - gridSpacing, 
+                Math.Abs(endX-startX) + gridSpacing, Math.Abs(endY-startY) + gridSpacing));
+            //grid
+
+            double largestScale = (scaleTransform.ScaleX + scaleTransform.ScaleY)/2;
+
+            
+            for (int x = startX; x < endX; x+= dynamicGridSpacingX) // x-axis
+            {
+                drawingContext.DrawLine(new Pen(Brushes.DimGray, 1.0/scaleTransform.ScaleX), new Point(x, startY), new Point(x, endY));
+                drawingContext.PushTransform(new ScaleTransform(scaleTransform.ScaleY, scaleTransform.ScaleX));
+                if (x != 0)
                 {
 
-                    FormattedText ft = new FormattedText((x / gridSpacing).ToString(),
+                    FormattedText ft = new FormattedText((x / (float)gridSpacing).ToString(),
                         CultureInfo.GetCultureInfo("en-us"),
                         FlowDirection.LeftToRight,
                         new Typeface("Verdana"),
-                        10, System.Windows.Media.Brushes.Black);
+                       12/ Math.Pow(largestScale, 2), System.Windows.Media.Brushes.Black);
                     ft.TextAlignment = TextAlignment.Center;
-                    drawingContext.DrawText(ft, new System.Windows.Point(x, 5));
+                    drawingContext.DrawText(ft, new System.Windows.Point(x/scaleTransform.ScaleY, 1.0/ scaleTransform.ScaleX));
                 }
-               
+                drawingContext.PushTransform(new ScaleTransform(1 / scaleTransform.ScaleY, 1 / scaleTransform.ScaleX));
+
             }
            
-            for (int y = -distance; y < distance; y+= gridSpacing) //parllel to x-axis grid
+            for (int y = startY; y < endY; y+= (int)(gridSpacing/ scaleTransform.ScaleY)) //y-axis
             {
-                drawingContext.DrawLine(new Pen(Brushes.DimGray, 1), new Point(-distance, y), new Point(distance, y));
-
+                drawingContext.DrawLine(new Pen(Brushes.DimGray, 1.0 / scaleTransform.ScaleY), new Point(startX, y), new Point(endX, y));
+                drawingContext.PushTransform(new ScaleTransform(scaleTransform.ScaleY, scaleTransform.ScaleX));
                 if (y != 0)
                 {
-                    FormattedText ft = new FormattedText((-y / gridSpacing).ToString(),
+                    FormattedText ft = new FormattedText((-y / (float)gridSpacing).ToString(),
                          CultureInfo.GetCultureInfo("en-us"),
                          FlowDirection.LeftToRight,
                          new Typeface("Verdana"),
-                         10, System.Windows.Media.Brushes.Black);
+                         12/Math.Pow(largestScale, 2), System.Windows.Media.Brushes.Black);
                     ft.TextAlignment = TextAlignment.Right;
-                    drawingContext.DrawText(ft, new System.Windows.Point(-10, y-7.5));
+                    drawingContext.DrawText(ft, new System.Windows.Point(-1.0/ scaleTransform.ScaleY, (y/ scaleTransform.ScaleX)));
                 }
-                else
-                {
-                    FormattedText ft = new FormattedText("0",
-                         CultureInfo.GetCultureInfo("en-us"),
-                         FlowDirection.LeftToRight,
-                         new Typeface("Verdana"),
-                         10, System.Windows.Media.Brushes.Black);
-                    ft.TextAlignment = TextAlignment.Right;
-                    drawingContext.DrawText(ft, new System.Windows.Point(-10, 5));
-                }
+                //else
+                //{
+                //    FormattedText ft = new FormattedText("0",
+                //         CultureInfo.GetCultureInfo("en-us"),
+                //         FlowDirection.LeftToRight,
+                //         new Typeface("Verdana"),
+                //         1.0/ avgScale, System.Windows.Media.Brushes.Black);
+                //    ft.TextAlignment = TextAlignment.Right;
+                //    drawingContext.DrawText(ft, new System.Windows.Point(-1.0/ scaleTransform.ScaleY, 2.0/ scaleTransform.ScaleX));
+                //}
+                  drawingContext.PushTransform(new ScaleTransform(1 / scaleTransform.ScaleY, 1 / scaleTransform.ScaleX));
 
             }
-            
-            
+          //  drawingContext.PushTransform(new ScaleTransform(1/scaleTransform.ScaleY, 1/scaleTransform.ScaleX));
+
             //axis
-            drawingContext.DrawLine(new Pen(Brushes.Black, 1), new Point(-distance, 0), new Point(distance, 0));
-            drawingContext.DrawLine(new Pen(Brushes.Black, 1), new Point(0, -distance), new Point(0, distance));
+            drawingContext.DrawLine(new Pen(Brushes.Black, 1.0 / largestScale), new Point(startX, 0), new Point(endX, 0));
+            drawingContext.DrawLine(new Pen(Brushes.Black, 1.0 / largestScale), new Point(0, startY), new Point(0, endY));
 
             //unselected points
 
@@ -185,7 +260,7 @@ namespace Thomas_Graph
                 if (point.isLinePoint && point != selectedLinePoint)
                 {
 
-                    drawingContext.DrawRectangle(Brushes.Red, null, point.GetOffsetRect());
+                    drawingContext.DrawRectangle(Brushes.Red, null, point.GetOffsetRect(scaleTransform));
                 }
             }
 
@@ -194,12 +269,13 @@ namespace Thomas_Graph
             if (selectedLinePoint != null)
             {
                 CustomPoint point = selectedLinePoint;
-                drawingContext.DrawRectangle(Brushes.Green, null, point.GetOffsetRect());
+                drawingContext.DrawRectangle(Brushes.Green, null, point.GetOffsetRect(scaleTransform));
                 foreach (CustomPoint cpPoint in GetControlPoints(selectedLinePoint))
                 {
                     point = cpPoint;
-                    drawingContext.DrawRectangle(Brushes.Green, null, point.GetOffsetRect());
-                    drawingContext.DrawLine(new Pen(Brushes.Teal, 2), selectedLinePoint.p, cpPoint.p);
+                    Rect offsetRect = point.GetOffsetRect(scaleTransform);
+                    drawingContext.DrawEllipse(Brushes.Green, null, point.p, offsetRect.Width/2, offsetRect.Height/2);
+                    drawingContext.DrawLine(new Pen(Brushes.Teal, 2/scaleTransform.ScaleX), selectedLinePoint.p, cpPoint.p);
                 }
 
 
@@ -212,8 +288,25 @@ namespace Thomas_Graph
 
         private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            Focus();
+            Keyboard.Focus(this);
 
-            CustomPoint point = GetPointAt(e.GetPosition(this));
+            SelectPointAt(e.GetPosition(this));
+            if(e.RightButton == MouseButtonState.Pressed)
+            {
+                menu.DataContext = selectedLinePoint;
+                menu.IsOpen = true;
+                addPointMenu.IsEnabled = selectedLinePoint == null;
+            }
+            InvalidateVisual();
+
+
+        }
+
+        void SelectPointAt(Point position)
+        {
+            CustomPoint point = GetPointAt(position);
+
 
             foreach (CustomPoint p in points)
             {
@@ -251,9 +344,6 @@ namespace Thomas_Graph
 
 
             }
-            InvalidateVisual();
-
-
         }
 
         List<CustomPoint> GetControlPoints(CustomPoint linePoint)
@@ -284,7 +374,7 @@ namespace Thomas_Graph
             int i = points.IndexOf(controlPoint);
             if (points[i + 1].isLinePoint && points.Count > i + 2)
                 return points[i + 2];
-            else if (i > 1)
+            else if (i > 1 && !points[i-2].isLinePoint)
                 return points[i - 2];
             else
                 return null;
@@ -325,7 +415,7 @@ namespace Thomas_Graph
             {
                 if (point.visible)
                 {
-                    if (point.Contains(mousePoint))
+                    if (point.GetOffsetRect(scaleTransform).Contains(mousePoint))
                         return point;
                 }
             }
@@ -339,8 +429,29 @@ namespace Thomas_Graph
             {
                 rawPoints.Add(points[i].p);
             }
+            InvalidateVisual();
         }
 
+        void RemovePoint(CustomPoint point)
+        {
+            int pointIndex = points.IndexOf(point);
+            bool lastPoint = pointIndex == points.Count - 1;
+            foreach(CustomPoint cp in GetControlPoints(point))
+            {
+                points.Remove(cp);
+            }
+            points.Remove(point);
+
+            if (pointIndex == 0 && points.Count > 0)
+            {
+                points.RemoveAt(0);
+            }
+            else if (lastPoint && points.Count > 0)
+                points.RemoveAt(points.Count - 1);
+            
+            UpdateRawPoints();
+            InvalidateVisual();
+        }
         public void AddPoints(List<Point> newPoints)
         {
             ClearList();
@@ -390,8 +501,8 @@ namespace Thomas_Graph
                 {
                     prevPoint = points[0];
                     Vector dir = new Vector(prevPoint.X - pos.X, prevPoint.Y - pos.Y);
-                    CustomPoint cp1 = new CustomPoint(pos.X + dir.X * 0.45, pos.Y + dir.Y * 0.45);
-                    CustomPoint cp2 = new CustomPoint(prevPoint.X - dir.X * 0.45, prevPoint.Y - dir.Y * 0.45);
+                    CustomPoint cp1 = new CustomPoint(pos.X + dir.X * 0.45, pos.Y);
+                    CustomPoint cp2 = new CustomPoint(prevPoint.X - dir.X * 0.45, prevPoint.Y);
                     points.Insert(0, cp2);
                     points.Insert(0, cp1);
                     points.Insert(0, linePoint);
@@ -401,8 +512,12 @@ namespace Thomas_Graph
                     CustomPoint nextPoint = points[i];
                     Vector dir1 = new Vector(prevPoint.X - pos.X, prevPoint.Y - pos.Y);
                     Vector dir2 = new Vector(nextPoint.X - pos.X, nextPoint.Y - pos.Y);
-                    CustomPoint cp1 = new CustomPoint(pos.X + dir1.X * 0.45, pos.Y + dir1.Y * 0.45);
-                    CustomPoint cp2 = new CustomPoint(pos.X + dir2.X * 0.45, pos.Y + dir2.Y * 0.45);
+
+
+                    Vector dir = dir1.Length > dir2.Length ? dir2 : dir1;
+
+                    CustomPoint cp1 = new CustomPoint(pos.X - Math.Abs(dir.X) * 0.45, pos.Y);
+                    CustomPoint cp2 = new CustomPoint(pos.X + Math.Abs(dir.X) * 0.45, pos.Y);
 
                     //Update previousPoint's right CP
                     Vector prevCPvec = new Vector(points[i - 2].X - prevPoint.X, points[i - 2].Y - prevPoint.Y);
@@ -429,8 +544,8 @@ namespace Thomas_Graph
                 else
                 {
                     Vector dir = new Vector(pos.X - prevPoint.X, pos.Y - prevPoint.Y);
-                    CustomPoint cp1 = new CustomPoint(prevPoint.X + dir.X * 0.45, prevPoint.Y + dir.Y * 0.45);
-                    CustomPoint cp2 = new CustomPoint(pos.X - dir.X * 0.45, pos.Y - dir.Y * 0.45);
+                    CustomPoint cp1 = new CustomPoint(prevPoint.X + dir.X * 0.45, prevPoint.Y);
+                    CustomPoint cp2 = new CustomPoint(pos.X - dir.X * 0.45, pos.Y);
 
                     points.Add(cp1);
                     points.Add(cp2);
@@ -446,52 +561,58 @@ namespace Thomas_Graph
         }
 
 
-        bool isValidMovement(CustomPoint target, Point mousePoint)
+        Point GetValidPosition(CustomPoint targetPoint, Point TargetPos)
         {
-            int i = points.IndexOf(target);
-            float mouseX = (float)mousePoint.X;
-            bool movingLeft = target.p.X > mouseX;
-            if (!target.isLinePoint) //control point
+            int i = points.IndexOf(targetPoint);
+            float mouseX = (float)TargetPos.X;
+            bool movingLeft = targetPoint.p.X > mouseX;
+            if (!targetPoint.isLinePoint) //control point
             {
 
                 if (movingLeft)
                 {
-                    CustomPoint leftPoint = GetLinePointToTheLeft(target);
-                    if (leftPoint.p.X < mouseX)
-                        return true;
+                    CustomPoint leftPoint = GetLinePointToTheLeft(targetPoint);
+                    if (leftPoint.p.X > mouseX)
+                        TargetPos.X = leftPoint.X;
                 }
                 else
                 {
-                    CustomPoint rightPoint = GetLinePointToTheRight(target);
-                    if (rightPoint.p.X > mouseX)
-                        return true;
+                    CustomPoint rightPoint = GetLinePointToTheRight(targetPoint);
+                    if (rightPoint.p.X < mouseX)
+                        TargetPos.X = rightPoint.X;
                 }
-                return false;
             }
             else
             {
-                if (movingLeft)
+                if (movingLeft && i != 0)
                 {
-                    if (i == 0)
-                        return true;
-
                     CustomPoint leftCP = points[i - 1];
-                    if (leftCP.p.X < mouseX)
-                        return true;
+                    if (leftCP.p.X > mouseX)
+                        TargetPos.X = leftCP.X;
+
+                    if(i - 2 > 0)
+                    {
+                        CustomPoint leftLineRCP = points[i - 2];
+                        if (leftLineRCP.p.X > mouseX)
+                            TargetPos.X = leftLineRCP.X;
+                    }
                 }
-                else
+                else if(i < points.Count - 1)
                 {
-
-
-                    if (i == points.Count - 1)
-                        return true;
 
                     CustomPoint rightCP = points[i + 1];
-                    if (rightCP.p.X > mouseX)
-                        return true;
+                    if (rightCP.p.X < mouseX)
+                        TargetPos.X = rightCP.X;
+
+                    if (i + 2 < points.Count)
+                    {
+                        CustomPoint RightLineLCP = points[i + 2];
+                        if (RightLineLCP.p.X < mouseX)
+                            TargetPos.X = RightLineLCP.X;
+                    }
                 }
-                return false;
             }
+            return TargetPos;
         }
 
 
@@ -503,39 +624,109 @@ namespace Thomas_Graph
                 AddPoint(e.GetPosition(this));
         }
 
+        private void HandleMovement(Point targetPoint)
+        {
+            Point validPos = GetValidPosition(selectedPoint, targetPoint);
+            Point deltaMovement = new Point(selectedPoint.p.X - validPos.X, selectedPoint.p.Y - validPos.Y);
+
+            if (selectedPoint == selectedLinePoint)
+            {
+                foreach (CustomPoint cp in GetControlPoints(selectedLinePoint))
+                {
+                    Point newPos = new Point(cp.p.X - deltaMovement.X, cp.p.Y - deltaMovement.Y);
+                    cp.MoveTo(GetValidPosition(cp, newPos));
+                }
+                validPos = GetValidPosition(selectedPoint, targetPoint);
+                selectedPoint.MoveTo(validPos);
+            }
+            else //is a control point
+            {
+                selectedPoint.MoveTo(validPos);
+                CustomPoint mirror = GetMirrorControlPoint(selectedPoint);
+                if (mirror != null && !selectedLinePoint.unlockedControlPoints)
+                {
+                    Point cpDelta = new Point(selectedPoint.p.X - selectedLinePoint.p.X, selectedPoint.p.Y - selectedLinePoint.p.Y);
+                    Point newPos = new Point(selectedLinePoint.p.X - cpDelta.X, selectedLinePoint.p.Y - cpDelta.Y);
+                    mirror.MoveTo(GetValidPosition(mirror, newPos));
+
+                    int i = points.IndexOf(selectedPoint) % 3;
+
+                    if ((i == 1 && selectedPoint.X <= mirror.X) || (i == 2 && selectedPoint.X >= mirror.X))
+                    {
+                        int a = points.IndexOf(selectedPoint);
+                        int b = points.IndexOf(mirror);
+                        points[a] = mirror;
+                        points[b] = selectedPoint;
+                    }
+
+                }
+
+            }
+        }
+
+
         private void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
-
-            Cursor = Cursors.Arrow;
+            if(currentMode == ManipulateMode.All)
+                Cursor = Cursors.Arrow;
             CustomPoint over = GetPointAt(e.GetPosition(this));
-            if (over != null || selectedPoint != null)
+            if (over != null)
             {
                 Cursor = Cursors.SizeAll;
             }
-            if (selectedPoint != null)
+           
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (isValidMovement(selectedPoint, e.GetPosition(this)))
+                if (selectedPoint != null)
                 {
-                    selectedPoint.MoveTo(e.GetPosition(this));
+                    Cursor = Cursors.SizeAll;
+                    HandleMovement(e.GetPosition(this));
                     InvalidateVisual();
                     OnPointsChanged?.Invoke();
+
+                    UpdateRawPoints();
                 }
-                int i = points.IndexOf(selectedPoint);
-                if(i != 0)
+                else
                 {
-                    rawPoints[i - 1] = selectedPoint.p;
+                    double deltaX = e.GetPosition(this).X - prevMouseX;
+                    double deltaY = e.GetPosition(this).Y - prevMouseY;
+                    Cursor = Cursors.Hand;
+                    translateTransform.X += deltaX;
+                    translateTransform.Y -= deltaY;
+                    InvalidateVisual();
                 }
-            }
-            else if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                double deltaX = e.GetPosition(this).X - prevMouseX;
-                double deltaY = e.GetPosition(this).Y - prevMouseY;
-                Cursor = Cursors.Hand;
-                translateTransform.X += deltaX;
-                translateTransform.Y -= deltaY;
+
+                
             }
             prevMouseX = e.GetPosition(this).X;
             prevMouseY = e.GetPosition(this).Y;
+
+            
+        }
+
+        private void MenuAddPoint(object sender, RoutedEventArgs e)
+        {
+            AddPoint(Mouse.GetPosition(this));
+            SelectPointAt(Mouse.GetPosition(this));
+        }
+
+        private void MenuRemovePoint(object sender, RoutedEventArgs e)
+        {
+            RemovePoint(selectedLinePoint);
+            selectedLinePoint = null;
+            selectedPoint = null;
+            UpdateRawPoints();
+
+        }
+
+        private void MenuUnlockPoint(object sender, RoutedEventArgs e)
+        {
+            selectedLinePoint.unlockedControlPoints = true;
+        }
+
+        private void MenuLockPoint(object sender, RoutedEventArgs e)
+        {
+            selectedLinePoint.unlockedControlPoints = false;
         }
     }
 
@@ -546,6 +737,7 @@ namespace Thomas_Graph
         private Rect rectangle;
         public bool isLinePoint = false;
         public bool visible = false;
+        public bool unlockedControlPoints = false;
 
         public double X { get { return rectangle.X; } }
         public double Y { get { return rectangle.Y; } }
@@ -558,15 +750,10 @@ namespace Thomas_Graph
             rectangle = new Rect(x, y, 10, 10);
         }
 
-        public bool Contains(Point point)
+        public Rect GetOffsetRect(ScaleTransform scale)
         {
-            return GetOffsetRect().Contains(point);
-        }
-
-        public Rect GetOffsetRect()
-        {
-            Rect offsetRect = new Rect(rect.Location, rect.Size);
-            offsetRect.Offset(-5, -5);
+            Rect offsetRect = new Rect(rect.Location, new Size(rect.Width/scale.ScaleX, rect.Height/scale.ScaleY));
+            offsetRect.Offset(-offsetRect.Width/2, -offsetRect.Height/2);
             return offsetRect;
         }
         public void MoveTo(Point newPoint)
