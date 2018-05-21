@@ -172,7 +172,6 @@ namespace ThomasEditor
 			if (operatorStack->Count != 0)
 			{
 				numberStack->Add(numberAccumulator);
-
 				double test = 0.0;
 				for (int oi = operatorStack->Count - 1; oi > -1; --oi)
 				{
@@ -204,7 +203,7 @@ namespace ThomasEditor
 			return numberStack[0];
 		}
 		//Driver for approximate function
-		List<Point>^ Approximate(String^ func, double xMin, double xMax, int linePoints)
+		List<Point>^ Approximate(String^ func, double xMin, double xMax, int partitions)
 		{
 			List<Point>^ output;
 			//Create start & end points, pass along to private approx
@@ -213,18 +212,12 @@ namespace ThomasEditor
 			double yMinh = ParseFunction(func, xMin + h);
 			double yMax = ParseFunction(func, xMax);
 			double yMaxh = ParseFunction(func, xMax - h);
-			double mindx = (yMinh - yMin) / ((xMin + h) - xMin);
-			double maxdx = (yMaxh - yMax) / ((xMax - h) - xMax);
 
-			Point startLP, startCP, endLP, endCP;
-			startLP.X			= xMin;
-			startLP.Y			= yMin;
-			startCP.X			= xMin + h;
-			startCP.Y			= yMinh;
-			endLP.X				= xMax;
-			endLP.Y				= yMax;
-			endCP.X				= xMax - h;
-			endCP.Y				= yMaxh;
+			//convert to Point data type
+			Point startLP = Point(xMin, yMin);
+			Point startCP = Point(xMin + h, yMinh);
+			Point endLP = Point(xMax, yMax);
+			Point endCP = Point(xMax - h, yMaxh);
 
 			//calculate vectors for CPs
 			Vector startCPvec	= Vector(startCP.X - startLP.X, startCP.Y - startLP.Y);
@@ -233,8 +226,8 @@ namespace ThomasEditor
 			endCPvec.Normalize();
 
 			//Adjust CP distance to respective LPs according to how many line points the user wants
-			startCPvec *= 0.45 / linePoints;
-			endCPvec *= 0.45 / linePoints;
+			startCPvec *= 0.45 / (partitions + 1);
+			endCPvec *= 0.45 / (partitions + 1);
 			startCP = Point(startLP.X + startCPvec.X, startLP.Y + startCPvec.Y);
 			endCP = Point(endLP.X + endCPvec.X, endCP.Y + endCPvec.Y);
 
@@ -248,27 +241,37 @@ namespace ThomasEditor
 			//add LP for end
 			output->Add(endLP);
 
-			output->InsertRange(2, ApproximatePr(func, xMin, xMax, linePoints));
+			output->InsertRange(2, ApproximatePr(func, xMin, xMax, partitions, partitions));
 
 			return output;
 		}
 	private:
-		List<Point>^ ApproximatePr(String^ func, double xMin, double xMax, int recursions)
+		List<Point>^ ApproximatePr(String^ func, double xMin, double xMax, int recursions, int partitions)
 		{
 			List<Point>^ output;
 			if (recursions == 0)
 				return output;
-			double h = (xMax - xMin) / 1000;
-			double yMin = ParseFunction(func, xMin);
-			double yMinh = ParseFunction(func, xMin + h);
-			double yMax = ParseFunction(func, xMax);
-			double yMaxh = ParseFunction(func, xMax - h);
-			double mindx = (yMinh - yMin) / ((xMin + h) - xMin);
-			double maxdx = (yMaxh - yMax) / ((xMax - h) - xMax);
+			//evaluate function to find y and yh from x and x+h
+			double h = (xMax - xMin) / 1000000;
+			double x = (xMax + xMin) / 2;
+			double xh1 = x - h;
+			double y = ParseFunction(func, x);
+			double yh1 = ParseFunction(func, x - h);
+			
+			//convert y and x to Point datatype
+			Point LP = Point(x, y);
+			//Calculate CP positions from func dx
+			Point CP1 = Point(x - h, yh1);
+			Vector CPvec = Vector(CP1.X - LP.X, CP1.Y - LP.Y);
+			CPvec.Normalize();
+			CPvec *= 0.45 / (partitions + 1);
+			CP1 = Point(LP.X + CPvec.X, LP.Y + CPvec.Y);
+			Point CP2 = Point(LP.X - CPvec.X, LP.Y - CPvec.Y);
 
-			int recuCopy = recursions - 1;
-			ApproximatePr(func, xMin, xMax / 2, recuCopy);
-			ApproximatePr(func, xMax / 2, xMax, recuCopy);
+			//Go deeper
+			recursions /= 2;
+			output->InsertRange(0, ApproximatePr(func, xMin, x, recursions, partitions));
+			output->InsertRange(3, ApproximatePr(func, x, xMax, recursions, partitions));
 
 			return output;
 		}
