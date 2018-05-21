@@ -204,30 +204,60 @@ namespace ThomasEditor
 			return numberStack[0];
 		}
 		//Driver for approximate function
-		List<Point>^ Approximate(String^ func, double xMin, double xMax, int recursions)
+		List<Point>^ Approximate(String^ func, double xMin, double xMax, int linePoints)
 		{
+			List<Point>^ output;
 			//Create start & end points, pass along to private approx
-			
-			//remove points between xMin and xMax
-			for (int i = 0; i < points->Count; ++++++i)
-			{
-				if (points[i].X >= xMin && points[i].X <= xMax)
-				{
+			double h = (xMax - xMin) / 1000000;
+			double yMin = ParseFunction(func, xMin);
+			double yMinh = ParseFunction(func, xMin + h);
+			double yMax = ParseFunction(func, xMax);
+			double yMaxh = ParseFunction(func, xMax - h);
+			double mindx = (yMinh - yMin) / ((xMin + h) - xMin);
+			double maxdx = (yMaxh - yMax) / ((xMax - h) - xMax);
 
-				}
-			}
+			Point startLP, startCP, endLP, endCP;
+			startLP.X			= xMin;
+			startLP.Y			= yMin;
+			startCP.X			= xMin + h;
+			startCP.Y			= yMinh;
+			endLP.X				= xMax;
+			endLP.Y				= yMax;
+			endCP.X				= xMax - h;
+			endCP.Y				= yMaxh;
+
+			//calculate vectors for CPs
+			Vector startCPvec	= Vector(startCP.X - startLP.X, startCP.Y - startLP.Y);
+			Vector endCPvec		= Vector(endCP.X - endLP.X, endCP.Y - endLP.Y); //we want this vector pointing the "opposite" way of the other one
+			startCPvec.Normalize();
+			endCPvec.Normalize();
+
+			//Adjust CP distance to respective LPs according to how many line points the user wants
+			startCPvec *= 0.45 / linePoints;
+			endCPvec *= 0.45 / linePoints;
+			startCP = Point(startLP.X + startCPvec.X, startLP.Y + startCPvec.Y);
+			endCP = Point(endLP.X + endCPvec.X, endCP.Y + endCPvec.Y);
 
 			//add LP for start
+			output->Add(startLP);
 			//add CP for start
+			output->Add(startCP);
 
-			//add LP for end
 			//add CP for end
+			output->Add(endCP);
+			//add LP for end
+			output->Add(endLP);
+
+			output->InsertRange(2, ApproximatePr(func, xMin, xMax, linePoints));
+
+			return output;
 		}
 	private:
 		List<Point>^ ApproximatePr(String^ func, double xMin, double xMax, int recursions)
 		{
+			List<Point>^ output;
 			if (recursions == 0)
-				return;
+				return output;
 			double h = (xMax - xMin) / 1000;
 			double yMin = ParseFunction(func, xMin);
 			double yMinh = ParseFunction(func, xMin + h);
@@ -236,11 +266,11 @@ namespace ThomasEditor
 			double mindx = (yMinh - yMin) / ((xMin + h) - xMin);
 			double maxdx = (yMaxh - yMax) / ((xMax - h) - xMax);
 
-			//add middle point, update existing start/end points 
-
 			int recuCopy = recursions - 1;
-			Approximate(func, xMin, xMax / 2, recuCopy);
-			Approximate(func, xMax / 2, xMax, recuCopy);
+			ApproximatePr(func, xMin, xMax / 2, recuCopy);
+			ApproximatePr(func, xMax / 2, xMax, recuCopy);
+
+			return output;
 		}
 	};
 }
