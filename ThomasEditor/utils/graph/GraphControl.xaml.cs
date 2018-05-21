@@ -73,10 +73,13 @@ namespace Thomas_Graph
             InvalidateVisual();
             
 
-            //Curve asdf = new Curve();
-            //asdf.ParseFunction("x + 1-1*5", 6);
+            Curve asdf = new Curve();
+            String testString = "((x+2)*2 - 4) ^(2 + 1)";
+            double testF = asdf.ParseFunction(ref testString, 2);
+            
 
-
+            double asdfasdf = 0.0;
+            asdfasdf++;
         }
 
         private void GraphControl_KeyUp(object sender, KeyEventArgs e)

@@ -67,33 +67,38 @@ namespace ThomasEditor
 
 		}
 
-		double ParseFunction(String^ func, double x)
+		double keklel()
 		{
-			
+			return 5.0;
+		}
+
+		double ParseFunction(String^% func, double x)
+		{
 			Dictionary<char, unsigned>^ operators = gcnew Dictionary<char, unsigned>();
-			operators->Add('^', 1);
-			operators->Add('*', 10);
-			operators->Add('/', 11);
-			operators->Add('+', 100);
-			operators->Add('-', 101);
-			operators->Add('(', 1000);
-			operators->Add(')', 1001);
+			operators->Add('(', 10);
+			operators->Add(')', 31);
+			operators->Add('^', 100);
+			operators->Add('*', 1000);
+			operators->Add('/', 1001);
+			operators->Add('+', 10000);
+			operators->Add('-', 10001);
+			
 			List<double>^ numberStack = gcnew List<double>();
 			List<unsigned>^ operatorStack = gcnew List<unsigned>();
 			
 			String^ delimStr = " ";
 			array<Char>^ delim = delimStr->ToCharArray();
 			func = String::Join("", func->Split(delim, StringSplitOptions::RemoveEmptyEntries));
-
 			
 			
-			if (func[0] != 'x' && !Char::IsNumber(func[0]) && func[0] != '(' && func[0] != '-')
+			if (func[0] != 'x' && !Char::IsNumber(func[0]) && func[0] != '(' && func[0] != '-' && func == "")
 				return 0.0;
 
 			double numberAccumulator = 0;
 			unsigned incrementer = 1;
+			bool exit = false;
 
-			for (int i = 0; i < func->Length; ++i)
+			for (int i = 0; i < func->Length && !exit; ++i)
 			{
 				char c = func[i];
 
@@ -119,39 +124,54 @@ namespace ThomasEditor
 					{
 						if (o.Key == c)
 						{
-							if (operatorStack->Count == 0)
+							if (o.Value == 10)
+							{
+								func = func->Substring(i + 1, func->Length - i - 1);
+								numberStack->Add(ParseFunction(func, x));
+								if (func != "")
+									i = -1;
+								else
+									exit = true;
+							}
+							else if (o.Value == 31)
+							{
+								func = func->Substring(i + 1, func->Length - i - 1);
+								exit = true;
+							}
+							else if (operatorStack->Count == 0)
 							{
 								operatorStack->Add(o.Value);
 							}
 							else
 							{
-								double test = 0.0;
 								while (operatorStack[operatorStack->Count - 1] < o.Value * 2)
 								{
 									switch (operatorStack[operatorStack->Count - 1])
 									{
-									case 1:
-										test = Math::Pow(numberStack[numberStack->Count - 2], numberStack[numberStack->Count - 1]);
-										numberStack[numberStack->Count - 2] = test;
+									/*case 10:
+										numberStack->Add(ParseFunction(func->Substring(i + 1, func->Length - i - 1), x));
+										numberStack->Add(0.0);//Bogo-number
+										break;*/
+									/*case 31:
+										func = "";
+										numberStack->Add(0.0);//bogo
+										break;*/
+									case 100:
+										numberStack[numberStack->Count - 2] = Math::Pow(numberStack[numberStack->Count - 2], numberStack[numberStack->Count - 1]);
 										break;
-									case 10:
+									case 1000:
 										numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] * numberStack[numberStack->Count - 1];
 										break;
-									case 11:
+									case 1001:
 										numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] / numberStack[numberStack->Count - 1];
 										break;
-									case 100:
+									case 10000:
 										numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] + numberStack[numberStack->Count - 1];
 										break;
-									case 101:
+									case 10001:
 										numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] - numberStack[numberStack->Count - 1];
 										break;
-										/*case 1000:
-										numberStack->Add(ParseFunction(func.Substring(i, func.Length - i), x, min, max));
-										break;
-										case 1001:
-
-										break;*/
+									
 									default:
 										break;
 									}
@@ -171,26 +191,27 @@ namespace ThomasEditor
 			}
 			if (operatorStack->Count != 0)
 			{
-				numberStack->Add(numberAccumulator);
-				double test = 0.0;
+				if (!exit)
+					numberStack->Add(numberAccumulator);
+
 				for (int oi = operatorStack->Count - 1; oi > -1; --oi)
 				{
 					switch (operatorStack[oi])
 					{
-					case 1:
-						test = Math::Pow(numberStack[numberStack->Count - 2], numberStack[numberStack->Count - 1]);
-						numberStack[numberStack->Count - 2] = test;
+
+					case 100:
+						numberStack[numberStack->Count - 2] = Math::Pow(numberStack[numberStack->Count - 2], numberStack[numberStack->Count - 1]);
 						break;
-					case 10:
+					case 1000:
 						numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] * numberStack[numberStack->Count - 1];
 						break;
-					case 11:
+					case 1001:
 						numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] / numberStack[numberStack->Count - 1];
 						break;
-					case 100:
+					case 10000:
 						numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] + numberStack[numberStack->Count - 1];
 						break;
-					case 101:
+					case 10001:
 						numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] - numberStack[numberStack->Count - 1];
 						break;
 					default:
