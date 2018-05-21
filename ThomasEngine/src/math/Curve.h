@@ -66,6 +66,151 @@ namespace ThomasEditor
 
 
 		}
+
+		double ParseFunction(String^ func, double x)
+		{
+			
+			Dictionary<char, unsigned>^ operators = gcnew Dictionary<char, unsigned>();
+			operators->Add('^', 1);
+			operators->Add('*', 10);
+			operators->Add('/', 11);
+			operators->Add('+', 100);
+			operators->Add('-', 101);
+			operators->Add('(', 1000);
+			operators->Add(')', 1001);
+			List<double>^ numberStack = gcnew List<double>();
+			List<unsigned>^ operatorStack = gcnew List<unsigned>();
+			
+			String^ delimStr = " ";
+			array<Char>^ delim = delimStr->ToCharArray();
+			func = String::Join("", func->Split(delim, StringSplitOptions::RemoveEmptyEntries));
+
+			
+			
+			if (func[0] != 'x' && !Char::IsNumber(func[0]) && func[0] != '(' && func[0] != '-')
+				return 0.0;
+
+			double numberAccumulator = 0;
+			unsigned incrementer = 1;
+
+			for (int i = 0; i < func->Length; ++i)
+			{
+				char c = func[i];
+
+				if (Char::IsNumber(c))
+				{
+					numberAccumulator += incrementer * (double)(c - '0');
+					incrementer *= 10;
+				}
+				else if (c == 'x')
+				{
+					numberStack->Add(x);
+				}
+				else
+				{
+					if (numberAccumulator != 0)
+					{
+						numberStack->Add(numberAccumulator);
+						incrementer = 1;
+						numberAccumulator = 0;
+					}
+					//for (Dictionary<char, unsigned>^ o : operators)
+					for each(KeyValuePair<char, unsigned> o in operators)
+					{
+						if (o.Key == c)
+						{
+							if (operatorStack->Count == 0)
+							{
+								operatorStack->Add(o.Value);
+							}
+							else
+							{
+								double test = 0.0;
+								while (operatorStack[operatorStack->Count - 1] < o.Value * 2)
+								{
+									switch (operatorStack[operatorStack->Count - 1])
+									{
+									case 1:
+										test = Math::Pow(numberStack[numberStack->Count - 2], numberStack[numberStack->Count - 1]);
+										numberStack[numberStack->Count - 2] = test;
+										break;
+									case 10:
+										numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] * numberStack[numberStack->Count - 1];
+										break;
+									case 11:
+										numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] / numberStack[numberStack->Count - 1];
+										break;
+									case 100:
+										numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] + numberStack[numberStack->Count - 1];
+										break;
+									case 101:
+										numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] - numberStack[numberStack->Count - 1];
+										break;
+										/*case 1000:
+										numberStack->Add(ParseFunction(func.Substring(i, func.Length - i), x, min, max));
+										break;
+										case 1001:
+
+										break;*/
+									default:
+										break;
+									}
+									numberStack->RemoveAt(numberStack->Count - 1);
+									operatorStack->RemoveAt(operatorStack->Count - 1);
+									if (operatorStack->Count == 0)
+									{
+										break;
+									}
+								}
+								operatorStack->Add(o.Value);
+							}
+							break;
+						}
+					}
+				}
+			}
+			if (operatorStack->Count != 0)
+			{
+				numberStack->Add(numberAccumulator);
+
+				double test = 0.0;
+				for (int oi = operatorStack->Count - 1; oi > -1; --oi)
+				{
+					switch (operatorStack[oi])
+					{
+					case 1:
+						test = Math::Pow(numberStack[numberStack->Count - 2], numberStack[numberStack->Count - 1]);
+						numberStack[numberStack->Count - 2] = test;
+						break;
+					case 10:
+						numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] * numberStack[numberStack->Count - 1];
+						break;
+					case 11:
+						numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] / numberStack[numberStack->Count - 1];
+						break;
+					case 100:
+						numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] + numberStack[numberStack->Count - 1];
+						break;
+					case 101:
+						numberStack[numberStack->Count - 2] = numberStack[numberStack->Count - 2] - numberStack[numberStack->Count - 1];
+						break;
+					default:
+						break;
+					}
+					numberStack->RemoveAt(numberStack->Count - 1);
+					operatorStack->RemoveAt(operatorStack->Count - 1);
+				}
+			}
+			return numberStack[0];
+		}
+
+		List<Point>^ Approximate(String^ func, double minX, double maxX, int recursions)
+		{
+			if (recursions == 0)
+				return;
+			double minY = ParseFunction(func, minX);
+			double maxY = ParseFunction(func, maxX);
+		}
 	};
 }
 

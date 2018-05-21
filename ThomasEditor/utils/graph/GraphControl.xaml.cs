@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ThomasEditor;
 
 namespace Thomas_Graph
 {
@@ -34,6 +35,8 @@ namespace Thomas_Graph
 
         ScaleTransform scaleTransform = new ScaleTransform(1, 1);
         TranslateTransform translateTransform;
+
+        
 
         double prevMouseX = 0;
         double prevMouseY = 0;
@@ -60,6 +63,10 @@ namespace Thomas_Graph
             this.RenderTransform = group;
 
             this.Loaded += GraphControl_Loaded;
+
+            //Curve asdf = new Curve();
+            //asdf.ParseFunction("x + 1-1*5", 6);
+
 
         }
         public void OnLostFocus() 
