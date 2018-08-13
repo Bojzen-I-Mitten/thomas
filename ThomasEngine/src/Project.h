@@ -32,7 +32,15 @@ namespace ThomasEditor
 			System::IO::Directory::CreateDirectory(m_path);
 			System::IO::Directory::CreateDirectory(m_resourcePath);
 			System::IO::Directory::CreateDirectory(m_assemblyPath);
+			System::IO::File::Create(m_path + "\\" + m_name + ".thomas");
 		}
+		Project(String^ projectFile) {
+			m_name = System::IO::Path::GetFileNameWithoutExtension(projectFile);
+			m_path = System::IO::Path::GetDirectoryName(projectFile);
+			m_resourcePath = m_path + "\\" + "Assets";
+			m_assemblyPath = m_path + "\\" + "Assembly";
+		}
+
 		property String^ name
 		{
 			String^ get() { return m_name; }

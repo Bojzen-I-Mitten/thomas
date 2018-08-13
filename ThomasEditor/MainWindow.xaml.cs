@@ -308,7 +308,18 @@ namespace ThomasEditor
 
         private void OpenProject_Click(object sender, RoutedEventArgs e)
         {
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            openFileDialog.Filter = "Thomas Project (*.thomas) |*.thomas";
 
+
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                Project proj = new Project(openFileDialog.FileName);
+                Application.currentProject = proj;
+            }
         }
     }
 
