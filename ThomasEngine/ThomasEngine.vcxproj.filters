@@ -35,6 +35,7 @@
     <ClCompile Include="src\object\component\physics\SphereCollider.cpp" />
     <ClCompile Include="src\object\component\physics\MeshCollider.cpp" />
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\math\Curve.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\resource\Model.h" />
@@ -75,6 +76,7 @@
     <ClInclude Include="src\object\component\physics\MeshCollider.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Project.h" />
+    <ClInclude Include="src\math\Curve.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />

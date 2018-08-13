@@ -129,7 +129,6 @@
     <Compile Include="utils\EditableTextBlock.xaml.cs">
       <DependentUpon>EditableTextBlock.xaml</DependentUpon>
     </Compile>
-    <Compile Include="utils\graph\Bezier.cs" />
     <Compile Include="utils\graph\ExpandedGraphControl.xaml.cs">
       <DependentUpon>ExpandedGraphControl.xaml</DependentUpon>
     </Compile>
