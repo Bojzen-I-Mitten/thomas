@@ -4,12 +4,14 @@
 #pragma managed
 #include <string>
 #include <msclr\marshal_cppstd.h>
-
+#include "../math/Math.h"
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::ComponentModel;
 namespace ThomasEditor {
 
+	ref class Transform;
+	ref class GameObject;
 	[SerializableAttribute]
 	public ref class Object: public INotifyPropertyChanged
 	{
@@ -19,6 +21,10 @@ namespace ThomasEditor {
 	internal:
 		[NonSerializedAttribute]
 		thomas::object::Object* nativePtr;
+
+		static System::IO::Stream^ SerializeGameObject(GameObject^ gObj);
+		static GameObject^ DeSerializeGameObject(System::IO::Stream^ stream);
+
 	public:
 		[field:NonSerializedAttribute]
 		virtual event PropertyChangedEventHandler^ PropertyChanged;
@@ -65,6 +71,12 @@ namespace ThomasEditor {
 			}
 			return nullptr;
 		}
+
+		static GameObject^ Instantiate(GameObject^ original);
+		static GameObject^ Instantiate(GameObject^ original, Transform^ parent);
+		static GameObject^ Instantiate(GameObject^ original, Vector3 position, Quaternion rotation);
+		static GameObject^ Instantiate(GameObject^ original, Vector3 position, Quaternion rotation, Transform^ parent);
+
 
 		static List<Object^>^ GetObjects()
 		{

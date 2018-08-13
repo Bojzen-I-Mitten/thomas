@@ -99,8 +99,8 @@ namespace thomas {
 				m_data.vertexBuffers[resource::Shader::Semantics::TANGENT] = new utils::buffers::VertexBuffer(m_data.vertices.tangents);
 			if (m_data.vertices.bitangents.size() > 0)
 				m_data.vertexBuffers[resource::Shader::Semantics::BITANGENT] = new utils::buffers::VertexBuffer(m_data.vertices.bitangents);
-			if (m_data.vertices.boneWeight.size() > 0)
-				m_data.vertexBuffers[resource::Shader::Semantics::BONEWEIGHT] = new utils::buffers::VertexBuffer(m_data.vertices.boneWeight);
+			if (m_data.vertices.boneWeights.size() > 0)
+				m_data.vertexBuffers[resource::Shader::Semantics::BONEWEIGHT] = new utils::buffers::VertexBuffer(m_data.vertices.boneWeights);
 
 			if(!m_data.indices.empty())
 				m_data.indexBuffer = new utils::buffers::IndexBuffer(m_data.indices);

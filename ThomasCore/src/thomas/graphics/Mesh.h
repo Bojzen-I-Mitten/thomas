@@ -65,14 +65,14 @@ namespace thomas
 			std::vector<math::Vector3> normals;
 			std::vector<math::Vector3> tangents;
 			std::vector<math::Vector3> bitangents;
-			std::vector<BoneWeight> boneWeight;
+			std::vector<BoneWeight> boneWeights;
 		};
-
 
 		struct MeshData
 		{
 			Vertices vertices;
 			std::vector<int> indices;
+			
 			std::map<resource::Shader::Semantics, utils::buffers::VertexBuffer*> vertexBuffers;
 			utils::buffers::IndexBuffer* indexBuffer = nullptr;
 		};

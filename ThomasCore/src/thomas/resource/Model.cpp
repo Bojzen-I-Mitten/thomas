@@ -7,36 +7,41 @@ namespace thomas {
 
 		math::BoundingBox Model::GenerateBounds()
 		{
-			math::BoundingBox bounds = m_meshes[0]->m_bounds;
+			math::BoundingBox bounds = m_data.meshes[0]->m_bounds;
 			
-			for (int i = 1; i < m_meshes.size(); i++)
+			for (int i = 1; i < m_data.meshes.size(); i++)
 			{
-				math::BoundingBox::CreateMerged(bounds, bounds, m_meshes[i]->m_bounds);
+				math::BoundingBox::CreateMerged(bounds, bounds, m_data.meshes[i]->m_bounds);
 			}
 			return bounds;
 		}
 
 		void Model::OnChanged()
 		{
-			m_meshes.clear();
-			m_meshes = utils::AssimpLoader::LoadModel(m_path);
+			m_data.meshes.clear();
+			//m_data.meshes = utils::AssimpLoader::LoadModel(m_path);
 			m_bounds = GenerateBounds();
 		}
 
 		Model::Model(std::string path) : Resource(path)
 		{
-			m_meshes = utils::AssimpLoader::LoadModel(path);
+			m_data = utils::AssimpLoader::LoadModel(path);
 			m_bounds = GenerateBounds();
 		}
 		std::vector<std::shared_ptr<graphics::Mesh>> Model::GetMeshes()
 		{
-			return m_meshes;
+			return m_data.meshes;
+		}
+
+		std::vector<Model::BoneInfo> Model::GetBones()
+		{
+			return m_data.boneInfo;
 		}
 
 
 		Model::~Model()
 		{
-			m_meshes.clear();
+			m_data.meshes.clear();
 		}
 
 	}

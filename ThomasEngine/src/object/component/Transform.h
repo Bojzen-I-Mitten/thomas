@@ -30,15 +30,10 @@ namespace ThomasEditor
 					return (Transform^)GetObject(((thomas::object::component::Transform*)nativePtr)->GetParent());
 				else
 					return nullptr;
+				
 			}
 
-			void set(Transform^ newParent) 
-			{
-				if (newParent)
-					((thomas::object::component::Transform*)nativePtr)->SetParent((thomas::object::component::Transform*)newParent->nativePtr);
-				else
-					((thomas::object::component::Transform*)nativePtr)->SetParent(nullptr);
-			}
+			void set(Transform^ value);
 		}
 
 		[BrowsableAttribute(false)]

@@ -62,9 +62,16 @@ struct v2f {
 v2f vert(appdata_thomas v)
 {
 	v2f o;
-	o.vertex = ThomasObjectToClipPos(v.vertex);
-	o.worldPos = ThomasObjectToWorldPos(v.vertex);
-	o.normal = ThomasWorldToObjectDir(v.normal);
+
+    float3x3 boneTransform; = v.boneWeight.boneIndex0 * v.boneWeight.weight0;
+    //boneTransform += v.boneWeight.boneIndex1 * v.boneWeight.weight1;
+    //boneTransform += v.boneWeight.boneIndex2 * v.boneWeight.weight2;
+    //boneTransform += v.boneWeight.boneIndex3 * v.boneWeight.weight3;
+    float3 posL = mul(boneTransform, v.vertex);
+    float3 normalL = mul(boneTransform, v.normal);
+    o.vertex = ThomasObjectToClipPos(posL);
+    o.worldPos = ThomasObjectToWorldPos(posL);
+    o.normal = ThomasWorldToObjectDir(normalL);
     o.texcoord = v.texcoord;
 	return o;
 }

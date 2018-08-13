@@ -10,10 +10,10 @@ namespace ThomasEditor
 {
 	Resource^ Resources::Load(String^ path)
 	{
-		
-		if (resources->ContainsKey(System::IO::Path::GetFullPath(path)))
+		String^ fullPath = System::IO::Path::GetFullPath(path);
+		if (resources->ContainsKey(fullPath))
 		{
-			Resource^ obj = resources[System::IO::Path::GetFullPath(path)];
+			Resource^ obj = resources[fullPath];
 			return obj;
 		}
 		else
@@ -48,7 +48,7 @@ namespace ThomasEditor
 			}
 			if (obj != nullptr)
 			{
-				resources[System::IO::Path::GetFullPath(path)] = obj;
+				resources[fullPath] = obj;
 			}
 			return obj;
 		}

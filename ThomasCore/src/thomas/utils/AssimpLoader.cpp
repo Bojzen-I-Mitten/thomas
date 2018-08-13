@@ -12,9 +12,9 @@ namespace thomas
 {
 	namespace utils
 	{
-		std::vector<std::shared_ptr<graphics::Mesh>> AssimpLoader::LoadModel(std::string path)
+		resource::Model::ModelData AssimpLoader::LoadModel(std::string path)
 		{
-
+			resource::Model::ModelData modelData;
 			std::vector<std::shared_ptr<graphics::Mesh>> meshes;
 			std::string dir = path.substr(0, path.find_last_of("\\/"));
 			// Read file via ASSIMP
@@ -31,24 +31,25 @@ namespace thomas
 				aiProcess_RemoveRedundantMaterials |
 				aiProcess_SortByPType |
 				aiProcess_Triangulate |
-				aiProcess_RemoveComponent |
 				aiProcess_ValidateDataStructure |
 				aiProcess_GenSmoothNormals |
 				aiProcess_CalcTangentSpace |
-				aiProcess_FlipUVs |
-				aiProcess_PreTransformVertices
+				aiProcess_FlipUVs
 			);
 
 			if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 			{
 				LOG("ERROR::ASSIMP " << importer.GetErrorString());
-				return meshes;
+				return modelData;
 			}
 
 
 			// Process ASSIMP's root node recursively
-			ProcessNode(scene->mRootNode, scene, meshes);
-			return meshes;
+			ProcessNode(scene->mRootNode, scene, modelData);
+			
+			math::Matrix globalInverseTransform = math::Matrix((float*)&scene->mRootNode->mTransformation.Inverse());
+			ProcessSkeleton(scene->mRootNode, modelData, -1, globalInverseTransform, math::Matrix::Identity);
+			return modelData;
 		}
 
 		std::string AssimpLoader::GetMaterialName(aiMaterial * material)
@@ -161,7 +162,8 @@ namespace thomas
 			return opacity;
 		}
 
-		std::shared_ptr<graphics::Mesh> AssimpLoader::ProcessMesh(aiMesh * mesh, const aiScene* scene, std::string meshName)
+		void AssimpLoader::ProcessMesh(aiMesh * mesh, const aiScene* scene,
+			std::string meshName, resource::Model::ModelData& modelData, aiMatrix4x4& transform)
 		{
 			graphics::Vertices vertices;
 			std::vector <int> indices;
@@ -170,11 +172,20 @@ namespace thomas
 
 			//vector<Texture> textures;
 			vertices.positions.resize(mesh->mNumVertices);
-			vertices.texCoord0.resize(mesh->mNumVertices);
 			vertices.normals.resize(mesh->mNumVertices);
-			vertices.tangents.resize(mesh->mNumVertices);
-			vertices.bitangents.resize(mesh->mNumVertices);
-			vertices.boneWeight.resize(mesh->mNumVertices);
+
+			if (mesh->mTextureCoords[0])
+				vertices.texCoord0.resize(mesh->mNumVertices);
+			
+			if (mesh->HasTangentsAndBitangents())
+			{
+				vertices.tangents.resize(mesh->mNumVertices);
+				vertices.bitangents.resize(mesh->mNumVertices);
+			}
+				
+
+			if (mesh->HasBones())
+				vertices.boneWeights.resize(mesh->mNumVertices);
 
 			// Walk through each of the mesh's vertices
 			for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -182,26 +193,21 @@ namespace thomas
 				
 
 				// Positions
-				vertices.positions[i].x = mesh->mVertices[i].x;
-				vertices.positions[i].y = mesh->mVertices[i].y;
-				vertices.positions[i].z = mesh->mVertices[i].z;
+				vertices.positions[i] = math::Vector3((float*)&(transform * mesh->mVertices[i]));
 
 				// Normals
-				vertices.normals[i].x = mesh->mNormals[i].x;
-				vertices.normals[i].y = mesh->mNormals[i].y;
-				vertices.normals[i].z = mesh->mNormals[i].z;
+				vertices.normals[i] = math::Vector3((float*)&(transform *mesh->mNormals[i]));
 
 				// Tangents
 				if (mesh->HasTangentsAndBitangents())
 				{
-					vertices.tangents[i].x = mesh->mTangents[i].x;
-					vertices.tangents[i].y = mesh->mTangents[i].y;
-					vertices.tangents[i].z = mesh->mTangents[i].z;
+					
+					
+
+					vertices.tangents[i] = math::Vector3((float*)&mesh->mTangents[i]);
 
 					// Bitangents
-					vertices.bitangents[i].x = mesh->mBitangents[i].x;
-					vertices.bitangents[i].y = mesh->mBitangents[i].y;
-					vertices.bitangents[i].z = mesh->mBitangents[i].z;
+					vertices.bitangents[i] = math::Vector3((float*)&mesh->mBitangents[i]);
 
 				}
 				
@@ -209,12 +215,12 @@ namespace thomas
 				// Texture Coordinates
 				if (mesh->mTextureCoords[0])
 				{
+					
 					math::Vector2 vec;
 
 					// A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
 					// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-					vertices.texCoord0[i].x = mesh->mTextureCoords[0][i].x;
-					vertices.texCoord0[i].y = mesh->mTextureCoords[0][i].y;
+					vertices.texCoord0[i] = math::Vector2((float*)&mesh->mTextureCoords[0]);
 				}
 			}
 
@@ -227,34 +233,32 @@ namespace thomas
 					indices.push_back(face.mIndices[j]);
 			}
 
-
 			if (mesh->HasBones())
 			{
+				for (unsigned i = 0; i < mesh->mNumBones; i++)
+				{
+					
+					unsigned int boneIndex = 0;
+					aiBone* meshBone = mesh->mBones[i];
+					std::string boneName = meshBone->mName.C_Str();
+					if (modelData.boneMapping.find(boneName) == modelData.boneMapping.end()) //bone does not exist
+					{
+						boneIndex = modelData.boneInfo.size();
+						resource::Model::BoneInfo bi;
+						modelData.boneInfo.push_back(bi);
+						
+					}
+					else //Bone already exists
+						boneIndex = modelData.boneMapping[boneName];
 
-			}
-			std::map<std::string, unsigned int> boneMapping;
-			std::map<unsigned int, math::Matrix> bones;
-			
-			for (unsigned i = 0; i < mesh->mNumBones; i++)
-			{
-				unsigned int boneIndex = 0;
-				aiBone* bone = mesh->mBones[i];
-				std::string boneName = bone->mName.C_Str();
-				
-				if (boneMapping.find(boneName) == boneMapping.end())
-				{
-					boneIndex = boneMapping.size();
-					boneMapping[boneName] = boneIndex;
-				}
-				else
-				{
-					boneIndex = boneMapping[boneName];
-				}
-				bones[boneIndex] = math::Matrix((float*)&bone->mOffsetMatrix);
-				
-				for (int j = 0; j < bone->mNumWeights; j++)
-				{
-					vertices.boneWeight[bone->mWeights[0].mVertexId].AddBoneData(boneIndex, bone->mWeights[j].mWeight);
+					modelData.boneMapping[boneName] = boneIndex;
+					modelData.boneInfo[boneIndex].name = boneName;
+					modelData.boneInfo[boneIndex].offsetMatrix = math::Matrix((float*)&meshBone->mOffsetMatrix);
+
+					for (int j = 0; j < meshBone->mNumWeights; j++)
+					{
+						vertices.boneWeights[meshBone->mWeights[j].mVertexId].AddBoneData(boneIndex, meshBone->mWeights[j].mWeight);
+					}
 				}
 			}
 
@@ -267,28 +271,59 @@ namespace thomas
 
 
 			std::shared_ptr<graphics::Mesh> m(new graphics::Mesh(vertices, indices, name));
-			return m;
+			modelData.meshes.push_back(m);
+
 		}
 
-		void AssimpLoader::ProcessNode(aiNode * node, const aiScene * scene, std::vector<std::shared_ptr<graphics::Mesh>> &meshes)
+		void AssimpLoader::ProcessSkeleton(aiNode * node, resource::Model::ModelData & modelData, int parentBone, math::Matrix globalInverseTransform, math::Matrix parentTransform)
+		{
+			std::string boneName = node->mName.C_Str();
+
+			math::Matrix nodeTransform = math::Matrix((float*)&node->mTransformation);
+			math::Matrix globalTransform = nodeTransform * parentTransform;
+
+			if (modelData.boneMapping.find(node->mName.C_Str()) != modelData.boneMapping.end())
+			{
+				unsigned int BoneIndex = modelData.boneMapping[boneName];
+				if (parentBone != -1)
+					modelData.boneInfo[BoneIndex].parentBone = parentBone;
+				else
+					modelData.boneInfo[BoneIndex].parentBone = BoneIndex;
+				parentBone = BoneIndex;
+				
+				modelData.boneInfo[BoneIndex].offsetMatrix =
+					(globalInverseTransform * globalTransform * modelData.boneInfo[BoneIndex].offsetMatrix).Transpose();
+			}
+			else
+			{
+				int x = 5;
+			}
+			for (unsigned int i = 0; i < node->mNumChildren; i++)
+			{
+				ProcessSkeleton(node->mChildren[i], modelData, parentBone, globalInverseTransform, globalTransform);
+			}
+		}
+
+		void AssimpLoader::ProcessNode(aiNode * node, const aiScene * scene, resource::Model::ModelData& modelData)
 		{
 			std::string modelName(scene->mRootNode->mName.C_Str());
 			std::string nodeName(node->mName.C_Str());
 			if (nodeName == modelName)
-				nodeName = "";
+				nodeName = "root";
 			// Process each mesh located at the current node
 			for (unsigned int i = 0; i < node->mNumMeshes; i++)
 			{
 				// The node object only contains indices to index the actual objects in the scene. 
 				// The scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 				aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-				std::shared_ptr<graphics::Mesh> processedMesh = ProcessMesh(mesh, scene, modelName + "-" + nodeName + "-" + std::to_string(i));
-				meshes.push_back(processedMesh);
+				
+				ProcessMesh(mesh, scene, modelName + "-" + nodeName + "-" + std::to_string(i), modelData, node->mTransformation);
 			}
+			
 			// After we've processed all of the meshes (if any) we then recursively process each of the children nodes
 			for (unsigned int i = 0; i < node->mNumChildren; i++)
 			{
-				ProcessNode(node->mChildren[i], scene, meshes);
+				ProcessNode(node->mChildren[i], scene, modelData);
 			}
 		}
 	}
