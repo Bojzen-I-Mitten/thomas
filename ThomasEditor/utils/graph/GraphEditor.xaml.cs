@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Thomas_Graph
+namespace ThomasEditor
 {
     /// <summary>
     /// Interaction logic for GraphEditor.xaml
@@ -24,14 +24,14 @@ namespace Thomas_Graph
         bool isExpanded = false;
         public static readonly DependencyProperty ValueProperty =
         DependencyProperty.Register(
-        "Value", typeof(Bezier),
+        "Value", typeof(Curve),
         typeof(GraphEditor),
-        new PropertyMetadata(new Bezier())
+        new PropertyMetadata(new Curve())
         );
 
-        public Bezier Value
+        public Curve Value
         {
-            get { return (Bezier)GetValue(ValueProperty); }
+            get { return (Curve)GetValue(ValueProperty); }
             set { SetValue(ValueProperty, value); }
         }
 
@@ -47,7 +47,7 @@ namespace Thomas_Graph
             set { SetValue(PropNameProperty, value); }
         }
 
-        ExpandedGraphControl expandedGraph;
+        Thomas_Graph.ExpandedGraphControl expandedGraph;
         public GraphEditor()
         {
             InitializeComponent();
@@ -65,6 +65,11 @@ namespace Thomas_Graph
 
         private void GraphEditor_Unloaded(object sender, RoutedEventArgs e)
         {
+            if(expandedGraph != null)
+            {
+                expandedGraph.Close();
+                expandedGraph = null;
+            }
             graph.OnPointsChanged -= GraphControl_OnPointsChanged;
             graph.points.CollectionChanged -= Points_CollectionChanged;
         }
@@ -72,16 +77,19 @@ namespace Thomas_Graph
         private void GraphEditor_Loaded(object sender, RoutedEventArgs e)
         {
             if (Value == null)
-                Value = new Bezier();
+                Value = new Curve();
             graph.OnPointsChanged += GraphControl_OnPointsChanged;
             graph.points.CollectionChanged += Points_CollectionChanged;
             UpdatePoints();
+
+            if (Value.expandedInPropertyGrid)
+                Expand(null, new RoutedEventArgs());
         }
 
         private void UpdateValue()
         {
             List<Point> points = new List<Point>();
-            foreach (CustomPoint cp in graph.points)
+            foreach (Thomas_Graph.CustomPoint cp in graph.points)
                 points.Add(new Point(cp.X / graph.gridSpacing, cp.Y / graph.gridSpacing));
             Value.points = points;
         }
@@ -100,7 +108,8 @@ namespace Thomas_Graph
             if(expandedGraph == null)
             {
                 isExpanded = true;
-                expandedGraph = new ExpandedGraphControl(graph);
+                Value.expandedInPropertyGrid = true;
+                expandedGraph = new Thomas_Graph.ExpandedGraphControl(graph);
                 expandedGraph.Title = PropName;
                 expandedGraph.graph.OnPointsChanged += GraphControl_OnPointsChanged;
                 expandedGraph.onPopIn += ExpandedGraph_onPopIn;
@@ -117,6 +126,7 @@ namespace Thomas_Graph
         private void ExpandedGraph_onPopIn()
         {
             isExpanded = false;
+            Value.expandedInPropertyGrid = false;
             expandedGraph.Close();
             popup.IsOpen = true;
             popup.Height = popup.Width / 16 * 9;
@@ -128,6 +138,7 @@ namespace Thomas_Graph
         private void W_Closed(object sender, EventArgs e)
         {
             expandedGraph = null;
+            
         }
 
         private void Show_Graph(object sender, RoutedEventArgs e)

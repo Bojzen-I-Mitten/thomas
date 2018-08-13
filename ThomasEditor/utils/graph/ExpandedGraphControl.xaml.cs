@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,9 +45,15 @@ namespace Thomas_Graph
                 this.Width = width;
                 this.Height = height;
             }
-            graph.points = smallGraph.points;
+            SetPoints(smallGraph.points);
+        }
+
+        public void SetPoints(ObservableCollection<CustomPoint> points)
+        {
+            graph.points = points;
             graph.UpdateRawPoints();
         }
+
         private void ExpandedGraphControl_Closed(object sender, EventArgs e)
         {
             left = this.Left;

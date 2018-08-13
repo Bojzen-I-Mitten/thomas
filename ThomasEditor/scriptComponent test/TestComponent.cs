@@ -8,12 +8,8 @@ namespace ThomasEditor
 {
     public class TestComponent : ScriptComponent
     {
-        public int testVar { get; set; }
-        public AudioClip audioClip { get; set; }
-        public Material mat { get; set; }
-
-        public Thomas_Graph.Bezier posCurve {get; set;}
-        public Thomas_Graph.Bezier scaleCurve { get; set; }
+        public Curve posCurve {get; set;}
+        public Curve scaleCurve { get; set; }
 
         float t = 0;
 
@@ -25,21 +21,8 @@ namespace ThomasEditor
         public override void Update()
         {
             t += Time.DeltaTime;
-            gameObject.transform.position = new Vector3(0, (float)posCurve.GetYFromX((t*10) % 10), 0);
-            gameObject.transform.scale = new Vector3((float)scaleCurve.GetYFromX((t*10) % 10), 1, (float)scaleCurve.GetYFromX((t*10) % 10));
-            if (Input.GetKeyDown(Input.Keys.K))
-            {
-
-                //RenderComponent r = gameObject.AddComponent<RenderComponent>();
-                
-            }
-            if (Input.GetKeyDown(Input.Keys.Space))
-            {
-                testVar = 10;
-                //gameObject.GetComponent<SoundComponent>().Play();
-                
-                
-            }
+            gameObject.transform.position = new Vector3(0, (float)posCurve.GetYFromX((t*6.5) % 5), 0);
+            gameObject.transform.scale = new Vector3((float)scaleCurve.GetYFromX((t*6.5) % 5), 1, (float)scaleCurve.GetYFromX((t*6.5) % 5));
         }
     }
 }

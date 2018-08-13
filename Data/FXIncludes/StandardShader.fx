@@ -128,7 +128,7 @@ float CalculatePointLightContribution(float4 lightColor, float lightIntensity, f
 void Apply(inout float4 colorAcculmulator, float3 lightMultiplyer, float3 normal, float3 lightDir, float3 viewDir)//should take material properties later
 {
     float4 ambient = float4(0.1f, 0.1f, 0.1f, 1.0f);
-    float4 diffuse = float4(0.4f, 0.4f, 0.4f, 1.0f);
+    float4 diffuse = wow;
     float4 specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
     float smoothness = 16.0f;
 
@@ -149,7 +149,7 @@ float4 frag(v2f input) : SV_TARGET
     tempLight.color = float3(0.5f, 0.5f, 0.5f);
     tempLight.position = float3(3, 3, 3);
     tempLight.intensity = 1;
-    tempLight.direction = -normalize(float3(1, 1, 1));
+    tempLight.direction = normalize(float3(-0.5, -1, -0.8));
     tempLight.spotInnerAngle = 10.0f;
     tempLight.spotOuterAngle = 30.0f;
     tempLight.attenuation = float3(0.4f, 0.02f, 0.1f);
@@ -205,7 +205,6 @@ float4 frag(v2f input) : SV_TARGET
         lightMultiplyer = spotFactor * tempLight.color * tempLight.intensity / (tempLight.attenuation.x + tempLight.attenuation.y * lightDistance + tempLight.attenuation.z * lightDistance * lightDistance);
         Apply(finalColor, lightMultiplyer, input.normal, lightDir, viewDir);
     }
-    return ambientTex.Sample(StandardWrapSampler, input.texcoord) * wow;
     return saturate(finalColor);
 
 }

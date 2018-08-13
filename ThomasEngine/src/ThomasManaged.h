@@ -214,11 +214,13 @@ namespace ThomasEditor {
 				UpdateSelectedObjects();
 		}
 
+		static Guid selectedGUID;
 		static void Play()
 		{
 			ThomasEditor::Resources::OnPlay();
 			Scene::CurrentScene->Play();
 			playing = true;
+			
 		}
 
 		static bool IsPlaying()
@@ -228,9 +230,20 @@ namespace ThomasEditor {
 
 		static void Stop()
 		{
+			if (SelectedGameObjects->Count > 0)
+				selectedGUID = SelectedGameObjects[0]->m_guid;
+			else
+				selectedGUID = Guid::Empty;
 			playing = false;
 			Scene::RestartCurrentScene();
 			ThomasEditor::Resources::OnStop();
+			if (selectedGUID != Guid::Empty)
+			{
+				GameObject^ gObj = (GameObject^)ThomasEditor::Object::Find(selectedGUID);
+				if (gObj)
+					SelectGameObject(gObj);
+			}
+				
 		}
 
 		static void SelectGameObject(GameObject^ gObj)

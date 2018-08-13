@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:ThomasEditor.Inspectors"
              xmlns:converters="clr-namespace:ThomasEditor.Converters"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:editor="clr-namespace:ThomasEditor"
              xmlns:managed="clr-namespace:ThomasEditor;assembly=ThomasEngine"
-             xmlns:graph="clr-namespace:Thomas_Graph"
              mc:Ignorable="d" 
               xmlns:p="clr-namespace:PropertyTools.Wpf;assembly=PropertyTools.Wpf"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -52,7 +52,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="CurveEditor">
-            <graph:GraphEditor PropName="{Binding DisplayName}" Value="{Binding Value, Mode=TwoWay}"/>
+            <editor:GraphEditor PropName="{Binding DisplayName}" Value="{Binding Value, Mode=TwoWay}"/>
         </DataTemplate>
         
         <DataTemplate x:Key="TextureEditor">
@@ -161,7 +161,7 @@
             </xctk:EditorTemplateDefinition>
             <xctk:EditorTemplateDefinition EditingTemplate="{StaticResource CurveEditor}">
                 <xctk:EditorTemplateDefinition.TargetProperties>
-                    <xctk:TargetPropertyType Type="graph:Bezier"/>
+                    <xctk:TargetPropertyType Type="managed:Curve"/>
                 </xctk:EditorTemplateDefinition.TargetProperties>
             </xctk:EditorTemplateDefinition>
         </xctk:PropertyGrid.EditorDefinitions>
