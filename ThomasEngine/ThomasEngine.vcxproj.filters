@@ -36,6 +36,7 @@
     <ClCompile Include="src\object\component\physics\MeshCollider.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\math\Curve.cpp" />
+    <ClCompile Include="src\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\resource\Model.h" />

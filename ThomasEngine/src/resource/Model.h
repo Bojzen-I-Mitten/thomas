@@ -2,6 +2,8 @@
 #pragma unmanaged
 #include <thomas\resource\Model.h>
 #include <thomas\utils\Primitives.h>
+#include <thomas\graphics\Mesh.h>
+#include <memory>
 #pragma managed
 #include "Resource.h"
 
@@ -25,6 +27,7 @@ namespace ThomasEditor
 	public:
 		Model(String^ path) : Resource(path, new thomas::resource::Model(Utility::ConvertString(path))) {};
 
+		void GenerateBones(GameObject^ parent);
 		~Model()
 		{
 			if (m_nativePtr)
@@ -32,11 +35,10 @@ namespace ThomasEditor
 		}
 		[OnDeserializedAttribute]
 		void OnDeserialized(StreamingContext c)
-		{
-
+		{						
 			m_nativePtr = new thomas::resource::Model(Utility::ConvertString(m_path));
 		}
-		
+						
 		static Model^ GetPrimitive(PrimitiveType type) { return gcnew Model(thomas::utils::Primitives::GetPrimitive((thomas::utils::Primitives::Type)type)); }
 	};
 }

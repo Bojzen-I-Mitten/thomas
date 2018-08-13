@@ -78,23 +78,22 @@ namespace ThomasEditor
 			}
 		}
 		
-		void Awake()
-		{
-			Monitor::Enter(m_componentsLock);
-			List<Component^>^ uninitializedComponents = gcnew List<Component^>;
-			for each(Component^ component in m_components)
-			{
-				if (!component->initialized)
-					uninitializedComponents->Add(component);
-
-			}
-			initComponents(uninitializedComponents);
-			Monitor::Exit(m_componentsLock);
-		}
-
 		void Update()
 		{
 			Monitor::Enter(m_componentsLock);
+			if (Scene::CurrentScene->IsPlaying())
+			{
+				List<Component^>^ uninitializedComponents = gcnew List<Component^>;
+				for each(Component^ component in m_components)
+				{
+					if (!component->initialized)
+						uninitializedComponents->Add(component);
+
+				}
+				initComponents(uninitializedComponents);
+			}
+
+
 			for (int i = 0; i < m_components.Count; i++)
 			{
 				Component^ component = m_components[i];

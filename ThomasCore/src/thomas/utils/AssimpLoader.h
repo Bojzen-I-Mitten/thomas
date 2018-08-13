@@ -4,7 +4,8 @@
 #include <string>
 #include "Math.h"
 #include <memory>
-
+#include "../resource/Model.h"
+#include <assimp\matrix4x4.h>
 struct aiNode;
 struct aiMesh;
 struct aiScene;
@@ -22,11 +23,12 @@ namespace thomas
 		class AssimpLoader
 		{
 		private:
-			static std::shared_ptr<graphics::Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene, std::string meshName);
-			static void ProcessNode(aiNode* node, const aiScene* scene, std::vector<std::shared_ptr<graphics::Mesh>> &meshes);
+			static void ProcessMesh(aiMesh* mesh, const aiScene* scene, std::string meshName, resource::Model::ModelData& modelData, aiMatrix4x4& transform);
+			static void ProcessSkeleton(aiNode* node, resource::Model::ModelData& modelData, int parentBone, math::Matrix globalInverseTransform, math::Matrix parentTransform);
+			static void ProcessNode(aiNode* node, const aiScene* scene, resource::Model::ModelData& modelData);
 		public:
 
-			static std::vector<std::shared_ptr<graphics::Mesh>> LoadModel(std::string path);
+			static resource::Model::ModelData LoadModel(std::string path);
 			
 			static std::string GetMaterialName(aiMaterial* material);
 			static int GetMaterialShadingModel(aiMaterial* material);

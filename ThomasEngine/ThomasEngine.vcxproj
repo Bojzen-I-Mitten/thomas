@@ -211,6 +211,7 @@
     <ClCompile Include="src\resource\Shader.cpp" />
     <ClCompile Include="src\ThomasManaged.cpp" />
     <ClCompile Include="src\Time.cpp" />
+    <ClCompile Include="src\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

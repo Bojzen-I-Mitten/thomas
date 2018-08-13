@@ -121,7 +121,7 @@ namespace ThomasEditor
 			String^ extension = System::IO::Path::GetExtension(path);
 			if (extension->Length == 0)
 				return AssetTypes::UNKNOWN;
-			extension = extension->Remove(0, 1);
+			extension = extension->Remove(0, 1)->ToLower();
 			if (extension == "fx")
 			{
 				return AssetTypes::SHADER;
@@ -134,7 +134,7 @@ namespace ThomasEditor
 			{
 				return AssetTypes::AUDIO_CLIP;
 			}
-			else if (extension == "obj")
+			else if (extension == "obj" || extension == "fbx" || extension == "dae")
 			{
 				return AssetTypes::MODEL;
 			}

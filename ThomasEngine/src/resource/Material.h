@@ -174,5 +174,5 @@ namespace ThomasEditor
 	/*	Texture* GetTexture(String^ name);
 		void SetTexture(String^ name, Texture& value);*/
 
-};
+	};
 }

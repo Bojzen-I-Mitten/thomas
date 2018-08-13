@@ -10,12 +10,16 @@ namespace ThomasEditor
     {
         public Curve posCurve {get; set;}
         public Curve scaleCurve { get; set; }
+        public int testVar { get; set; }
+        public AudioClip audioClip { get; set; }
+        public Material mat { get; set; }
+        public Model m { get; set; }
 
         float t = 0;
 
         public override void Start()
         {
-
+            m.GenerateBones(gameObject);
         }
 
         public override void Update()

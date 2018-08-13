@@ -30,7 +30,8 @@ namespace thomas
 				COLOR = 8,
 				POSITIONT = 9,
 				PSIZE = 10,
-				UNKNOWN = 11
+				UNKNOWN = 11,
+				BONEWEIGHT = 12
 			};
 		private:
 			static bool Compile(std::string path, ID3DX11Effect** effect);
