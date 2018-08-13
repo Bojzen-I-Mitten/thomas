@@ -45,6 +45,18 @@
 #define LIGHTMAP_RGBM_SCALE 5.0
 #define EMISSIVE_RGBM_SCALE 97.0
 
+//struct BoneWeight
+//{
+//    int boneIndex0;
+//    int boneIndex1;
+//    int boneIndex2;
+//    int boneIndex3;
+
+//    float weight0;
+//    float weight1;
+//    float weight2;
+//    float weight3;
+//};
 
 struct appdata_thomas {
 	float3 vertex : POSITION;
@@ -52,6 +64,7 @@ struct appdata_thomas {
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
 	float3 bitangent : BITANGENT;
+    //BoneWeight boneWeight : BONEWEIGHT;
 };
 
 

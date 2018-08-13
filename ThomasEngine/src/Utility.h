@@ -2,6 +2,7 @@
 #include <string>
 #include <msclr\marshal_cppstd.h>
 using namespace System;
+
 namespace ThomasEditor
 {
 	class Utility

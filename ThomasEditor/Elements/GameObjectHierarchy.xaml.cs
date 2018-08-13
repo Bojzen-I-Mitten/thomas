@@ -31,7 +31,13 @@ namespace ThomasEditor
             Scene.sceneChanged = SceneGameObjectsChanged;
             Scene.CurrentScene.GameObjects.CollectionChanged += SceneGameObjectsChanged;
             ThomasWrapper.SelectedGameObjects.CollectionChanged += SceneSelectedGameObjectChanged;
+            ThomasWrapper.OnEditorUpdate += ThomasWrapper_OnEditorUpdate;
             instance = this;
+        }
+
+        private void ThomasWrapper_OnEditorUpdate()
+        {
+            ResetTreeView();
         }
 
         private void BuildTree(Transform parent, TreeViewItem parentTree)
@@ -54,19 +60,22 @@ namespace ThomasEditor
 
         private void ResetTreeView()
         {
-            hierarchy.Items.Clear();
-            foreach (GameObject gObj in Scene.CurrentScene.GameObjects)
+            this.Dispatcher.Invoke((Action)(() => 
             {
-                if (gObj.transform.parent == null)
+                hierarchy.Items.Clear();
+                foreach (GameObject gObj in Scene.CurrentScene.GameObjects)
                 {
-                    TreeViewItem node = new TreeViewItem { DataContext = gObj };
-                    //node.MouseRightButtonUp += Node_MouseRightButtonUp;
-                    node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
-                    node.Padding = new Thickness(0, 0, 0, 2);
-                    BuildTree(gObj.transform, node);
-                    hierarchy.Items.Add(node);
+                    if (gObj.transform.parent == null)
+                    {
+                        TreeViewItem node = new TreeViewItem { DataContext = gObj };
+                        //node.MouseRightButtonUp += Node_MouseRightButtonUp;
+                        node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
+                        node.Padding = new Thickness(0, 0, 0, 2);
+                        BuildTree(gObj.transform, node);
+                        hierarchy.Items.Add(node);
+                    }
                 }
-            }
+            }));
         }
 
         public void Unselect()
@@ -81,43 +90,47 @@ namespace ThomasEditor
 
         private void SceneGameObjectsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.NewItems != null)
+            this.Dispatcher.Invoke((Action)(() => 
             {
-
-                foreach (GameObject newItem in e.NewItems)
+                if (e.NewItems != null)
                 {
-                    if (newItem.transform.parent == null)
+
+                    foreach (GameObject newItem in e.NewItems)
                     {
-                        TreeViewItem node = new TreeViewItem { DataContext = newItem };
-                        //node.MouseRightButtonUp += Node_MouseRightButtonUp;
-                        node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
-                        node.Padding = new Thickness(0, 0, 0, 2);
-                        
-                       
-                        BuildTree(newItem.transform, node);
-                        hierarchy.Items.Add(node);
+                        if (newItem.transform.parent == null)
+                        {
+                            TreeViewItem node = new TreeViewItem { DataContext = newItem };
+                            //node.MouseRightButtonUp += Node_MouseRightButtonUp;
+                            node.SetBinding(TreeViewItem.HeaderProperty, new Binding("Name"));
+                            node.Padding = new Thickness(0, 0, 0, 2);
+
+
+                            BuildTree(newItem.transform, node);
+                            hierarchy.Items.Add(node);
+                        }
                     }
                 }
-            }
 
-            if (e.OldItems != null)
-            {
-                foreach (GameObject oldItem in e.OldItems)
+                if (e.OldItems != null)
                 {
-                    oldItem.Destroy();
-                    DeleteObjectInTree(hierarchy.Items, oldItem);
-                    ////oldItem.Destroy();
-                    //foreach (TreeViewItem node in hierarchy.Items)
-                    //{
-                    //    if (node.DataContext == oldItem)
-                    //    {
-                    //        //node.MouseRightButtonUp -= Node_MouseRightButtonUp;
-                    //        hierarchy.Items.Remove(node);
-                    //        break;
-                    //    }
-                    //}
+                    foreach (GameObject oldItem in e.OldItems)
+                    {
+                        oldItem.Destroy();
+                        DeleteObjectInTree(hierarchy.Items, oldItem);
+                        ////oldItem.Destroy();
+                        //foreach (TreeViewItem node in hierarchy.Items)
+                        //{
+                        //    if (node.DataContext == oldItem)
+                        //    {
+                        //        //node.MouseRightButtonUp -= Node_MouseRightButtonUp;
+                        //        hierarchy.Items.Remove(node);
+                        //        break;
+                        //    }
+                        //}
+                    }
                 }
-            }
+            }));
+            
 
         }
 
