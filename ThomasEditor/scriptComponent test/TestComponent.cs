@@ -19,7 +19,7 @@ namespace ThomasEditor
 
         public override void Start()
         {
-            m.GenerateBones(gameObject);
+           // m.GenerateBones(gameObject);
         }
 
         public override void Update()
