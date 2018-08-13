@@ -11,6 +11,7 @@ namespace ThomasEditor
         public int testVar { get; set; }
         public AudioClip audioClip { get; set; }
         public Material mat { get; set; }
+        public Model m { get; set; }
 
         public Thomas_Graph.Bezier posCurve {get; set;}
         public Thomas_Graph.Bezier scaleCurve { get; set; }
@@ -19,7 +20,7 @@ namespace ThomasEditor
 
         public override void Start()
         {
-
+            m.GenerateBones(gameObject);
         }
 
         public override void Update()

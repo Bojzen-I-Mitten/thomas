@@ -10,10 +10,10 @@ namespace ThomasEditor
 		String^ tempFile = System::IO::Path::Combine(Environment::GetFolderPath(Environment::SpecialFolder::LocalApplicationData), "thomas/scene.tds");
 		SaveSceneAs(this, tempFile);
 		m_playing = true;
-		for each(GameObject^ gObj in m_gameObjects)
-		{
-			gObj->Awake();
-		}
+		//for each(GameObject^ gObj in m_gameObjects)
+		//{
+		//	gObj->Awake();
+		//}
 	}
 
 	Scene^ Scene::CurrentScene::get()

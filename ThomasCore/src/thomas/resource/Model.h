@@ -4,6 +4,7 @@
 #include "Resource.h"
 #include <vector>
 #include <memory>
+#include <map>
 namespace thomas {
 	namespace graphics
 	{
@@ -16,17 +17,28 @@ namespace thomas {
 			math::BoundingBox GenerateBounds();
 			void OnChanged();
 		public:
+			struct BoneInfo
+			{
+				std::string name;
+				math::Matrix offsetMatrix;
+				unsigned int parentBone;
+			};
+			struct ModelData
+			{
+				std::map<std::string, unsigned int> boneMapping;
+				std::vector<BoneInfo> boneInfo;
+				std::vector<std::shared_ptr<graphics::Mesh>> meshes;
+			};
 			Model(std::string path);
 
 			std::vector<std::shared_ptr<graphics::Mesh>> GetMeshes();
-
+			std::vector<BoneInfo> GetBones();
 			~Model();
 			
 		public:
 			math::BoundingBox m_bounds;
 		private:
-			std::vector<std::shared_ptr<graphics::Mesh>> m_meshes;
-						
+			ModelData m_data;
 		};
 	}
 }

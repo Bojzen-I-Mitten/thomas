@@ -34,12 +34,16 @@ namespace ThomasEditor {
 	{
 	private:
 
+		static bool updateEditor = false;
+
 		static Thread^ mainThread;
 		static Thread^ renderThread;
 		static bool playing = false;	
 		static ManualResetEvent^ RenderFinished;
 		static ManualResetEvent^ UpdateFinished;
 	public:
+		delegate void UpdateEditor();
+		static event UpdateEditor^ OnEditorUpdate;
 
 		enum class ManipulatorOperation {
 			TRANSLATE,
@@ -65,6 +69,11 @@ namespace ThomasEditor {
 				renderThread->Start();
 			}
 
+		}
+
+		static void UpdateEditor()
+		{
+			updateEditor = true;
 		}
 
 		static void StartRenderer()
@@ -114,8 +123,9 @@ namespace ThomasEditor {
 				{
 					//Physics
 					thomas::Physics::UpdateRigidbodies();
-					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
+					for (int i = 0; i < Scene::CurrentScene->GameObjects->Count; i++)
 					{
+						GameObject^ gameObject = Scene::CurrentScene->GameObjects[i];
 						if (gameObject->GetActive())
 							gameObject->FixedUpdate(); //Should only be ran at fixed timeSteps.
 					}
@@ -123,8 +133,9 @@ namespace ThomasEditor {
 				}
 
 				//Logic
-				for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
+				for (int i = 0; i < Scene::CurrentScene->GameObjects->Count; i++)
 				{
+					GameObject^ gameObject = Scene::CurrentScene->GameObjects[i];
 					if(gameObject->GetActive())
 						gameObject->Update();
 				}
@@ -139,8 +150,9 @@ namespace ThomasEditor {
 				{
 						
 					editor::EditorCamera::Render();
-					for each(ThomasEditor::GameObject^ gameObject in Scene::CurrentScene->GameObjects)
+					for (int i = 0; i < Scene::CurrentScene->GameObjects->Count; i++)
 					{
+						GameObject^ gameObject = Scene::CurrentScene->GameObjects[i];
 						if(gameObject->GetActive())
 							gameObject->RenderGizmos();
 					}
@@ -164,6 +176,10 @@ namespace ThomasEditor {
 					UpdateFinished->Set();
 				}
 				Monitor::Exit(lock);
+
+				if (updateEditor)
+					OnEditorUpdate();
+				updateEditor = false;
 			}
 			Resources::UnloadAll();
 			ThomasCore::Destroy();

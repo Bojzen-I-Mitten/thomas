@@ -83,7 +83,7 @@ namespace ThomasEditor {
 			void set(Scene^ value);
 		}
 
-	private:
+	public:
 		ref class SceneSurrogate : System::Runtime::Serialization::IDataContractSurrogate
 		{
 			public:
