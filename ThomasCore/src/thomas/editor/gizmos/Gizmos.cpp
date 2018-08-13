@@ -152,7 +152,7 @@ namespace thomas
 				pos = minorAxis*incrementalSin + pos;
 				lines[i] = pos;
 
-				//Standard formula to rotate a vector.
+				// Standard formula to rotate a vector.
 				math::Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
 				math::Vector3 newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
 				incrementalCos = newCos;

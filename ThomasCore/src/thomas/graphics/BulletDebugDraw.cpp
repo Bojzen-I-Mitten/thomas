@@ -12,7 +12,7 @@ namespace thomas
 	{
 		BulletDebugDraw::BulletDebugDraw()
 		{
-			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/lineShader.fx"); //Hardcoded line shader for debug draw
+			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/lineShader.fx"); // Hardcoded line shader for debug draw
 
 			if (shader != nullptr)
 			{
@@ -57,13 +57,13 @@ namespace thomas
 			if (m_linePositions.empty())
 				return;
 
-			//Set necessary states
+			// Set necessary states
 			DirectX::CommonStates states(ThomasCore::GetDevice());
 			ThomasCore::GetDeviceContext()->OMSetBlendState(states.Opaque(), nullptr, 0xFFFFFFFF);
 			ThomasCore::GetDeviceContext()->OMSetDepthStencilState(states.DepthNone(), 0);
 			ThomasCore::GetDeviceContext()->RSSetState(states.CullNone());
 
-			//Set the data and send to GPU
+			// Set the data and send to GPU
 			m_vertexBufferPos->SetData(m_linePositions);
 			m_vertexBufferColor->SetData(m_lineColors);
 			m_material->m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;		
@@ -72,7 +72,7 @@ namespace thomas
 			m_material->Bind();
 			m_material->Draw(m_linePositions.size(), 0);
 
-			//Clear the memory
+			// Clear the memory
 			m_linePositions.clear();
 			m_lineColors.clear();
 		}

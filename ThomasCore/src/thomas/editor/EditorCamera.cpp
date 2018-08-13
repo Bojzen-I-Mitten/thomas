@@ -19,7 +19,7 @@ namespace thomas
 																		   m_manipulatorSnapping(false), m_objectHighlighter(nullptr), 
 																		   m_manipulatorMode(ImGuizmo::MODE::LOCAL), m_manipulatorOperation(ImGuizmo::OPERATION::TRANSLATE)
 		{
-			//Transform component
+			// Transform component
 			m_transform = new object::component::Transform();
 			m_transform->m_gameObject = this;
 			m_transform->SetPosition(math::Vector3(5.f));
@@ -29,14 +29,14 @@ namespace thomas
 			m_rotationY = -eulerAngles.x;
 			m_transform->SetRotation(-m_rotationX, -m_rotationY, 0.f);
 
-			//Camera component
+			// Camera component
 			m_cameraComponent = std::make_unique<object::component::Camera>(true);
 			m_cameraComponent->SetTargetDisplay(-1);
 			m_cameraComponent->m_gameObject = this;
 
-			//Create the grid
+			// Create the grid
 			m_grid = std::make_unique<EditorGrid>(100, 1.f, 10);
-			resource::Shader* outliner = resource::Shader::CreateShader("../Data/FXIncludes/EditorOutlineShader.fx"); //Hardcoded outline shader
+			resource::Shader* outliner = resource::Shader::CreateShader("../Data/FXIncludes/EditorOutlineShader.fx"); // Hardcoded outline shader
 			if (outliner != nullptr)
 				m_objectHighlighter = std::make_unique<resource::Material>(outliner);
 		}
@@ -78,7 +78,7 @@ namespace thomas
 
 		void EditorCamera::SelectObject(object::GameObject * gameObject)
 		{
-			//Select single gameobject
+			// Select single gameobject
 			s_selectedObjects.clear();
 			if (gameObject)
 				s_selectedObjects.push_back(gameObject);
@@ -87,7 +87,7 @@ namespace thomas
 
 		void EditorCamera::UnselectObject(GameObject * gameObject)
 		{
-			//Unselect only a specific gameobject
+			// Unselect only a specific gameobject
 			for (int i = 0; i < (int)s_selectedObjects.size(); ++i)
 			{
 				if (s_selectedObjects[i] == gameObject)
@@ -100,7 +100,7 @@ namespace thomas
 
 		void EditorCamera::UnselectObjects()
 		{
-			//Unselect all objects in the scene
+			// Unselect all objects in the scene
 			s_selectedObjects.clear();
 			GetEditorCamera()->m_hasSelectionChanged = true;
 		}
@@ -110,7 +110,7 @@ namespace thomas
 			return s_selectedObjects;
 		}
 
-		void EditorCamera::SetHasSelectionChanged(bool selectionChanged)
+		void EditorCamera::SetHasSelectionChanged(const bool & selectionChanged)
 		{
 			GetEditorCamera()->m_hasSelectionChanged = selectionChanged;
 		}
@@ -142,7 +142,7 @@ namespace thomas
 
 		void EditorCamera::RenderCamera()
 		{
-			//Render camera related work
+			// Render camera related work
 			RenderSelectedObjects();
 			m_cameraComponent->Render();
 			RenderGizmos();
@@ -156,28 +156,26 @@ namespace thomas
 			m_manipulatorSnapping = false;
 			HWND focus = GetForegroundWindow();
 
-			//Make sure we are dealing with the editor window
+			// Make sure we are dealing with the editor window
 			if (!Window::GetEditorWindow())
 				return;
 
-			//Toggle editor mode on scene camera
+			// Toggle editor mode on scene camera
 			if (Input::GetMouseButtonDown(Input::MouseButtons::RIGHT))
 				Input::SetMouseMode(Input::MouseMode::POSITION_RELATIVE);
 
 			if (Input::GetMouseButtonUp(Input::MouseButtons::RIGHT))
 				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
 
-			//Scroll doesn't work for some reason... Commented out for now
+			// Scroll doesn't work for some reason... Commented out for now
 			/*if (Input::GetMouseScrollWheel() > 0)
-				m_transform->Translate(m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 3000.f);
+				m_transform->Translate(m_transform->Forward() * ThomasTime::GetActualDeltaTime() * 3000.f);
 
 			if (Input::GetMouseScrollWheel() < 0)
-				m_transform->Translate(-m_transform->Forward()*ThomasTime::GetActualDeltaTime() * 3000.f);*/
+				m_transform->Translate(-m_transform->Forward() * ThomasTime::GetActualDeltaTime() * 3000.f);*/
 
 			if (Input::GetMouseButton(Input::MouseButtons::RIGHT))
-			{
 				MoveAndRotateCamera();
-			}
 			else if (Input::GetMouseButtonDown(Input::MouseButtons::LEFT))
 			{
 				if (!ImGuizmo::IsOver())
@@ -188,7 +186,7 @@ namespace thomas
 			}
 			else
 			{
-				//Allow manipulation of the gizmo if the game object is focused
+				// Allow manipulation of the gizmo if the game object is focused
 				Input::SetMouseMode(Input::MouseMode::POSITION_ABSOLUTE);
 
 				if (Input::GetKeyDown(Input::Keys::W))
@@ -204,7 +202,7 @@ namespace thomas
 
 		void EditorCamera::RenderSelectedObjects()
 		{
-			//Render the selected objects for the editor camera
+			// Render the selected objects for the editor camera
 			if (!m_objectHighlighter)
 				return;
 
@@ -280,11 +278,11 @@ namespace thomas
 				transform->Translate(direction * ThomasTime::GetActualDeltaTime() * speed);
 			};
 
-			//Increase camera speed
+			// Increase camera speed
 			if (Input::GetKey(Input::Keys::LeftShift))
 				speed *= 4.0f;
 
-			//Allow the camera to move freely in the scene
+			// Allow the camera to move freely in the scene
 			if (Input::GetKey(Input::Keys::A))
 				move(-m_transform->Right(), m_transform, speed);
 			if (Input::GetKey(Input::Keys::D))
@@ -298,7 +296,7 @@ namespace thomas
 			if (Input::GetKey(Input::Keys::E))
 				move(m_transform->Up(), m_transform, speed);
 
-			//Rotate camera
+			// Rotate camera
 			m_rotationX += Input::GetMouseX() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
 			m_rotationY += Input::GetMouseY() * ThomasTime::GetActualDeltaTime() * m_sensitivity;
 			m_transform->SetRotation(-m_rotationX, -m_rotationY, 0.f);

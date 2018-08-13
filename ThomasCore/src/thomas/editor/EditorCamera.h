@@ -36,7 +36,7 @@ namespace thomas
 			static void UnselectObjects();
 
 		public:
-			static void SetHasSelectionChanged(bool selectionChanged);
+			static void SetHasSelectionChanged(const bool & selectionChanged);
 			static void SetManipulatorOperation(ImGuizmo::OPERATION operation);
 
 		public:

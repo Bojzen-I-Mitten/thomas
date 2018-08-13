@@ -9,14 +9,7 @@
 
 namespace thomas
 {
-	namespace utils
-	{
-		namespace buffers
-		{
-			class VertexBuffer;
-		}
-	}
-
+	namespace utils { namespace buffers { class VertexBuffer; } }
 	namespace object { namespace component { class Camera; } }
 	namespace resource { class Material; }
 
