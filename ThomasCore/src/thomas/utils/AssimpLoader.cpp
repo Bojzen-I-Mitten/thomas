@@ -193,7 +193,8 @@ namespace thomas
 				
 
 				// Positions
-				vertices.positions[i] = math::Vector3((float*)&(transform * mesh->mVertices[i]));
+				math::Vector3 v3 = math::Vector3((float*)&(transform * mesh->mVertices[i]));
+				vertices.positions[i] = math::Vector4(v3.x, v3.y, v3.z, 1.0f);
 
 				// Normals
 				vertices.normals[i] = math::Vector3((float*)&(transform *mesh->mNormals[i]));
