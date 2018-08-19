@@ -3,7 +3,7 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "RenderComponent.h"
-#include "Light.h"
+#include "LightComponent.h"
 #include "SoundComponent.h"
 #include "TextComponent.h"
 #include "SpriteComponent.h"

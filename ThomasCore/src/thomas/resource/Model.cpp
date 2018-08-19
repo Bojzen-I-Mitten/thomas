@@ -7,6 +7,8 @@ namespace thomas {
 
 		math::BoundingBox Model::GenerateBounds()
 		{
+			if (m_data.meshes.size() == 0)
+				return math::BoundingBox();
 			math::BoundingBox bounds = m_data.meshes[0]->m_bounds;
 			
 			for (int i = 1; i < m_data.meshes.size(); i++)

@@ -25,4 +25,4 @@
 #define THOMAS_AA_COUNT 8
 #define THOMAS_AA_QUALITY 0
 
-#define _XM_NO_INTRINSICS_ 1; //Bullet fix
+//#define _XM_NO_INTRINSICS_ 1; //Bullet fix

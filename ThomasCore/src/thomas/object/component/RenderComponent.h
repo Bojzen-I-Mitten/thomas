@@ -1,5 +1,4 @@
 #pragma once
-#define _XM_NO_INTRINSICS_ 1;
 #include "Component.h"
 #include "../../utils/Math.h"
 namespace thomas

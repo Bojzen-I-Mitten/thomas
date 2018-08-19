@@ -6,9 +6,11 @@
 #include "DirectXTK/SimpleMath.h"
 #include <cmath>
 #include <string>
+
 namespace DirectX {
 	namespace SimpleMath {
 
+		const float PI = XM_PI;
 		using DirectX::BoundingBox;
 		using DirectX::BoundingSphere;
 		using DirectX::BoundingFrustum;
@@ -16,7 +18,6 @@ namespace DirectX {
 
 		static float DegreesToRadians(float degree)
 		{
-			
 			return std::fmodf(degree, 360.0f) * (PI / 180.0f);
 		}
 

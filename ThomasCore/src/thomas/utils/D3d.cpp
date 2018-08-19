@@ -366,6 +366,7 @@ namespace thomas
 			}
 			for (int i = 0; i < infoQueue->GetNumStoredMessages(); i++) {
 				SIZE_T messageLength;	
+
 				infoQueue->GetMessageA(i, NULL, &messageLength);
 				D3D11_MESSAGE * message = (D3D11_MESSAGE*)malloc(messageLength);
 				infoQueue->GetMessageA(i, message, &messageLength);

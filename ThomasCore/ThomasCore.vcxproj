@@ -50,7 +50,7 @@
     <ClCompile Include="src\thomas\Input.cpp" />
     <ClCompile Include="src\thomas\object\component\Camera.cpp" />
     <ClCompile Include="src\thomas\object\component\Component.cpp" />
-    <ClCompile Include="src\thomas\object\component\Light.cpp" />
+    <ClCompile Include="src\thomas\object\component\LightComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\ParticleEmitterComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\RenderComponent.cpp" />
     <ClCompile Include="src\thomas\object\component\physics\Rigidbody.cpp" />
@@ -120,7 +120,7 @@
     <ClInclude Include="src\thomas\object\component\Component.h" />
     <ClInclude Include="src\thomas\object\component\Components.h" />
     <ClInclude Include="src\thomas\object\component\ScriptComponent.h" />
-    <ClInclude Include="src\thomas\object\component\Light.h" />
+    <ClInclude Include="src\thomas\object\component\LightComponent.h" />
     <ClInclude Include="src\thomas\object\component\ParticleEmitterComponent.h" />
     <ClInclude Include="src\thomas\object\component\RenderComponent.h" />
     <ClInclude Include="src\thomas\object\component\physics\Rigidbody.h" />
@@ -169,7 +169,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -208,8 +208,8 @@
     <OutDir>$(ProjectDir)Build\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)freetype;$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
@@ -231,7 +231,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;DirectXTK_Debug.lib;DirectXTKAudioWin8_Debug.lib;DirectXTex_Debug.lib;Effects11_Debug.lib;libnoise.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AntTweakBar.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;DirectXTK_Debug.lib;DirectXTKAudioWin8_Debug.lib;DirectXTex_Debug.lib;Effects11_Debug.lib;LinearMath_Debug.lib;zlibstaticd.lib;assimp_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -240,18 +240,21 @@
       </PrecompiledHeader>
       <WarningLevel>Level2</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_DEBUG;_LIB;THOMAS_EXPORT;_DEBUG_DX;%(PreprocessorDefinitions)%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
       <AdditionalDependencies>$(ProjectDir)\lib\assimp.lib;$(ProjectDir)\lib\libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>BulletCollision_Debug.lib;BulletDynamics_Debug.lib;DirectXTex_Debug.lib;DirectXTK_Debug.lib;DirectXTKAudioWin8_Debug.lib;Effects11_64_Debug.lib;LinearMath_Debug.lib;assimp_Debug.lib;AntTweakBar64.lib;zlib_Debug.lib</AdditionalDependencies>
     </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -300,6 +303,5 @@
     </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

@@ -245,17 +245,17 @@ namespace thomas
 		}
 		void Shader::BindVertexBuffer(utils::buffers::VertexBuffer* buffer)
 		{
-			size_t stride = buffer->GetStride();
+			UINT stride = buffer->GetStride();
 			ID3D11Buffer* buff = buffer->GetBuffer();
-			size_t offset = 0;
+			UINT offset = 0;
 			ThomasCore::GetDeviceContext()->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
 		}
 
 		void Shader::BindVertexBuffers(std::vector<utils::buffers::VertexBuffer*> buffers)
 		{
 			std::vector<ID3D11Buffer*> buffs;
-			std::vector<size_t> strides;
-			std::vector<size_t> offsets;
+			std::vector<UINT> strides;
+			std::vector<UINT> offsets;
 
 			for (utils::buffers::VertexBuffer* buffer : buffers)
 			{
