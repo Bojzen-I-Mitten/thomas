@@ -84,7 +84,8 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)include;$(SolutionDir)ThomasCore\include;$(SolutionDir)ThomasCore\src;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <OutDir>$(ProjectDir)Build\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)Build\$(Configuration)\64\</OutDir>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -93,7 +94,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)Build\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)Build\$(Configuration)\64\</OutDir>
     <IncludePath>$(ProjectDir)include;$(SolutionDir)ThomasCore\include;$(SolutionDir)ThomasCore\src;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
