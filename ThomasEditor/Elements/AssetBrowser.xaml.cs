@@ -221,6 +221,11 @@ namespace ThomasEditor
             {
 
                 AddNode(p);
+                ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(p);
+                if(assetType == ThomasEditor.Resources.AssetTypes.SCRIPT)
+                {
+                    utils.ScriptAssemblyManager.AddScript(p);
+                }
 
             }), e.FullPath);
         }
@@ -234,6 +239,7 @@ namespace ThomasEditor
             assetImages[ThomasEditor.Resources.AssetTypes.AUDIO_CLIP] = new BitmapImage(new Uri("pack://application:,,/icons/assets/audio.png"));
             assetImages[ThomasEditor.Resources.AssetTypes.MODEL] = new BitmapImage(new Uri("pack://application:,,/icons/assets/model.png"));
             assetImages[ThomasEditor.Resources.AssetTypes.MATERIAL] = new BitmapImage(new Uri("pack://application:,,/icons/assets/material.png"));
+            assetImages[ThomasEditor.Resources.AssetTypes.SCRIPT] = new BitmapImage(new Uri("pack://application:,,/icons/assets/script.png"));
         }
 
 

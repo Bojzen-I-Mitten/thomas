@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\Debug.h" />
     <ClInclude Include="src\math\Curve.h" />
     <ClInclude Include="src\object\component\physics\BoxCollider.h" />
     <ClInclude Include="src\object\component\physics\Collider.h" />
@@ -192,6 +193,7 @@
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Debug.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\math\Curve.cpp" />
     <ClCompile Include="src\object\component\physics\BoxCollider.cpp" />

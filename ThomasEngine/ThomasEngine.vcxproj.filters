@@ -37,6 +37,7 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\math\Curve.cpp" />
     <ClCompile Include="src\Utility.cpp" />
+    <ClCompile Include="src\Debug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\resource\Model.h" />
@@ -78,6 +79,7 @@
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Project.h" />
     <ClInclude Include="src\math\Curve.h" />
+    <ClInclude Include="src\Debug.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />
