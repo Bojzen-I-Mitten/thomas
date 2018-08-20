@@ -55,7 +55,7 @@ namespace thomas
 			math::BoundingBox GenerateBounds();
 
 		public:
-			math::BoundingBox m_bounds; //This should be private
+			math::BoundingBox m_bounds;
 
 		private:
 			std::string m_name;
