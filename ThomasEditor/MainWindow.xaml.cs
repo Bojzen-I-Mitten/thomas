@@ -299,26 +299,38 @@ namespace ThomasEditor
 
             if (saveFileDialog.ShowDialog() == true)
             {
-                Project proj = new Project(System.IO.Path.GetFileNameWithoutExtension(saveFileDialog.FileName), System.IO.Path.GetDirectoryName(saveFileDialog.FileName));
-                Application.currentProject = proj;
-            }
+                Debug.Log("Starting to create project...");
+                string fileName = System.IO.Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
+                string dir = System.IO.Path.GetDirectoryName(saveFileDialog.FileName);
 
-          
+                if(utils.ScriptAssemblyManager.CreateSolution(dir + "\\" + fileName, fileName))
+                {
+                    Project proj = new Project(fileName, dir);
+                    Application.currentProject = proj;
+                    Debug.Log("...Project created!");
+                }
+                
+            }
+                      
         }
 
         private void OpenProject_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.Filter = "Thomas Project (*.thomas) |*.thomas";
-
-
+            
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             openFileDialog.RestoreDirectory = true;
 
             if (openFileDialog.ShowDialog() == true)
             {
-                Project proj = new Project(openFileDialog.FileName);
-                Application.currentProject = proj;
+                string fileName = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                string dir = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
+                if(utils.ScriptAssemblyManager.OpenSolution(dir + "/" + fileName + ".sln"))
+                {
+                    Project proj = new Project(openFileDialog.FileName);
+                    Application.currentProject = proj;
+                }
             }
         }
     }

@@ -126,6 +126,10 @@ namespace ThomasEditor
 			{
 				return AssetTypes::SHADER;
 			}
+			else if (extension == "cs")
+			{
+				return AssetTypes::SCRIPT;
+			}
 			else if (extension == "tds")
 			{
 				return AssetTypes::SCENE;
@@ -134,7 +138,7 @@ namespace ThomasEditor
 			{
 				return AssetTypes::AUDIO_CLIP;
 			}
-			else if (extension == "obj" || extension == "fbx" || extension == "dae")
+			else if (extension == "obj" || extension == "fbx")
 			{
 				return AssetTypes::MODEL;
 			}
