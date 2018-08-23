@@ -168,19 +168,23 @@ namespace ThomasEditor
 
         private void SceneSelectedGameObjectChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.NewItems != null)
+            this.Dispatcher.Invoke((Action)(() =>
             {
-                SelectOrDeselectInTree(hierarchy.Items, e.NewItems, true);
-            }
-            if (e.OldItems != null)
-            {
-                SelectOrDeselectInTree(hierarchy.Items, e.OldItems, false);
-            }
+                if (e.NewItems != null)
+                {
+                    SelectOrDeselectInTree(hierarchy.Items, e.NewItems, true);
+                }
+                if (e.OldItems != null)
+                {
+                    SelectOrDeselectInTree(hierarchy.Items, e.OldItems, false);
+                }
 
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
-            {
-                ResetTree(hierarchy.Items);
-            }
+                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+                {
+                    ResetTree(hierarchy.Items);
+                }
+            }));
+            
         }
 
 
