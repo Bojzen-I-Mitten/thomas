@@ -21,9 +21,11 @@ namespace ThomasEditor
     {
         double scrollRatio = 0;
         TimeSpan lastRender;
+        public static MainWindow _instance;
 
         public MainWindow()
         {
+            _instance = this;
             InitializeComponent();
 
             playPauseButton.DataContext = false;
@@ -127,10 +129,6 @@ namespace ThomasEditor
             }
         }
 
-        private void LoadWaveFile(object sender, RoutedEventArgs e)
-        {
-            var x = ThomasEngine.Resources.Load<AudioClip>("..\\Data\\test.wav");
-        }
 
         private void Console_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
@@ -197,9 +195,10 @@ namespace ThomasEditor
             Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
             saveFileDialog.Filter = "Thomas Dank Scene (*.tds) |*.tds";
 
-            string CombinedPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "..\\Data");
-
-            saveFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
+            if (ThomasEngine.Application.currentProject == null)
+                saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            else
+                saveFileDialog.InitialDirectory = ThomasEngine.Application.currentProject.assetPath;
             saveFileDialog.RestoreDirectory = true;
             saveFileDialog.FileName = Scene.CurrentScene.Name;
             if (saveFileDialog.ShowDialog() == true)
@@ -212,21 +211,37 @@ namespace ThomasEditor
 
         private void LoadScene_Click(object sender, RoutedEventArgs e)
         {
-         
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.Filter = "Thomas Dank Scene (*.tds) |*.tds";
 
-            string CombinedPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "..\\Data");
+            if (ThomasEngine.Application.currentProject == null)
+                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            else
+                openFileDialog.InitialDirectory = ThomasEngine.Application.currentProject.assetPath;
 
-            openFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
             openFileDialog.RestoreDirectory = true;
             if (openFileDialog.ShowDialog() == true)
             {
-                Scene newScene = Scene.LoadScene(openFileDialog.FileName);               
-                Scene.CurrentScene.UnLoad();
-                Scene.CurrentScene = newScene;                                         
-                Scene.CurrentScene.PostLoad();
+                LoadScene(openFileDialog.FileName);
             }     
+        }
+
+        public void LoadScene(string path)
+        {
+            BackgroundWorker worker = new BackgroundWorker();
+            showBusyIndicator("Loading scene...");
+            worker.DoWork += (o, ea) =>
+            {
+                Scene newScene = Scene.LoadScene(path);
+                Scene.CurrentScene.UnLoad();
+                Scene.CurrentScene = newScene;
+                Scene.CurrentScene.PostLoad();
+            };
+            worker.RunWorkerCompleted += (o, ea) =>
+            {
+                hideBusyIndicator();
+            };
+            worker.RunWorkerAsync();
         }
 
         private void PlayPauseButton_Click(object sender, ExecutedRoutedEventArgs e)
@@ -291,19 +306,42 @@ namespace ThomasEditor
 
             if (saveFileDialog.ShowDialog() == true)
             {
-                Debug.Log("Starting to create project...");
-                string fileName = System.IO.Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
-                string dir = System.IO.Path.GetDirectoryName(saveFileDialog.FileName);
-
-                if(utils.ScriptAssemblyManager.CreateSolution(dir + "\\" + fileName, fileName))
+                BackgroundWorker worker = new BackgroundWorker();
+                showBusyIndicator("Creating new project...");
+                worker.DoWork += (o, ea) =>
                 {
-                    Project proj = new Project(fileName, dir);
-                    ThomasEngine.Application.currentProject = proj;
-                    Debug.Log("...Project created!");
-                }
-                
+                    string fileName = System.IO.Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
+                    string dir = System.IO.Path.GetDirectoryName(saveFileDialog.FileName);
+
+                    if (utils.ScriptAssemblyManager.CreateSolution(dir + "\\" + fileName, fileName))
+                    {
+                        Project proj = new Project(fileName, dir);
+                        ThomasEngine.Application.currentProject = proj;
+                    }
+                };
+                worker.RunWorkerCompleted += (o, ea) =>
+                {
+                    hideBusyIndicator();
+                };
+                worker.RunWorkerAsync();
+
             }
                       
+        }
+
+
+       private void showBusyIndicator(string message)
+       {
+            busyCator.IsBusy = true;
+            busyCator.BusyContent = message;
+            editor.Visibility = Visibility.Hidden;
+            game.Visibility = Visibility.Hidden;
+        }
+        private void hideBusyIndicator()
+        {
+            busyCator.IsBusy = false;
+            editor.Visibility = Visibility.Visible;
+            game.Visibility = Visibility.Visible;
         }
 
         private void OpenProject_Click(object sender, RoutedEventArgs e)
@@ -316,14 +354,28 @@ namespace ThomasEditor
 
             if (openFileDialog.ShowDialog() == true)
             {
-                string fileName = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                string dir = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
-                if(utils.ScriptAssemblyManager.OpenSolution(dir + "/" + fileName + ".sln"))
+                showBusyIndicator("Opening project...");
+                BackgroundWorker worker = new BackgroundWorker();
+
+                worker.DoWork += (o, ea) =>
                 {
-                    Project proj = new Project(openFileDialog.FileName);
-                    ThomasEngine.Application.currentProject = proj;
-                }
+                    
+                    string fileName = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                    string dir = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
+                    if (utils.ScriptAssemblyManager.OpenSolution(dir + "/" + fileName + ".sln"))
+                    {
+                        Project proj = new Project(openFileDialog.FileName);
+                        ThomasEngine.Application.currentProject = proj;
+                    }
+                };
+                worker.RunWorkerCompleted += (o, ea) =>
+                {
+                    hideBusyIndicator();
+                };
+                worker.RunWorkerAsync();
+                
             }
+            
         }
 
         private void ReloadAssembly(object sender, RoutedEventArgs e)
