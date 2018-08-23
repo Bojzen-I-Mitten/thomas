@@ -51,8 +51,10 @@ namespace ThomasEditor
 
         private void Application_currentProjectChanged(Project newProject)
         {
-            fileTree.Items.Clear();
-            ShowAssetsFrom(newProject.assetPath);
+            Dispatcher.BeginInvoke(new Action<String>((String assetPath) => {
+                fileTree.Items.Clear();
+                ShowAssetsFrom(assetPath);
+            }), newProject.assetPath);
         }
 
         public void ShowAssetsFrom(String path)
@@ -420,26 +422,9 @@ namespace ThomasEditor
             if (fileTree.SelectedItem == null)
                 return;
             TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
-            StackPanel stack = item.Header as StackPanel;
-
-            String file = stack.DataContext as String;
-            ThomasEngine.Resources.AssetTypes assetType = ThomasEngine.Resources.GetResourceAssetType(file);
             if (e.ClickCount == 2)
             {
-
-                if (assetType == ThomasEngine.Resources.AssetTypes.SCENE)
-                {
-                    SplashScreen splash = new SplashScreen("splash.png");
-                    splash.Show(false, true);
-                    Scene.CurrentScene.UnLoad();
-                    Scene.CurrentScene = Scene.LoadScene(file);
-                    splash.Close(TimeSpan.FromSeconds(0.2));
-
-                }
-                else if (assetType == ThomasEngine.Resources.AssetTypes.SHADER)
-                {
-                    System.Diagnostics.Process.Start(file);
-                }
+                OpenItem(item);
             }
         }
 
@@ -510,7 +495,11 @@ namespace ThomasEditor
 
         private void Menu_OpenAsset(object sender, RoutedEventArgs e)
         {
-
+            if (fileTree.SelectedItem != null)
+            {
+                TreeViewItem item = fileTree.SelectedItem as TreeViewItem;
+                OpenItem(item);
+            }
         }
 
         private void Menu_DeleteAsset(object sender, RoutedEventArgs e)
@@ -549,6 +538,24 @@ namespace ThomasEditor
 
         }
         #endregion
+
+
+        private void OpenItem(TreeViewItem item)
+        {
+            StackPanel stack = item.Header as StackPanel;
+
+            String file = stack.DataContext as String;
+            ThomasEngine.Resources.AssetTypes assetType = ThomasEngine.Resources.GetResourceAssetType(file);
+            if (assetType == ThomasEngine.Resources.AssetTypes.SCENE)
+            {
+                MainWindow._instance.LoadScene(file);
+            }
+            else if (assetType == ThomasEngine.Resources.AssetTypes.SHADER)
+            {
+                System.Diagnostics.Process.Start(file);
+            }
+            
+        }
 
         private void AssetBrowser_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {

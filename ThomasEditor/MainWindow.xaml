@@ -35,17 +35,8 @@
             </ResourceDictionary.MergedDictionaries>-->
         </ResourceDictionary>
     </Window.Resources>
-
-    <Grid Background="Gray">
-        
-        <!--<TabControl  HorizontalAlignment="Left" Height="533" VerticalAlignment="Top" Width="800">
-            <TabItem Header="Editor Window">
-                <Grid Background="#FFE5E5E5">
-                    <local:ThomasWindow x:Name="editor" HorizontalAlignment="Stretch"/>
-                </Grid>
-            </TabItem>
-        </TabControl>-->
-
+    <xctk:BusyIndicator x:Name="busyCator">
+        <Grid Background="Gray">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
@@ -53,6 +44,9 @@
             
         </Grid.RowDefinitions>
 
+        
+
+        
         <DockPanel>
             <Menu DockPanel.Dock="Top" Grid.Row="0">
                 <MenuItem Header="_File">
@@ -170,9 +164,10 @@
                 </xcad:LayoutPanel>
             </xcad:LayoutRoot>
         </xcad:DockingManager>
+
+
         
-
-
-    </Grid>
+        </Grid>
+    </xctk:BusyIndicator>
 
 </Window>
