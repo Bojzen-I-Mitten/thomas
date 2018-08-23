@@ -7,7 +7,7 @@
 #pragma managed
 #include "Resource.h"
 
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	public enum class PrimitiveType //could not typedef because no ToString
 	{

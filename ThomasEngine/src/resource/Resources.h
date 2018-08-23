@@ -4,21 +4,23 @@
 #pragma managed
 #include "Resource.h"
 #include "../Application.h"
+
 using namespace System::Collections::Generic;
 using namespace System::Linq;
 using namespace System::Threading;
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	public ref class Resources
 	{
 	internal:
 		static Object^ resourceLock = gcnew Object();
-		static Dictionary<String^, Resource^>^ resources = gcnew Dictionary<String^, ThomasEditor::Resource^>();
+		static Dictionary<String^, Resource^>^ resources = gcnew Dictionary<String^, ThomasEngine::Resource^>();
 
 		generic<typename T>
 		where T : Resource
 		static T Deserialize(String^ path)
 		{
+			
 			Monitor::Enter(resourceLock);
 			using namespace System::Runtime::Serialization;
 			DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
@@ -32,6 +34,8 @@ namespace ThomasEditor
 			resource->Rename(path);
 			Monitor::Exit(resourceLock);
 			return resource;
+			
+			
 		}
 	public:
 		enum class AssetTypes

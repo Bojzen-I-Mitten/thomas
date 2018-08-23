@@ -1,7 +1,7 @@
 #include "ScriptingManager.h"
 
 
-void ThomasEditor::ScriptingManger::OnChanged(System::Object ^sender, System::IO::FileSystemEventArgs ^e)
+void ThomasEngine::ScriptingManger::OnChanged(System::Object ^sender, System::IO::FileSystemEventArgs ^e)
 {
 	fsw->EnableRaisingEvents = false;
 	FileInfo^ fInfo = gcnew FileInfo(e->FullPath);

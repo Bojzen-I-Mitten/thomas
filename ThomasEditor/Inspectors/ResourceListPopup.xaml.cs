@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
+
 using System.Threading;
-using System.Threading.Tasks;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
+
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 using Xceed.Wpf.Toolkit.PropertyGrid;
+
+using ThomasEngine;
 
 namespace ThomasEditor
 {
@@ -30,7 +32,7 @@ namespace ThomasEditor
                 if (value is Resource)
                 {
                     Resource res = value as Resource;
-                    Resources.AssetTypes type = ThomasEditor.Resources.GetResourceAssetType(res.GetType());
+                    Resources.AssetTypes type = ThomasEngine.Resources.GetResourceAssetType(res.GetType());
                     if (type == Resources.AssetTypes.TEXTURE2D)
                     {
                         Texture2D tex = res as Texture2D;
@@ -63,7 +65,7 @@ namespace ThomasEditor
             _property = property;
             Title = "Select " + resourceType.Name;
             
-            List<object> resources = ThomasEditor.Resources.GetResourcesOfType(resourceType).Cast<object>().ToList();
+            List<object> resources = ThomasEngine.Resources.GetResourcesOfType(resourceType).Cast<object>().ToList();
            
 
             if(resourceType == typeof(Material))

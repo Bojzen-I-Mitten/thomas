@@ -5,7 +5,7 @@
 #include "resource.h"
 #include "Resources.h"
 #include "../math/Math.h"
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	[DataContractAttribute]
 	public ref class Shader : public Resource
@@ -21,11 +21,11 @@ namespace ThomasEditor
 			thomas::resource::Shader* nativePtr = thomas::resource::Shader::FindByName(Utility::ConvertString(name));
 			if (nativePtr)
 			{
-				ThomasEditor::Resource^ shader = ThomasEditor::Resources::FindResourceFromNativePtr(nativePtr);
+				ThomasEngine::Resource^ shader = ThomasEngine::Resources::FindResourceFromNativePtr(nativePtr);
 				if (shader)
-					return (ThomasEditor::Shader^)shader;
+					return (ThomasEngine::Shader^)shader;
 				else
-					return gcnew ThomasEditor::Shader(nativePtr);
+					return gcnew ThomasEngine::Shader(nativePtr);
 			}
 			else
 				return nullptr;

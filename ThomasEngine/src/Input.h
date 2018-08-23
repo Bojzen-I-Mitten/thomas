@@ -7,7 +7,7 @@
 #include "math\Math.h"
 
 
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	public ref class Input
 	{

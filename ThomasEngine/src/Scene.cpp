@@ -3,7 +3,7 @@
 #include "object\Component.h"
 #include "resource\Resources.h"
 #include "ThomasManaged.h"
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	void Scene::Play()
 	{

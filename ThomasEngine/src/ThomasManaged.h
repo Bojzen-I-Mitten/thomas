@@ -27,7 +27,7 @@ using namespace System::Threading;
 using namespace thomas;
 
 
-namespace ThomasEditor {
+namespace ThomasEngine {
 
 
 	public ref class ThomasWrapper
@@ -159,7 +159,7 @@ namespace ThomasEditor {
 					}
 
 					Monitor::Enter(SelectedGameObjects);
-					for each(ThomasEditor::GameObject^ gameObject in SelectedGameObjects)
+					for each(ThomasEngine::GameObject^ gameObject in SelectedGameObjects)
 					{
 						if(gameObject->GetActive())
 							gameObject->RenderSelectedGizmos();
@@ -233,7 +233,7 @@ namespace ThomasEditor {
 		static Guid selectedGUID;
 		static void Play()
 		{
-			ThomasEditor::Resources::OnPlay();
+			ThomasEngine::Resources::OnPlay();
 			Scene::CurrentScene->Play();
 			playing = true;
 			
@@ -252,10 +252,10 @@ namespace ThomasEditor {
 				selectedGUID = Guid::Empty;
 			playing = false;
 			Scene::RestartCurrentScene();
-			ThomasEditor::Resources::OnStop();
+			ThomasEngine::Resources::OnStop();
 			if (selectedGUID != Guid::Empty)
 			{
-				GameObject^ gObj = (GameObject^)ThomasEditor::Object::Find(selectedGUID);
+				GameObject^ gObj = (GameObject^)ThomasEngine::Object::Find(selectedGUID);
 				if (gObj)
 					SelectGameObject(gObj);
 			}
@@ -285,7 +285,7 @@ namespace ThomasEditor {
 			Monitor::Enter(SelectedGameObjects);
 			for (thomas::object::GameObject* gameObject : thomas::editor::EditorCamera::GetSelectedObjects())
 			{
-				GameObject^ gObj = (GameObject^)ThomasEditor::Object::GetObject(gameObject);
+				GameObject^ gObj = (GameObject^)ThomasEngine::Object::GetObject(gameObject);
 				if (gObj)
 					tempSelectedGameObjects.Add(gObj);
 			}

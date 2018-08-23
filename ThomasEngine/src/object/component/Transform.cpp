@@ -1,7 +1,7 @@
 #include "Transform.h"
 #include "../GameObject.h"
 #include "../../ThomasManaged.h"
-void ThomasEditor::Transform::OnDestroy()
+void ThomasEngine::Transform::OnDestroy()
 {
 	if (parent)
 	{
@@ -15,7 +15,7 @@ void ThomasEditor::Transform::OnDestroy()
 	}
 }
 
-void ThomasEditor::Transform::parent::set(ThomasEditor::Transform^ value)
+void ThomasEngine::Transform::parent::set(ThomasEngine::Transform^ value)
 {
 	if (value)
 		((thomas::object::component::Transform*)nativePtr)->SetParent((thomas::object::component::Transform*)value->nativePtr);

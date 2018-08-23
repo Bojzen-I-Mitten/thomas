@@ -1,23 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Dynamic;
+
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Xceed.Wpf.Toolkit.PropertyGrid;
+using ThomasEngine;
 namespace ThomasEditor
 {
     namespace Converters
@@ -67,7 +58,7 @@ namespace ThomasEditor
 
             public List<Shader> AvailableShaders
             {
-                get { return new List<Shader>(ThomasEditor.Resources.GetResourcesOfType(typeof(Shader)).Cast<Shader>()); }
+                get { return new List<Shader>(ThomasEngine.Resources.GetResourcesOfType(typeof(Shader)).Cast<Shader>()); }
             }
 
             public static readonly DependencyProperty MaterialProperty =

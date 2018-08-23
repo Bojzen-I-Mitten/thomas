@@ -3,23 +3,23 @@
 #include <thomas\object\GameObject.h>
 #include "../ScriptingManager.h"
 
-ThomasEditor::Component::Component() : Object(new thomas::object::component::Component())
+ThomasEngine::Component::Component() : Object(new thomas::object::component::Component())
 {
 	setGameObject(GameObject::s_lastObject);
 }
 
-ThomasEditor::Component::Component(thomas::object::component::Component * ptr) : Object(ptr)
+ThomasEngine::Component::Component(thomas::object::component::Component * ptr) : Object(ptr)
 {
 	if(GameObject::s_lastObject)
 		setGameObject(GameObject::s_lastObject);
 }
 
-ThomasEditor::Transform^ ThomasEditor::Component::transform::get()
+ThomasEngine::Transform^ ThomasEngine::Component::transform::get()
 {
 	return gameObject->transform;
 }
 
-void ThomasEditor::Component::setGameObject(GameObject ^ gObj)
+void ThomasEngine::Component::setGameObject(GameObject ^ gObj)
 {
 	m_gameObject = gObj;
 	
@@ -27,7 +27,7 @@ void ThomasEditor::Component::setGameObject(GameObject ^ gObj)
 	((thomas::object::GameObject*)m_gameObject->nativePtr)->m_components.push_back(((thomas::object::component::Component*)nativePtr));
 }
 
-void ThomasEditor::Component::Destroy()
+void ThomasEngine::Component::Destroy()
 {
 	Monitor::Enter(m_gameObject->m_componentsLock);
 	OnDestroy();
@@ -48,7 +48,7 @@ void ThomasEditor::Component::Destroy()
 	Monitor::Exit(m_gameObject->m_componentsLock);
 }
 
-List<Type^>^ ThomasEditor::Component::GetAllComponentTypes()
+List<Type^>^ ThomasEngine::Component::GetAllComponentTypes()
 {
 	List<System::Type^>^ types = gcnew List<System::Type^>(System::Reflection::Assembly::GetAssembly(Scene::typeid)->GetExportedTypes());
 	
@@ -71,7 +71,7 @@ List<Type^>^ ThomasEditor::Component::GetAllComponentTypes()
 	return types;
 }
 
-List<Type^>^ ThomasEditor::Component::GetAllAddableComponentTypes()
+List<Type^>^ ThomasEngine::Component::GetAllAddableComponentTypes()
 {
 	List<System::Type^>^ types = GetAllComponentTypes();
 

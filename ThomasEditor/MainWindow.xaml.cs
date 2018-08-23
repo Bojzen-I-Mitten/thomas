@@ -1,26 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Interop;
-using System.Xml.Serialization;
 using System.Reflection;
 using System.ComponentModel;
-using System.Windows.Threading;
 
-using System.Runtime.Serialization;
 using System.IO;
-using System.Security.Policy;
+
+using ThomasEngine;
 
 namespace ThomasEditor
 {
@@ -39,7 +27,7 @@ namespace ThomasEditor
             InitializeComponent();
 
             playPauseButton.DataContext = false;
-            Component.editorAssembly = Assembly.GetAssembly(this.GetType());
+            ThomasEngine.Component.editorAssembly = Assembly.GetAssembly(this.GetType());
 
             //Changeds decimals to . instead of ,
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
@@ -137,7 +125,7 @@ namespace ThomasEditor
 
         private void LoadWaveFile(object sender, RoutedEventArgs e)
         {
-            var x = ThomasEditor.Resources.Load<AudioClip>("..\\Data\\test.wav");
+            var x = ThomasEngine.Resources.Load<AudioClip>("..\\Data\\test.wav");
         }
 
         private void Console_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -306,7 +294,7 @@ namespace ThomasEditor
                 if(utils.ScriptAssemblyManager.CreateSolution(dir + "\\" + fileName, fileName))
                 {
                     Project proj = new Project(fileName, dir);
-                    Application.currentProject = proj;
+                    ThomasEngine.Application.currentProject = proj;
                     Debug.Log("...Project created!");
                 }
                 
@@ -329,7 +317,7 @@ namespace ThomasEditor
                 if(utils.ScriptAssemblyManager.OpenSolution(dir + "/" + fileName + ".sln"))
                 {
                     Project proj = new Project(openFileDialog.FileName);
-                    Application.currentProject = proj;
+                    ThomasEngine.Application.currentProject = proj;
                 }
             }
         }

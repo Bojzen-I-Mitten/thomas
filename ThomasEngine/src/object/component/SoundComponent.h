@@ -9,7 +9,7 @@
 #include "../Component.h"
 #include "../../Input.h"
 
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	public ref class SoundComponent : public Component
 	{

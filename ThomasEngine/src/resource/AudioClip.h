@@ -5,7 +5,7 @@
 
 #include "Resource.h"
 
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	[DataContractAttribute]
 	public ref class AudioClip : public Resource

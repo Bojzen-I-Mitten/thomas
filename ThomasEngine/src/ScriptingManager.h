@@ -6,7 +6,7 @@ using namespace System;
 using namespace System::IO;
 using namespace System::Reflection;
 
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	public ref class ScriptingManger
 	{
@@ -23,7 +23,7 @@ namespace ThomasEditor
 			fsw->Path = assemblyFolderPath;
 			fsw->Filter = "*.dll";
 
-			fsw->Changed += gcnew FileSystemEventHandler(&ThomasEditor::ScriptingManger::OnChanged);
+			fsw->Changed += gcnew FileSystemEventHandler(&ThomasEngine::ScriptingManger::OnChanged);
 
 			fsw->EnableRaisingEvents = true;
 

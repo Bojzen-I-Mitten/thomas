@@ -5,7 +5,7 @@ using namespace System::Runtime::Serialization;
 using namespace System;
 using namespace System::Windows;
 
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	public ref class Curve
 	{

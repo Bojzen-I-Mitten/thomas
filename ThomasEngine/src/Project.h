@@ -4,7 +4,7 @@
 using namespace System;
 using namespace System::Runtime::Serialization;
 using namespace System::ComponentModel;
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	[DataContractAttribute]
 	public ref class Project

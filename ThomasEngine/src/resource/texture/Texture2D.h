@@ -5,7 +5,7 @@
 
 #include "Texture.h"
 #include "../../math/Math.h"
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	[DataContractAttribute]
 	public ref class Texture2D : public Texture

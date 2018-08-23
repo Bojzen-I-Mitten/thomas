@@ -9,7 +9,7 @@
 #include <msclr\marshal_cppstd.h>
 
 using namespace System::ComponentModel;
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	[DisallowMultipleComponent]
 	[ExecuteInEditor]

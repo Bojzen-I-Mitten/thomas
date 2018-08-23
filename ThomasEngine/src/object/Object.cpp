@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "component\Transform.h"
 #include "../Scene.h"
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	GameObject ^ Object::Instantiate(GameObject ^ original)
 	{

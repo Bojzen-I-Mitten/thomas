@@ -1,6 +1,6 @@
 #include "Model.h"
 #include "../object/GameObject.h"
-void ThomasEditor::Model::GenerateBones(GameObject^ parent)
+void ThomasEngine::Model::GenerateBones(GameObject^ parent)
 {
 	thomas::resource::Model* nativeModel = ((thomas::resource::Model*)m_nativePtr);
 	auto boneInfos = nativeModel->GetBones();
