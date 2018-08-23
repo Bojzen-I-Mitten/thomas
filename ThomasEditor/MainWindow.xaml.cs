@@ -40,21 +40,25 @@ namespace ThomasEditor
 
         private void OutputLog_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.NewItems != null)
+            this.Dispatcher.Invoke((Action)(() =>
             {
-                foreach (String output in e.NewItems)
+                if (e.NewItems != null)
                 {
-                    TextBlock block = new TextBlock
+                    foreach (String output in e.NewItems)
                     {
-                        Text = output,
-                        TextWrapping = TextWrapping.Wrap
-                    };
-                    console.Items.Add(block);
-                    console.Items.Add(new Separator());
-                    if (console.Items.Count > 10)
-                        console.Items.RemoveAt(0);
-                }
-            }
+                        TextBlock block = new TextBlock
+                        {
+                            Text = output,
+                            TextWrapping = TextWrapping.Wrap
+                        };
+                        console.Items.Add(block);
+                        console.Items.Add(new Separator());
+                        if (console.Items.Count > 10)
+                            console.Items.RemoveAt(0);
+                    }
+                } 
+            }));
+            
         }
 
         private void Node_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
@@ -320,6 +324,11 @@ namespace ThomasEditor
                     ThomasEngine.Application.currentProject = proj;
                 }
             }
+        }
+
+        private void ReloadAssembly(object sender, RoutedEventArgs e)
+        {
+            ScriptingManger.LoadAssembly();
         }
     }
 

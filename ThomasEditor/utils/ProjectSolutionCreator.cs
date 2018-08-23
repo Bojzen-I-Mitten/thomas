@@ -29,6 +29,8 @@ namespace ThomasEditor.utils
                 project.ProjectItems.AddFromDirectory(path + "\\Assets");
                 assemblyPath = path + "\\" + name + ".sln";
 
+
+                solution.SolutionBuild.Build(true);
                 // save and quit
                 dte.ExecuteCommand("File.SaveAll");
                 dte.Quit();

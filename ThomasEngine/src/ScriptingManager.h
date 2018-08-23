@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 #include "object\GameObject.h"
+#include "Application.h"
 using namespace System;
 using namespace System::IO;
 using namespace System::Reflection;
@@ -12,25 +13,34 @@ namespace ThomasEngine
 	{
 	private:
 		static FileSystemWatcher^ fsw;
-		static String^ assemblyFolderPath;
+		static String^ assemblyFolderPath = "../Data/assembly";
 		static Assembly^ assembly;
 	public:
 		static void Init() {
 			fsw = gcnew FileSystemWatcher();
-
-			assemblyFolderPath = "../Data/assembly";
-
+			
 			fsw->Path = assemblyFolderPath;
-			fsw->Filter = "*.dll";
+			fsw->Filter = "Assembly.dll";
 
-			fsw->Changed += gcnew FileSystemEventHandler(&ThomasEngine::ScriptingManger::OnChanged);
+			fsw->Changed += gcnew FileSystemEventHandler(&ScriptingManger::OnChanged);
 
 			fsw->EnableRaisingEvents = true;
-
-			
+			Application::currentProjectChanged += gcnew Application::CurrentProjectChangedEvent(&ScriptingManger::OnCurrentProjectChanged);
 			LoadAssembly();
 		}
 
+		static void OnCurrentProjectChanged(Project^ newProject) {
+			assemblyFolderPath = newProject->assembly;
+#ifdef _DEBUG
+			assemblyFolderPath += "/Debug";
+#else
+			assemblyFolderPath += "/Release";
+#endif
+			fsw->EnableRaisingEvents = false;
+			fsw->Path = assemblyFolderPath;
+			fsw->EnableRaisingEvents = true;
+			LoadAssembly();
+		}
 		static Assembly^ GetAssembly()
 		{
 			return assembly;
@@ -38,6 +48,7 @@ namespace ThomasEngine
 
 		delegate void OnChanged(Object^ sender, FileSystemEventArgs e);
 		
+		delegate void OnCreated(Object^ sender, FileSystemEventArgs e);
 
 		static bool IsFileLocked(FileInfo^ file)
 		{
@@ -92,4 +103,3 @@ namespace ThomasEngine
 		static void OnChanged(System::Object ^sender, System::IO::FileSystemEventArgs ^e);
 	};
 }
-

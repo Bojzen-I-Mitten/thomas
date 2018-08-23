@@ -90,6 +90,7 @@
                 </MenuItem>
                 <MenuItem Header="_Tools">
                     <MenuItem Command="{x:Static commands:CustomCommands.GetOpenOptionsWindow}"/>
+                    <MenuItem Header="_Reload Assembly" Click="ReloadAssembly"/>
                 </MenuItem>
             </Menu>
             <WrapPanel Grid.Row="1" Height="40">
