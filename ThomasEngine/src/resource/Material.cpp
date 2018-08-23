@@ -3,7 +3,7 @@
 #include "../ThomasManaged.h"
 
 
-void ThomasEditor::Material::Shader::set(ThomasEditor::Shader^ value)
+void ThomasEngine::Material::Shader::set(ThomasEngine::Shader^ value)
 {
 	if (m_nativePtr)
 		((thomas::resource::Material*)m_nativePtr)->SetShader((thomas::resource::Shader*)value->m_nativePtr);
@@ -15,11 +15,11 @@ void ThomasEditor::Material::Shader::set(ThomasEditor::Shader^ value)
 
 	if (m_loaded && !ThomasWrapper::IsPlaying())
 	{
-		ThomasEditor::Resources::SaveResource(this);
+		ThomasEngine::Resources::SaveResource(this);
 	}
 }
 
-void ThomasEditor::Material::EditorProperties::set(Dictionary<String^, System::Object^>^ value)
+void ThomasEngine::Material::EditorProperties::set(Dictionary<String^, System::Object^>^ value)
 {
 
 	for each(String^ key in value->Keys)
@@ -48,6 +48,6 @@ void ThomasEditor::Material::EditorProperties::set(Dictionary<String^, System::O
 	}
 	if (m_loaded && !ThomasWrapper::IsPlaying())
 	{
-		ThomasEditor::Resources::SaveResource(this);
+		ThomasEngine::Resources::SaveResource(this);
 	}
 }

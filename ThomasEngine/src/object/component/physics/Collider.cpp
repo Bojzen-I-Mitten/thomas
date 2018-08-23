@@ -1,6 +1,6 @@
 #include "Collider.h"
 #include "Rigidbody.h"
-void ThomasEditor::Collider::attachedRigidbody::set(Rigidbody^ value)
+void ThomasEngine::Collider::attachedRigidbody::set(Rigidbody^ value)
 {
 	m_attachedRigidbody = value;
 	if (m_attachedRigidbody)

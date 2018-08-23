@@ -1,18 +1,15 @@
 ﻿
 using System;
-using System.Linq;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
 using System.Globalization;
-using System.Windows.Threading;
-using System.Collections.ObjectModel;
+
 using System.Windows.Input;
-using Xceed.Wpf.Toolkit.PropertyGrid;
-using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
-using System.Threading;
-using System.Collections.Generic;
+
+using ThomasEngine;
 
 namespace ThomasEditor
 {

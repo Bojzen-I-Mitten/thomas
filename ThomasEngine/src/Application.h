@@ -2,7 +2,7 @@
 
 #include "Project.h"
 using namespace System;
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	public ref class Application
 	{

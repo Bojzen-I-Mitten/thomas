@@ -8,7 +8,7 @@ using namespace System::ComponentModel;
 using namespace System::Runtime::Serialization;
 using namespace System;
 
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	
 	public value class Vector4

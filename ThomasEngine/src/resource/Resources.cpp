@@ -6,7 +6,7 @@
 #include "texture\Texture2D.h"
 #include "Resources.h"
 #include "../Scene.h"
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	Resource^ Resources::Load(String^ path)
 	{
@@ -20,32 +20,44 @@ namespace ThomasEditor
 		{
 			Resource^ obj;
 			AssetTypes type = GetResourceAssetType(path);
-			switch (type)
-			{
-			case AssetTypes::MODEL:
-				obj = gcnew Model(path);
-				break;
-			case AssetTypes::TEXTURE2D:
-				obj = gcnew Texture2D(path);
-				break;
-			case AssetTypes::SCENE:
-				break;
-			case AssetTypes::SHADER:
-				obj = gcnew Shader(path);
-				break;
-			case AssetTypes::MATERIAL:
-				obj = Deserialize<Material^>(path);
-				break;
-			case AssetTypes::SCRIPT:
-				break;
-			case AssetTypes::AUDIO_CLIP:
-				obj = gcnew AudioClip(path);
-				break;
-			case AssetTypes::UNKNOWN:
-				break;
-			default:
-				break;
+			try {
+				switch (type)
+				{
+				case AssetTypes::MODEL:
+					obj = gcnew Model(path);
+					break;
+				case AssetTypes::TEXTURE2D:
+					obj = gcnew Texture2D(path);
+					break;
+				case AssetTypes::SCENE:
+					break;
+				case AssetTypes::SHADER:
+					obj = gcnew Shader(path);
+					break;
+				case AssetTypes::MATERIAL:
+					obj = Deserialize<Material^>(path);
+					break;
+				case AssetTypes::SCRIPT:
+					break;
+				case AssetTypes::AUDIO_CLIP:
+					obj = gcnew AudioClip(path);
+					break;
+				case AssetTypes::UNKNOWN:
+					break;
+				default:
+					break;
+				}
 			}
+			catch (SerializationException^ e) {
+				std::string error = "Error creating resource from file: " + Utility::ConvertString(path) + " \nError: Serialization failed";
+				LOG(error);
+			}
+			catch (Exception^ e) {
+				std::string error = "Error creating resource from file: " + Utility::ConvertString(path) + " \nError: " + Utility::ConvertString(e->Message);
+				LOG(error);
+				//Debug::Log("Failed to create resource from file. Filename: " + path + " \nError: " + e->Message);
+			}
+			
 			if (obj != nullptr)
 			{
 				resources[fullPath] = obj;

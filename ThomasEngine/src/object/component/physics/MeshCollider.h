@@ -4,7 +4,7 @@
 #pragma managed
 #include "Collider.h"
 #include "../../../resource/Model.h"
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	public ref class MeshCollider : public Collider
 	{

@@ -8,7 +8,7 @@
 #include "Resources.h"
 #include "texture\Texture2D.h"
 using namespace System::Collections::Generic;
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	[DataContractAttribute]
 	public ref class Material : public Resource
@@ -89,27 +89,27 @@ namespace ThomasEditor
 		Texture2D^ GetTexture2D(String^ name) 
 		{
 			thomas::resource::Texture2D* nativePtr = ((thomas::resource::Material*)m_nativePtr)->GetTexture2D(Utility::ConvertString(name));
-			ThomasEditor::Resource^ texture = ThomasEditor::Resources::FindResourceFromNativePtr(nativePtr);
+			ThomasEngine::Resource^ texture = ThomasEngine::Resources::FindResourceFromNativePtr(nativePtr);
 			if (texture)
-				return (ThomasEditor::Texture2D^)texture;
+				return (ThomasEngine::Texture2D^)texture;
 			else
-				return gcnew ThomasEditor::Texture2D(nativePtr);
+				return gcnew ThomasEngine::Texture2D(nativePtr);
 		}
 		void SetTexture2D(String^ name, Texture2D^ value) { ((thomas::resource::Material*)m_nativePtr)->SetTexture2D(Utility::ConvertString(name), (thomas::resource::Texture2D*)value->m_nativePtr); }
 		
 		[DataMemberAttribute(Order=0)]
 		property Shader^ Shader
 		{
-			ThomasEditor::Shader^ get() {
+			ThomasEngine::Shader^ get() {
 				thomas::resource::Shader* nativePtr = ((thomas::resource::Material*)m_nativePtr)->GetShader();
-				ThomasEditor::Resource^ shader = ThomasEditor::Resources::FindResourceFromNativePtr(nativePtr);
+				ThomasEngine::Resource^ shader = ThomasEngine::Resources::FindResourceFromNativePtr(nativePtr);
 				if (shader)
-					return (ThomasEditor::Shader^)shader;
+					return (ThomasEngine::Shader^)shader;
 				else
-					return gcnew ThomasEditor::Shader(nativePtr);
+					return gcnew ThomasEngine::Shader(nativePtr);
 
 			}
-			void set(ThomasEditor::Shader^ value);
+			void set(ThomasEngine::Shader^ value);
 		}
 
 

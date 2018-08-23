@@ -3,7 +3,7 @@
 #include <thomas\object\component\physics\SphereCollider.h>
 #pragma managed
 #include "Collider.h"
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	public ref class SphereCollider : public Collider
 	{

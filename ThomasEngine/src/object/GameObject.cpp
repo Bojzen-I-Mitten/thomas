@@ -5,7 +5,7 @@
 #include "component\physics\BoxCollider.h"
 #include "component\physics\SphereCollider.h"
 
-void ThomasEditor::GameObject::Destroy()
+void ThomasEngine::GameObject::Destroy()
 {
 	Monitor::Enter(Scene::CurrentScene->GetGameObjectsLock());
 	Monitor::Enter(m_componentsLock);
@@ -22,7 +22,7 @@ void ThomasEditor::GameObject::Destroy()
 	Monitor::Exit(Scene::CurrentScene->GetGameObjectsLock());
 }
 
-ThomasEditor::GameObject ^ ThomasEditor::GameObject::CreatePrimitive(PrimitiveType type)
+ThomasEngine::GameObject ^ ThomasEngine::GameObject::CreatePrimitive(PrimitiveType type)
 {
 
 	GameObject^ gameObject = gcnew GameObject("new" + type.ToString());

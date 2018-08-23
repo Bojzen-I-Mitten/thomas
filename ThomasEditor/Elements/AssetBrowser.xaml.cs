@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.IO;
+
 using ThomasEditor.utils;
 using ThomasEditor.Inspectors;
+using ThomasEngine;
 
 namespace ThomasEditor
 {
@@ -27,7 +23,7 @@ namespace ThomasEditor
         bool _isDragging = false;
         bool renameNextAddedItem = false;
 
-        public static Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage> assetImages = new Dictionary<ThomasEditor.Resources.AssetTypes, BitmapImage>();
+        public static Dictionary<ThomasEngine.Resources.AssetTypes, BitmapImage> assetImages = new Dictionary<ThomasEngine.Resources.AssetTypes, BitmapImage>();
 
         FileSystemWatcher watcher;
 
@@ -49,7 +45,7 @@ namespace ThomasEditor
             
             instance = this;
 
-            Application.currentProjectChanged += Application_currentProjectChanged;
+            ThomasEngine.Application.currentProjectChanged += Application_currentProjectChanged;
             
         }
 
@@ -84,8 +80,8 @@ namespace ThomasEditor
         {
             Dispatcher.BeginInvoke(new Action<String, String>((String oldPath, String newPath) =>
             {
-                ThomasEditor.Resources.AssetTypes oldType = ThomasEditor.Resources.GetResourceAssetType(oldPath);
-                ThomasEditor.Resources.AssetTypes newType = ThomasEditor.Resources.GetResourceAssetType(newPath);
+                ThomasEngine.Resources.AssetTypes oldType = ThomasEngine.Resources.GetResourceAssetType(oldPath);
+                ThomasEngine.Resources.AssetTypes newType = ThomasEngine.Resources.GetResourceAssetType(newPath);
 
                 TreeViewItem foundItem = FindNode(oldPath);
                 if (foundItem != null)
@@ -94,7 +90,7 @@ namespace ThomasEditor
                     if (oldType != newType)
                         return;
 
-                    ThomasEditor.Resources.RenameResource(oldPath, newPath);
+                    ThomasEngine.Resources.RenameResource(oldPath, newPath);
 
                     StackPanel stack = foundItem.Header as StackPanel;
                     stack.DataContext = newPath;
@@ -105,9 +101,9 @@ namespace ThomasEditor
                 }
                 else
                 {
-                    if(newType == ThomasEditor.Resources.AssetTypes.SHADER)
+                    if(newType == ThomasEngine.Resources.AssetTypes.SHADER)
                     {
-                        Resource shader = ThomasEditor.Resources.Find(newPath);
+                        Resource shader = ThomasEngine.Resources.Find(newPath);
                         if (shader != null)
                             shader.Reload();
                     }
@@ -153,7 +149,7 @@ namespace ThomasEditor
                     }
                     if(foundItem.DataContext is Resource)
                     {
-                        ThomasEditor.Resources.Unload(foundItem.DataContext as Resource);
+                        ThomasEngine.Resources.Unload(foundItem.DataContext as Resource);
                     }
                 }
               
@@ -221,8 +217,8 @@ namespace ThomasEditor
             {
 
                 AddNode(p);
-                ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(p);
-                if(assetType == ThomasEditor.Resources.AssetTypes.SCRIPT)
+                ThomasEngine.Resources.AssetTypes assetType = ThomasEngine.Resources.GetResourceAssetType(p);
+                if(assetType == ThomasEngine.Resources.AssetTypes.SCRIPT)
                 {
                     utils.ScriptAssemblyManager.AddScript(p);
                 }
@@ -233,13 +229,13 @@ namespace ThomasEditor
         private void LoadAssetImages()
         {
             
-            assetImages[ThomasEditor.Resources.AssetTypes.UNKNOWN] = new BitmapImage(new Uri("pack://application:,,/icons/assets/unknown.png"));
-            assetImages[ThomasEditor.Resources.AssetTypes.SCENE] = new BitmapImage(new Uri("pack://application:,,/icons/assets/scene.png"));
-            assetImages[ThomasEditor.Resources.AssetTypes.SHADER] = new BitmapImage(new Uri("pack://application:,,/icons/assets/shader.png"));
-            assetImages[ThomasEditor.Resources.AssetTypes.AUDIO_CLIP] = new BitmapImage(new Uri("pack://application:,,/icons/assets/audio.png"));
-            assetImages[ThomasEditor.Resources.AssetTypes.MODEL] = new BitmapImage(new Uri("pack://application:,,/icons/assets/model.png"));
-            assetImages[ThomasEditor.Resources.AssetTypes.MATERIAL] = new BitmapImage(new Uri("pack://application:,,/icons/assets/material.png"));
-            assetImages[ThomasEditor.Resources.AssetTypes.SCRIPT] = new BitmapImage(new Uri("pack://application:,,/icons/assets/script.png"));
+            assetImages[ThomasEngine.Resources.AssetTypes.UNKNOWN] = new BitmapImage(new Uri("pack://application:,,/icons/assets/unknown.png"));
+            assetImages[ThomasEngine.Resources.AssetTypes.SCENE] = new BitmapImage(new Uri("pack://application:,,/icons/assets/scene.png"));
+            assetImages[ThomasEngine.Resources.AssetTypes.SHADER] = new BitmapImage(new Uri("pack://application:,,/icons/assets/shader.png"));
+            assetImages[ThomasEngine.Resources.AssetTypes.AUDIO_CLIP] = new BitmapImage(new Uri("pack://application:,,/icons/assets/audio.png"));
+            assetImages[ThomasEngine.Resources.AssetTypes.MODEL] = new BitmapImage(new Uri("pack://application:,,/icons/assets/model.png"));
+            assetImages[ThomasEngine.Resources.AssetTypes.MATERIAL] = new BitmapImage(new Uri("pack://application:,,/icons/assets/material.png"));
+            assetImages[ThomasEngine.Resources.AssetTypes.SCRIPT] = new BitmapImage(new Uri("pack://application:,,/icons/assets/script.png"));
         }
 
 
@@ -268,15 +264,15 @@ namespace ThomasEditor
             else if(File.Exists(filePath))
             {
                 String fileName = Path.GetFileNameWithoutExtension(filePath);
-                ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(filePath);
-                if (assetType == ThomasEditor.Resources.AssetTypes.UNKNOWN)
+                ThomasEngine.Resources.AssetTypes assetType = ThomasEngine.Resources.GetResourceAssetType(filePath);
+                if (assetType == ThomasEngine.Resources.AssetTypes.UNKNOWN)
                     return null;
                 StackPanel stack = new StackPanel();
                 stack.Orientation = Orientation.Horizontal;
                 stack.Height = 18;
 
                 ImageSource source;
-                if (assetType == ThomasEditor.Resources.AssetTypes.TEXTURE2D)
+                if (assetType == ThomasEngine.Resources.AssetTypes.TEXTURE2D)
                     source = new BitmapImage(new Uri(Path.GetFullPath(filePath)));
                 else
                     source = assetImages[assetType];
@@ -288,7 +284,7 @@ namespace ThomasEditor
                 stack.Children.Add(lbl);
                 stack.DataContext = filePath;
 
-                return new TreeViewItem { Header = stack, DataContext = ThomasEditor.Resources.Load(filePath) };
+                return new TreeViewItem { Header = stack, DataContext = ThomasEngine.Resources.Load(filePath) };
             }
             return null;
         }
@@ -427,11 +423,11 @@ namespace ThomasEditor
             StackPanel stack = item.Header as StackPanel;
 
             String file = stack.DataContext as String;
-            ThomasEditor.Resources.AssetTypes assetType = ThomasEditor.Resources.GetResourceAssetType(file);
+            ThomasEngine.Resources.AssetTypes assetType = ThomasEngine.Resources.GetResourceAssetType(file);
             if (e.ClickCount == 2)
             {
 
-                if (assetType == ThomasEditor.Resources.AssetTypes.SCENE)
+                if (assetType == ThomasEngine.Resources.AssetTypes.SCENE)
                 {
                     SplashScreen splash = new SplashScreen("splash.png");
                     splash.Show(false, true);
@@ -440,7 +436,7 @@ namespace ThomasEditor
                     splash.Close(TimeSpan.FromSeconds(0.2));
 
                 }
-                else if (assetType == ThomasEditor.Resources.AssetTypes.SHADER)
+                else if (assetType == ThomasEngine.Resources.AssetTypes.SHADER)
                 {
                     System.Diagnostics.Process.Start(file);
                 }
@@ -498,7 +494,7 @@ namespace ThomasEditor
         private void Menu_CreateMaterial(object sender, RoutedEventArgs e)
         {
             Material newMat = new Material(Shader.Find("StandardShader"));
-            ThomasEditor.Resources.CreateResource(newMat, "New Material.mat");
+            ThomasEngine.Resources.CreateResource(newMat, "New Material.mat");
             renameNextAddedItem = true;
         }
 

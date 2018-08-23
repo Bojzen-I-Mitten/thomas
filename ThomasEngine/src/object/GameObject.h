@@ -21,7 +21,7 @@ using namespace System::Collections::ObjectModel;
 using namespace System::Threading;
 using namespace System::Linq;
 
-namespace ThomasEditor 
+namespace ThomasEngine 
 {
 	public ref class GameObject : public Object
 	{

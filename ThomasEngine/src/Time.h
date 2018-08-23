@@ -4,7 +4,7 @@
 #pragma managed
 
 
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	public ref class Time
 	{

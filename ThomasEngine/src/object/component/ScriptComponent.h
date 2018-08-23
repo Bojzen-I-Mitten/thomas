@@ -5,7 +5,7 @@
 
 #include "../Component.h"
 
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	[HideInInspector]
 	public ref class ScriptComponent : public Component

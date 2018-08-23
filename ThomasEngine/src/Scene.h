@@ -7,7 +7,7 @@
 #using "PresentationFramework.dll"
 
 
-namespace ThomasEditor {
+namespace ThomasEngine {
 	ref class GameObject;
 
 	

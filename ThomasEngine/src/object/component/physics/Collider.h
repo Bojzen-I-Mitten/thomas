@@ -4,7 +4,7 @@
 #pragma managed
 #include "../../Component.h"
 #include "Rigidbody.h"
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	ref class Rigidbody;
 	[HideInInspector]

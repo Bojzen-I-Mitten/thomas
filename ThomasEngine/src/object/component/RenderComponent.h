@@ -7,7 +7,7 @@
 #include "../../resource/Model.h"
 #include "../../resource/Material.h"
 
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	[DisallowMultipleComponent]
 	[ExecuteInEditor]
@@ -38,7 +38,7 @@ namespace ThomasEditor
 		property Material^ material {
 			Material^ get() {
 				thomas::resource::Material* nptr = ((thomas::object::component::RenderComponent*)nativePtr)->GetMaterial(0);
-				Resource^ mat =	ThomasEditor::Resources::FindResourceFromNativePtr(nptr);
+				Resource^ mat =	ThomasEngine::Resources::FindResourceFromNativePtr(nptr);
 				if (mat != nullptr)
 					return (Material^)mat;
 				else

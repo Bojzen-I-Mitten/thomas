@@ -1,6 +1,6 @@
 #include "Rigidbody.h"
 #include "Collider.h"
-void ThomasEditor::Rigidbody::Awake()
+void ThomasEngine::Rigidbody::Awake()
 {
 	Collider^ collider = gameObject->GetComponent<Collider^>();
 	if (collider)
@@ -10,7 +10,7 @@ void ThomasEditor::Rigidbody::Awake()
 	}
 }
 
-void ThomasEditor::Rigidbody::OnDestroy()
+void ThomasEngine::Rigidbody::OnDestroy()
 {
 	List<Collider^>^ colliders = gameObject->GetComponents<Collider^>();
 	for each(Collider^ c in colliders)

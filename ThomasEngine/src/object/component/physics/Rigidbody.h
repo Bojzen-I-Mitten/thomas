@@ -4,7 +4,7 @@
 #pragma managed
 #include "../../Component.h"
 #include "../../GameObject.h"
-namespace ThomasEditor
+namespace ThomasEngine
 {
 	[DisallowMultipleComponent]
 	public ref class Rigidbody : public Component
