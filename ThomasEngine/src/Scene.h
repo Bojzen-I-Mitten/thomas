@@ -19,7 +19,7 @@ namespace ThomasEngine {
 		System::Object^ m_gameObjectsLock = gcnew System::Object();
 		System::Collections::ObjectModel::ObservableCollection<GameObject^> m_gameObjects;
 		System::String^ m_name;
-		System::String^ m_savePath;
+		System::String^ m_relativeSavePath;
 
 		Scene() {
 			m_name = "New Scene";
@@ -40,9 +40,9 @@ namespace ThomasEngine {
 
 		bool IsPlaying() { return m_playing; }
 
-		property System::String^ SavePath {
-			System::String^ get() { return m_savePath; }
-			void set(System::String^ value) { m_savePath = value; }
+		property System::String^ RelativeSavePath {
+			System::String^ get() { return m_relativeSavePath; }
+			void set(System::String^ value) { m_relativeSavePath = value; }
 		}
 
 		System::Object^ GetGameObjectsLock()

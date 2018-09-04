@@ -10,15 +10,17 @@ namespace ThomasEngine
 	public ref class Project
 	{
 	private:
+		String ^ m_path;
 		[DataMemberAttribute]
 		String ^ m_name;
 		[DataMemberAttribute]
-		String^ m_path;
+		String^ m_relativeResourcePath;
 		[DataMemberAttribute]
-		String^ m_resourcePath;
-		[DataMemberAttribute]
-		String^ m_assemblyPath;
+		String^ m_relativeAssemblyPath;
 		
+		[DataMemberAttribute]
+		String^ m_relativeCurrentScenePath;
+
 	internal:
 		Project() {};
 
@@ -27,18 +29,37 @@ namespace ThomasEngine
 		{
 			m_name = name;
 			m_path = absolutePath + "\\" + name;
-			m_resourcePath = m_path + "\\" + "Assets";
-			m_assemblyPath = m_path + "\\" + "Assembly";
-			System::IO::Directory::CreateDirectory(m_path);
-			System::IO::Directory::CreateDirectory(m_resourcePath);
-			System::IO::Directory::CreateDirectory(m_assemblyPath);
-			System::IO::File::Create(m_path + "\\" + m_name + ".thomas");
+			m_relativeResourcePath = "Assets";
+			m_relativeAssemblyPath = "Assembly";
+			m_relativeCurrentScenePath = nullptr;
+			System::IO::Directory::CreateDirectory(path);
+			System::IO::Directory::CreateDirectory(assetPath);
+			System::IO::Directory::CreateDirectory(assembly);
+			Save();
 		}
-		Project(String^ projectFile) {
-			m_name = System::IO::Path::GetFileNameWithoutExtension(projectFile);
-			m_path = System::IO::Path::GetDirectoryName(projectFile);
-			m_resourcePath = m_path + "\\" + "Assets";
-			m_assemblyPath = m_path + "\\" + "Assembly";
+
+		static Project^ LoadProject(String^ projectFile) {
+			DataContractSerializer^ serializer = gcnew DataContractSerializer(Project::typeid);
+			Xml::XmlReader^ file = Xml::XmlReader::Create(projectFile);
+			Project^ project = (Project^)serializer->ReadObject(file);
+			file->Close();
+			project->m_path = IO::Path::GetDirectoryName(projectFile);
+			return project;
+		}
+
+		void Save() {
+			DataContractSerializer^ serializer = gcnew DataContractSerializer(Project::typeid);
+			System::IO::FileInfo^ fi = gcnew System::IO::FileInfo(path);
+			fi->Directory->Create();
+			Xml::XmlWriterSettings^ settings = gcnew Xml::XmlWriterSettings();
+			settings->Indent = true;
+			Xml::XmlWriter^ file = Xml::XmlWriter::Create(filepath, settings);
+			serializer->WriteObject(file, this);
+			file->Close();
+		}
+
+		property String^ filepath {
+			String^ get() { return m_path + "\\" + m_name + ".thomas"; }
 		}
 
 		property String^ name
@@ -51,11 +72,17 @@ namespace ThomasEngine
 		}
 		property String^ assetPath
 		{
-			String^ get() { return m_resourcePath; }
+			String^ get() { return m_path + "\\" + m_relativeResourcePath; }
 		}
 		property String^ assembly
 		{
-			String^ get() { return m_assemblyPath; }
+			String^ get() { return  m_path + "\\" + m_relativeAssemblyPath; }
+		}
+
+		property String^ currentScenePath
+		{
+			String^ get() { if (m_relativeCurrentScenePath) return assetPath + "\\" + m_relativeCurrentScenePath; else return nullptr; }
+			void set(String^ scene) { m_relativeCurrentScenePath = scene; Save(); }
 		}
 	};
 }

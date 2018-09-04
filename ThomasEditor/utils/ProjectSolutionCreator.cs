@@ -16,7 +16,7 @@ namespace ThomasEditor.utils
                 
                 dte.MainWindow.Visible = false; // optional if you want to See VS doing its thing
 
-                string template = System.IO.Path.GetFullPath("../Data/thomasProject/MyTemplate.vstemplate");
+                string template = System.IO.Path.GetFullPath("../Data/assemblyFiles/MyTemplate.vstemplate");
                 dte.Solution.AddFromTemplate(template, path, name);
 
                 //create a new solution

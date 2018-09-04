@@ -13,24 +13,17 @@ namespace ThomasEngine
 	{
 	private:
 		static FileSystemWatcher^ fsw;
-		static String^ assemblyFolderPath = "../Data/assembly";
 		static Assembly^ assembly;
 	public:
 		static void Init() {
 			fsw = gcnew FileSystemWatcher();
-			
-			fsw->Path = assemblyFolderPath;
 			fsw->Filter = "Assembly.dll";
-
 			fsw->Changed += gcnew FileSystemEventHandler(&ScriptingManger::OnChanged);
-
-			fsw->EnableRaisingEvents = true;
 			Application::currentProjectChanged += gcnew Application::CurrentProjectChangedEvent(&ScriptingManger::OnCurrentProjectChanged);
-			LoadAssembly();
 		}
 
 		static void OnCurrentProjectChanged(Project^ newProject) {
-			assemblyFolderPath = newProject->assembly;
+			String^ assemblyFolderPath = newProject->assembly;
 #ifdef _DEBUG
 			assemblyFolderPath += "/Debug";
 #else
@@ -48,7 +41,6 @@ namespace ThomasEngine
 
 		delegate void OnChanged(Object^ sender, FileSystemEventArgs e);
 		
-		delegate void OnCreated(Object^ sender, FileSystemEventArgs e);
 
 		static bool IsFileLocked(FileInfo^ file)
 		{
@@ -69,18 +61,18 @@ namespace ThomasEngine
 		static void LoadAssembly() {
 
 			String^ tempFile = Path::Combine(Environment::GetFolderPath(Environment::SpecialFolder::LocalApplicationData), "thomas/scene.tds");
-			if (File::Exists(assemblyFolderPath + "/Assembly.dll"))
+			if (File::Exists(fsw->Path + "/Assembly.dll"))
 			{
 				String^ currentSavePath;
 				if (Scene::CurrentScene)
 				{
-					currentSavePath = Scene::CurrentScene->SavePath;
+					currentSavePath = Scene::CurrentScene->RelativeSavePath;
 					Scene::SaveSceneAs(Scene::CurrentScene, tempFile);
 				}
 				
 
-				array<Byte>^ bytes = File::ReadAllBytes(assemblyFolderPath + "/Assembly.dll");
-				array<Byte>^ symbolBytes = File::ReadAllBytes(assemblyFolderPath + "/Assembly.pdb");
+				array<Byte>^ bytes = File::ReadAllBytes(fsw->Path + "/Assembly.dll");
+				array<Byte>^ symbolBytes = File::ReadAllBytes(fsw->Path + "/Assembly.pdb");
 				assembly = Assembly::Load(bytes, symbolBytes);
 				
 
@@ -91,7 +83,9 @@ namespace ThomasEngine
 					Scene::CurrentScene = Scene::LoadScene(tempFile);
 					oldScene->UnLoad();
 					File::Delete(tempFile);
-					Scene::CurrentScene->SavePath = currentSavePath;
+					Scene::CurrentScene->RelativeSavePath = currentSavePath;
+					if(Application::currentProject)
+						Application::currentProject->currentScenePath = currentSavePath;
 				}
 
 				

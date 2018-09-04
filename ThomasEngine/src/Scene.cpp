@@ -25,10 +25,12 @@ namespace ThomasEngine
 	{
 		ThomasWrapper::UnselectGameObjects();
 		s_currentScene = value;
+		if(Application::currentProject)
+			Application::currentProject->currentScenePath = value->m_relativeSavePath;
 	}
 
 
-	void Scene::SaveSceneAs(Scene ^ scene, System::String ^ fullPath)
+	void Scene::SaveSceneAs(Scene ^ scene, System::String ^ path)
 	{
 		using namespace System::Runtime::Serialization;
 		DataContractSerializerSettings^ serializserSettings = gcnew DataContractSerializerSettings();
@@ -39,20 +41,25 @@ namespace ThomasEngine
 		serializserSettings->PreserveObjectReferences = true;
 		serializserSettings->DataContractSurrogate = gcnew SceneSurrogate();
 		DataContractSerializer^ serializer = gcnew DataContractSerializer(Scene::typeid, serializserSettings);
-		System::IO::FileInfo^ fi = gcnew System::IO::FileInfo(fullPath);
+		System::IO::FileInfo^ fi = gcnew System::IO::FileInfo(path);
 		fi->Directory->Create();
 		Xml::XmlWriterSettings^ settings = gcnew Xml::XmlWriterSettings();
 		settings->Indent = true;
-		Xml::XmlWriter^ file = Xml::XmlWriter::Create(fullPath, settings);
+		Xml::XmlWriter^ file = Xml::XmlWriter::Create(path, settings);
 		serializer->WriteObject(file, scene);
 		file->Close();
-		scene->m_savePath = fullPath;
+		
+		if (Application::currentProject && scene->RelativeSavePath != path) {
+			scene->m_relativeSavePath = path->Replace(Application::currentProject->assetPath + "\\", "");
+			Application::currentProject->currentScenePath = scene->RelativeSavePath;
+		}
+			
 	}
 
 	void Scene::SaveScene(Scene ^ scene)
 	{
-		if(scene->m_savePath)
-			SaveSceneAs(scene, scene->m_savePath);
+		if(scene->RelativeSavePath)
+			SaveSceneAs(scene, scene->RelativeSavePath);
 	}
 
 	Scene ^ Scene::LoadScene(System::String ^ fullPath)
@@ -74,7 +81,8 @@ namespace ThomasEngine
 
 		scene->PostLoad();
 		s_loading = false;
-		scene->m_savePath = fullPath;
+		if(Application::currentProject)
+			scene->m_relativeSavePath = fullPath->Replace(Application::currentProject->assetPath + "\\", "");
 		return scene;
 
 	}

@@ -16,8 +16,15 @@ namespace ThomasEngine
 		{
 			Project^ get() { return m_currentProject; }
 			void set(Project^ value) {
-				m_currentProject = value;
+				m_currentProject = nullptr;
+				if (Scene::CurrentScene) {
+					Scene::CurrentScene->UnLoad();
+				}
 				currentProjectChanged(value);
+				m_currentProject = value;
+				if (m_currentProject->currentScenePath) {
+					Scene::CurrentScene = Scene::LoadScene(m_currentProject->currentScenePath);
+				}
 			}
 		}
 	};

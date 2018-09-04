@@ -93,20 +93,23 @@ namespace ThomasEditor
 
             private void Components_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
             {
-                if(SelectedGameObject != null)
-                {
-                    RenderComponent rc = SelectedGameObject.GetComponent<RenderComponent>();
-                    if (rc != null)
+                this.Dispatcher.Invoke((Action)(() => {
+                    if (SelectedGameObject != null)
                     {
-                        Binding materialBinding = new Binding("material");
-                        materialBinding.Source = rc;
-                        MaterialEditor.SetBinding(MaterialInspector.MaterialProperty, materialBinding);
+                        RenderComponent rc = SelectedGameObject.GetComponent<RenderComponent>();
+                        if (rc != null)
+                        {
+                            Binding materialBinding = new Binding("material");
+                            materialBinding.Source = rc;
+                            MaterialEditor.SetBinding(MaterialInspector.MaterialProperty, materialBinding);
+                        }
+                        else
+                        {
+                            BindingOperations.ClearBinding(MaterialEditor, MaterialInspector.MaterialProperty);
+                        }
                     }
-                    else
-                    {
-                        BindingOperations.ClearBinding(MaterialEditor, MaterialInspector.MaterialProperty);
-                    }
-                }
+                }));
+                
               
                     
             }

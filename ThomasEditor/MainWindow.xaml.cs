@@ -171,7 +171,7 @@ namespace ThomasEditor
         private void SaveScene_Click(object sender, RoutedEventArgs e)
         {
 
-            if(Scene.CurrentScene.SavePath != null)
+            if(Scene.CurrentScene.RelativeSavePath != null)
             {
                 Scene sceneToSave = Scene.CurrentScene;
                 Scene.SaveScene(sceneToSave);
@@ -364,8 +364,7 @@ namespace ThomasEditor
                     string dir = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
                     if (utils.ScriptAssemblyManager.OpenSolution(dir + "/" + fileName + ".sln"))
                     {
-                        Project proj = new Project(openFileDialog.FileName);
-                        ThomasEngine.Application.currentProject = proj;
+                        ThomasEngine.Application.currentProject = Project.LoadProject(openFileDialog.FileName);
                     }
                 };
                 worker.RunWorkerCompleted += (o, ea) =>
