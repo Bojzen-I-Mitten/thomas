@@ -147,7 +147,7 @@
     <ProjectGuid>{ED0D8681-B384-43D1-8F56-B4145588E20C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>THOMAS</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
     <ProjectName>ThomasCore</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -277,7 +277,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>$(ProjectDir)\lib\assimp.lib;$(ProjectDir)\lib\libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision.lib;BulletDynamics.lib;DirectXTK.lib;DirectXTKAudioWin8.lib;DirectXTex.lib;libnoise.lib;LinearMath.lib;Effects11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AntTweakBar.lib;assimp.lib;BulletCollision.lib;BulletDynamics.lib;DirectXTK.lib;DirectXTKAudioWin8.lib;DirectXTex.lib;libnoise.lib;LinearMath.lib;Effects11.lib;zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
