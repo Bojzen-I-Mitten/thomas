@@ -35,12 +35,11 @@ namespace thomas
 			
 			Rigidbody::~Rigidbody()
 			{
-				delete getMotionState();
-				Physics::s_world->removeCollisionObject(this);
-				delete getCollisionShape();
-				
 				Physics::RemoveRigidBody(this);
+				delete getMotionState();
 				
+				Physics::s_world->removeCollisionObject(this);
+				delete getCollisionShape();				
 			}
 			void Rigidbody::OnEnable()
 			{
@@ -56,9 +55,7 @@ namespace thomas
 
 			void Rigidbody::OnDisable()
 			{
-				Physics::RemoveRigidBody(this);
-
-				
+				Physics::RemoveRigidBody(this);				
 			}
 
 			void Rigidbody::OnDestroy()
@@ -105,8 +102,7 @@ namespace thomas
 						Physics::AddRigidBody(this);
 					}
 					
-				}
-		
+				}	
 			}
 			bool Rigidbody::IsKinematic()
 			{

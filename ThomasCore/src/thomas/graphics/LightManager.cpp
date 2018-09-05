@@ -1,10 +1,14 @@
 #include "LightManager.h"
-#include "../utils/d3d.h"
-#include "../resource/Shader.h"
+#include "..\utils\D3D.h"
+#include "..\resource\Shader.h"
+
 namespace thomas
 {
 	namespace graphics
 	{
+		LightManager::LightBufferStruct LightManager::s_lightstruct;
+		ID3D11Buffer* LightManager::s_lightBuffer;
+
 		LightManager::LightManager()
 		{
 		}
@@ -15,8 +19,6 @@ namespace thomas
 			s_lightBuffer = NULL;
 		}
 
-		LightManager::LightBufferStruct LightManager::s_lightstruct;
-		ID3D11Buffer* LightManager::s_lightBuffer;
 		bool LightManager::UpdateLightBuffer()
 		{
 			if (!s_lightBuffer)
@@ -27,12 +29,12 @@ namespace thomas
 			else
 				//return thomas::utils::D3d::FillBuffer(s_lightBuffer, s_lightstruct);
 				return true;
-
 		}
 
 		int LightManager::AddDirectionalLight(DirectionalLightStruct directionalLight)
 		{
 			int maxlength = sizeof(s_lightstruct.directionalLights) / sizeof(DirectionalLightStruct);
+
 			if (maxlength > s_lightstruct.nrOfDirectionalLights)
 			{
 				s_lightstruct.directionalLights[s_lightstruct.nrOfDirectionalLights] = directionalLight;
@@ -40,21 +42,19 @@ namespace thomas
 				UpdateLightBuffer();
 				return s_lightstruct.nrOfDirectionalLights - 1;
 			}
-			else//log - to many lights
+			else //TODO: log to many lights
 				return -1;
-
 		}
 
 		bool LightManager::UpdateDirectionalLight(DirectionalLightStruct other, int index)
 		{
-			s_lightstruct.directionalLights[index] = other;
-			
+			s_lightstruct.directionalLights[index] = other;		
 			return UpdateLightBuffer();
 		}
+
 		bool LightManager::UpdatePointLight(PointLightStruct other, int index)
 		{
 			s_lightstruct.pointLights[index] = other;
-
 			return UpdateLightBuffer();
 		}
 
@@ -68,7 +68,7 @@ namespace thomas
 				UpdateLightBuffer();
 				return s_lightstruct.nrOfPointLights - 1;
 			}
-			else//log - to many lights
+			else //TODO: log to many lights
 				return -1;
 		}
 
@@ -76,10 +76,12 @@ namespace thomas
 		{
 			return false;
 		}
+
 		bool LightManager::BindPointLight(unsigned int index)
 		{
 			return false;
 		}
+
 		void LightManager::Destroy()
 		{
 			SAFE_RELEASE(s_lightBuffer);

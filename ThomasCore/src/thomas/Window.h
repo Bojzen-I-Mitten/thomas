@@ -1,31 +1,18 @@
+/*
+	Singleton window management class
+*/
+
 #pragma once
 #include <Windows.h>
-#include "Common.h"
-
+#include <vector>
+#include <d3d11.h>
+#include <imgui\imgui.h>
 
 namespace thomas 
 {
-
-	class THOMAS_API Window
+	class Window
 	{
-	private:
-		
-		void CloneGUIData();
-		void DeleteGUIData();
-		bool UpdateWindow();
-		bool InitDxBuffers();
-		bool Resize();
-
-		Window(HINSTANCE hInstance, int nCmdShow, LONG width, LONG height, LPCSTR title);
-		Window(HWND hWnd);
 	public:
-		enum class Ratio
-		{
-			STANDARD_169 = 0,
-			STANDARD_1610 = 1,
-			STANDARD_43 = 2,
-		};
-
 		struct DXBuffers
 		{
 			ID3D11RenderTargetView* backBuffer = nullptr;
@@ -37,84 +24,86 @@ namespace thomas
 		}m_dxBuffers;
 
 	public:
+		~Window();
+		void QueueResize();
+		void Bind();
+		void Present();
+		void Clear();
+		bool IsFocused();
+		bool Initialized();
+		bool ChangeWindowShowState(int nCmdShow);
 
-		static bool WaitingForUpdate();
-
-		static LRESULT CALLBACK EventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-		static void InitEditor(HWND hWnd);
-		static Window* Create(HWND hWnd);
-		static Window* GetEditorWindow();
-		static Window* GetWindow(int index);
-		static Window* GetWindow(HWND hWnd);
-		static std::vector<Window*> GetWindows();
+	public:
 		static void Destroy();
-		static Window* GetCurrentBound();
-
 		static void ClearAllWindows();
 		static void PresentAllWindows();
-
-		void QueueResize();
-
 		static void BeginFrame();
 		static void EndFrame(bool copyGui);
 		static void Update();
 		static void UpdateFocus();
 
-		void Bind();
-		void Present();
+	public:
+		bool SetHeight(const LONG & height);
+		bool SetWidth(const LONG & width);
+		bool SetSize(const LONG & height, const LONG & width);
+		void SetCursor(const bool & visible);
 
-		~Window();
+	public:
+		static bool WaitingForUpdate();
+		static LRESULT CALLBACK EventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+		static void InitEditor(HWND hWnd);
+		static Window* Create(HWND hWnd);
 
-		IDXGISwapChain* GetSwapChain();
-		void Clear();
+	public:
+		static Window* GetEditorWindow();
+		static Window* GetWindow(int index);
+		static Window* GetWindow(HWND hWnd);
+		static Window* GetCurrentBound();
+		static std::vector<Window*> GetWindows();
 
-		bool SetHeight(LONG height);
-		bool SetWidth(LONG width);
-		bool SetAspectRatio();
-		bool SetSize(LONG height, LONG width);
-		bool IsFocused();
-		LONG GetHeight();
-		LONG GetWidth();
-		Ratio GetAspectRatio();
-		float GetRealAspectRatio();
-		HWND GetWindowHandler();
-		LONG GetHorizontalResolution();
-		LONG GetVerticalResolution();
-		
-		bool Initialized();
+	public:
+		LONG GetHeight() const;
+		LONG GetWidth() const;
+		LONG GetHorizontalResolution() const;
+		LONG GetVerticalResolution() const;
+		IDXGISwapChain* GetSwapChain() const;
+		HWND GetWindowHandler() const;
+		float GetRealAspectRatio() const;
 
-		void SetCursor(bool visible);
+	private:
+		Window(HINSTANCE hInstance, int nCmdShow, const LONG & width, const LONG & height, const LPCSTR & title);
+		Window(HWND hWnd);
 
-		bool ChangeWindowShowState(int nCmdShow);
+	private:
+		void CloneGUIData();
+		void DeleteGUIData();
+		bool UpdateWindow();
+		bool InitDxBuffers();
+		bool Resize();
 
-		void SetFullScreen(bool fullSceeen);
 	private:
 		LONG m_width;
 		LONG m_height;
-		float m_aspectRatio;
-		WNDCLASSEX m_windowClassInfo;
-		HWND m_windowHandler;
-		RECT m_windowRectangle;
-		std::string m_title;
 		bool m_showCursor;
-		Ratio m_ratio;
 		bool m_fullScreen;
 		bool m_initialized;
-
 		bool m_shouldResize;
 		bool m_created;
 		bool m_focused;
+		float m_aspectRatio;
+		std::string m_title;
 
+	private:
+		WNDCLASSEX m_windowClassInfo;
+		HWND m_windowHandler;
+		RECT m_windowRectangle;
 		IDXGISwapChain* m_swapChain;
 		ImDrawData* m_guiData = nullptr;
 
+	private:
 		static std::vector<Window*> s_windows;
 		static Window* s_editorWindow;
 		static Window* s_current;
-
-	private:
-
 	};
 }
 

@@ -3,12 +3,10 @@
 #include <ctime>
 #include "../GameObject.h"
 #include <fstream>
-#include "../../utils/DebugTools.h"
 #include "../../utils/d3d.h"
 
 #include "..\..\resource\Material.h"
 #include "..\..\graphics\ParticleSystem.h"
-#include "../../utils/DebugTools.h"
 #include "Transform.h"
 #include "../../ThomasTime.h"
 namespace thomas
@@ -75,8 +73,6 @@ namespace thomas
 				SAFE_RELEASE(m_d3dData.billboardBuffer);
 				SAFE_RELEASE(m_d3dData.billboardsSRV);
 				SAFE_RELEASE(m_d3dData.billboardsUAV);
-				if(!m_debugBarName.empty())
-					utils::DebugTools::RemoveBar(m_debugBarName);
 			}
 
 			void ParticleEmitterComponent::Update()
@@ -387,55 +383,6 @@ namespace thomas
 			ParticleEmitterComponent::D3DData * ParticleEmitterComponent::GetD3DData()
 			{
 				return &m_d3dData;
-			}
-
-			void ParticleEmitterComponent::AddToDebugMenu()
-			{
-				m_debugBarName = "particleEmitter-" + std::to_string(rand());
-				utils::DebugTools::CreateBar(m_debugBarName);
-				std::string def = m_debugBarName + " size='400 600' valueswidth=fit refresh=0.001 iconifiable=false buttonalign=center";
-				TwDefine(def.c_str());
-
-				utils::DebugTools::AddBool(m_isEmitting, "Active", m_debugBarName);
-				utils::DebugTools::AddFloat(m_emissionTimeLeft, "timeLeft", m_debugBarName);	
-				utils::DebugTools::AddFloat(m_emissionDuration, "Duration", m_debugBarName);
-				utils::DebugTools::AddBool(m_looping, "Looping", m_debugBarName);
-
-				utils::DebugTools::AddDirectionVector(m_offset, "offset", m_debugBarName);
-				utils::DebugTools::AddDirectionVector(m_directionVector, "direction", m_debugBarName);
-
-				utils::DebugTools::AddFloat(m_particleBufferStruct.spread, "spread", m_debugBarName);
-				utils::DebugTools::AddFloat(m_particleBufferStruct.gravity, "gravity", m_debugBarName);
-
-				utils::DebugTools::AddFloat(m_particleBufferStruct.minSize, "minSize", m_debugBarName);
-				utils::DebugTools::AddFloat(m_particleBufferStruct.maxSize, "maxSize", m_debugBarName);
-				utils::DebugTools::AddFloat(m_particleBufferStruct.endSize, "endSize", m_debugBarName);
-
-				utils::DebugTools::AddFloat(m_particleBufferStruct.minSpeed, "minSpeed", m_debugBarName);
-				utils::DebugTools::AddFloat(m_particleBufferStruct.maxSpeed, "maxSpeed", m_debugBarName);
-				utils::DebugTools::AddFloat(m_particleBufferStruct.endSpeed, "endSpeed", m_debugBarName);
-
-				utils::DebugTools::AddFloat(m_particleBufferStruct.minDelay, "minDelay", m_debugBarName);
-				utils::DebugTools::AddFloat(m_tempMaxDelay, "maxDelay", m_debugBarName);
-
-				utils::DebugTools::AddFloat(m_particleBufferStruct.minLifeTime, "minLifeTime", m_debugBarName);
-				utils::DebugTools::AddFloat(m_tempMaxLifeTime, "maxLifeTime", m_debugBarName);
-
-				utils::DebugTools::AddColor(m_particleBufferStruct.startColor, "startColor", m_debugBarName);
-				utils::DebugTools::AddColor(m_particleBufferStruct.endColor, "endColor", m_debugBarName);
-
-				utils::DebugTools::AddFloat(m_particleBufferStruct.radius, "radius", m_debugBarName);
-
-				utils::DebugTools::AddFloat(m_particleBufferStruct.rotationSpeed, "rotationSpeed", m_debugBarName);
-
-				utils::DebugTools::AddBool(m_particleBufferStruct.spawnAtSphereEdge, "Spawn at edge", m_debugBarName);
-				
-				utils::DebugTools::AddFloat(m_tempEmissionRate, "Emission rate", m_debugBarName);
-				
-				TwEnumVal blendStates[] = { {(int)BlendStates::ADDITIVE, "Additive"}, {(int)BlendStates::ALPHA_BLEND, "Alpha Blend"} };
-				TwType blendType = TwDefineEnum("Blend State", blendStates, 2);
-				utils::DebugTools::AddEnum(blendType, *(int*)&m_blendState, "BlendState", m_debugBarName);
-				
 			}
 
 			std::string ParticleEmitterComponent::GetDebugMenuName()

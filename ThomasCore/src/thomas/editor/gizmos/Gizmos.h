@@ -1,21 +1,22 @@
 #pragma once
-#include "../../Common.h"
-#include "../../utils/Math.h"
+#include "..\..\utils\Math.h"
+#include <memory>
+#include <vector>
+
 namespace thomas
 {
 	namespace resource { class Model; class Material; }
 	namespace utils { struct Ray; namespace buffers { class VertexBuffer; } }
+
 	namespace editor
 	{
-		class THOMAS_API Gizmos
+		class Gizmos
 		{
-
 		private:
-
 			enum class GizmoPasses
 			{
-				SOLID = 0,
-				WIREFRAME = 1,
+				SOLID,
+				WIREFRAME
 			};
 
 			struct GizmoRenderCommand
@@ -37,8 +38,6 @@ namespace thomas
 			static void ClearGizmos();
 			static void Init();
 			static void Destroy();
-			static void DrawModel(resource::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
-			static void DrawModel(resource::Model* model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
 
 			static void DrawWireModel(resource::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
 			static void DrawWireModel(resource::Model* model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
@@ -54,16 +53,14 @@ namespace thomas
 			static void DrawRay(math::Vector3 from, math::Vector3 direction);
 			static void DrawRay(math::Ray ray);
 
-			static void DrawFrustum(math::Vector3 center, float fov, float maxRange, float minRange, float aspect);
-			static void DrawFrustum(math::BoundingFrustum& frustrum);
+		private:
+			static void DrawLines(std::vector<math::Vector3> lines);
 
-			static void SetColor(math::Color color);
-			static void SetMatrix(math::Matrix matrix);
 		private:
 			static std::vector<GizmoRenderCommand> s_gizmoCommands;
 			static std::vector<GizmoRenderCommand> s_prevGizmoCommands;
-			static resource::Material* s_gizmoMaterial;
-			static utils::buffers::VertexBuffer* s_vertexBuffer;
+			static std::unique_ptr<resource::Material> s_gizmoMaterial;
+			static std::unique_ptr<utils::buffers::VertexBuffer> s_vertexBuffer;
 			static math::Matrix s_matrix;
 			static math::Color s_color;
 		};

@@ -1,11 +1,16 @@
-#pragma once
-#include "../Common.h"
+/*
+	Helper file for loading models with the assimp library. This class prepares the mesh
+	with vertex and index buffers and renders the model.
+*/
 
-#include "../utils/Math.h"
+#pragma once
+#include "..\utils\Math.h"
+#include "..\resource\Shader.h"
 #include <vector>
 #include <map>
-#include "../resource/Shader.h"
-namespace thomas 
+#include <memory>
+
+namespace thomas
 {
 	namespace object
 	{
@@ -77,29 +82,31 @@ namespace thomas
 			utils::buffers::IndexBuffer* indexBuffer = nullptr;
 		};
 
-		class THOMAS_API Mesh
+		class Mesh
 		{
+		public:
+			Mesh(const Vertices & vertices, std::vector<unsigned int> indices, const std::string & name);
+			~Mesh() = default;
+			void Draw(resource::Shader* shader);
+
+		public:
+			void SetName(const std::string & name);
+
+		public:
+			std::string GetName() const;
+		    unsigned int GetIndexCount() const;
+			unsigned int GetVertexCount() const;
+			Vertices & GetVertices();
+			std::vector<unsigned int> & GetIndices();
+			MeshData & GetData();
+
 		private:
 			void SetupMesh();
 			math::BoundingBox GenerateBounds();
+
 		public:
-			Mesh(Vertices vertices, std::vector<int> indices, std::string name);
-			~Mesh();
-			bool SetName(std::string name);
-
-			MeshData* GetData();
-	
-			std::string GetName();
-
-			int GetIndexCount();
-			int GetVertexCount();
-
-			void Draw(resource::Shader* shader);
-			
-			Vertices* GetVertices();
-			std::vector<int>* GetIndices();
-
 			math::BoundingBox m_bounds;
+
 		private:
 			std::string m_name;
 			MeshData m_data;

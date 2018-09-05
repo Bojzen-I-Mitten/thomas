@@ -20,6 +20,7 @@ namespace thomas {
 				m_bounds.Extents.z = 0;
 				s_renderComponents.push_back(this);
 			}
+
 			void RenderComponent::SetModel(resource::Model* model)
 			{
 				if (!model)
@@ -32,8 +33,7 @@ namespace thomas {
 				}
 				else
 				{
-					m_model = model;
-					
+					m_model = model;					
 				}
 			}
 
@@ -88,11 +88,10 @@ namespace thomas {
 							material = resource::Material::GetStandardMaterial();
 
 						std::shared_ptr<graphics::Mesh> mesh = m_model->GetMeshes()[i];
-						
+
 						thomas::graphics::Renderer::SubmitCommand(thomas::graphics::RenderCommand(m_gameObject->m_transform->GetWorldMatrix(), mesh, material, camera));
 					}
 				}
-				
 			}
 
 			void RenderComponent::OnDestroy()

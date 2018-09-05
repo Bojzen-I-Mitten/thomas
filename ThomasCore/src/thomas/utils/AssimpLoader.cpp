@@ -166,7 +166,7 @@ namespace thomas
 			std::string meshName, resource::Model::ModelData& modelData, aiMatrix4x4& transform)
 		{
 			graphics::Vertices vertices;
-			std::vector <int> indices;
+			std::vector <unsigned int> indices;
 			std::string name = meshName + "-" + std::string(mesh->mName.C_Str());
 			resource::Material* material;
 

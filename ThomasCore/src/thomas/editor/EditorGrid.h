@@ -1,42 +1,41 @@
+/*
+	Class for management of the grid in the scene.
+*/
+
 #pragma once
-#include "../Common.h"
-#include "../utils/Math.h"
-#include "../graphics/Mesh.h"
+#include "..\utils\Math.h"
+#include "..\graphics\Mesh.h"
 #include <memory>
+
 namespace thomas
 {
-	namespace utils
-	{
-		namespace buffers
-		{
-			class VertexBuffer;
-		}
-	}
+	namespace utils { namespace buffers { class VertexBuffer; } }
 	namespace object { namespace component { class Camera; } }
-	namespace resource
-	{
-		class Material;
-	}
+	namespace resource { class Material; }
+
 	namespace editor
 	{
 		class THOMAS_API EditorGrid
 		{
-		private:
-			void AddLine(math::Vector3 from, math::Vector3 to, math::Vector4 color, float viewDistance=1.0f);
 		public:
-			EditorGrid(int gridSize, float cellSize, int internalGridSize);
-			EditorGrid(int gridSize, float cellSize) : EditorGrid(gridSize, cellSize, 0) {};
-			EditorGrid(int gridSize) : EditorGrid(gridSize, 1.0f, 0) {}
+			EditorGrid(const int & gridSize, const float & cellSize = 1.0f, const int & internalGridSize = 0);
+			~EditorGrid() = default;
 			void Draw(object::component::Camera* camera);
-			~EditorGrid();
+
+		private:
+			void CreateGrid();
+			void AddLine(const math::Vector3 & from, const math::Vector3 & to, const math::Vector4 & color, const float & viewDistance = 1.0f);
+			
 		private:
 			graphics::Vertices m_lines;
-			std::shared_ptr<graphics::Mesh> m_mesh;
-			resource::Material* m_material = nullptr;
+			std::shared_ptr<graphics::Mesh> m_mesh; //Could probs be unique ptr too
+			std::unique_ptr<resource::Material> m_material;
 			math::Matrix worldMatrix;
+
+		private:
 			int m_gridSize;
-			float m_cellSize;
 			int m_internalGridSize;
+			float m_cellSize;
 		};
 	}
 }
