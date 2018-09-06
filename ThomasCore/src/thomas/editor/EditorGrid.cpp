@@ -15,7 +15,7 @@ namespace thomas
 
 			m_lines.positions.push_back(math::Vector4(from.x, from.y, from.z, viewDistance));
 			m_lines.colors.push_back(color);
-	
+
 			m_lines.positions.push_back(math::Vector4(to.x, to.y, to.z, viewDistance));
 			m_lines.colors.push_back(color);
 
@@ -26,27 +26,27 @@ namespace thomas
 			m_gridSize = gridSize;
 			m_cellSize = cellSize;
 			m_internalGridSize = internalGridSize;
-			for (int i = -m_gridSize / 2; i <= m_gridSize / 2; i+=cellSize)
+			for (float i = -m_gridSize / 2.f; i <= m_gridSize / 2.f; i += cellSize)
 			{
-				math::Vector3 from(i, 0.0f, -m_gridSize / 2);
-				math::Vector3 to(i, 0.0f, m_gridSize / 2);
+				math::Vector3 from(i, 0.0f, -m_gridSize / 2.f);
+				math::Vector3 to(i, 0.0f, m_gridSize / 2.f);
 				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 25);
-				from = math::Vector3(-m_gridSize / 2, 0.0f, i);
-				to = math::Vector3(m_gridSize / 2, 0.0f, i);
+				from = math::Vector3(-m_gridSize / 2.f, 0.0f, i);
+				to = math::Vector3(m_gridSize / 2.f, 0.0f, i);
 				AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 25);
 
-				for (float j = cellSize/internalGridSize; j < cellSize; j+= cellSize/internalGridSize)
+				for (float j = cellSize / internalGridSize; j < cellSize; j += cellSize / internalGridSize)
 				{
-					from = math::Vector3(i+j, 0.0f, -m_gridSize / 2);
-					to = math::Vector3(i+j, 0.0f, m_gridSize / 2);
+					from = math::Vector3(i + j, 0.0f, -m_gridSize / 2.f);
+					to = math::Vector3(i + j, 0.0f, m_gridSize / 2.f);
 					AddLine(from, to, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 1.0f), 1.5f);
-					from = math::Vector3(-m_gridSize / 2, 0.0f, i+j);
-					to = math::Vector3(m_gridSize / 2, 0.0f, i+j);
+					from = math::Vector3(-m_gridSize / 2.f, 0.0f, i + j);
+					to = math::Vector3(m_gridSize / 2.f, 0.0f, i + j);
 					AddLine(from, to, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 1.0f), 1.5f);
 				}
 
 			}
-		
+
 			resource::Shader* shader = resource::Shader::CreateShader("../Data/FXIncludes/EditorGridShader.fx");
 			if (shader)
 			{
@@ -57,8 +57,8 @@ namespace thomas
 				m_lines.positions.clear();
 				m_lines.colors.clear();
 			}
-				
-			
+
+
 		}
 
 		void EditorGrid::Draw(object::component::Camera* camera)
@@ -66,21 +66,21 @@ namespace thomas
 			if (m_material)
 			{
 				math::Vector3 cameraPos = camera->GetPosition();
-				int scale = (int)log10(((abs((cameraPos.y*m_internalGridSize)/2)+1) / m_cellSize)*m_cellSize);
-				scale = pow(10.0f,scale);
+				int scale = (int)log10(((abs((cameraPos.y*m_internalGridSize) / 2) + 1) / m_cellSize)*m_cellSize);
+				scale = (int)pow(10.0f, scale);
 				math::Matrix worldMatrix = math::Matrix::CreateScale((scale)*m_cellSize) * math::Matrix::CreateTranslation(
-					(int)(cameraPos.x / scale)*scale,
+					std::floorf((cameraPos.x / scale))*scale,	//Must be int here, grid moves with camera otherwise
 					0.0f,
-					(int)(cameraPos.z / scale)*scale
+					std::floorf((cameraPos.z / scale))*scale	//Must be int here, grid moves with camera otherwise
 				);
-				scale *= m_cellSize;
+				scale = int(scale * m_cellSize);
 				math::Vector4 cameraScaleMatrix(cameraPos.x, cameraPos.y, cameraPos.z, 0);
 				m_material->SetVector("cameraPos", math::Vector4(cameraScaleMatrix));
 				m_material->SetInt("gridScale", scale);
 
 				graphics::Renderer::SubmitCommand(graphics::RenderCommand(worldMatrix, m_mesh, m_material, camera));
 			}
-			
+
 		}
 
 		EditorGrid::~EditorGrid()
