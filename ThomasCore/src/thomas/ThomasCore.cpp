@@ -9,6 +9,7 @@
 #include "resource\Material.h"
 #include "editor\EditorCamera.h"
 #include "editor\gizmos\Gizmos.h"
+#include "utils\Primitives.h"
 #include <D3d11_4.h>
 
 namespace thomas 
@@ -38,6 +39,7 @@ namespace thomas
 		assert(Physics::Init());
 		editor::EditorCamera::Init();
 		editor::Gizmos::Init();
+		utils::Primitives::Init();
 
 		s_initialized = true;
 		return s_initialized;
@@ -82,6 +84,7 @@ namespace thomas
 		object::Object::Destroy();
 		editor::EditorCamera::Destroy();
 		editor::Gizmos::Destroy();
+		utils::Primitives::Destroy();
 		Physics::Destroy();
 		Sound::Destroy();
 		ImGui::DestroyContext(s_imGuiContext);
