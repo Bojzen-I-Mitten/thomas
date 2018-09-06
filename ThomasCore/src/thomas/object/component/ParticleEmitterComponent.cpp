@@ -112,7 +112,7 @@ namespace thomas
 						m_emissionTimeLeft -= ThomasTime::GetDeltaTime();
 
 					m_emissionTimer += ThomasTime::GetDeltaTime();
-					UINT numberOfParticlesToEmit = m_emissionTimer / (1.0f / m_emissionRate);
+					UINT numberOfParticlesToEmit = UINT(m_emissionTimer / (1.0f / m_emissionRate));
 					if (numberOfParticlesToEmit > 0)
 					{
 						m_emissionTimer = 0;
@@ -142,7 +142,7 @@ namespace thomas
 				m_directionVector = other;
 				math::Vector3 temp = math::Vector3::TransformNormal(other, m_gameObject->m_transform->GetWorldMatrix());
 				//m_directionVector = other;
-				other.x += 0.0000001;
+				other.x += 0.0000001f;
 				m_particleBufferStruct.directionMatrix = math::Matrix::CreateLookAt(math::Vector3(0, 0, 0), -temp, math::Vector3::Up).Invert().Transpose();
 			}
 			void ParticleEmitterComponent::SetDirection(float const x, float const y, float const z)
@@ -350,7 +350,7 @@ namespace thomas
 				m_particleBufferStruct.maxLifeTime = m_tempMaxLifeTime;
 				m_particleBufferStruct.maxDelay = m_tempMaxDelay;
 				m_emissionRate = m_tempEmissionRate;
-				m_maxNrOfParticles = (m_particleBufferStruct.maxLifeTime + m_particleBufferStruct.maxDelay)*m_emissionRate;
+				m_maxNrOfParticles = unsigned((m_particleBufferStruct.maxLifeTime + m_particleBufferStruct.maxDelay)*m_emissionRate);
 				m_shouldUpdateResources = true;
 
 			}

@@ -22,9 +22,9 @@ namespace thomas
 
 			Camera::Camera(bool dontAddTolist)
 			{
-				m_fov = 70;
-				m_near = 0.1;
-				m_far = 10000;
+				m_fov = 70.f;
+				m_near = 0.1f;
+				m_far = 10000.f;
 				m_viewport = math::Viewport(0, 0, 1, 1);
 				m_targetDisplay = -1;
 				UpdateProjMatrix();
@@ -185,7 +185,7 @@ namespace thomas
 			void Camera::OnDrawGizmosSelected()
 			{
 				//editor::Gizmos::SetMatrix(m_gameObject->m_transform->GetWorldMatrix().Transpose());
-				editor::Gizmos::SetColor(math::Color(0.6, 0.6, 0.6));
+				editor::Gizmos::SetColor(math::Color(0.6f, 0.6f, 0.6f));
 				editor::Gizmos::DrawFrustum(GetFrustrum());
 			
 			}
