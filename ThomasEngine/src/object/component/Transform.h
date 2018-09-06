@@ -42,7 +42,7 @@ namespace ThomasEngine
 			List<Transform^>^ get() 
 			{
 				std::vector<thomas::object::component::Transform*> nativeChildren = ((thomas::object::component::Transform*)nativePtr)->GetChildren();
-				List<Transform^>^ managedChildren = gcnew List<Transform^>(nativeChildren.size());
+				List<Transform^>^ managedChildren = gcnew List<Transform^>(int(nativeChildren.size()));
 
 				for (thomas::object::component::Transform* nativeChild : nativeChildren)
 					managedChildren->Add((Transform^)GetObject(nativeChild));

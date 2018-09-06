@@ -206,7 +206,7 @@ namespace ThomasEngine {
 
 		static property float FrameRate
 		{
-			float get() { return thomas::ThomasTime::GetFPS(); }
+			float get() { return float(thomas::ThomasTime::GetFPS()); }
 		}
 		
 
