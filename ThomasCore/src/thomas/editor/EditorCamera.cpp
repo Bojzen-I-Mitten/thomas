@@ -33,7 +33,7 @@ namespace thomas
 			m_cameraComponent = std::make_unique<object::component::Camera>(true);
 			m_cameraComponent->SetTargetDisplay(-1);
 			m_cameraComponent->m_gameObject = this;
-			m_grid = new EditorGrid(100, 1, 10);
+			m_grid = std::make_unique<EditorGrid>(100, 1, 10);
 			m_sensitivity = 50.0f;
 			m_speed = 2.0f;
 			m_hasSelectionChanged = false;
@@ -41,16 +41,10 @@ namespace thomas
 			resource::Shader* outliner = resource::Shader::CreateShader("../Data/FXIncludes/EditorOutlineShader.fx");
 			if (outliner)
 			{
-				m_objectHighlighter = new resource::Material(outliner);
+				m_objectHighlighter = std::make_unique<resource::Material>(outliner);
 				m_objectHighlighter->m_renderQueue = 100;
 			}
-			m_transform->SetPosition(math::Vector3(5, 5, 5));
-			m_transform->LookAt(math::Vector3(0, 0, 0));
-			math::Vector3 eulerAngles = math::ToEuler(m_transform->GetRotation());
-			rotationX = -eulerAngles.y;
-			rotationY = -eulerAngles.x;
-			m_transform->SetRotation(-rotationX, -rotationY, 0);
-
+			
 			m_manipulatorMode = ImGuizmo::MODE::LOCAL;
 			m_manipulatorOperation = ImGuizmo::OPERATION::TRANSLATE;
 		}
@@ -159,9 +153,9 @@ namespace thomas
 			// Render camera related work
 			RenderSelectedObjects();
 			m_cameraComponent->Render();
-			renderGizmos();
+			RenderGizmos();
 			//Physics::DrawDebug(m_cameraComponent);
-			m_grid->Draw(m_cameraComponent);
+			m_grid->Draw(m_cameraComponent.get());
 
 		}
 

@@ -23,7 +23,6 @@ namespace thomas
 			void Draw(object::component::Camera* camera);
 
 		private:
-			void CreateGrid();
 			void AddLine(const math::Vector3 & from, const math::Vector3 & to, const math::Vector4 & color, const float & viewDistance = 1.0f);
 			
 		private:

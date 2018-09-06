@@ -75,7 +75,7 @@ namespace thomas
 
 		//Destroy all objects
 		Window::Destroy();
-		graphics::LightManager::Destroy();
+		//graphics::LightManager::Destroy();
 		resource::Shader::DestroyAllShaders();
 		resource::Material::Destroy();
 		resource::Texture2D::Destroy();

@@ -8,7 +8,7 @@ namespace thomas
 {
 	namespace graphics { class BulletDebugDraw; };
 	namespace object { namespace component { class Camera; class Rigidbody; } }
-	class THOMAS_API Physics
+	class Physics
 	{
 	public:
 		static bool Init();
@@ -41,6 +41,7 @@ namespace thomas
 	private:
 		static float s_timeSinceLastPhysicsStep;
 		static float s_accumulator;
+		static float s_timeStep;
 
 		static std::vector<object::component::Rigidbody*> s_rigidBodies;
 	};

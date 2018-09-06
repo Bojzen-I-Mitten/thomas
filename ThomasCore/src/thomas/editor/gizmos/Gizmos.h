@@ -1,22 +1,21 @@
 #pragma once
-#include "..\..\utils\Math.h"
-#include <memory>
-#include <vector>
-
+#include "../../Common.h"
+#include "../../utils/Math.h"
 namespace thomas
 {
 	namespace resource { class Model; class Material; }
 	namespace utils { struct Ray; namespace buffers { class VertexBuffer; } }
-
 	namespace editor
 	{
 		class Gizmos
 		{
+
 		private:
+
 			enum class GizmoPasses
 			{
-				SOLID,
-				WIREFRAME
+				SOLID = 0,
+				WIREFRAME = 1,
 			};
 
 			struct GizmoRenderCommand
@@ -30,7 +29,7 @@ namespace thomas
 				GizmoRenderCommand(std::vector<math::Vector3> v, math::Matrix m, math::Color c, D3D_PRIMITIVE_TOPOLOGY t, GizmoPasses p) :
 					vertexData(v), matrix(m), color(c), topology(t), pass(p) {};
 			};
-			
+
 		public:
 			static void DrawLines(std::vector<math::Vector3> lines, D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 			static void TransferGizmoCommands();
@@ -38,6 +37,8 @@ namespace thomas
 			static void ClearGizmos();
 			static void Init();
 			static void Destroy();
+			static void DrawModel(resource::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
+			static void DrawModel(resource::Model* model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
 
 			static void DrawWireModel(resource::Model* model, int meshIndex, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
 			static void DrawWireModel(resource::Model* model, math::Vector3 position, math::Quaternion rotation, math::Vector3 scale);
@@ -53,14 +54,16 @@ namespace thomas
 			static void DrawRay(math::Vector3 from, math::Vector3 direction);
 			static void DrawRay(math::Ray ray);
 
-		private:
-			static void DrawLines(std::vector<math::Vector3> lines);
+			static void DrawFrustum(math::Vector3 center, float fov, float maxRange, float minRange, float aspect);
+			static void DrawFrustum(math::BoundingFrustum& frustrum);
 
+			static void SetColor(math::Color color);
+			static void SetMatrix(math::Matrix matrix);
 		private:
 			static std::vector<GizmoRenderCommand> s_gizmoCommands;
 			static std::vector<GizmoRenderCommand> s_prevGizmoCommands;
-			static std::unique_ptr<resource::Material> s_gizmoMaterial;
-			static std::unique_ptr<utils::buffers::VertexBuffer> s_vertexBuffer;
+			static resource::Material* s_gizmoMaterial;
+			static utils::buffers::VertexBuffer* s_vertexBuffer;
 			static math::Matrix s_matrix;
 			static math::Color s_color;
 		};

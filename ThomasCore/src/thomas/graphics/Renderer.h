@@ -49,11 +49,11 @@ namespace thomas
 
 		typedef std::map<object::component::Camera*, std::map<resource::Material*, std::vector<RenderCommand>, MaterialSorter>> CommandQueue;
 
-		class THOMAS_API Renderer {
+		class Renderer {
 		private:
 
 			static void BindFrame();
-			static void BindObject(thomas::resource::Material* material, thomas::math::Matrix& worldMatrix);
+			static void BindObject(thomas::resource::Material* material, const thomas::math::Matrix& worldMatrix);
 						
 		public:
 			static void BindCamera(thomas::object::component::Camera* camera);
@@ -62,9 +62,6 @@ namespace thomas
 			static void SubmitCommand(RenderCommand command);
 			static void TransferCommandList();
 
-		private:
-			static void BindFrame();
-			static void BindObject(thomas::resource::Material* material, const thomas::math::Matrix & worldMatrix);
 
 		private:
 			static CommandQueue s_renderCommands;

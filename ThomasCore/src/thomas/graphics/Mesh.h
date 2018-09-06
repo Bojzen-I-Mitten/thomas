@@ -76,10 +76,10 @@ namespace thomas
 		struct MeshData
 		{
 			Vertices vertices;
-			std::vector<int> indices;
+			std::vector<unsigned int> indices;
 			
-			std::map<resource::Shader::Semantics, utils::buffers::VertexBuffer*> vertexBuffers;
-			utils::buffers::IndexBuffer* indexBuffer = nullptr;
+			std::map<resource::Shader::Semantics, std::unique_ptr<utils::buffers::VertexBuffer>> vertexBuffers;
+			std::unique_ptr<utils::buffers::IndexBuffer> indexBuffer = nullptr;
 		};
 
 		class Mesh

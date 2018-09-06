@@ -6,10 +6,13 @@
 #include <cmath>
 #include <string>
 
+
 namespace DirectX
 {
 	namespace SimpleMath
 	{
+		constexpr float PI = 3.141592654f;
+
 		using DirectX::BoundingBox;
 		using DirectX::BoundingSphere;
 		using DirectX::BoundingFrustum;

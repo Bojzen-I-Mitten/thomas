@@ -17,7 +17,6 @@ namespace thomas
 	float Physics::s_timeSinceLastPhysicsStep = 0.0f;
 	std::vector<object::component::Rigidbody*> Physics::s_rigidBodies;
 	float Physics::s_accumulator;
-	std::vector<object::component::RigidBodyComponent*> Physics::s_rigidBodies;
 
 	bool Physics::Init()
 	{
@@ -60,6 +59,7 @@ namespace thomas
 		for (object::component::Rigidbody* rb : s_rigidBodies)
 		{
 			rb->UpdateTransformToRigidBody();
+		}
 	}
 
 	//Update physics collision
@@ -100,9 +100,11 @@ namespace thomas
 		for (object::component::Rigidbody* rb : s_rigidBodies)
 		{
 			rb->UpdateRigidbodyToTransform();
+		}
 
 		s_timeSinceLastPhysicsStep = 0.f;
 	}
+
 
 	void Physics::DrawDebug(object::component::Camera* camera)
 	{
