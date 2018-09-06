@@ -39,10 +39,10 @@ namespace thomas
 				{
 					from = math::Vector3(i+j, 0.0f, -m_gridSize / 2);
 					to = math::Vector3(i+j, 0.0f, m_gridSize / 2);
-					AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 1.5f);
+					AddLine(from, to, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 1.0f), 1.5f);
 					from = math::Vector3(-m_gridSize / 2, 0.0f, i+j);
 					to = math::Vector3(m_gridSize / 2, 0.0f, i+j);
-					AddLine(from, to, math::Vector4(0.40625f, 0.40625f, 0.40625f, 1.0f), 1.5f);
+					AddLine(from, to, math::Vector4(0.3046875f, 0.3046875f, 0.3046875f, 1.0f), 1.5f);
 				}
 
 			}
