@@ -15,11 +15,12 @@ namespace thomas
 
 			void SphereCollider::SetCenter(math::Vector3 center)
 			{
+				m_center = center;
 			}
 
 			math::Vector3 SphereCollider::getCenter()
 			{
-				return math::Vector3();
+				return m_center;
 			}
 
 			void SphereCollider::SetRadius(float size)

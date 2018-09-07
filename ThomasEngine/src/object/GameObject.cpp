@@ -24,22 +24,7 @@ void ThomasEngine::GameObject::Destroy()
 
 ThomasEngine::GameObject ^ ThomasEngine::GameObject::CreatePrimitive(PrimitiveType type)
 {
-
 	GameObject^ gameObject = gcnew GameObject("new" + type.ToString());
 	gameObject->AddComponent<RenderComponent^>()->model = Model::GetPrimitive(type);
-
-	switch (type)
-	{
-	case PrimitiveType::Cube:
-		gameObject->AddComponent<BoxCollider^>();
-		break;
-	case PrimitiveType::Sphere:
-		gameObject->AddComponent<SphereCollider^>();
-		break;
-	default:
-		break;
-	}
-
 	return gameObject;
-	
 }
